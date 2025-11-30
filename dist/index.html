@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UCI - ICU Medical Scales</title>
+    <link rel="stylesheet" href="/style.css">
+    
+<script type="module">
+import init, * as bindings from '/frontend-ef6823fa9fc92017.js';
+const wasm = await init({ module_or_path: '/frontend-ef6823fa9fc92017_bg.wasm' });
+
+
+window.wasmBindings = bindings;
+
+
+dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
+
+</script>
+<link rel="modulepreload" href="/frontend-ef6823fa9fc92017.js" crossorigin="anonymous" integrity="sha384-ZsqlVKtRsU97997I/fmGdTlNQoBnigJTDbc35fz/WE+BMdHee3+MaSTiw74il2vr"><link rel="preload" href="/frontend-ef6823fa9fc92017_bg.wasm" crossorigin="anonymous" integrity="sha384-jLN/3WzF3IqpdsVuLhEq/hOFULSkFMuPN8AzURtY6SX3mMc3SHiEXDil3zE+1rcU" as="fetch" type="application/wasm"></head>
+
+<body>
+    <!-- Leptos will mount here -->
+</body>
+
+</html>

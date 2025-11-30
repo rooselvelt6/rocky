@@ -22,7 +22,7 @@
 /// - **1 point**: No eye opening response
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum Eye {
     /// Spontaneous eye opening (4 points)
     Espontaneo,
@@ -84,7 +84,7 @@ impl Eye {
 /// - **3 points**: Inappropriate words
 /// - **2 points**: Incomprehensible sounds
 /// - **1 point**: No verbal response
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum Verbal {
     /// Oriented and conversing (5 points)
     OrientadoConversando,
@@ -145,7 +145,7 @@ impl Verbal {
 /// - **3 points**: Flexion to pain (decorticate posture)
 /// - **2 points**: Extension to pain (decerebrate posture)
 /// - **1 point**: No motor response
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum Motor {
     /// Obeys verbal commands (6 points)
     OrdenVerbalObedece,
@@ -217,7 +217,7 @@ impl Motor {
 /// let score = gcs.score(); // Returns 15
 /// let (diagnosis, recommendation) = gcs.result();
 /// ```
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Glasgow {
     /// Eye opening response component
     pub eye: Eye,
@@ -301,4 +301,20 @@ impl Glasgow {
             ),
         }
     }
+}
+
+/// Request payload for Glasgow calculation API
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct GlasgowRequest {
+    pub eye: u8,
+    pub verbal: u8,
+    pub motor: u8,
+}
+
+/// Response payload for Glasgow calculation API
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct GlasgowResponse {
+    pub score: u8,
+    pub diagnosis: String,
+    pub recommendation: String,
 }
