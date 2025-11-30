@@ -5,11 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UCI - ICU Medical Scales</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/style.css">
     
 <script type="module">
-import init, * as bindings from '/frontend-ef6823fa9fc92017.js';
-const wasm = await init({ module_or_path: '/frontend-ef6823fa9fc92017_bg.wasm' });
+import init, * as bindings from '/frontend-3b77bcd155b3dfd7.js';
+const wasm = await init({ module_or_path: '/frontend-3b77bcd155b3dfd7_bg.wasm' });
 
 
 window.wasmBindings = bindings;
@@ -18,10 +20,10 @@ window.wasmBindings = bindings;
 dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
 
 </script>
-<link rel="modulepreload" href="/frontend-ef6823fa9fc92017.js" crossorigin="anonymous" integrity="sha384-ZsqlVKtRsU97997I/fmGdTlNQoBnigJTDbc35fz/WE+BMdHee3+MaSTiw74il2vr"><link rel="preload" href="/frontend-ef6823fa9fc92017_bg.wasm" crossorigin="anonymous" integrity="sha384-jLN/3WzF3IqpdsVuLhEq/hOFULSkFMuPN8AzURtY6SX3mMc3SHiEXDil3zE+1rcU" as="fetch" type="application/wasm"></head>
+<link rel="modulepreload" href="/frontend-3b77bcd155b3dfd7.js" crossorigin="anonymous" integrity="sha384-loUE8CBiJwAQuZuRXa5l9yFzD8AKwovweZ6wJMiI8Rc3z+giyFg7/h3w7ACUqMQr"><link rel="preload" href="/frontend-3b77bcd155b3dfd7_bg.wasm" crossorigin="anonymous" integrity="sha384-EdIyl5EYgbTBTe66TOfVcRexiRVHc/VZrl67ZLKEcHFoC8/yO9DLctfhieHnusp3" as="fetch" type="application/wasm"></head>
 
 <body>
-    <!-- Leptos will mount here -->
+    <div id="app"></div>
 </body>
 
 </html>

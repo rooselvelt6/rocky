@@ -2,5 +2,5 @@
 pub mod uci;
 
 // Frontend components (only compiled for wasm/csr)
-#[cfg(feature = "hydrate")]
+#[cfg(feature = "csr")]
 pub mod frontend;
