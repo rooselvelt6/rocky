@@ -20,7 +20,9 @@
 /// - **3 points**: Eye opening to verbal command
 /// - **2 points**: Eye opening to pain
 /// - **1 point**: No eye opening response
-#[derive(Debug)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Serialize, Deserialize)]
 pub enum Eye {
     /// Spontaneous eye opening (4 points)
     Espontaneo,
@@ -82,7 +84,7 @@ impl Eye {
 /// - **3 points**: Inappropriate words
 /// - **2 points**: Incomprehensible sounds
 /// - **1 point**: No verbal response
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub enum Verbal {
     /// Oriented and conversing (5 points)
     OrientadoConversando,
@@ -143,7 +145,7 @@ impl Verbal {
 /// - **3 points**: Flexion to pain (decorticate posture)
 /// - **2 points**: Extension to pain (decerebrate posture)
 /// - **1 point**: No motor response
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub enum Motor {
     /// Obeys verbal commands (6 points)
     OrdenVerbalObedece,
@@ -215,7 +217,7 @@ impl Motor {
 /// let score = gcs.score(); // Returns 15
 /// let (diagnosis, recommendation) = gcs.result();
 /// ```
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Glasgow {
     /// Eye opening response component
     pub eye: Eye,
