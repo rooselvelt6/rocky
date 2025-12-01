@@ -7,11 +7,13 @@
     <title>UCI - ICU Medical Scales</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="/style.css">
     
 <script type="module">
-import init, * as bindings from '/frontend-3b77bcd155b3dfd7.js';
-const wasm = await init({ module_or_path: '/frontend-3b77bcd155b3dfd7_bg.wasm' });
+import init, * as bindings from '/frontend-9e309d26dd7b9426.js';
+const wasm = await init({ module_or_path: '/frontend-9e309d26dd7b9426_bg.wasm' });
 
 
 window.wasmBindings = bindings;
@@ -20,7 +22,7 @@ window.wasmBindings = bindings;
 dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
 
 </script>
-<link rel="modulepreload" href="/frontend-3b77bcd155b3dfd7.js" crossorigin="anonymous" integrity="sha384-loUE8CBiJwAQuZuRXa5l9yFzD8AKwovweZ6wJMiI8Rc3z+giyFg7/h3w7ACUqMQr"><link rel="preload" href="/frontend-3b77bcd155b3dfd7_bg.wasm" crossorigin="anonymous" integrity="sha384-EdIyl5EYgbTBTe66TOfVcRexiRVHc/VZrl67ZLKEcHFoC8/yO9DLctfhieHnusp3" as="fetch" type="application/wasm"></head>
+<link rel="modulepreload" href="/frontend-9e309d26dd7b9426.js" crossorigin="anonymous" integrity="sha384-GyivxDAZJhanNt3eURq2TlwicJge9zOkcAuynhR9XT51k2HeOvnPIY09WBqYoZyV"><link rel="preload" href="/frontend-9e309d26dd7b9426_bg.wasm" crossorigin="anonymous" integrity="sha384-dM27mkSbATWci9p6W3v+j7kyh0GoJxVy5L3wGcpf2mwMcdp9/Kl72Q6qtdVP2S7N" as="fetch" type="application/wasm"></head>
 
 <body>
     <div id="app"></div>

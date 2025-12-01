@@ -2,7 +2,7 @@ use crate::uci::scale::glasgow::{GlasgowRequest, GlasgowResponse};
 use leptos::*;
 use reqwasm::http::Request;
 
-/// Glasgow Coma Scale form component
+/// Glasgow Coma Scale form component - Compact, Responsive & Smooth
 #[component]
 pub fn GlasgowForm() -> impl IntoView {
     // Reactive signals for form inputs
@@ -37,105 +37,273 @@ pub fn GlasgowForm() -> impl IntoView {
     );
 
     view! {
-        <div class="glasgow-form">
-            <h2>"Glasgow Coma Scale"</h2>
-            <p class="description">
-                "Assess the level of consciousness in ICU patients"
-            </p>
-
-            <div class="form-grid">
-                // Eye Opening Response
-                <div class="form-group">
-                    <label for="eye-response">
-                        <strong>"Eye Opening Response"</strong>
-                        " (1-4 points)"
-                    </label>
-                    <select
-                        id="eye-response"
-                        on:change=move |ev| {
-                            let value = event_target_value(&ev).parse().unwrap_or(4);
-                            set_eye_value.set(value);
-                        }
-                        prop:value=move || eye_value.get().to_string()
-                    >
-                        <option value="4">"4 - Spontaneous"</option>
-                        <option value="3">"3 - To verbal command"</option>
-                        <option value="2">"2 - To pain"</option>
-                        <option value="1">"1 - No response"</option>
-                    </select>
-                </div>
-
-                // Verbal Response
-                <div class="form-group">
-                    <label for="verbal-response">
-                        <strong>"Verbal Response"</strong>
-                        " (1-5 points)"
-                    </label>
-                    <select
-                        id="verbal-response"
-                        on:change=move |ev| {
-                            let value = event_target_value(&ev).parse().unwrap_or(5);
-                            set_verbal_value.set(value);
-                        }
-                        prop:value=move || verbal_value.get().to_string()
-                    >
-                        <option value="5">"5 - Oriented and conversing"</option>
-                        <option value="4">"4 - Disoriented and conversing"</option>
-                        <option value="3">"3 - Inappropriate words"</option>
-                        <option value="2">"2 - Incomprehensible sounds"</option>
-                        <option value="1">"1 - No response"</option>
-                    </select>
-                </div>
-
-                // Motor Response
-                <div class="form-group">
-                    <label for="motor-response">
-                        <strong>"Motor Response"</strong>
-                        " (1-6 points)"
-                    </label>
-                    <select
-                        id="motor-response"
-                        on:change=move |ev| {
-                            let value = event_target_value(&ev).parse().unwrap_or(6);
-                            set_motor_value.set(value);
-                        }
-                        prop:value=move || motor_value.get().to_string()
-                    >
-                        <option value="6">"6 - Obeys commands"</option>
-                        <option value="5">"5 - Localizes pain"</option>
-                        <option value="4">"4 - Withdrawal from pain"</option>
-                        <option value="3">"3 - Flexion to pain"</option>
-                        <option value="2">"2 - Extension to pain"</option>
-                        <option value="1">"1 - No response"</option>
-                    </select>
-                </div>
+        <div class="w-full max-w-6xl mx-auto px-4">
+            // Compact Header
+            <div class="text-center mb-4">
+                <h2 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
+                    <i class="fas fa-brain mr-2"></i>
+                    "Glasgow Coma Scale"
+                </h2>
             </div>
 
-            // Results display with Suspense for async loading
-            <div class="results">
-                <Suspense fallback=move || view! { <p>"Calculating..."</p> }>
+            // Results - Fixed height with smooth transitions
+            <div class="min-h-[80px] mb-4">
+                <Transition fallback=move || view! {
+                    <div class="flex justify-center items-center h-[80px]">
+                        <div class="animate-spin rounded-full h-8 w-8 border-4 border-purple-500 border-t-transparent"></div>
+                    </div>
+                }>
                     {move || {
                         glasgow_resource.get().flatten().map(|data| {
+                            let (bg_color, text_color) = if data.score >= 13 {
+                                ("bg-green-500", "text-green-50")
+                            } else if data.score >= 9 {
+                                ("bg-yellow-500", "text-yellow-50")
+                            } else {
+                                ("bg-red-500", "text-red-50")
+                            };
+
                             view! {
-                                <div class="result-card">
-                                    <h3>"Results"</h3>
-                                    <div class="score-display">
-                                        <span class="score-label">"Total Score:"</span>
-                                        <span class="score-value">{data.score}" / 15"</span>
-                                    </div>
-                                    <div class="diagnosis">
-                                        <strong>"Diagnosis: "</strong>
-                                        {data.diagnosis}
-                                    </div>
-                                    <div class="recommendation">
-                                        <strong>"Recommendation: "</strong>
-                                        {data.recommendation}
+                                <div class=format!("{} {} rounded-xl shadow-lg transition-colors duration-700 ease-in-out", bg_color, text_color)>
+                                    <div class="p-4 grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                                        // Score Box
+                                        <div class="text-center md:border-r border-white/20">
+                                            <div class="text-xs uppercase opacity-80 mb-1 transition-opacity duration-500">
+                                                <i class="fas fa-calculator mr-1"></i>"Score"
+                                            </div>
+                                            <div class="text-4xl font-bold transition-all duration-700 ease-in-out transform">
+                                                {data.score}<span class="text-2xl opacity-80 transition-opacity duration-700">"/15"</span>
+                                            </div>
+                                        </div>
+
+                                        // Diagnosis
+                                        <div class="md:col-span-2 text-center md:text-left">
+                                            <div class="text-xs uppercase opacity-80 mb-1 transition-opacity duration-500">
+                                                <i class="fas fa-stethoscope mr-1"></i>"Diagnosis"
+                                            </div>
+                                            <div class="font-semibold text-sm transition-all duration-700 ease-in-out">{data.diagnosis}</div>
+                                        </div>
+
+                                        // Recommendation
+                                        <div class="text-center md:text-left">
+                                            <div class="text-xs uppercase opacity-80 mb-1 transition-opacity duration-500">
+                                                <i class="fas fa-lightbulb mr-1"></i>"Action"
+                                            </div>
+                                            <div class="font-semibold text-sm transition-all duration-700 ease-in-out">{data.recommendation}</div>
+                                        </div>
                                     </div>
                                 </div>
                             }
                         })
                     }}
-                </Suspense>
+                </Transition>
+            </div>
+
+            // Compact Selection Grid - Smooth transitions
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                // Eye Response
+                <div class="bg-white rounded-xl shadow p-4 transition-all duration-300 hover:shadow-lg">
+                    <h3 class="text-sm font-bold text-gray-800 mb-3 flex items-center">
+                        <i class="fas fa-eye text-purple-600 mr-2"></i>"Eye Response (1-4)"
+                    </h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button
+                            on:click=move |_| set_eye_value.set(4)
+                            class=move || if eye_value.get() == 4 {
+                                "p-3 text-xs rounded-lg border-2 border-green-500 bg-green-50 font-semibold transform scale-100 transition-all duration-200 shadow-md"
+                            } else {
+                                "p-3 text-xs rounded-lg border border-gray-200 hover:border-green-400 hover:shadow transition-all duration-200"
+                            }
+                        >
+                            <div class="font-bold text-green-600 mb-1"><i class="fas fa-check-circle mr-1"></i>"4"</div>
+                            <div class="text-gray-700">"Spontaneous"</div>
+                        </button>
+
+                        <button
+                            on:click=move |_| set_eye_value.set(3)
+                            class=move || if eye_value.get() == 3 {
+                                "p-3 text-xs rounded-lg border-2 border-blue-500 bg-blue-50 font-semibold transform scale-100 transition-all duration-200 shadow-md"
+                            } else {
+                                "p-3 text-xs rounded-lg border border-gray-200 hover:border-blue-400 hover:shadow transition-all duration-200"
+                            }
+                        >
+                            <div class="font-bold text-blue-600 mb-1"><i class="fas fa-volume-up mr-1"></i>"3"</div>
+                            <div class="text-gray-700">"To Voice"</div>
+                        </button>
+
+                        <button
+                            on:click=move |_| set_eye_value.set(2)
+                            class=move || if eye_value.get() == 2 {
+                                "p-3 text-xs rounded-lg border-2 border-orange-500 bg-orange-50 font-semibold transform scale-100 transition-all duration-200 shadow-md"
+                            } else {
+                                "p-3 text-xs rounded-lg border border-gray-200 hover:border-orange-400 hover:shadow transition-all duration-200"
+                            }
+                        >
+                            <div class="font-bold text-orange-600 mb-1"><i class="fas fa-hand-point-up mr-1"></i>"2"</div>
+                            <div class="text-gray-700">"To Pain"</div>
+                        </button>
+
+                        <button
+                            on:click=move |_| set_eye_value.set(1)
+                            class=move || if eye_value.get() == 1 {
+                                "p-3 text-xs rounded-lg border-2 border-red-500 bg-red-50 font-semibold transform scale-100 transition-all duration-200 shadow-md"
+                            } else {
+                                "p-3 text-xs rounded-lg border border-gray-200 hover:border-red-400 hover:shadow transition-all duration-200"
+                            }
+                        >
+                            <div class="font-bold text-red-600 mb-1"><i class="fas fa-times-circle mr-1"></i>"1"</div>
+                            <div class="text-gray-700">"None"</div>
+                        </button>
+                    </div>
+                </div>
+
+                // Verbal Response
+                <div class="bg-white rounded-xl shadow p-4 transition-all duration-300 hover:shadow-lg">
+                    <h3 class="text-sm font-bold text-gray-800 mb-3 flex items-center">
+                        <i class="fas fa-comments text-purple-600 mr-2"></i>"Verbal Response (1-5)"
+                    </h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button
+                            on:click=move |_| set_verbal_value.set(5)
+                            class=move || if verbal_value.get() == 5 {
+                                "p-3 text-xs rounded-lg border-2 border-green-500 bg-green-50 font-semibold transform scale-100 transition-all duration-200 shadow-md"
+                            } else {
+                                "p-3 text-xs rounded-lg border border-gray-200 hover:border-green-400 hover:shadow transition-all duration-200"
+                            }
+                        >
+                            <div class="font-bold text-green-600 mb-1"><i class="fas fa-star mr-1"></i>"5"</div>
+                            <div class="text-gray-700">"Oriented"</div>
+                        </button>
+
+                        <button
+                            on:click=move |_| set_verbal_value.set(4)
+                            class=move || if verbal_value.get() == 4 {
+                                "p-3 text-xs rounded-lg border-2 border-blue-500 bg-blue-50 font-semibold transform scale-100 transition-all duration-200 shadow-md"
+                            } else {
+                                "p-3 text-xs rounded-lg border border-gray-200 hover:border-blue-400 hover:shadow transition-all duration-200"
+                            }
+                        >
+                            <div class="font-bold text-blue-600 mb-1"><i class="fas fa-question-circle mr-1"></i>"4"</div>
+                            <div class="text-gray-700">"Confused"</div>
+                        </button>
+
+                        <button
+                            on:click=move |_| set_verbal_value.set(3)
+                            class=move || if verbal_value.get() == 3 {
+                                "p-3 text-xs rounded-lg border-2 border-yellow-500 bg-yellow-50 font-semibold transform scale-100 transition-all duration-200 shadow-md"
+                            } else {
+                                "p-3 text-xs rounded-lg border border-gray-200 hover:border-yellow-400 hover:shadow transition-all duration-200"
+                            }
+                        >
+                            <div class="font-bold text-yellow-600 mb-1"><i class="fas fa-font mr-1"></i>"3"</div>
+                            <div class="text-gray-700">"Words"</div>
+                        </button>
+
+                        <button
+                            on:click=move |_| set_verbal_value.set(2)
+                            class=move || if verbal_value.get() == 2 {
+                                "p-3 text-xs rounded-lg border-2 border-orange-500 bg-orange-50 font-semibold transform scale-100 transition-all duration-200 shadow-md"
+                            } else {
+                                "p-3 text-xs rounded-lg border border-gray-200 hover:border-orange-400 hover:shadow transition-all duration-200"
+                            }
+                        >
+                            <div class="font-bold text-orange-600 mb-1"><i class="fas fa-music mr-1"></i>"2"</div>
+                            <div class="text-gray-700">"Sounds"</div>
+                        </button>
+
+                        <button
+                            on:click=move |_| set_verbal_value.set(1)
+                            class=move || if verbal_value.get() == 1 {
+                                "p-3 text-xs rounded-lg border-2 border-red-500 bg-red-50 font-semibold col-span-2 transition-all duration-200 shadow-md"
+                            } else {
+                                "p-3 text-xs rounded-lg border border-gray-200 hover:border-red-400 col-span-2 transition-all duration-200"
+                            }
+                        >
+                            <div class="font-bold text-red-600 mb-1"><i class="fas fa-volume-mute mr-1"></i>"1"</div>
+                            <div class="text-gray-700">"None"</div>
+                        </button>
+                    </div>
+                </div>
+
+                // Motor Response
+                <div class="bg-white rounded-xl shadow p-4 transition-all duration-300 hover:shadow-lg">
+                    <h3 class="text-sm font-bold text-gray-800 mb-3 flex items-center">
+                        <i class="fas fa-hand-rock text-purple-600 mr-2"></i>"Motor Response (1-6)"
+                    </h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button
+                            on:click=move |_| set_motor_value.set(6)
+                            class=move || if motor_value.get() == 6 {
+                                "p-3 text-xs rounded-lg border-2 border-green-500 bg-green-50 font-semibold transform scale-100 transition-all duration-200 shadow-md"
+                            } else {
+                                "p-3 text-xs rounded-lg border border-gray-200 hover:border-green-400 hover:shadow transition-all duration-200"
+                            }
+                        >
+                            <div class="font-bold text-green-600 mb-1"><i class="fas fa-thumbs-up mr-1"></i>"6"</div>
+                            <div class="text-gray-700">"Obeys"</div>
+                        </button>
+
+                        <button
+                            on:click=move |_| set_motor_value.set(5)
+                            class=move || if motor_value.get() == 5 {
+                                "p-3 text-xs rounded-lg border-2 border-blue-500 bg-blue-50 font-semibold transform scale-100 transition-all duration-200 shadow-md"
+                            } else {
+                                "p-3 text-xs rounded-lg border border-gray-200 hover:border-blue-400 hover:shadow transition-all duration-200"
+                            }
+                        >
+                            <div class="font-bold text-blue-600 mb-1"><i class="fas fa-crosshairs mr-1"></i>"5"</div>
+                            <div class="text-gray-700">"Localizes"</div>
+                        </button>
+
+                        <button
+                            on:click=move |_| set_motor_value.set(4)
+                            class=move || if motor_value.get() == 4 {
+                                "p-3 text-xs rounded-lg border-2 border-cyan-500 bg-cyan-50 font-semibold transform scale-100 transition-all duration-200 shadow-md"
+                            } else {
+                                "p-3 text-xs rounded-lg border border-gray-200 hover:border-cyan-400 hover:shadow transition-all duration-200"
+                            }
+                        >
+                            <div class="font-bold text-cyan-600 mb-1"><i class="fas fa-hand-paper mr-1"></i>"4"</div>
+                            <div class="text-gray-700">"Withdraws"</div>
+                        </button>
+
+                        <button
+                            on:click=move |_| set_motor_value.set(3)
+                            class=move || if motor_value.get() == 3 {
+                                "p-3 text-xs rounded-lg border-2 border-yellow-500 bg-yellow-50 font-semibold transform scale-100 transition-all duration-200 shadow-md"
+                            } else {
+                                "p-3 text-xs rounded-lg border border-gray-200 hover:border-yellow-400 hover:shadow transition-all duration-200"
+                            }
+                        >
+                            <div class="font-bold text-yellow-600 mb-1"><i class="fas fa-compress-arrows-alt mr-1"></i>"3"</div>
+                            <div class="text-gray-700">"Flexion"</div>
+                        </button>
+
+                        <button
+                            on:click=move |_| set_motor_value.set(2)
+                            class=move || if motor_value.get() == 2 {
+                                "p-3 text-xs rounded-lg border-2 border-orange-500 bg-orange-50 font-semibold transform scale-100 transition-all duration-200 shadow-md"
+                            } else {
+                                "p-3 text-xs rounded-lg border border-gray-200 hover:border-orange-400 hover:shadow transition-all duration-200"
+                            }
+                        >
+                            <div class="font-bold text-orange-600 mb-1"><i class="fas fa-expand-arrows-alt mr-1"></i>"2"</div>
+                            <div class="text-gray-700">"Extension"</div>
+                        </button>
+
+                        <button
+                            on:click=move |_| set_motor_value.set(1)
+                            class=move || if motor_value.get() == 1 {
+                                "p-3 text-xs rounded-lg border-2 border-red-500 bg-red-50 font-semibold transition-all duration-200 shadow-md"
+                            } else {
+                                "p-3 text-xs rounded-lg border border-gray-200 hover:border-red-400 transition-all duration-200"
+                            }
+                        >
+                            <div class="font-bold text-red-600 mb-1"><i class="fas fa-ban mr-1"></i>"1"</div>
+                            <div class="text-gray-700">"None"</div>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     }
