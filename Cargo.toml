@@ -12,7 +12,7 @@ path = "src/bin/frontend.rs"
 required-features = ["csr"]
 
 [[bin]]
-name = "uci"
+name = "uci-server"
 path = "src/main.rs"
 
 [dependencies]
@@ -32,10 +32,12 @@ tower-http = { version = "0.6.7", features = ["full"], optional = true }
 tracing = { version = "0.1.41", optional = true }
 tracing-subscriber = { version = "0.3.20", features = ["env-filter", "fmt"], optional = true }
 leptos_axum = { version = "0.6", optional = true }
+surrealdb = { version = "1.5", optional = true }
+chrono = { version = "0.4", features = ["serde"], optional = true }
 
 [features]
 default = ["ssr"]
-csr = ["leptos/csr", "leptos_meta/csr", "leptos_router/csr", "dep:reqwasm"]
+csr = ["leptos/csr", "leptos_meta/csr", "leptos_router/csr", "dep:reqwasm", "dep:chrono"]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate", "dep:reqwasm"]
 ssr = [
     "dep:axum",
@@ -44,6 +46,8 @@ ssr = [
     "dep:tracing",
     "dep:tracing-subscriber",
     "dep:leptos_axum",
+    "dep:surrealdb",
+    "dep:chrono",
     "leptos/ssr",
     "leptos_meta/ssr",
     "leptos_router/ssr",

@@ -9,20 +9,47 @@ UCI is a medical software system designed to streamline the calculation and inte
 ## ✨ Features
 
 ### Currently Implemented
-- **Glasgow Coma Scale (GCS)** - Neurological assessment tool
+- **Glasgow Coma Scale (GCS)** - Neurological assessment tool ✅
   - Eye opening response evaluation
   - Verbal response evaluation
   - Motor response evaluation
   - Automatic severity classification (Mild, Moderate, Severe TBI)
   - Clinical recommendations based on score
+  - Full frontend form with real-time calculation
 
-### Planned Features
-- APACHE II Score
-- SOFA Score (Sequential Organ Failure Assessment)
-- SAPS II (Simplified Acute Physiology Score)
-- Patient registration system
-- Results history and tracking
-- Multi-language support
+- **APACHE II Score** - Acute Physiology and Chronic Health Evaluation ✅
+  - 12 physiological parameters evaluation
+  - Age and chronic health assessment
+  - Predicted mortality calculation
+  - Severity classification with recommendations
+  - Backend API endpoint functional
+
+- **SOFA Score** - Sequential Organ Failure Assessment ✅
+  - 6 organ systems evaluation
+  - Respiratory, coagulation, liver, cardiovascular, CNS, renal scoring
+  - Calculation logic complete
+  - Ready for frontend integration
+
+- **SAPS II Score** - Simplified Acute Physiology Score ✅
+  - 15 parameters evaluation
+  - Advanced mortality prediction using logistic regression
+  - Severity classification
+  - Calculation logic complete
+
+- **Patient Registration System** ✅
+  - Complete patient data entry form
+  - Database storage with SurrealDB
+  - Patient listing API
+
+### In Progress / Planned Features
+- Frontend forms for APACHE II, SOFA, SAPS II
+- Patient list with search functionality
+- Dashboard with statistics
+- Assessment history per patient
+- Multi-language support (ES/EN)
+- PDF export functionality
+- User authentication
+- Data visualization
 
 ## 🚀 Prerequisites
 
@@ -44,13 +71,37 @@ cargo build --release
 
 ## 🎯 Usage
 
-### Running the Development Server
+### Building the Frontend
 
+First, install Trunk if you haven't already:
 ```bash
-cargo run
+cargo install trunk
 ```
 
-The server will start on `http://localhost:3000`
+Build the Leptos frontend:
+```bash
+trunk build
+```
+
+For development with hot reload:
+```bash
+trunk serve
+# Frontend will be available at http://localhost:8080
+```
+
+### Running the Backend Server
+
+Make sure SurrealDB is running first:
+```bash
+.\start-db.ps1
+# Or manually: .\surreal.exe start --user root --pass root file:uci.db
+```
+
+Then start the Axum backend:
+```bash
+cargo run
+# Server will start on http://localhost:3000
+```
 
 ### Accessing the Application
 
@@ -124,10 +175,27 @@ The Glasgow Coma Scale (GCS) is a neurological scale that aims to give a reliabl
 
 ## 🗺️ Roadmap
 
-- [ ] RESTful API endpoints for scale calculations
-- [ ] Interactive web UI with form inputs
-- [ ] Patient registration system
-- [ ] Results history and persistence
+### Completed ✅
+- [x] Glasgow Coma Scale with full frontend
+- [x] Patient registration system
+- [x] APACHE II calculation logic & backend API
+- [x] SOFA calculation logic
+- [x] SAPS II calculation logic
+- [x] SurrealDB integration
+- [x] Database schema (patients, glasgow_assessments, apache_assessments)
+- [x] Trunk build configuration
+
+### In Progress 🚧
+- [ ] APACHE II frontend form
+- [ ] SOFA frontend form & backend API
+- [ ] SAPS II frontend form & backend API
+- [ ] Patient list/search interface
+- [ ] Dashboard with statistics
+
+### Planned 📋
+- [ ] Assessment history view per patient
+- [ ] Link assessments to specific patients
+- [ ] Data visualization (charts/graphs)
 - [ ] User authentication
 - [ ] Multiple language support (ES, EN)
 - [ ] Export results to PDF

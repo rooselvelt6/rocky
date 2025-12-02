@@ -1,1 +1,5 @@
 /target
+/dist
+/uci.db
+.env
+*.db
