@@ -139,7 +139,7 @@ pub fn SofaForm() -> impl IntoView {
                     </h3>
                     <div>
                         <label class="flex justify-between text-sm font-medium text-gray-700 mb-1">
-                            <span>{move || t(lang.get(), "pao2_fio2")}</span>
+                            <span class="flex items-center"><i class="fas fa-wind text-blue-500 mr-2 w-5 text-center"></i>{move || t(lang.get(), "pao2_fio2")}</span>
                             <span class="text-blue-600 font-bold">{move || pao2_fio2.get()}</span>
                         </label>
                         <input type="range" min="50" max="600" step="10"
@@ -157,7 +157,7 @@ pub fn SofaForm() -> impl IntoView {
                     </h3>
                     <div>
                         <label class="flex justify-between text-sm font-medium text-gray-700 mb-1">
-                            <span>{move || t(lang.get(), "platelets")}</span>
+                            <span class="flex items-center"><i class="fas fa-circle text-red-500 mr-2 w-5 text-center"></i>{move || t(lang.get(), "platelets")}</span>
                             <span class="text-red-600 font-bold">{move || platelets.get()}</span>
                         </label>
                         <input type="range" min="0" max="400" step="5"
@@ -175,7 +175,7 @@ pub fn SofaForm() -> impl IntoView {
                     </h3>
                     <div>
                         <label class="flex justify-between text-sm font-medium text-gray-700 mb-1">
-                            <span>{move || t(lang.get(), "bilirubin")}</span>
+                            <span class="flex items-center"><i class="fas fa-vial text-amber-500 mr-2 w-5 text-center"></i>{move || t(lang.get(), "bilirubin")}</span>
                             <span class="text-amber-600 font-bold">{move || format!("{:.1}", bilirubin.get())}</span>
                         </label>
                         <input type="range" min="0.1" max="20.0" step="0.1"
@@ -192,7 +192,7 @@ pub fn SofaForm() -> impl IntoView {
                         <i class="fas fa-heart text-pink-600 mr-2"></i>{move || t(lang.get(), "cardiovascular")}
                     </h3>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">{move || t(lang.get(), "hemodynamic_status")}</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1 flex items-center"><i class="fas fa-heart-pulse text-pink-500 mr-2 w-5 text-center"></i>{move || t(lang.get(), "hemodynamic_status")}</label>
                         <select
                             on:change=move |ev| set_cardiovascular.set(event_target_value(&ev))
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500">
@@ -213,7 +213,7 @@ pub fn SofaForm() -> impl IntoView {
                     </h3>
                     <div>
                         <label class="flex justify-between text-sm font-medium text-gray-700 mb-1">
-                            <span>{move || t(lang.get(), "gcs_score")}</span>
+                            <span class="flex items-center"><i class="fas fa-brain text-purple-500 mr-2 w-5 text-center"></i>{move || t(lang.get(), "gcs_score")}</span>
                             <span class="text-purple-600 font-bold">{move || glasgow.get()}</span>
                         </label>
                         <input type="range" min="3" max="15" step="1"
@@ -230,7 +230,7 @@ pub fn SofaForm() -> impl IntoView {
                         <i class="fas fa-kidneys text-indigo-600 mr-2"></i>{move || t(lang.get(), "renal")}
                     </h3>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">{move || t(lang.get(), "creatinine_level")}</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1 flex items-center"><i class="fas fa-filter text-indigo-500 mr-2 w-5 text-center"></i>{move || t(lang.get(), "creatinine_level")}</label>
                         <select
                             on:change=move |ev| set_renal.set(event_target_value(&ev))
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">

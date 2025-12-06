@@ -14,7 +14,7 @@ pub fn App() -> impl IntoView {
     let (lang, set_lang) = create_signal(Language::default());
 
     // Provide language signal to all children
-    provide_context(lang);
+    provide_context(Signal::from(lang));
 
     let toggle_lang = move |_| {
         set_lang.update(|l| {
@@ -33,7 +33,7 @@ pub fn App() -> impl IntoView {
                     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div class="flex items-center justify-between h-16">
                             <div class="flex items-center">
-                                <a href="/" class="text-xl font-bold tracking-wider">"UCI System"</a>
+                                <A href="/" class="text-xl font-bold tracking-wider">"UCI System"</A>
                                 <div class="ml-10 flex items-baseline space-x-4">
                                     <A href="/" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors">
                                         {move || t(lang.get(), "home")}
@@ -72,22 +72,22 @@ pub fn App() -> impl IntoView {
                                 <h1 class="text-4xl font-bold text-indigo-900 mb-4">{move || t(lang.get(), "welcome_title")}</h1>
                                 <p class="text-xl text-indigo-600 mb-8">{move || t(lang.get(), "welcome_subtitle")}</p>
                                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto px-4">
-                                    <a href="/register" class="bg-indigo-600 text-white px-6 py-4 rounded-lg hover:bg-indigo-700 transition shadow-md">
+                                    <A href="/register" class="bg-indigo-600 text-white px-6 py-4 rounded-lg hover:bg-indigo-700 transition shadow-md">
                                         <i class="fas fa-user-plus text-2xl mb-2"></i>
                                         <div class="font-bold">{move || t(lang.get(), "register_patient")}</div>
-                                    </a>
-                                    <a href="/glasgow" class="bg-purple-600 text-white px-6 py-4 rounded-lg hover:bg-purple-700 transition shadow-md">
+                                    </A>
+                                    <A href="/glasgow" class="bg-purple-600 text-white px-6 py-4 rounded-lg hover:bg-purple-700 transition shadow-md">
                                         <i class="fas fa-brain text-2xl mb-2"></i>
                                         <div class="font-bold">{move || t(lang.get(), "glasgow_scale")}</div>
-                                    </a>
-                                    <a href="/apache" class="bg-red-600 text-white px-6 py-4 rounded-lg hover:bg-red-700 transition shadow-md">
+                                    </A>
+                                    <A href="/apache" class="bg-red-600 text-white px-6 py-4 rounded-lg hover:bg-red-700 transition shadow-md">
                                         <i class="fas fa-heartbeat text-2xl mb-2"></i>
                                         <div class="font-bold">{move || t(lang.get(), "apache_ii")}</div>
-                                    </a>
-                                    <a href="/sofa" class="bg-teal-600 text-white px-6 py-4 rounded-lg hover:bg-teal-700 transition shadow-md">
+                                    </A>
+                                    <A href="/sofa" class="bg-teal-600 text-white px-6 py-4 rounded-lg hover:bg-teal-700 transition shadow-md">
                                         <i class="fas fa-procedures text-2xl mb-2"></i>
                                         <div class="font-bold">{move || t(lang.get(), "sofa_score")}</div>
-                                    </a>
+                                    </A>
                                 </div>
                             </div>
                         }/>
