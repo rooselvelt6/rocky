@@ -12,8 +12,8 @@
     <link rel="stylesheet" href="/style.css">
     
 <script type="module">
-import init, * as bindings from '/frontend-c18fb973b387fe4f.js';
-const wasm = await init({ module_or_path: '/frontend-c18fb973b387fe4f_bg.wasm' });
+import init, * as bindings from '/frontend-4c7fcbb59b6b41ec.js';
+const wasm = await init({ module_or_path: '/frontend-4c7fcbb59b6b41ec_bg.wasm' });
 
 
 window.wasmBindings = bindings;
@@ -22,7 +22,7 @@ window.wasmBindings = bindings;
 dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
 
 </script>
-<link rel="modulepreload" href="/frontend-c18fb973b387fe4f.js" crossorigin="anonymous" integrity="sha384-BWRHICdfwoP+rnk3RolY1LS9zmDmZj5Ho8kXfiT1LGPACgL3FzOVqT5DgnrHcj5M"><link rel="preload" href="/frontend-c18fb973b387fe4f_bg.wasm" crossorigin="anonymous" integrity="sha384-H6WA+tXHsQBQXViO1KJMuOWSfkJBpxbEYZmimRa6m6lJmaxdPuRuRI7U8ZHw2hIu" as="fetch" type="application/wasm"></head>
+<link rel="modulepreload" href="/frontend-4c7fcbb59b6b41ec.js" crossorigin="anonymous" integrity="sha384-sgAmbpJOuV6vcRGQ+tAifxLULb2x6UVZ1NGBZerlWj13pRD6/BJJ5UMdCaBWE1iY"><link rel="preload" href="/frontend-4c7fcbb59b6b41ec_bg.wasm" crossorigin="anonymous" integrity="sha384-/kz2v+PfXtitWpv3daonoeE8nAkf9aTEmyoJ+zhg0c836+QoOOo9sL2/DUxnA2c4" as="fetch" type="application/wasm"></head>
 
 <body>
     <div id="app"></div>

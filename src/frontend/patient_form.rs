@@ -1,4 +1,4 @@
-use crate::models::patient::Patient;
+use crate::models::patient::{AdmissionType, Patient, SkinColor};
 use leptos::*;
 
 #[component]
@@ -7,18 +7,72 @@ pub fn PatientForm() -> impl IntoView {
     let (last_name, set_last_name) = create_signal(String::new());
     let (dob, set_dob) = create_signal(String::new());
     let (gender, set_gender) = create_signal("Male".to_string());
+
+    // New fields
+    let (hospital_admission, set_hospital_admission) = create_signal(String::new());
+    let (uci_admission, set_uci_admission) = create_signal(String::new());
+    let (skin_color, set_skin_color) = create_signal("White".to_string());
     let (diagnosis, set_diagnosis) = create_signal(String::new());
+    let (mech_vent, set_mech_vent) = create_signal(false);
+    let (uci_hist, set_uci_hist) = create_signal(false);
+    let (transfer, set_transfer) = create_signal(false);
+    let (admission_type, set_admission_type) = create_signal("Urgent".to_string());
+    let (invasive, set_invasive) = create_signal(false);
+
     let (submit_status, set_submit_status) = create_signal(Option::<String>::None);
+
+    // Derived signal for days in hospital
+    let days_in_hospital = move || {
+        let hosp = hospital_admission.get();
+        let uci = uci_admission.get();
+        if hosp.is_empty() || uci.is_empty() {
+            return "N/A".to_string();
+        }
+
+        let h_date = chrono::NaiveDate::parse_from_str(&hosp, "%Y-%m-%d").ok();
+        let u_date = chrono::NaiveDate::parse_from_str(&uci, "%Y-%m-%d").ok();
+
+        if let (Some(h), Some(u)) = (h_date, u_date) {
+            let diff = u.signed_duration_since(h).num_days();
+            format!("{} days", diff.max(0))
+        } else {
+            "Invalid Dates".to_string()
+        }
+    };
 
     let on_submit = move |ev: leptos::ev::SubmitEvent| {
         ev.prevent_default();
+
+        let skin_enum = match skin_color.get().as_str() {
+            "Mixed" => SkinColor::Mixed,
+            "Black" => SkinColor::Black,
+            _ => SkinColor::White,
+        };
+
+        let adm_enum = match admission_type.get().as_str() {
+            "Programmed" => AdmissionType::Programmed,
+            "Transfer" => AdmissionType::Transfer,
+            _ => AdmissionType::Urgent,
+        };
+
+        // Ensure dates are in ISO 8601 format (simplified for this context, assuming standard date input YYYY-MM-DD)
+        // We append T00:00:00Z for simplicity as the input type="date" returns YYYY-MM-DD
+        let format_date = |d: String| format!("{}T00:00:00Z", d);
 
         let patient = Patient::new(
             first_name.get(),
             last_name.get(),
             dob.get(),
             gender.get(),
+            format_date(hospital_admission.get()),
+            format_date(uci_admission.get()),
+            skin_enum,
             diagnosis.get(),
+            mech_vent.get(),
+            uci_hist.get(),
+            transfer.get(),
+            adm_enum,
+            invasive.get(),
         );
 
         spawn_local(async move {
@@ -32,11 +86,7 @@ pub fn PatientForm() -> impl IntoView {
                 Ok(resp) => {
                     if resp.ok() {
                         set_submit_status.set(Some("Patient registered successfully!".to_string()));
-                        // Reset form?
-                        set_first_name.set(String::new());
-                        set_last_name.set(String::new());
-                        set_dob.set(String::new());
-                        set_diagnosis.set(String::new());
+                        // Reset form? logic could be expanded here
                     } else {
                         set_submit_status.set(Some(format!("Error: {}", resp.status_text())));
                     }
@@ -49,83 +99,183 @@ pub fn PatientForm() -> impl IntoView {
     };
 
     view! {
-        <div class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">"Patient Registration"</h2>
+        <div class="bg-white p-8 rounded-2xl shadow-xl max-w-5xl mx-auto border-t-8 border-indigo-600">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 flex items-center justify-center gap-3">
+                    <i class="fas fa-user-plus text-indigo-600 text-4xl"></i>
+                    "Patient Registration"
+                </h2>
+                <p class="text-gray-500 mt-2 text-lg">"Enter clinical admission details"</p>
+            </div>
 
-            <form on:submit=on_submit class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">"First Name"</label>
-                        <input
-                            type="text"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
-                            prop:value=first_name
-                            on:input=move |ev| set_first_name.set(event_target_value(&ev))
-                            required
-                        />
+            <form on:submit=on_submit class="space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    // Personal Information Section
+                    <div class="bg-indigo-50 p-6 rounded-xl border border-indigo-100 shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+                            <i class="fas fa-id-card text-9xl text-indigo-900"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-indigo-800 mb-6 flex items-center border-b border-indigo-200 pb-2">
+                            <i class="fas fa-user-circle mr-3"></i> "Personal Information"
+                        </h3>
+
+                        <div class="space-y-5 relative z-10">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">
+                                    <i class="fas fa-user mr-2 text-indigo-500 w-5 text-center"></i> "First Name"
+                                </label>
+                                <input type="text" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 transition-colors"
+                                    prop:value=first_name on:input=move |ev| set_first_name.set(event_target_value(&ev)) required />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">
+                                    <i class="fas fa-user mr-2 text-indigo-500 w-5 text-center"></i> "Last Name"
+                                </label>
+                                <input type="text" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 transition-colors"
+                                    prop:value=last_name on:input=move |ev| set_last_name.set(event_target_value(&ev)) required />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">
+                                    <i class="fas fa-birthday-cake mr-2 text-indigo-500 w-5 text-center"></i> "Date of Birth"
+                                </label>
+                                <input type="date" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 transition-colors"
+                                    prop:value=dob on:input=move |ev| set_dob.set(event_target_value(&ev)) required />
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1">
+                                        <i class="fas fa-venus-mars mr-2 text-indigo-500 w-5 text-center"></i> "Gender"
+                                    </label>
+                                    <select class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 cursor-pointer"
+                                        prop:value=gender on:change=move |ev| set_gender.set(event_target_value(&ev))>
+                                        <option value="Male">"Male"</option>
+                                        <option value="Female">"Female"</option>
+                                        <option value="Other">"Other"</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1">
+                                        <i class="fas fa-palette mr-2 text-indigo-500 w-5 text-center"></i> "Skin Color"
+                                    </label>
+                                    <select class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 cursor-pointer"
+                                        prop:value=skin_color on:change=move |ev| set_skin_color.set(event_target_value(&ev))>
+                                        <option value="White">"⚪ White"</option>
+                                        <option value="Mixed">"🏽 Mixed/Moreno"</option>
+                                        <option value="Black">"⚫ Black"</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">"Last Name"</label>
-                        <input
-                            type="text"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
-                            prop:value=last_name
-                            on:input=move |ev| set_last_name.set(event_target_value(&ev))
-                            required
-                        />
+
+                    // Clinical Information Section
+                    <div class="bg-teal-50 p-6 rounded-xl border border-teal-100 shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+                            <i class="fas fa-notes-medical text-9xl text-teal-900"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-teal-800 mb-6 flex items-center border-b border-teal-200 pb-2">
+                            <i class="fas fa-clinic-medical mr-3"></i> "Clinical Information"
+                        </h3>
+
+                        <div class="space-y-5 relative z-10">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1">
+                                        <i class="fas fa-hospital mr-2 text-teal-600 w-5 text-center"></i> "Hospital Adm."
+                                    </label>
+                                    <input type="date" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 py-2 px-3 transition-colors"
+                                        prop:value=hospital_admission on:input=move |ev| set_hospital_admission.set(event_target_value(&ev)) required />
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1">
+                                        <i class="fas fa-procedures mr-2 text-teal-600 w-5 text-center"></i> "UCI Adm."
+                                    </label>
+                                    <input type="date" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 py-2 px-3 transition-colors"
+                                        prop:value=uci_admission on:input=move |ev| set_uci_admission.set(event_target_value(&ev)) required />
+                                </div>
+                            </div>
+
+                            <div class="bg-white/80 backdrop-blur-sm p-4 rounded-lg border border-teal-200 flex items-center justify-between shadow-sm">
+                                <span class="text-sm font-bold text-teal-800 flex items-center">
+                                    <i class="fas fa-hourglass-half mr-2 text-xl"></i> "Days in Hospital (Pre-UCI):"
+                                </span>
+                                <span class="text-2xl font-black text-teal-600 bg-teal-50 px-3 py-1 rounded-md border border-teal-100 min-w-[3rem] text-center">
+                                    {days_in_hospital}
+                                </span>
+                            </div>
+
+                             <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">
+                                    <i class="fas fa-file-signature mr-2 text-teal-500 w-5 text-center"></i> "Admission Type"
+                                </label>
+                                <select class="w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 py-2 px-3 cursor-pointer"
+                                    prop:value=admission_type on:change=move |ev| set_admission_type.set(event_target_value(&ev))>
+                                    <option value="Urgent">"🚑 Urgent"</option>
+                                    <option value="Programmed">"📅 Programmed"</option>
+                                    <option value="Transfer">"🔄 Transfer"</option>
+                                </select>
+                            </div>
+
+                             <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">
+                                    <i class="fas fa-stethoscope mr-2 text-teal-500 w-5 text-center"></i> "Principal Diagnosis"
+                                </label>
+                                <textarea class="w-full rounded-lg border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 py-2 px-3 transition-colors"
+                                    rows="2" prop:value=diagnosis on:input=move |ev| set_diagnosis.set(event_target_value(&ev)) required placeholder="Enter diagnosis here...">
+                                </textarea>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                                <div class="flex items-center p-2 rounded-lg hover:bg-teal-100/50 transition-colors">
+                                    <input type="checkbox" class="h-5 w-5 text-teal-600 focus:ring-teal-500 border-gray-300 rounded cursor-pointer"
+                                        prop:checked=mech_vent on:change=move |ev| set_mech_vent.set(event_target_checked(&ev)) />
+                                    <label class="ml-3 block text-sm font-medium text-gray-800 cursor-pointer flex items-center">
+                                        <i class="fas fa-lungs text-teal-500 mr-2"></i> "Mech. Ventilation"
+                                    </label>
+                                </div>
+                                <div class="flex items-center p-2 rounded-lg hover:bg-teal-100/50 transition-colors">
+                                    <input type="checkbox" class="h-5 w-5 text-teal-600 focus:ring-teal-500 border-gray-300 rounded cursor-pointer"
+                                        prop:checked=uci_hist on:change=move |ev| set_uci_hist.set(event_target_checked(&ev)) />
+                                    <label class="ml-3 block text-sm font-medium text-gray-800 cursor-pointer flex items-center">
+                                        <i class="fas fa-history text-teal-500 mr-2"></i> "History in UCI"
+                                    </label>
+                                </div>
+                                <div class="flex items-center p-2 rounded-lg hover:bg-teal-100/50 transition-colors">
+                                    <input type="checkbox" class="h-5 w-5 text-teal-600 focus:ring-teal-500 border-gray-300 rounded cursor-pointer"
+                                        prop:checked=transfer on:change=move |ev| set_transfer.set(event_target_checked(&ev)) />
+                                    <label class="ml-3 block text-sm font-medium text-gray-800 cursor-pointer flex items-center">
+                                        <i class="fas fa-ambulance text-teal-500 mr-2"></i> "Transfer (Other Center)"
+                                    </label>
+                                </div>
+                                <div class="flex items-center p-2 rounded-lg hover:bg-teal-100/50 transition-colors">
+                                    <input type="checkbox" class="h-5 w-5 text-teal-600 focus:ring-teal-500 border-gray-300 rounded cursor-pointer"
+                                        prop:checked=invasive on:change=move |ev| set_invasive.set(event_target_checked(&ev)) />
+                                    <label class="ml-3 block text-sm font-medium text-gray-800 cursor-pointer flex items-center">
+                                        <i class="fas fa-syringe text-teal-500 mr-2"></i> "Invasive Processes"
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">"Date of Birth"</label>
-                        <input
-                            type="date"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
-                            prop:value=dob
-                            on:input=move |ev| set_dob.set(event_target_value(&ev))
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">"Gender"</label>
-                        <select
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
-                            prop:value=gender
-                            on:change=move |ev| set_gender.set(event_target_value(&ev))
-                        >
-                            <option value="Male">"Male"</option>
-                            <option value="Female">"Female"</option>
-                            <option value="Other">"Other"</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">"Admission Diagnosis"</label>
-                    <textarea
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
-                        rows="3"
-                        prop:value=diagnosis
-                        on:input=move |ev| set_diagnosis.set(event_target_value(&ev))
-                        required
-                    ></textarea>
-                </div>
-
-                <div class="pt-4">
-                    <button
-                        type="submit"
-                        class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                        "Register Patient"
+                <div class="pt-6">
+                    <button type="submit" class="w-full flex items-center justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transform hover:scale-[1.02] transition-all duration-200">
+                        <i class="fas fa-save mr-3 text-2xl"></i> "Register Patient"
                     </button>
                 </div>
             </form>
 
-            {move || submit_status.get().map(|status| view! {
-                <div class="mt-4 p-4 rounded-md bg-green-50 text-green-700">
-                    {status}
-                </div>
+            {move || submit_status.get().map(|status| {
+                let is_error = status.starts_with("Error") || status.starts_with("Network");
+                let color = if is_error { "red" } else { "green" };
+                let icon = if is_error { "exclamation-triangle" } else { "check-circle" };
+                view! {
+                    <div class=format!("mt-6 p-4 rounded-xl border border-{}-200 bg-{}-50 text-{}-800 flex items-center shadow-sm animate-fade-in", color, color, color)>
+                        <i class=format!("fas fa-{} text-2xl mr-3 text-{}-600", icon, color)></i>
+                        <span class="font-medium text-lg">{status}</span>
+                    </div>
+                }
             })}
         </div>
     }

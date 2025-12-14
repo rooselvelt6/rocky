@@ -322,7 +322,15 @@ async fn create_patient(
         payload.last_name,
         payload.date_of_birth,
         payload.gender,
-        payload.admission_diagnosis,
+        payload.hospital_admission_date,
+        payload.uci_admission_date,
+        payload.skin_color,
+        payload.principal_diagnosis,
+        payload.mechanical_ventilation,
+        payload.uci_history,
+        payload.transfer_from_other_center,
+        payload.admission_type,
+        payload.invasive_processes,
     );
 
     match db.create("patients").content(patient).await {
