@@ -1,4 +1,4 @@
-use crate::frontend::i18n::{t, use_i18n, Language};
+use crate::frontend::i18n::{t, use_i18n};
 use crate::uci::scale::apache::{ApacheIIRequest, ApacheIIResponse};
 use leptos::*;
 use reqwasm::http::Request;
@@ -161,7 +161,7 @@ pub fn ApacheForm() -> impl IntoView {
     // Vital Signs
                     <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-red-500">
                         <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center border-b pb-2">
-                            <i class="fas fa-temperature-high text-red-600 mr-2"></i>"Vital Signs"
+                            <i class="fas fa-temperature-high text-red-600 mr-2"></i>{move || t(lang.get(), "vital_signs")}
                         </h3>
                         <div class="space-y-6">
                             <div>
@@ -210,11 +210,11 @@ pub fn ApacheForm() -> impl IntoView {
                     // Oxygenation
                     <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-blue-500">
                         <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center border-b pb-2">
-                            <i class="fas fa-lungs text-blue-600 mr-2"></i>"Oxygenation & pH"
+                            <i class="fas fa-lungs text-blue-600 mr-2"></i>{move || t(lang.get(), "oxygenation_ph")}
                         </h3>
                         <div class="space-y-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1 flex items-center"><i class="fas fa-sliders-h text-blue-500 mr-2 w-5 text-center"></i>"Oxygenation Type"</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1 flex items-center"><i class="fas fa-sliders-h text-blue-500 mr-2 w-5 text-center"></i>{move || t(lang.get(), "oxygenation_type")}</label>
                                 <select
                                     on:change=move |ev| set_oxygenation_type.set(event_target_value(&ev))
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
@@ -224,7 +224,7 @@ pub fn ApacheForm() -> impl IntoView {
                             </div>
                             <div>
                                 <label class="flex justify-between text-sm font-medium text-gray-700 mb-1">
-                                    <span class="flex items-center"><i class="fas fa-lungs text-blue-500 mr-2 w-5 text-center"></i>"Value (mmHg)"</span>
+                                    <span class="flex items-center"><i class="fas fa-lungs text-blue-500 mr-2 w-5 text-center"></i>{move || t(lang.get(), "value_mmhg")}</span>
                                     <span class="text-blue-600 font-bold">{move || oxygenation_value.get()}</span>
                                 </label>
                                 <input type="range" min="0" max="800" step="1"
@@ -248,7 +248,7 @@ pub fn ApacheForm() -> impl IntoView {
                     // Laboratory Values
                     <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-purple-500">
                         <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center border-b pb-2">
-                            <i class="fas fa-flask text-purple-600 mr-2"></i>"Laboratory Values"
+                            <i class="fas fa-flask text-purple-600 mr-2"></i>{move || t(lang.get(), "laboratory_values")}
                         </h3>
                         <div class="space-y-6">
                             <div>
@@ -307,7 +307,7 @@ pub fn ApacheForm() -> impl IntoView {
                     // Neurological & Demographics
                     <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-indigo-500">
                         <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center border-b pb-2">
-                            <i class="fas fa-user-md text-indigo-600 mr-2"></i>"Patient Data"
+                            <i class="fas fa-user-md text-indigo-600 mr-2"></i>{move || t(lang.get(), "patient_data")}
                         </h3>
                         <div class="space-y-6">
                             <div>
@@ -335,15 +335,15 @@ pub fn ApacheForm() -> impl IntoView {
                                 <select
                                     on:change=move |ev| set_chronic_health.set(event_target_value(&ev))
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
-                                    <option value="none" selected>"None"</option>
-                                    <option value="elective">"Elective Surgery"</option>
-                                    <option value="non_elective">"Non-Elective Surgery"</option>
-                                    <option value="non_operative">"Non-Operative"</option>
+                                    <option value="none" selected>{move || t(lang.get(), "none")}</option>
+                                    <option value="elective">{move || t(lang.get(), "elective_surgery")}</option>
+                                    <option value="non_elective">{move || t(lang.get(), "non_elective_surgery")}</option>
+                                    <option value="non_operative">{move || t(lang.get(), "non_operative")}</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        }
+    }
 }

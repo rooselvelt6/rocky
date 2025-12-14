@@ -44,6 +44,8 @@ async fn main() {
         }
     };
 
+use tower_http::cors::CorsLayer;
+
     let app = Router::new()
         // API Endpoints
         .route("/api/glasgow", post(calculate_glasgow))
@@ -55,6 +57,7 @@ async fn main() {
         .fallback_service(
             ServeDir::new("dist").not_found_service(ServeFile::new("dist/index.html")),
         )
+        .layer(CorsLayer::permissive()) // Enable CORS for all origins
         .with_state(db); // Add database to app state
 
     println!("¡Servidor Axum arrancando...");

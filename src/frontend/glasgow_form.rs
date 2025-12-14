@@ -1,3 +1,4 @@
+use crate::frontend::i18n::{t, use_i18n};
 use crate::uci::scale::glasgow::{GlasgowRequest, GlasgowResponse};
 use leptos::*;
 use reqwasm::http::Request;
@@ -5,6 +6,8 @@ use reqwasm::http::Request;
 /// Glasgow Coma Scale form component - Compact, Responsive & Smooth
 #[component]
 pub fn GlasgowForm() -> impl IntoView {
+    let lang = use_i18n();
+
     // Reactive signals for form inputs
     let (eye_value, set_eye_value) = create_signal(4u8);
     let (verbal_value, set_verbal_value) = create_signal(5u8);
@@ -42,7 +45,7 @@ pub fn GlasgowForm() -> impl IntoView {
             <div class="text-center mb-4">
                 <h2 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
                     <i class="fas fa-brain mr-2"></i>
-                    "Glasgow Coma Scale"
+                    {move || t(lang.get(), "glasgow_scale")}
                 </h2>
             </div>
 
@@ -69,7 +72,7 @@ pub fn GlasgowForm() -> impl IntoView {
                                         // Score Box
                                         <div class="text-center md:border-r border-white/20">
                                             <div class="text-xs uppercase opacity-80 mb-1 transition-opacity duration-500">
-                                                <i class="fas fa-calculator mr-1"></i>"Score"
+                                                <i class="fas fa-calculator mr-1"></i>{t(lang.get(), "score")}
                                             </div>
                                             <div class="text-4xl font-bold transition-all duration-700 ease-in-out transform">
                                                 {data.score}<span class="text-2xl opacity-80 transition-opacity duration-700">"/15"</span>
@@ -79,7 +82,7 @@ pub fn GlasgowForm() -> impl IntoView {
                                         // Diagnosis
                                         <div class="md:col-span-2 text-center md:text-left">
                                             <div class="text-xs uppercase opacity-80 mb-1 transition-opacity duration-500">
-                                                <i class="fas fa-stethoscope mr-1"></i>"Diagnosis"
+                                                <i class="fas fa-stethoscope mr-1"></i>{t(lang.get(), "diagnosis")}
                                             </div>
                                             <div class="font-semibold text-sm transition-all duration-700 ease-in-out">{data.diagnosis}</div>
                                         </div>
@@ -87,7 +90,7 @@ pub fn GlasgowForm() -> impl IntoView {
                                         // Recommendation
                                         <div class="text-center md:text-left">
                                             <div class="text-xs uppercase opacity-80 mb-1 transition-opacity duration-500">
-                                                <i class="fas fa-lightbulb mr-1"></i>"Action"
+                                                <i class="fas fa-lightbulb mr-1"></i>{t(lang.get(), "action")}
                                             </div>
                                             <div class="font-semibold text-sm transition-all duration-700 ease-in-out">{data.recommendation}</div>
                                         </div>
@@ -104,7 +107,7 @@ pub fn GlasgowForm() -> impl IntoView {
                 // Eye Response
                 <div class="bg-white rounded-xl shadow p-4 transition-all duration-300 hover:shadow-lg">
                     <h3 class="text-sm font-bold text-gray-800 mb-3 flex items-center">
-                        <i class="fas fa-eye text-purple-600 mr-2"></i>"Eye Response (1-4)"
+                        <i class="fas fa-eye text-purple-600 mr-2"></i>{move || t(lang.get(), "eye_response")}
                     </h3>
                     <div class="grid grid-cols-2 gap-2">
                         <button
@@ -116,7 +119,7 @@ pub fn GlasgowForm() -> impl IntoView {
                             }
                         >
                             <div class="font-bold text-green-600 mb-1"><i class="fas fa-check-circle mr-1"></i>"4"</div>
-                            <div class="text-gray-700">"Spontaneous"</div>
+                            <div class="text-gray-700">{move || t(lang.get(), "spontaneous")}</div>
                         </button>
 
                         <button
@@ -128,7 +131,7 @@ pub fn GlasgowForm() -> impl IntoView {
                             }
                         >
                             <div class="font-bold text-blue-600 mb-1"><i class="fas fa-volume-up mr-1"></i>"3"</div>
-                            <div class="text-gray-700">"To Voice"</div>
+                            <div class="text-gray-700">{move || t(lang.get(), "to_voice")}</div>
                         </button>
 
                         <button
@@ -140,7 +143,7 @@ pub fn GlasgowForm() -> impl IntoView {
                             }
                         >
                             <div class="font-bold text-orange-600 mb-1"><i class="fas fa-hand-point-up mr-1"></i>"2"</div>
-                            <div class="text-gray-700">"To Pain"</div>
+                            <div class="text-gray-700">{move || t(lang.get(), "to_pain")}</div>
                         </button>
 
                         <button
@@ -152,7 +155,7 @@ pub fn GlasgowForm() -> impl IntoView {
                             }
                         >
                             <div class="font-bold text-red-600 mb-1"><i class="fas fa-times-circle mr-1"></i>"1"</div>
-                            <div class="text-gray-700">"None"</div>
+                            <div class="text-gray-700">{move || t(lang.get(), "none")}</div>
                         </button>
                     </div>
                 </div>
@@ -160,7 +163,7 @@ pub fn GlasgowForm() -> impl IntoView {
                 // Verbal Response
                 <div class="bg-white rounded-xl shadow p-4 transition-all duration-300 hover:shadow-lg">
                     <h3 class="text-sm font-bold text-gray-800 mb-3 flex items-center">
-                        <i class="fas fa-comments text-purple-600 mr-2"></i>"Verbal Response (1-5)"
+                        <i class="fas fa-comments text-purple-600 mr-2"></i>{move || t(lang.get(), "verbal_response")}
                     </h3>
                     <div class="grid grid-cols-2 gap-2">
                         <button
@@ -172,7 +175,7 @@ pub fn GlasgowForm() -> impl IntoView {
                             }
                         >
                             <div class="font-bold text-green-600 mb-1"><i class="fas fa-star mr-1"></i>"5"</div>
-                            <div class="text-gray-700">"Oriented"</div>
+                            <div class="text-gray-700">{move || t(lang.get(), "oriented")}</div>
                         </button>
 
                         <button
@@ -184,7 +187,7 @@ pub fn GlasgowForm() -> impl IntoView {
                             }
                         >
                             <div class="font-bold text-blue-600 mb-1"><i class="fas fa-question-circle mr-1"></i>"4"</div>
-                            <div class="text-gray-700">"Confused"</div>
+                            <div class="text-gray-700">{move || t(lang.get(), "confused")}</div>
                         </button>
 
                         <button
@@ -196,7 +199,7 @@ pub fn GlasgowForm() -> impl IntoView {
                             }
                         >
                             <div class="font-bold text-yellow-600 mb-1"><i class="fas fa-font mr-1"></i>"3"</div>
-                            <div class="text-gray-700">"Words"</div>
+                            <div class="text-gray-700">{move || t(lang.get(), "words")}</div>
                         </button>
 
                         <button
@@ -208,7 +211,7 @@ pub fn GlasgowForm() -> impl IntoView {
                             }
                         >
                             <div class="font-bold text-orange-600 mb-1"><i class="fas fa-music mr-1"></i>"2"</div>
-                            <div class="text-gray-700">"Sounds"</div>
+                            <div class="text-gray-700">{move || t(lang.get(), "sounds")}</div>
                         </button>
 
                         <button
@@ -220,7 +223,7 @@ pub fn GlasgowForm() -> impl IntoView {
                             }
                         >
                             <div class="font-bold text-red-600 mb-1"><i class="fas fa-volume-mute mr-1"></i>"1"</div>
-                            <div class="text-gray-700">"None"</div>
+                            <div class="text-gray-700">{move || t(lang.get(), "none")}</div>
                         </button>
                     </div>
                 </div>
@@ -228,7 +231,7 @@ pub fn GlasgowForm() -> impl IntoView {
                 // Motor Response
                 <div class="bg-white rounded-xl shadow p-4 transition-all duration-300 hover:shadow-lg">
                     <h3 class="text-sm font-bold text-gray-800 mb-3 flex items-center">
-                        <i class="fas fa-hand-rock text-purple-600 mr-2"></i>"Motor Response (1-6)"
+                        <i class="fas fa-hand-rock text-purple-600 mr-2"></i>{move || t(lang.get(), "motor_response")}
                     </h3>
                     <div class="grid grid-cols-2 gap-2">
                         <button
@@ -240,7 +243,7 @@ pub fn GlasgowForm() -> impl IntoView {
                             }
                         >
                             <div class="font-bold text-green-600 mb-1"><i class="fas fa-thumbs-up mr-1"></i>"6"</div>
-                            <div class="text-gray-700">"Obeys"</div>
+                            <div class="text-gray-700">{move || t(lang.get(), "obeys")}</div>
                         </button>
 
                         <button
@@ -252,7 +255,7 @@ pub fn GlasgowForm() -> impl IntoView {
                             }
                         >
                             <div class="font-bold text-blue-600 mb-1"><i class="fas fa-crosshairs mr-1"></i>"5"</div>
-                            <div class="text-gray-700">"Localizes"</div>
+                            <div class="text-gray-700">{move || t(lang.get(), "localizes")}</div>
                         </button>
 
                         <button
@@ -264,7 +267,7 @@ pub fn GlasgowForm() -> impl IntoView {
                             }
                         >
                             <div class="font-bold text-cyan-600 mb-1"><i class="fas fa-hand-paper mr-1"></i>"4"</div>
-                            <div class="text-gray-700">"Withdraws"</div>
+                            <div class="text-gray-700">{move || t(lang.get(), "withdraws")}</div>
                         </button>
 
                         <button
@@ -276,7 +279,7 @@ pub fn GlasgowForm() -> impl IntoView {
                             }
                         >
                             <div class="font-bold text-yellow-600 mb-1"><i class="fas fa-compress-arrows-alt mr-1"></i>"3"</div>
-                            <div class="text-gray-700">"Flexion"</div>
+                            <div class="text-gray-700">{move || t(lang.get(), "flexion")}</div>
                         </button>
 
                         <button
@@ -288,7 +291,7 @@ pub fn GlasgowForm() -> impl IntoView {
                             }
                         >
                             <div class="font-bold text-orange-600 mb-1"><i class="fas fa-expand-arrows-alt mr-1"></i>"2"</div>
-                            <div class="text-gray-700">"Extension"</div>
+                            <div class="text-gray-700">{move || t(lang.get(), "extension")}</div>
                         </button>
 
                         <button
@@ -300,7 +303,7 @@ pub fn GlasgowForm() -> impl IntoView {
                             }
                         >
                             <div class="font-bold text-red-600 mb-1"><i class="fas fa-ban mr-1"></i>"1"</div>
-                            <div class="text-gray-700">"None"</div>
+                            <div class="text-gray-700">{move || t(lang.get(), "none")}</div>
                         </button>
                     </div>
                 </div>

@@ -4,20 +4,29 @@ use surrealdb::{Error, Surreal};
 
 /// Connect to SurrealDB and return a configured client
 pub async fn connect() -> Result<Surreal<Client>, Error> {
-    // Connect to local SurrealDB instance
-    let db = Surreal::new::<Ws>("127.0.0.1:8000").await?;
+    // Load .env file if it exists
+    dotenvy::dotenv().ok();
 
-    // Sign in with root credentials
+    let db_host = std::env::var("DB_HOST").unwrap_or_else(|_| "127.0.0.1:8000".to_string());
+    let db_user = std::env::var("DB_USER").unwrap_or_else(|_| "root".to_string());
+    let db_pass = std::env::var("DB_PASS").unwrap_or_else(|_| "root".to_string());
+    let db_ns = std::env::var("DB_NS").unwrap_or_else(|_| "hospital".to_string());
+    let db_db = std::env::var("DB_DB").unwrap_or_else(|_| "uci".to_string());
+
+    // Connect to SurrealDB instance
+    let db = Surreal::new::<Ws>(db_host).await?;
+
+    // Sign in with credentials
     db.signin(Root {
-        username: "root",
-        password: "root",
+        username: &db_user,
+        password: &db_pass,
     })
     .await?;
 
-    // Use the hospital namespace and uci database
-    db.use_ns("hospital").use_db("uci").await?;
+    // Use the namespace and database
+    db.use_ns(db_ns).use_db(db_db).await?;
 
-    tracing::info!("✅ Connected to SurrealDB (hospital/uci)");
+    tracing::info!("✅ Connected to SurrealDB");
 
     Ok(db)
 }

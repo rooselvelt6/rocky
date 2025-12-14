@@ -2,8 +2,8 @@ use crate::frontend::apache_form::ApacheForm;
 use crate::frontend::glasgow_form::GlasgowForm;
 use crate::frontend::i18n::{t, Language};
 use crate::frontend::patient_form::PatientForm;
+use crate::frontend::saps_form::SapsForm;
 use crate::frontend::sofa_form::SofaForm;
-// use crate::frontend::saps_form::SapsForm; // Temporarily disabled
 use leptos::*;
 use leptos_router::*;
 
@@ -50,6 +50,9 @@ pub fn App() -> impl IntoView {
                                     <A href="/sofa" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors">
                                         {move || t(lang.get(), "sofa_score")}
                                     </A>
+                                    <A href="/saps" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors">
+                                        "SAPS II"
+                                    </A>
                                 </div>
                             </div>
                             <div>
@@ -88,6 +91,10 @@ pub fn App() -> impl IntoView {
                                         <i class="fas fa-procedures text-2xl mb-2"></i>
                                         <div class="font-bold">{move || t(lang.get(), "sofa_score")}</div>
                                     </A>
+                                     <A href="/saps" class="bg-orange-600 text-white px-6 py-4 rounded-lg hover:bg-orange-700 transition shadow-md">
+                                        <i class="fas fa-notes-medical text-2xl mb-2"></i>
+                                        <div class="font-bold">"SAPS II"</div>
+                                    </A>
                                 </div>
                             </div>
                         }/>
@@ -95,6 +102,7 @@ pub fn App() -> impl IntoView {
                         <Route path="/glasgow" view=GlasgowForm/>
                         <Route path="/apache" view=ApacheForm/>
                         <Route path="/sofa" view=SofaForm/>
+                        <Route path="/saps" view=SapsForm/>
                     </Routes>
                 </main>
 

@@ -1,4 +1,4 @@
-use crate::frontend::i18n::{t, use_i18n, Language};
+use crate::frontend::i18n::{t, use_i18n};
 use crate::uci::scale::sofa::{SOFARequest, SOFAResponse};
 use leptos::*;
 use reqwasm::http::Request;
@@ -146,7 +146,7 @@ pub fn SofaForm() -> impl IntoView {
                             prop:value=move || pao2_fio2.get()
                             on:input=move |ev| set_pao2_fio2.set(event_target_value(&ev).parse().unwrap_or(400))
                             class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"/>
-                        <p class="text-xs text-gray-500 mt-2">"≥400: Normal | 300-399: Mild | 200-299: Moderate | 100-199: Severe | <100: Critical"</p>
+                        <p class="text-xs text-gray-500 mt-2">{move || t(lang.get(), "pao2_hint")}</p>
                     </div>
                 </div>
 
@@ -164,7 +164,7 @@ pub fn SofaForm() -> impl IntoView {
                             prop:value=move || platelets.get()
                             on:input=move |ev| set_platelets.set(event_target_value(&ev).parse().unwrap_or(150))
                             class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-red-600"/>
-                        <p class="text-xs text-gray-500 mt-2">"≥150: Normal | 100-149: Mild | 50-99: Moderate | 20-49: Severe | <20: Critical"</p>
+                        <p class="text-xs text-gray-500 mt-2">{move || t(lang.get(), "platelets_hint")}</p>
                     </div>
                 </div>
 
@@ -182,7 +182,7 @@ pub fn SofaForm() -> impl IntoView {
                             prop:value=move || bilirubin.get()
                             on:input=move |ev| set_bilirubin.set(event_target_value(&ev).parse().unwrap_or(1.0))
                             class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-amber-600"/>
-                        <p class="text-xs text-gray-500 mt-2">"<1.2: Normal | 1.2-1.9: Mild | 2.0-5.9: Moderate | 6.0-11.9: Severe | ≥12: Critical"</p>
+                        <p class="text-xs text-gray-500 mt-2">{move || t(lang.get(), "bilirubin_hint")}</p>
                     </div>
                 </div>
 
@@ -196,13 +196,13 @@ pub fn SofaForm() -> impl IntoView {
                         <select
                             on:change=move |ev| set_cardiovascular.set(event_target_value(&ev))
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500">
-                            <option value="map_70_plus" selected>"MAP ≥70 mmHg"</option>
-                            <option value="map_lt_70">"MAP <70 mmHg"</option>
-                            <option value="dopa_lte5">"Dopamine ≤5 or Dobutamine (any)"</option>
-                            <option value="dopa_gt5">"Dopamine >5 or Epi/Norepi ≤0.1"</option>
-                            <option value="dopa_gt15">"Dopamine >15 or Epi/Norepi >0.1"</option>
+                            <option value="map_70_plus" selected>{move || t(lang.get(), "map_70_plus")}</option>
+                            <option value="map_lt_70">{move || t(lang.get(), "map_lt_70")}</option>
+                            <option value="dopa_lte5">{move || t(lang.get(), "dopa_lte5")}</option>
+                            <option value="dopa_gt5">{move || t(lang.get(), "dopa_gt5")}</option>
+                            <option value="dopa_gt15">{move || t(lang.get(), "dopa_gt15")}</option>
                         </select>
-                        <p class="text-xs text-gray-500 mt-2">"Vasopressor doses in µg/kg/min"</p>
+                        <p class="text-xs text-gray-500 mt-2">{move || t(lang.get(), "vasopressor_hint")}</p>
                     </div>
                 </div>
 
@@ -220,7 +220,7 @@ pub fn SofaForm() -> impl IntoView {
                             prop:value=move || glasgow.get()
                             on:input=move |ev| set_glasgow.set(event_target_value(&ev).parse().unwrap_or(15))
                             class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-purple-600"/>
-                        <p class="text-xs text-gray-500 mt-2">"15: Normal | 13-14: Mild | 10-12: Moderate | 6-9: Severe | 3-5: Critical"</p>
+                        <p class="text-xs text-gray-500 mt-2">{move || t(lang.get(), "gcs_hint")}</p>
                     </div>
                 </div>
 
@@ -234,13 +234,13 @@ pub fn SofaForm() -> impl IntoView {
                         <select
                             on:change=move |ev| set_renal.set(event_target_value(&ev))
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
-                            <option value="cr_lt_1_2" selected>"<1.2 mg/dL"</option>
-                            <option value="cr_1_2_1_9">"1.2 - 1.9 mg/dL"</option>
-                            <option value="cr_2_0_3_4">"2.0 - 3.4 mg/dL"</option>
-                            <option value="cr_3_5_4_9">"3.5 - 4.9 mg/dL"</option>
-                            <option value="cr_gte_5">"≥5.0 mg/dL"</option>
+                            <option value="cr_lt_1_2" selected>{move || t(lang.get(), "cr_lt_1_2")}</option>
+                            <option value="cr_1_2_1_9">{move || t(lang.get(), "cr_1_2_1_9")}</option>
+                            <option value="cr_2_0_3_4">{move || t(lang.get(), "cr_2_0_3_4")}</option>
+                            <option value="cr_3_5_4_9">{move || t(lang.get(), "cr_3_5_4_9")}</option>
+                            <option value="cr_gte_5">{move || t(lang.get(), "cr_gte_5")}</option>
                         </select>
-                        <p class="text-xs text-gray-500 mt-2">"Or urine output <500 mL/day (if applicable)"</p>
+                        <p class="text-xs text-gray-500 mt-2">{move || t(lang.get(), "renal_hint")}</p>
                     </div>
                 </div>
             </div>
