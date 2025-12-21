@@ -16,6 +16,14 @@ pub struct HistoryResponse {
     pub saps: Vec<SapsAssessment>,
 }
 
+#[derive(Clone, Debug, Serialize, Deserialize, Default)]
+pub struct ValidationResult {
+    pub can_assess: bool,
+    pub hours_since_last: Option<i64>,
+    pub hours_remaining: Option<i64>,
+    pub message: Option<String>,
+}
+
 #[component]
 pub fn PatientDetail() -> impl IntoView {
     let params = use_params_map();
@@ -25,6 +33,12 @@ pub fn PatientDetail() -> impl IntoView {
     let (patient, set_patient) = create_signal(Option::<Patient>::None);
     let (history, set_history) = create_signal(HistoryResponse::default());
     let (loading, set_loading) = create_signal(true);
+
+    // Eligibility signals
+    let (glasgow_eligible, set_glasgow_eligible) = create_signal(ValidationResult::default());
+    let (apache_eligible, set_apache_eligible) = create_signal(ValidationResult::default());
+    let (sofa_eligible, set_sofa_eligible) = create_signal(ValidationResult::default());
+    let (saps_eligible, set_saps_eligible) = create_signal(ValidationResult::default());
 
     // Fetch data
     create_effect(move |_| {
@@ -54,6 +68,32 @@ pub fn PatientDetail() -> impl IntoView {
                         }
                     }
                 }
+
+                // Fetch eligibility for each assessment type
+                let scales = vec!["glasgow", "apache", "sofa", "saps"];
+                for scale in scales {
+                    let elig_res = reqwasm::http::Request::get(&format!(
+                        "/api/patients/{}/can-assess/{}",
+                        p_id, scale
+                    ))
+                    .send()
+                    .await;
+
+                    if let Ok(resp) = elig_res {
+                        if resp.ok() {
+                            if let Ok(val) = resp.json::<ValidationResult>().await {
+                                match scale {
+                                    "glasgow" => set_glasgow_eligible.set(val),
+                                    "apache" => set_apache_eligible.set(val),
+                                    "sofa" => set_sofa_eligible.set(val),
+                                    "saps" => set_saps_eligible.set(val),
+                                    _ => {}
+                                }
+                            }
+                        }
+                    }
+                }
+
                 set_loading.set(false);
             });
         }
@@ -107,25 +147,83 @@ pub fn PatientDetail() -> impl IntoView {
                         </div>
                     </div>
 
-                    // Assessments History
+                   // Assessments History
                     <div class="bg-white rounded-xl shadow-md p-6">
                         <div class="flex justify-between items-center mb-6">
                             <h2 class="text-2xl font-bold text-gray-800">{move || t(lang.get(), "history_assessments")}</h2>
 
-                            // Buttons to Add New Assessments (Linked to Patient)
-                            <div class="flex gap-2">
-                                <a href=format!("/sofa?patient_id={}", id()) class="bg-teal-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-teal-700 transition">
-                                    "+ SOFA"
-                                </a>
-                                <a href=format!("/apache?patient_id={}", id()) class="bg-red-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-red-700 transition">
-                                    "+ APACHE"
-                                </a>
-                                <a href=format!("/glasgow?patient_id={}", id()) class="bg-purple-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-purple-700 transition">
-                                    "+ Glasgow"
-                                </a>
-                                <a href=format!("/saps?patient_id={}", id()) class="bg-orange-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-orange-700 transition">
-                                    "+ SAPS II"
-                                </a>
+                            // Buttons to Add New Assessments with eligibility status
+                            <div class="flex flex-wrap gap-2">
+                                {move || {
+                                    let pid = id();
+                                    let sofa_elig = sofa_eligible.get();
+                                    let apache_elig = apache_eligible.get();
+                                    let glasgow_elig = glasgow_eligible.get();
+                                    let saps_elig = saps_eligible.get();
+
+                                    view! {
+                                        <a
+                                            href=format!("/sofa?patient_id={}", pid)
+                                            class="bg-teal-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-teal-700 transition flex items-center gap-2"
+                                            title=sofa_elig.message.unwrap_or_default()
+                                        >
+                                            <i class="fas fa-heart"></i>
+                                            <span class="font-semibold">"SOFA"</span>
+                                            {if sofa_elig.can_assess {
+                                                view! { <i class="fas fa-check-circle text-sm"></i> }.into_view()
+                                            } else if let Some(hrs) = sofa_elig.hours_remaining {
+                                                view! { <span class="text-xs bg-yellow-400 text-gray-900 px-1.5 py-0.5 rounded font-bold">{format!("{}h", hrs)}</span> }.into_view()
+                                            } else {
+                                                view! {}.into_view()
+                                            }}
+                                        </a>
+                                        <a
+                                            href=format!("/apache?patient_id={}", pid)
+                                            class="bg-red-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-red-700 transition flex items-center gap-2"
+                                            title=apache_elig.message.unwrap_or_default()
+                                        >
+                                            <i class="fas fa-heartbeat"></i>
+                                            <span class="font-semibold">"APACHE"</span>
+                                            {if apache_elig.can_assess {
+                                                view! { <i class="fas fa-check-circle text-sm"></i> }.into_view()
+                                            } else if let Some(hrs) = apache_elig.hours_remaining {
+                                                view! { <span class="text-xs bg-yellow-400 text-gray-900 px-1.5 py-0.5 rounded font-bold">{format!("{}h", hrs)}</span> }.into_view()
+                                            } else {
+                                                view! {}.into_view()
+                                            }}
+                                        </a>
+                                        <a
+                                            href=format!("/glasgow?patient_id={}", pid)
+                                            class="bg-purple-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-purple-700 transition flex items-center gap-2"
+                                            title=glasgow_elig.message.unwrap_or_default()
+                                        >
+                                            <i class="fas fa-brain"></i>
+                                            <span class="font-semibold">"Glasgow"</span>
+                                            {if glasgow_elig.can_assess {
+                                                view! { <i class="fas fa-check-circle text-sm"></i> }.into_view()
+                                            } else if let Some(hrs) = glasgow_elig.hours_remaining {
+                                                view! { <span class="text-xs bg-yellow-400 text-gray-900 px-1.5 py-0.5 rounded font-bold">{format!("{}h", hrs)}</span> }.into_view()
+                                            } else {
+                                                view! {}.into_view()
+                                            }}
+                                        </a>
+                                        <a
+                                            href=format!("/saps?patient_id={}", pid)
+                                            class="bg-orange-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-orange-700 transition flex items-center gap-2"
+                                            title=saps_elig.message.unwrap_or_default()
+                                        >
+                                            <i class="fas fa-procedures"></i>
+                                            <span class="font-semibold">"SAPS II"</span>
+                                            {if saps_elig.can_assess {
+                                                view! { <i class="fas fa-check-circle text-sm"></i> }.into_view()
+                                            } else if let Some(hrs) = saps_elig.hours_remaining {
+                                                view! { <span class="text-xs bg-yellow-400 text-gray-900 px-1.5 py-0.5 rounded font-bold">{format!("{}h", hrs)}</span> }.into_view()
+                                            } else {
+                                                view! {}.into_view()
+                                            }}
+                                        </a>
+                                    }
+                                }}
                             </div>
                         </div>
 

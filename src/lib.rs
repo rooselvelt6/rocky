@@ -11,3 +11,6 @@ pub mod models; // Also useful to share DB types if needed, but DB logic is back
                 // Actually db.rs uses tokio/surreal which might not compile on wasm easily if not careful.
                 // Let's keep db in main for now or check if it's safe.
                 // models is definitely safe (structs).
+
+#[cfg(feature = "ssr")]
+pub mod services;

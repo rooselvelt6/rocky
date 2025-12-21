@@ -84,9 +84,44 @@ pub fn PatientList() -> impl IntoView {
                                         </div>
                                     </div>
 
-                                    <div class="flex gap-3">
-                                        <a href=format!("/patients/{}", id_str) class="flex-1 bg-indigo-50 text-indigo-700 text-center py-3 rounded-xl hover:bg-indigo-600 hover:text-white font-semibold transition-colors flex items-center justify-center gap-2">
-                                            <i class="fas fa-chart-line"></i>
+                                    <div class="space-y-2">
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <a
+                                                href=format!("/glasgow?patient_id={}", id_str)
+                                                class="bg-purple-50 text-purple-700 text-center py-2 px-2 rounded-lg hover:bg-purple-600 hover:text-white text-xs font-semibold transition-all flex items-center justify-center gap-1"
+                                            >
+                                                <i class="fas fa-brain text-xs"></i>
+                                                "Glasgow"
+                                            </a>
+                                            <a
+                                                href=format!("/apache?patient_id={}", id_str)
+                                                class="bg-red-50 text-red-700 text-center py-2 px-2 rounded-lg hover:bg-red-600 hover:text-white text-xs font-semibold transition-all flex items-center justify-center gap-1"
+                                            >
+                                                <i class="fas fa-heartbeat text-xs"></i>
+                                                "APACHE"
+                                            </a>
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <a
+                                                href=format!("/sofa?patient_id={}", id_str)
+                                                class="bg-teal-50 text-teal-700 text-center py-2 px-2 rounded-lg hover:bg-teal-600 hover:text-white text-xs font-semibold transition-all flex items-center justify-center gap-1"
+                                            >
+                                                <i class="fas fa-heart text-xs"></i>
+                                                "SOFA"
+                                            </a>
+                                            <a
+                                                href=format!("/saps?patient_id={}", id_str)
+                                                class="bg-orange-50 text-orange-700 text-center py-2 px-2 rounded-lg hover:bg-orange-600 hover:text-white text-xs font-semibold transition-all flex items-center justify-center gap-1"
+                                            >
+                                                <i class="fas fa-procedures text-xs"></i>
+                                                "SAPS II"
+                                            </a>
+                                        </div>
+                                        <a
+                                            href=format!("/patients/{}", id_str)
+                                            class="block bg-indigo-50 text-indigo-700 text-center py-2 rounded-lg hover:bg-indigo-600 hover:text-white text-xs font-semibold transition-all"
+                                        >
+                                            <i class="fas fa-chart-line mr-1"></i>
                                             {move || t(lang.get(), "view_history")}
                                         </a>
                                     </div>

@@ -1,0 +1,67 @@
+// Helper function to check if a patient can perform a specific assessment
+// This checks the 24-hour restriction
+async fn check_assessment_eligibility(
+    State(db): State<Surreal<Client>>,
+    Path((patient_id, scale_type)): Path<(String, String)>,
+) -> Json<validation::ValidationResult> {
+    // Validate patient_id format
+    if thing(&patient_id).is_err() {
+        return Json(validation::ValidationResult {
+            can_assess: false,
+            hours_since_last: None,
+            hours_remaining: None,
+            message: Some("Invalid patient ID format".to_string()),
+        });
+    }
+
+    // Determine table name based on scale type
+    let table_name = match scale_type.to_lowercase().as_str() {
+        "glasgow" => "glasgow_assessments",
+        "apache" => "apache_assessments",
+        "sofa" => "sofa_assessments",
+        "saps" => "saps_assessments",
+        _ => {
+            return Json(validation::ValidationResult {
+                can_assess: false,
+                hours_since_last: None,
+                hours_remaining: None,
+                message: Some("Invalid scale type".to_string()),
+            });
+        }
+    };
+
+    // Query last assessment of this type for this patient
+    let sql = format!(
+        "SELECT * FROM {} WHERE patient_id = type::thing($id) ORDER BY assessed_at DESC LIMIT 1",
+        table_name
+    );
+
+    let mut resp = match db.query(&sql).bind(("id", &patient_id)).await {
+        Ok(r) => r,
+        Err(_) => {
+            return Json(validation::ValidationResult {
+                can_assess: true, // If query fails, allow assessment
+                hours_since_last: None,
+                hours_remaining: None,
+                message: None,
+            });
+        }
+    };
+
+    // Try to extract assessed_at timestamp
+    let result: Vec<serde_json::Value> = resp.take(0).unwrap_or_default();
+    
+    if let Some(assessment) = result.first() {
+        if let Some(assessed_at) = assessment.get("assessed_at").and_then(|v| v.as_str()) {
+            return Json(validation::check_assessment_eligibility(Some(assessed_at)));
+        }
+    }
+
+    // No previous assessment found - can assess
+    Json(validation::ValidationResult {
+        can_assess: true,
+        hours_since_last: None,
+        hours_remaining: None,
+        message: None,
+    })
+}

@@ -110,6 +110,39 @@ pub fn GlasgowForm() -> impl IntoView {
                 </Transition>
             </div>
 
+            // Save Confirmation Message
+            {move || {
+                if let Some(pid) = patient_id() {
+                    if let Some(data) = glasgow_resource.get().flatten() {
+                        // Only show if it's not an error/restriction
+                        if data.diagnosis != "Restriction" && data.diagnosis != "Error" {
+                            view! {
+                                <div class="bg-green-50 border-l-4 border-green-500 p-3 mb-4 rounded-r-lg animate-fade-in">
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-check-circle text-green-600 text-lg"></i>
+                                        <div class="text-sm">
+                                            <span class="font-bold text-green-800">"✅ Evaluación guardada"</span>
+                                            <span class="text-green-700">" para paciente ID: "</span>
+                                            <span class="font-mono text-green-900">{pid.split(':').last().unwrap_or("?")}</span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-1 text-xs text-green-600 ml-7">
+                                        "Score: " <span class="font-bold">{data.score}"/15"</span> " - "
+                                        <a href=format!("/patients/{}", pid) class="underline hover:text-green-800">"Ver historial completo →"</a>
+                                    </div>
+                                </div>
+                            }.into_view()
+                        } else {
+                            view! {}.into_view()
+                        }
+                    } else {
+                        view! {}.into_view()
+                    }
+                } else {
+                    view! {}.into_view()
+                }
+            }}
+
             // Compact Selection Grid - Smooth transitions
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 // Eye Response

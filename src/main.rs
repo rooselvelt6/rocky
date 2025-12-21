@@ -26,6 +26,9 @@ use uci::models::patient::Patient;
 use uci::models::saps::SapsAssessment;
 use uci::models::sofa::SofaAssessment;
 
+#[cfg(feature = "ssr")]
+use uci::services::validation;
+
 #[tokio::main]
 async fn main() {
     // Initialize tracing
@@ -65,6 +68,10 @@ async fn main() {
             get(get_patient).put(update_patient).delete(delete_patient),
         )
         .route("/api/patients/{id}/history", get(get_patient_history))
+        .route(
+            "/api/patients/{id}/can-assess/{scale_type}",
+            get(check_assessment_eligibility),
+        )
         // Servir archivos estáticos desde dist
         .fallback_service(
             ServeDir::new("dist").not_found_service(ServeFile::new("dist/index.html")),
@@ -86,6 +93,34 @@ async fn main() {
         .unwrap();
 }
 
+/// Helper function to check 24-hour restriction for any assessment type
+async fn check_24h_restriction<T: serde::de::DeserializeOwned>(
+    db: &Surreal<Client>,
+    patient_id: &str,
+    table_name: &str,
+) -> Result<(), String> {
+    let sql = format!(
+        "SELECT * FROM {} WHERE patient_id = type::thing($id) ORDER BY assessed_at DESC LIMIT 1",
+        table_name
+    );
+
+    let mut resp = db
+        .query(&sql)
+        .bind(("id", patient_id))
+        .await
+        .map_err(|e| format!("Database query failed: {}", e))?;
+
+    let last_assessments: Vec<serde_json::Value> = resp.take(0).unwrap_or_default();
+
+    if let Some(last) = last_assessments.first() {
+        if let Some(assessed_at) = last.get("assessed_at").and_then(|v| v.as_str()) {
+            validation::validate_24_hour_interval(Some(assessed_at))?;
+        }
+    }
+
+    Ok(())
+}
+
 /// Handler para calcular la escala de Glasgow y guardar en DB
 async fn calculate_glasgow(
     State(db): State<Surreal<Client>>,
@@ -103,6 +138,20 @@ async fn calculate_glasgow(
 
             // Parse patient_id (Option<String> -> Option<Thing>)
             let patient_id_thing = payload.patient_id.as_ref().and_then(|id| thing(id).ok());
+
+            // If patient_id provided, check 24-hour restriction
+            if let Some(p_id) = payload.patient_id.as_ref() {
+                if let Err(msg) =
+                    check_24h_restriction::<GlasgowAssessment>(&db, p_id, "glasgow_assessments")
+                        .await
+                {
+                    return Json(GlasgowResponse {
+                        score: 0,
+                        diagnosis: "Restriction".to_string(),
+                        recommendation: msg,
+                    });
+                }
+            }
 
             // Save to database
             let mut assessment = GlasgowAssessment::new(
@@ -158,6 +207,20 @@ async fn calculate_apache(
 
             // Parse patient_id
             let patient_id_thing = payload.patient_id.as_ref().and_then(|id| thing(id).ok());
+
+            // Check 24-hour restriction
+            if let Some(p_id) = payload.patient_id.as_ref() {
+                if let Err(msg) =
+                    check_24h_restriction::<ApacheAssessment>(&db, p_id, "apache_assessments").await
+                {
+                    return Json(ApacheIIResponse {
+                        score: 0,
+                        predicted_mortality: 0.0,
+                        severity: "Restriction".to_string(),
+                        recommendation: msg,
+                    });
+                }
+            }
 
             // Save to database
             let mut assessment = ApacheAssessment::new(
@@ -228,6 +291,19 @@ async fn calculate_sofa(
             // Parse patient_id
             let patient_id_thing = payload.patient_id.as_ref().and_then(|id| thing(id).ok());
 
+            // Check 24-hour restriction
+            if let Some(p_id) = payload.patient_id.as_ref() {
+                if let Err(msg) =
+                    check_24h_restriction::<SofaAssessment>(&db, p_id, "sofa_assessments").await
+                {
+                    return Json(SOFAResponse {
+                        score: 0,
+                        severity: "Restriction".to_string(),
+                        recommendation: msg,
+                    });
+                }
+            }
+
             // Save to database
             let mut assessment = SofaAssessment::new(
                 payload.pao2_fio2,
@@ -287,6 +363,20 @@ async fn calculate_saps(
 
             // Parse patient_id
             let patient_id_thing = payload.patient_id.as_ref().and_then(|id| thing(id).ok());
+
+            // Check 24-hour restriction
+            if let Some(p_id) = payload.patient_id.as_ref() {
+                if let Err(msg) =
+                    check_24h_restriction::<SapsAssessment>(&db, p_id, "saps_assessments").await
+                {
+                    return Json(SAPSIIResponse {
+                        score: 0,
+                        predicted_mortality: 0.0,
+                        severity: "Restriction".to_string(),
+                        recommendation: msg,
+                    });
+                }
+            }
 
             // Save to database
             let mut assessment = SapsAssessment::new(
@@ -441,6 +531,73 @@ async fn delete_patient(State(db): State<Surreal<Client>>, Path(id): Path<String
     } else {
         StatusCode::BAD_REQUEST
     }
+}
+
+/// Check if a patient can perform a specific assessment (24-hour restriction)
+async fn check_assessment_eligibility(
+    State(db): State<Surreal<Client>>,
+    Path((patient_id, scale_type)): Path<(String, String)>,
+) -> Json<validation::ValidationResult> {
+    // Validate patient_id format
+    if thing(&patient_id).is_err() {
+        return Json(validation::ValidationResult {
+            can_assess: false,
+            hours_since_last: None,
+            hours_remaining: None,
+            message: Some("Invalid patient ID format".to_string()),
+        });
+    }
+
+    // Determine table name based on scale type
+    let table_name = match scale_type.to_lowercase().as_str() {
+        "glasgow" => "glasgow_assessments",
+        "apache" => "apache_assessments",
+        "sofa" => "sofa_assessments",
+        "saps" => "saps_assessments",
+        _ => {
+            return Json(validation::ValidationResult {
+                can_assess: false,
+                hours_since_last: None,
+                hours_remaining: None,
+                message: Some("Invalid scale type".to_string()),
+            });
+        }
+    };
+
+    // Query last assessment of this type for this patient
+    let sql = format!(
+        "SELECT * FROM {} WHERE patient_id = type::thing($id) ORDER BY assessed_at DESC LIMIT 1",
+        table_name
+    );
+
+    let mut resp = match db.query(&sql).bind(("id", &patient_id)).await {
+        Ok(r) => r,
+        Err(_) => {
+            return Json(validation::ValidationResult {
+                can_assess: true, // If query fails, allow assessment
+                hours_since_last: None,
+                hours_remaining: None,
+                message: None,
+            });
+        }
+    };
+
+    // Try to extract assessed_at timestamp
+    let result: Vec<serde_json::Value> = resp.take(0).unwrap_or_default();
+
+    if let Some(assessment) = result.first() {
+        if let Some(assessed_at) = assessment.get("assessed_at").and_then(|v| v.as_str()) {
+            return Json(validation::check_assessment_eligibility(Some(assessed_at)));
+        }
+    }
+
+    // No previous assessment found - can assess
+    Json(validation::ValidationResult {
+        can_assess: true,
+        hours_since_last: None,
+        hours_remaining: None,
+        message: None,
+    })
 }
 
 #[derive(serde::Serialize)]
