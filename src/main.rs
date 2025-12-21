@@ -1,6 +1,13 @@
 // src/main.rs
-use axum::{extract::State, routing::post, Json, Router};
+// src/main.rs
+use axum::{
+    extract::{Path, State},
+    http::StatusCode,
+    routing::{get, post},
+    Json, Router,
+};
 use surrealdb::engine::remote::ws::Client;
+use surrealdb::sql::thing;
 use surrealdb::Surreal;
 use tokio::net::TcpListener;
 use tower_http::services::{ServeDir, ServeFile};
@@ -44,7 +51,7 @@ async fn main() {
         }
     };
 
-use tower_http::cors::CorsLayer;
+    use tower_http::cors::CorsLayer;
 
     let app = Router::new()
         // API Endpoints
@@ -53,6 +60,11 @@ use tower_http::cors::CorsLayer;
         .route("/api/sofa", post(calculate_sofa))
         .route("/api/saps", post(calculate_saps))
         .route("/api/patients", post(create_patient).get(get_patients))
+        .route(
+            "/api/patients/{id}",
+            get(get_patient).put(update_patient).delete(delete_patient),
+        )
+        .route("/api/patients/{id}/history", get(get_patient_history))
         // Servir archivos estáticos desde dist
         .fallback_service(
             ServeDir::new("dist").not_found_service(ServeFile::new("dist/index.html")),
@@ -89,8 +101,11 @@ async fn calculate_glasgow(
                 recommendation: recommendation.clone(),
             };
 
+            // Parse patient_id (Option<String> -> Option<Thing>)
+            let patient_id_thing = payload.patient_id.as_ref().and_then(|id| thing(id).ok());
+
             // Save to database
-            let assessment = GlasgowAssessment::new(
+            let mut assessment = GlasgowAssessment::new(
                 payload.eye,
                 payload.verbal,
                 payload.motor,
@@ -98,6 +113,7 @@ async fn calculate_glasgow(
                 diagnosis,
                 recommendation,
             );
+            assessment.patient_id = patient_id_thing;
 
             match db.create("glasgow_assessments").content(assessment).await {
                 Ok(saved) => {
@@ -140,8 +156,11 @@ async fn calculate_apache(
                 recommendation: recommendation.clone(),
             };
 
+            // Parse patient_id
+            let patient_id_thing = payload.patient_id.as_ref().and_then(|id| thing(id).ok());
+
             // Save to database
-            let assessment = ApacheAssessment::new(
+            let mut assessment = ApacheAssessment::new(
                 payload.temperature,
                 payload.mean_arterial_pressure,
                 payload.heart_rate,
@@ -162,6 +181,7 @@ async fn calculate_apache(
                 severity,
                 recommendation,
             );
+            assessment.patient_id = patient_id_thing;
 
             match db.create("apache_assessments").content(assessment).await {
                 Ok(saved) => {
@@ -205,8 +225,11 @@ async fn calculate_sofa(
                 recommendation: recommendation.clone(),
             };
 
+            // Parse patient_id
+            let patient_id_thing = payload.patient_id.as_ref().and_then(|id| thing(id).ok());
+
             // Save to database
-            let assessment = SofaAssessment::new(
+            let mut assessment = SofaAssessment::new(
                 payload.pao2_fio2,
                 payload.platelets,
                 payload.bilirubin,
@@ -217,6 +240,7 @@ async fn calculate_sofa(
                 severity,
                 recommendation,
             );
+            assessment.patient_id = patient_id_thing;
 
             match db.create("sofa_assessments").content(assessment).await {
                 Ok(saved) => {
@@ -261,8 +285,11 @@ async fn calculate_saps(
                 recommendation: recommendation.clone(),
             };
 
+            // Parse patient_id
+            let patient_id_thing = payload.patient_id.as_ref().and_then(|id| thing(id).ok());
+
             // Save to database
-            let assessment = SapsAssessment::new(
+            let mut assessment = SapsAssessment::new(
                 payload.age,
                 payload.heart_rate,
                 payload.systolic_bp,
@@ -283,6 +310,7 @@ async fn calculate_saps(
                 severity,
                 recommendation,
             );
+            assessment.patient_id = patient_id_thing;
 
             match db.create("saps_assessments").content(assessment).await {
                 Ok(saved) => {
@@ -357,4 +385,124 @@ async fn get_patients(State(db): State<Surreal<Client>>) -> Json<Vec<Patient>> {
             Json(vec![])
         }
     }
+}
+
+/// Handler to get a single patient by ID
+async fn get_patient(
+    State(db): State<Surreal<Client>>,
+    Path(id): Path<String>,
+) -> Json<Option<Patient>> {
+    let id_thing = thing(&id).ok();
+    if let Some(thing) = id_thing {
+        match db.select(thing).await {
+            Ok(patient) => Json(patient),
+            Err(e) => {
+                tracing::error!("❌ Failed to fetch patient {}: {}", id, e);
+                Json(None)
+            }
+        }
+    } else {
+        Json(None)
+    }
+}
+
+/// Handler to update a patient
+async fn update_patient(
+    State(db): State<Surreal<Client>>,
+    Path(id): Path<String>,
+    Json(payload): Json<Patient>,
+) -> Json<Option<Patient>> {
+    let id_thing = thing(&id).ok();
+    if let Some(thing) = id_thing {
+        // We use .update to replace or merge. .content replaces.
+        match db.update(thing).content(payload).await {
+            Ok(saved) => Json(saved),
+            Err(e) => {
+                tracing::error!("❌ Failed to update patient {}: {}", id, e);
+                Json(None)
+            }
+        }
+    } else {
+        Json(None)
+    }
+}
+
+/// Handler to delete a patient
+async fn delete_patient(State(db): State<Surreal<Client>>, Path(id): Path<String>) -> StatusCode {
+    let id_thing = thing(&id).ok();
+    if let Some(thing) = id_thing {
+        match db.delete::<Option<Patient>>(thing).await {
+            Ok(_) => StatusCode::NO_CONTENT,
+            Err(e) => {
+                tracing::error!("❌ Failed to delete patient {}: {}", id, e);
+                StatusCode::INTERNAL_SERVER_ERROR
+            }
+        }
+    } else {
+        StatusCode::BAD_REQUEST
+    }
+}
+
+#[derive(serde::Serialize)]
+struct PatientHistoryResponse {
+    glasgow: Vec<GlasgowAssessment>,
+    apache: Vec<ApacheAssessment>,
+    sofa: Vec<SofaAssessment>,
+    saps: Vec<SapsAssessment>,
+}
+
+/// Handler to get patient history (all assessments)
+async fn get_patient_history(
+    State(db): State<Surreal<Client>>,
+    Path(id): Path<String>,
+) -> Json<PatientHistoryResponse> {
+    // Validate ID format first
+    if thing(&id).is_err() {
+        return Json(PatientHistoryResponse {
+            glasgow: vec![],
+            apache: vec![],
+            sofa: vec![],
+            saps: vec![],
+        });
+    }
+
+    // Run parallel queries? Or sequential for simplicity.
+    // We filter by patient_id = $id
+    // Note: patient_id is stored as a Thing in the DB.
+    // SurrealQL query: SELECT * FROM table WHERE patient_id = type::thing($id)
+
+    let sql_glasgow = "SELECT * FROM glasgow_assessments WHERE patient_id = type::thing($id) ORDER BY assessed_at DESC";
+    let sql_apache = "SELECT * FROM apache_assessments WHERE patient_id = type::thing($id) ORDER BY assessed_at DESC";
+    let sql_sofa = "SELECT * FROM sofa_assessments WHERE patient_id = type::thing($id) ORDER BY assessed_at DESC";
+    let sql_saps = "SELECT * FROM saps_assessments WHERE patient_id = type::thing($id) ORDER BY assessed_at DESC";
+
+    // Helper to fetch
+    async fn fetch_records<T: serde::de::DeserializeOwned>(
+        db: &Surreal<Client>,
+        sql: &str,
+        id: &str,
+    ) -> Vec<T> {
+        let mut response = match db.query(sql).bind(("id", id)).await {
+            Ok(r) => r,
+            Err(e) => {
+                tracing::error!("Query failed: {}", e);
+                return vec![];
+            }
+        };
+        response.take(0).unwrap_or_default()
+    }
+
+    let (glasgow, apache, sofa, saps) = tokio::join!(
+        fetch_records::<GlasgowAssessment>(&db, sql_glasgow, &id),
+        fetch_records::<ApacheAssessment>(&db, sql_apache, &id),
+        fetch_records::<SofaAssessment>(&db, sql_sofa, &id),
+        fetch_records::<SapsAssessment>(&db, sql_saps, &id)
+    );
+
+    Json(PatientHistoryResponse {
+        glasgow,
+        apache,
+        sofa,
+        saps,
+    })
 }

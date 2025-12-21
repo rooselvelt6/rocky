@@ -1,12 +1,15 @@
 use crate::frontend::i18n::{t, use_i18n};
 use crate::uci::scale::sofa::{SOFARequest, SOFAResponse};
 use leptos::*;
+use leptos_router::use_query_map;
 use reqwasm::http::Request;
 
 /// SOFA Score form component - Sequential Organ Failure Assessment
 #[component]
 pub fn SofaForm() -> impl IntoView {
     let lang = use_i18n();
+    let query = use_query_map();
+    let patient_id = move || query.get().get("patient_id").cloned();
 
     // Reactive signals for form inputs
     let (pao2_fio2, set_pao2_fio2) = create_signal(400i32);
@@ -31,6 +34,7 @@ pub fn SofaForm() -> impl IntoView {
             cardiovascular: cardiovascular.get(),
             glasgow: glasgow.get(),
             renal: renal.get(),
+            patient_id: patient_id(),
         };
 
         spawn_local(async move {

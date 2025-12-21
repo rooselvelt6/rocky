@@ -49,6 +49,7 @@ ssr = [
     "dep:tracing-subscriber",
     "dep:leptos_axum",
     "dep:surrealdb",
+    "surrealdb/default",
     "dep:chrono",
     "dep:dotenvy",
     "leptos/ssr",

@@ -3,13 +3,32 @@ use serde::{Deserialize, Serialize};
 use surrealdb::sql::Thing;
 
 #[cfg(not(feature = "ssr"))]
-type Thing = String;
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash, Default)]
+pub struct Id {
+    #[serde(rename = "String")]
+    pub string: String,
+}
+
+#[cfg(not(feature = "ssr"))]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash, Default)]
+pub struct Thing {
+    pub tb: String,
+    pub id: Id,
+}
+
+#[cfg(not(feature = "ssr"))]
+impl ToString for Thing {
+    fn to_string(&self) -> String {
+        format!("{}:{}", self.tb, self.id.string)
+    }
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ApacheAssessment {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<Thing>,
-    pub patient: Option<Thing>, // Reference to patient
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub patient_id: Option<Thing>,
 
     // Physiological parameters
     pub temperature: f32,
@@ -63,7 +82,7 @@ impl ApacheAssessment {
     ) -> Self {
         Self {
             id: None,
-            patient: None,
+            patient_id: None,
             temperature,
             mean_arterial_pressure,
             heart_rate,

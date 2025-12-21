@@ -1,12 +1,15 @@
 use crate::frontend::i18n::{t, use_i18n};
 use crate::uci::scale::saps::{SAPSIIRequest, SAPSIIResponse};
 use leptos::*;
+use leptos_router::use_query_map;
 use reqwasm::http::Request;
 
 /// SAPS II Score form component
 #[component]
 pub fn SapsForm() -> impl IntoView {
     let lang = use_i18n();
+    let query = use_query_map();
+    let patient_id = move || query.get().get("patient_id").cloned();
 
     // Signals
     let (age, set_age) = create_signal(50u8);
@@ -56,6 +59,7 @@ pub fn SapsForm() -> impl IntoView {
             glasgow: glasgow.get(),
             chronic_disease: chronic_disease.get(),
             admission_type: admission_type.get(),
+            patient_id: patient_id(),
         };
 
         spawn_local(async move {

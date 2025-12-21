@@ -1,12 +1,15 @@
 use crate::frontend::i18n::{t, use_i18n};
 use crate::uci::scale::glasgow::{GlasgowRequest, GlasgowResponse};
 use leptos::*;
+use leptos_router::use_query_map;
 use reqwasm::http::Request;
 
 /// Glasgow Coma Scale form component - Compact, Responsive & Smooth
 #[component]
 pub fn GlasgowForm() -> impl IntoView {
     let lang = use_i18n();
+    let query = use_query_map();
+    let patient_id = move || query.get().get("patient_id").cloned();
 
     // Reactive signals for form inputs
     let (eye_value, set_eye_value) = create_signal(4u8);
@@ -17,7 +20,12 @@ pub fn GlasgowForm() -> impl IntoView {
     let glasgow_resource = create_resource(
         move || (eye_value.get(), verbal_value.get(), motor_value.get()),
         move |(eye, verbal, motor)| async move {
-            let request = GlasgowRequest { eye, verbal, motor };
+            let request = GlasgowRequest {
+                eye,
+                verbal,
+                motor,
+                patient_id: patient_id(),
+            };
 
             // Call the API
             let response = Request::post("/api/glasgow")

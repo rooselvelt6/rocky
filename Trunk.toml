@@ -1,26 +1,6 @@
 [build]
-# The index HTML file to use for the application
 target = "index.html"
-# The output directory for all final build artifacts
 dist = "dist"
-# The public URL from which assets are served
-public_url = "/"
 
 [watch]
-# Paths to watch for changes
-watch = ["src", "index.html", "style.css"]
-# Paths to ignore
-ignore = ["target", "dist"]
-
-[serve]
-# The address to serve on
-address = "127.0.0.1"
-# The port to serve on  
-port = 8080
-# Open the browser on serve
-open = false
-
-[clean]
-# Directories to clean
-dist = "dist"
-cargo = false
+ignore = ["./src/bin/uci-server.rs"]

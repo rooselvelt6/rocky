@@ -3,7 +3,25 @@ use serde::{Deserialize, Serialize};
 use surrealdb::sql::Thing;
 
 #[cfg(not(feature = "ssr"))]
-type Thing = String;
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash, Default)]
+pub struct Id {
+    #[serde(rename = "String")]
+    pub string: String,
+}
+
+#[cfg(not(feature = "ssr"))]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash, Default)]
+pub struct Thing {
+    pub tb: String,
+    pub id: Id,
+}
+
+#[cfg(not(feature = "ssr"))]
+impl ToString for Thing {
+    fn to_string(&self) -> String {
+        format!("{}:{}", self.tb, self.id.string)
+    }
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum SkinColor {

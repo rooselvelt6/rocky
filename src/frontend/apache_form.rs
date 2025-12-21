@@ -1,12 +1,15 @@
 use crate::frontend::i18n::{t, use_i18n};
 use crate::uci::scale::apache::{ApacheIIRequest, ApacheIIResponse};
 use leptos::*;
+use leptos_router::use_query_map;
 use reqwasm::http::Request;
 
 /// APACHE II Score form component - Comprehensive ICU severity assessment
 #[component]
 pub fn ApacheForm() -> impl IntoView {
     let lang = use_i18n();
+    let query = use_query_map();
+    let patient_id = move || query.get().get("patient_id").cloned();
 
     // Reactive signals for form inputs
     let (temperature, set_temperature) = create_signal(37.0f32);
@@ -49,6 +52,7 @@ pub fn ApacheForm() -> impl IntoView {
             glasgow_coma_score: glasgow_coma_score.get(),
             age: age.get(),
             chronic_health: chronic_health.get(),
+            patient_id: patient_id(),
         };
 
         spawn_local(async move {

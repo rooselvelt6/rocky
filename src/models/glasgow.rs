@@ -3,13 +3,32 @@ use serde::{Deserialize, Serialize};
 use surrealdb::sql::Thing;
 
 #[cfg(not(feature = "ssr"))]
-type Thing = String;
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash, Default)]
+pub struct Id {
+    #[serde(rename = "String")]
+    pub string: String,
+}
+
+#[cfg(not(feature = "ssr"))]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash, Default)]
+pub struct Thing {
+    pub tb: String,
+    pub id: Id,
+}
+
+#[cfg(not(feature = "ssr"))]
+impl ToString for Thing {
+    fn to_string(&self) -> String {
+        format!("{}:{}", self.tb, self.id.string)
+    }
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GlasgowAssessment {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<Thing>,
-    pub patient: Option<Thing>, // Reference to patient (optional for now)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub patient_id: Option<Thing>, // Link to Patient record
     pub eye_response: u8,
     pub verbal_response: u8,
     pub motor_response: u8,
@@ -31,7 +50,7 @@ impl GlasgowAssessment {
     ) -> Self {
         Self {
             id: None,
-            patient: None, // Can be set later
+            patient_id: None, // Can be set later via setter or updated constructor
             eye_response: eye,
             verbal_response: verbal,
             motor_response: motor,

@@ -159,6 +159,7 @@ pub struct SOFARequest {
     pub cardiovascular: String, // "map_70_plus", "map_lt_70", "dopa_lte5", "dopa_gt5", "dopa_gt15"
     pub glasgow: u8,
     pub renal: String, // "cr_lt_1_2", "cr_1_2_1_9", "cr_2_0_3_4", "cr_3_5_4_9", "cr_gte_5"
+    pub patient_id: Option<String>,
 }
 
 /// Response payload for SOFA calculation

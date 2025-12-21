@@ -314,6 +314,7 @@ pub struct ApacheIIRequest {
     pub glasgow_coma_score: u8,
     pub age: u8,
     pub chronic_health: String, // "none", "elective", "non_elective", "non_operative"
+    pub patient_id: Option<String>,
 }
 
 /// Response payload for APACHE II calculation

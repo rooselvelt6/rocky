@@ -309,6 +309,7 @@ pub struct GlasgowRequest {
     pub eye: u8,
     pub verbal: u8,
     pub motor: u8,
+    pub patient_id: Option<String>,
 }
 
 /// Response payload for Glasgow calculation API

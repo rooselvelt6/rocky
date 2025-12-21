@@ -260,6 +260,7 @@ pub struct SAPSIIRequest {
     pub glasgow: u8,
     pub chronic_disease: String, // "none", "cancer", "hematologic", "aids"
     pub admission_type: String,  // "scheduled", "medical", "unscheduled"
+    pub patient_id: Option<String>,
 }
 
 /// Response payload

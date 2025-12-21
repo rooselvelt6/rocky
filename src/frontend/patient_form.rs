@@ -5,6 +5,13 @@ use leptos::*;
 #[component]
 pub fn PatientForm() -> impl IntoView {
     let lang = use_i18n();
+    let navigate = leptos_router::use_navigate();
+    // navigate is a closure, it might not be Clone, so we might need to rely on it being Copy or wrap it?
+    // Actually, let's try just moving a clone if possible, or assume it's not Clone and use a trick.
+    // If we cannot clone 'navigate' (some impl Fn are not Clone), we can't use it multiple times in spawn_local.
+    // However, we can use `Batch` or `Signal`?
+    // Let's try wrapping it in Rc to be safe.
+    let navigate = std::rc::Rc::new(navigate);
     let (first_name, set_first_name) = create_signal(String::new());
     let (last_name, set_last_name) = create_signal(String::new());
     let (dob, set_dob) = create_signal(String::new());
@@ -77,6 +84,7 @@ pub fn PatientForm() -> impl IntoView {
             invasive.get(),
         );
 
+        let navigate = navigate.clone();
         spawn_local(async move {
             let client = reqwasm::http::Request::post("/api/patients")
                 .header("Content-Type", "application/json")
@@ -88,7 +96,13 @@ pub fn PatientForm() -> impl IntoView {
                 Ok(resp) => {
                     if resp.ok() {
                         set_submit_status.set(Some(t(lang.get(), "success_register")));
-                        // Reset form? logic could be expanded here
+                        // Delay redirect for user to see success
+                        set_timeout(
+                            move || {
+                                navigate("/patients", Default::default());
+                            },
+                            std::time::Duration::from_millis(1500),
+                        );
                     } else {
                         set_submit_status.set(Some(format!(
                             "{}: {}",

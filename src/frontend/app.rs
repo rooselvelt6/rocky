@@ -1,7 +1,9 @@
 use crate::frontend::apache_form::ApacheForm;
 use crate::frontend::glasgow_form::GlasgowForm;
 use crate::frontend::i18n::{t, Language};
+use crate::frontend::patient_detail::PatientDetail;
 use crate::frontend::patient_form::PatientForm;
+use crate::frontend::patient_list::PatientList;
 use crate::frontend::saps_form::SapsForm;
 use crate::frontend::sofa_form::SofaForm;
 use leptos::*;
@@ -35,8 +37,8 @@ pub fn App() -> impl IntoView {
                             <div class="flex items-center">
                                 <A href="/" class="text-xl font-bold tracking-wider">"UCI System"</A>
                                 <div class="ml-10 flex items-baseline space-x-4">
-                                    <A href="/" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors">
-                                        {move || t(lang.get(), "home")}
+                                    <A href="/patients" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors">
+                                        {move || t(lang.get(), "patient_list")}
                                     </A>
                                     <A href="/register" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors">
                                         {move || t(lang.get(), "register_patient")}
@@ -99,6 +101,8 @@ pub fn App() -> impl IntoView {
                             </div>
                         }/>
                         <Route path="/register" view=PatientForm/>
+                        <Route path="/patients" view=PatientList/>
+                        <Route path="/patients/:id" view=PatientDetail/>
                         <Route path="/glasgow" view=GlasgowForm/>
                         <Route path="/apache" view=ApacheForm/>
                         <Route path="/sofa" view=SofaForm/>
