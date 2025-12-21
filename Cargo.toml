@@ -36,6 +36,7 @@ leptos_axum = { version = "0.6", optional = true }
 surrealdb = { version = "1.5", optional = true }
 chrono = { version = "0.4", features = ["serde"], optional = true }
 dotenvy = { version = "0.15", optional = true }
+tower_governor = { version = "0.4.3", optional = true }
 
 [features]
 default = ["ssr"]
@@ -52,7 +53,14 @@ ssr = [
     "surrealdb/default",
     "dep:chrono",
     "dep:dotenvy",
+    "dep:tower_governor",
     "leptos/ssr",
     "leptos_meta/ssr",
     "leptos_router/ssr",
 ]
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"

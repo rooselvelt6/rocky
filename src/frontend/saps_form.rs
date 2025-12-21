@@ -36,6 +36,43 @@ pub fn SapsForm() -> impl IntoView {
     let (result, set_result) = create_signal(Option::<SAPSIIResponse>::None);
     let (loading, set_loading) = create_signal(false);
 
+    // Smart Pre-fill Logic
+    create_effect(move |_| {
+        if let Some(id) = patient_id() {
+            let id_clone = id.clone();
+            spawn_local(async move {
+                // 1. Fetch Patient Data for Age Pre-fill
+                let pat_url = format!("/api/patients/{}", id_clone);
+                if let Ok(res) = Request::get(&pat_url).send().await {
+                    if let Ok(patient) = res.json::<crate::models::patient::Patient>().await {
+                        if let Ok(dob) =
+                            chrono::NaiveDate::parse_from_str(&patient.date_of_birth, "%Y-%m-%d")
+                        {
+                            let now = chrono::Local::now().naive_local().date();
+                            let age_val = now.years_since(dob).unwrap_or(50) as u8;
+                            set_age.set(age_val.clamp(18, 110));
+                        }
+                    }
+                }
+
+                // 2. Fetch History for Glasgow Pre-fill
+                let hist_url = format!("/api/patients/{}/history", id_clone);
+                if let Ok(res) = Request::get(&hist_url).send().await {
+                    #[derive(serde::Deserialize)]
+                    struct PartialHistory {
+                        glasgow: Vec<crate::models::glasgow::GlasgowAssessment>,
+                    }
+
+                    if let Ok(history) = res.json::<PartialHistory>().await {
+                        if let Some(latest) = history.glasgow.first() {
+                            set_glasgow.set(latest.score as u8);
+                        }
+                    }
+                }
+            });
+        }
+    });
+
     let calculate = move |_| {
         set_loading.set(true);
 

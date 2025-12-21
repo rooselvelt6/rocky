@@ -49,12 +49,41 @@ pub fn GlasgowForm() -> impl IntoView {
 
     view! {
         <div class="w-full max-w-6xl mx-auto px-4">
-            // Compact Header
-            <div class="text-center mb-4">
-                <h2 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
-                    <i class="fas fa-brain mr-2"></i>
-                    {move || t(lang.get(), "glasgow_scale")}
-                </h2>
+            // Header with Load Last
+            <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                <div class="text-center md:text-left">
+                    <h2 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
+                        <i class="fas fa-brain mr-2"></i>
+                        {move || t(lang.get(), "glasgow_scale")}
+                    </h2>
+                </div>
+                 <button
+                    on:click=move |_| {
+                        if let Some(id) = patient_id() {
+                            spawn_local(async move {
+                                let url = format!("/api/patients/{}/history", id);
+                                if let Ok(res) = Request::get(&url).send().await {
+                                     #[derive(serde::Deserialize)]
+                                     struct PartialHistory {
+                                         glasgow: Vec<crate::models::glasgow::GlasgowAssessment>,
+                                     }
+
+                                     if let Ok(history) = res.json::<PartialHistory>().await {
+                                         if let Some(last) = history.glasgow.first() {
+                                             set_eye_value.set(last.eye_response);
+                                             set_verbal_value.set(last.verbal_response);
+                                             set_motor_value.set(last.motor_response);
+                                         }
+                                     }
+                                }
+                            });
+                        }
+                    }
+                    class="px-4 py-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg text-sm font-semibold transition-colors flex items-center shadow-sm border border-indigo-100"
+                    title="Load previous assessment">
+                    <i class="fas fa-clock-rotate-left mr-2"></i>
+                    {move || t(lang.get(), "load_last")}
+                </button>
             </div>
 
             // Results - Fixed height with smooth transitions
@@ -109,6 +138,39 @@ pub fn GlasgowForm() -> impl IntoView {
                     }}
                 </Transition>
             </div>
+
+            // Chaining: Suggest next assessments
+            {move || {
+                if glasgow_resource.get().flatten().is_some() {
+                    if let Some(pid) = patient_id() {
+                        view! {
+                            <div class="mb-8 p-4 bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-100 rounded-xl animate-fade-in shadow-sm">
+                                <h4 class="text-sm font-bold text-indigo-800 mb-3 flex items-center">
+                                    <i class="fas fa-forward mr-2"></i>{t(lang.get(), "continue_assessment")}
+                                </h4>
+                                <div class="flex flex-wrap gap-3">
+                                     <a href=format!("/apache?patient_id={}", pid)
+                                       class="flex items-center px-4 py-2 bg-white text-indigo-600 border border-indigo-200 rounded-lg hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-colors duration-200 shadow-sm text-sm font-bold">
+                                       <i class="fas fa-chart-bar mr-2"></i>"APACHE II"
+                                    </a>
+                                    <a href=format!("/sofa?patient_id={}", pid)
+                                       class="flex items-center px-4 py-2 bg-white text-teal-600 border border-teal-200 rounded-lg hover:bg-teal-600 hover:text-white hover:border-teal-600 transition-colors duration-200 shadow-sm text-sm font-bold">
+                                       <i class="fas fa-procedures mr-2"></i>"SOFA"
+                                    </a>
+                                    <a href=format!("/saps?patient_id={}", pid)
+                                       class="flex items-center px-4 py-2 bg-white text-orange-600 border border-orange-200 rounded-lg hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-colors duration-200 shadow-sm text-sm font-bold">
+                                       <i class="fas fa-notes-medical mr-2"></i>"SAPS II"
+                                    </a>
+                                </div>
+                            </div>
+                        }.into_view()
+                    } else {
+                        view! { <div/> }.into_view()
+                    }
+                } else {
+                    view! { <div/> }.into_view()
+                }
+            }}
 
             // Save Confirmation Message
 

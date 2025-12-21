@@ -29,6 +29,9 @@ use uci::models::sofa::SofaAssessment;
 #[cfg(feature = "ssr")]
 use uci::services::validation;
 
+#[cfg(feature = "ssr")]
+use tower_governor::{governor::GovernorConfigBuilder, GovernorLayer};
+
 #[tokio::main]
 async fn main() {
     // Initialize tracing
@@ -54,9 +57,23 @@ async fn main() {
         }
     };
 
+    use tower_http::compression::CompressionLayer;
     use tower_http::cors::CorsLayer;
 
+    // Rate Limiting Configuration (100ms per IP approx 10 reqs/sec burst)
+    let governor_conf = Box::new(
+        GovernorConfigBuilder::default()
+            .per_second(10)
+            .burst_size(20)
+            .finish()
+            .unwrap(),
+    );
+
     let app = Router::new()
+        .layer(GovernorLayer {
+            config: Box::leak(governor_conf),
+        })
+        .layer(CompressionLayer::new()) // Auto-compress responses (Gzip/Brotli/Deflate)
         // API Endpoints
         .route("/api/glasgow", post(calculate_glasgow))
         .route("/api/apache", post(calculate_apache))
@@ -88,9 +105,18 @@ async fn main() {
 
     println!("¡LISTO! Servidor corriendo en http://localhost:3000");
 
+    // Graceful Shutdown Signal
+    let shutdown_signal = async {
+        let _ = tokio::signal::ctrl_c().await;
+        println!("🛑 Recibida señal de apagado. Cerrando servidor ordenadamente...");
+    };
+
     axum::serve(listener, app.into_make_service())
+        .with_graceful_shutdown(shutdown_signal)
         .await
         .unwrap();
+
+    println!("👋 Servidor detenido correctamente.");
 }
 
 /// Helper function to check 24-hour restriction for any assessment type
@@ -467,14 +493,14 @@ async fn create_patient(
 }
 
 /// Handler para obtener todos los pacientes
-async fn get_patients(State(db): State<Surreal<Client>>) -> Json<Vec<Patient>> {
-    match db.select("patients").await {
-        Ok(patients) => Json(patients),
-        Err(e) => {
-            tracing::error!("❌ Failed to fetch patients: {}", e);
-            Json(vec![])
-        }
-    }
+async fn get_patients(
+    State(db): State<Surreal<Client>>,
+) -> Result<Json<Vec<Patient>>, crate::error::AppError> {
+    let patients = db
+        .select("patients")
+        .await
+        .map_err(crate::error::AppError::from)?;
+    Ok(Json(patients))
 }
 
 /// Handler to get a single patient by ID

@@ -23,6 +23,29 @@ pub fn SofaForm() -> impl IntoView {
     let (result, set_result) = create_signal(Option::<SOFAResponse>::None);
     let (loading, set_loading) = create_signal(false);
 
+    // Smart Pre-fill Logic
+    create_effect(move |_| {
+        if let Some(id) = patient_id() {
+            let id_clone = id.clone();
+            spawn_local(async move {
+                // Fetch History for Glasgow Pre-fill
+                let hist_url = format!("/api/patients/{}/history", id_clone);
+                if let Ok(res) = Request::get(&hist_url).send().await {
+                    #[derive(serde::Deserialize)]
+                    struct PartialHistory {
+                        glasgow: Vec<crate::models::glasgow::GlasgowAssessment>,
+                    }
+
+                    if let Ok(history) = res.json::<PartialHistory>().await {
+                        if let Some(latest) = history.glasgow.first() {
+                            set_glasgow.set(latest.score as u8);
+                        }
+                    }
+                }
+            });
+        }
+    });
+
     // Calculate function
     let calculate = move |_| {
         set_loading.set(true);

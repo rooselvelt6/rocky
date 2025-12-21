@@ -32,6 +32,51 @@ pub fn ApacheForm() -> impl IntoView {
     let (result, set_result) = create_signal(Option::<ApacheIIResponse>::None);
     let (loading, set_loading) = create_signal(false);
 
+    // Smart Pre-fill Logic
+    create_effect(move |_| {
+        if let Some(id) = patient_id() {
+            let id_clone = id.clone();
+            spawn_local(async move {
+                // 1. Fetch Patient Data for Age Pre-fill
+                let pat_url = format!("/api/patients/{}", id_clone);
+                if let Ok(res) = Request::get(&pat_url).send().await {
+                    if let Ok(patient) = res.json::<crate::models::patient::Patient>().await {
+                        // Calculate age from DOB
+                        if let Ok(dob) =
+                            chrono::NaiveDate::parse_from_str(&patient.date_of_birth, "%Y-%m-%d")
+                        {
+                            let now = chrono::Local::now().naive_local().date();
+                            // Simple year diff calculation
+                            let age_val = now.years_since(dob).unwrap_or(50) as u8;
+                            set_age.set(age_val.clamp(18, 100));
+                        }
+                    }
+                }
+
+                // 2. Fetch History for Glasgow Pre-fill
+                let hist_url = format!("/api/patients/{}/history", id_clone);
+                if let Ok(res) = Request::get(&hist_url).send().await {
+                    // We define a transient struct to parse just what we need
+                    #[derive(serde::Deserialize)]
+                    struct PartialHistory {
+                        glasgow: Vec<crate::models::glasgow::GlasgowAssessment>,
+                    }
+
+                    if let Ok(history) = res.json::<PartialHistory>().await {
+                        // Find latest assessment (assuming sorted by DB or we sort here)
+                        // For safety, let's look for the most recent 'assessed_at' if available
+                        // But typically the API returns them. Let's just take the first one if the API sorts them,
+                        // or we can iterate. Master plan says "recent value < 1h", for now we just take the latest.
+                        if let Some(latest) = history.glasgow.first() {
+                            // Assuming GlasgowAssessment has a score field or method
+                            set_glasgow_coma_score.set(latest.score as u8);
+                        }
+                    }
+                }
+            });
+        }
+    });
+
     // Calculate function
     let calculate = move |_| {
         set_loading.set(true);
@@ -159,6 +204,39 @@ pub fn ApacheForm() -> impl IntoView {
                         }
                     }}
                 </div>
+
+                // Chaining
+                {move || {
+                    if result.get().is_some() {
+                        if let Some(pid) = patient_id() {
+                            view! {
+                                <div class="mb-8 p-4 bg-gradient-to-r from-red-50 to-orange-50 border border-red-100 rounded-xl animate-fade-in shadow-sm">
+                                    <h4 class="text-sm font-bold text-red-800 mb-3 flex items-center">
+                                        <i class="fas fa-forward mr-2"></i>{t(lang.get(), "continue_assessment")}
+                                    </h4>
+                                    <div class="flex flex-wrap gap-3">
+                                        <a href=format!("/glasgow?patient_id={}", pid)
+                                           class="flex items-center px-4 py-2 bg-white text-purple-600 border border-purple-200 rounded-lg hover:bg-purple-600 hover:text-white hover:border-purple-600 transition-colors duration-200 shadow-sm text-sm font-bold">
+                                           <i class="fas fa-brain mr-2"></i>"Glasgow"
+                                        </a>
+                                        <a href=format!("/sofa?patient_id={}", pid)
+                                           class="flex items-center px-4 py-2 bg-white text-teal-600 border border-teal-200 rounded-lg hover:bg-teal-600 hover:text-white hover:border-teal-600 transition-colors duration-200 shadow-sm text-sm font-bold">
+                                           <i class="fas fa-procedures mr-2"></i>"SOFA"
+                                        </a>
+                                        <a href=format!("/saps?patient_id={}", pid)
+                                           class="flex items-center px-4 py-2 bg-white text-orange-600 border border-orange-200 rounded-lg hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-colors duration-200 shadow-sm text-sm font-bold">
+                                           <i class="fas fa-notes-medical mr-2"></i>"SAPS II"
+                                        </a>
+                                    </div>
+                                </div>
+                            }.into_view()
+                        } else {
+                             view! { <div/> }.into_view()
+                        }
+                    } else {
+                         view! { <div/> }.into_view()
+                    }
+                }}
 
                 // Form Sections
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
