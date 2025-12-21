@@ -8,3 +8,4 @@ pub mod patient_form;
 pub mod patient_list;
 pub mod saps_form;
 pub mod sofa_form;
+pub mod ward_view;

@@ -6,12 +6,15 @@ use crate::frontend::patient_form::PatientForm;
 use crate::frontend::patient_list::PatientList;
 use crate::frontend::saps_form::SapsForm;
 use crate::frontend::sofa_form::SofaForm;
+use crate::frontend::ward_view::WardView;
 use leptos::*;
 use leptos_router::*;
 
 /// Main application component
 #[component]
 pub fn App() -> impl IntoView {
+    // ... existing code ...
+
     // Initialize language signal
     let (lang, set_lang) = create_signal(Language::default());
 
@@ -54,6 +57,10 @@ pub fn App() -> impl IntoView {
                                     </A>
                                     <A href="/saps" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors">
                                         "SAPS II"
+                                    </A>
+                                    <A href="/ward" class="px-3 py-2 rounded-md text-sm font-medium bg-indigo-800 text-green-300 hover:bg-indigo-700 hover:text-green-200 transition-colors border border-green-500/30 flex items-center gap-2">
+                                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                        "Ward Monitor"
                                     </A>
                                 </div>
                             </div>
@@ -107,6 +114,7 @@ pub fn App() -> impl IntoView {
                         <Route path="/apache" view=ApacheForm/>
                         <Route path="/sofa" view=SofaForm/>
                         <Route path="/saps" view=SapsForm/>
+                        <Route path="/ward" view=WardView/>
                     </Routes>
                 </main>
 
