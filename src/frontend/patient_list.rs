@@ -6,6 +6,29 @@ use leptos::*;
 pub fn PatientList() -> impl IntoView {
     let lang = use_i18n();
     let (patients, set_patients) = create_signal(Vec::<Patient>::new());
+    let (search_query, set_search_query) = create_signal(String::new());
+
+    // Filtered patients based on search query
+    let filtered_patients = move || {
+        let query = search_query.get().to_lowercase();
+        if query.is_empty() {
+            patients.get()
+        } else {
+            patients
+                .get()
+                .into_iter()
+                .filter(|p| {
+                    p.first_name.to_lowercase().contains(&query)
+                        || p.last_name.to_lowercase().contains(&query)
+                        || p.principal_diagnosis.to_lowercase().contains(&query)
+                        || p.id
+                            .as_ref()
+                            .and_then(|id| Some(id.to_string().to_lowercase().contains(&query)))
+                            .unwrap_or(false)
+                })
+                .collect()
+        }
+    };
 
     // Fetch patients on mount
     create_effect(move |_| {
@@ -43,10 +66,46 @@ pub fn PatientList() -> impl IntoView {
                 </a>
             </div>
 
+            // Search Box
+            <div class="mb-6">
+                <div class="relative max-w-md">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i class="fas fa-search text-gray-400"></i>
+                    </div>
+                    <input
+                        type="text"
+                        placeholder="Buscar por nombre, apellido, diagnóstico o ID..."
+                        class="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                        on:input=move |ev| {
+                            set_search_query.set(event_target_value(&ev));
+                        }
+                        prop:value=move || search_query.get()
+                    />
+                </div>
+                {move || {
+                    let count = filtered_patients().len();
+                    let total = patients.get().len();
+                    if search_query.get().is_empty() {
+                        view! {
+                            <p class="text-sm text-gray-500 mt-2">
+                                {format!("Mostrando {} pacientes", total)}
+                            </p>
+                        }.into_view()
+                    } else {
+                        view! {
+                            <p class="text-sm text-gray-600 mt-2">
+                                <span class="font-semibold">{count}</span>
+                                {format!(" de {} pacientes", total)}
+                            </p>
+                        }.into_view()
+                    }
+                }}
+            </div>
+
             // Ward View / Grid View
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <For
-                    each=move || patients.get()
+                    each=move || filtered_patients()
                     key=|p| p.id.clone()
                     children=move |patient| {
                         let id = patient.id.clone();
