@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 #[cfg(feature = "ssr")]
-use surrealdb::sql::Thing;
+use surrealdb::RecordId;
 
 #[cfg(not(feature = "ssr"))]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash, Default)]
@@ -40,6 +40,9 @@ pub enum AdmissionType {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Patient {
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[cfg(feature = "ssr")]
+    pub id: Option<RecordId>,
+    #[cfg(not(feature = "ssr"))]
     pub id: Option<Thing>,
     pub first_name: String,
     pub last_name: String,

@@ -33,10 +33,10 @@ tower-http = { version = "0.6.7", features = ["full", "cors"], optional = true }
 tracing = { version = "0.1.41", optional = true }
 tracing-subscriber = { version = "0.3.20", features = ["env-filter", "fmt"], optional = true }
 leptos_axum = { version = "0.6", optional = true }
-surrealdb = { version = "1.5", optional = true }
+surrealdb = { version = "2.4", optional = true }
 chrono = { version = "0.4", features = ["serde"], optional = true }
 dotenvy = { version = "0.15", optional = true }
-tower_governor = { version = "0.4.3", optional = true }
+# tower_governor = { version = "0.4.3", optional = true } # Incompatible with Axum 0.8
 
 [features]
 default = ["ssr"]
@@ -50,10 +50,11 @@ ssr = [
     "dep:tracing-subscriber",
     "dep:leptos_axum",
     "dep:surrealdb",
-    "surrealdb/default",
+    "surrealdb/protocol-ws", 
+    "surrealdb/protocol-http",
     "dep:chrono",
     "dep:dotenvy",
-    "dep:tower_governor",
+    # "dep:tower_governor",
     "leptos/ssr",
     "leptos_meta/ssr",
     "leptos_router/ssr",

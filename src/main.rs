@@ -6,10 +6,11 @@ use axum::{
     routing::{get, post},
     Json, Router,
 };
-use std::sync::Arc;
+// use std::sync::Arc;
 use surrealdb::engine::remote::ws::Client;
-use surrealdb::sql::thing;
-use surrealdb::Surreal;
+// use surrealdb::engine::any::Any;
+// use surrealdb::sql::thing; // Deprecated/Incompatible with select in 2.x
+use surrealdb::{RecordId, Surreal};
 use tokio::net::TcpListener;
 use tower_http::services::{ServeDir, ServeFile};
 use uci::uci::scale::apache::{ApacheIIRequest, ApacheIIResponse};
@@ -48,14 +49,19 @@ async fn main() {
         std::process::exit(1);
     }
 
+    println!("DEBUG: Starting server initialization...");
+
     // Connect to SurrealDB
+    println!("DEBUG: Connecting to DB...");
     let db = match db::connect().await {
         Ok(db) => {
             tracing::info!("✅ Database connection established");
+            println!("DEBUG: Login success!");
             db
         }
         Err(e) => {
             eprintln!("❌ Failed to connect to SurrealDB: {}", e);
+            println!("DEBUG: Login failed: {}", e);
             eprintln!("   Make sure SurrealDB is running: .\\surreal.exe start --user root --pass root file:uci.db");
             std::process::exit(1);
         }
@@ -155,9 +161,12 @@ async fn check_24h_restriction<T: serde::de::DeserializeOwned>(
         table_name
     );
 
+    let mut params = std::collections::BTreeMap::new();
+    params.insert("id".to_string(), patient_id.to_string());
+
     let mut resp = db
         .query(&sql)
-        .bind(("id", patient_id))
+        .bind(params)
         .await
         .map_err(|e| format!("Database query failed: {}", e))?;
 
@@ -187,8 +196,11 @@ async fn calculate_glasgow(
                 recommendation: recommendation.clone(),
             };
 
-            // Parse patient_id (Option<String> -> Option<Thing>)
-            let patient_id_thing = payload.patient_id.as_ref().and_then(|id| thing(id).ok());
+            // Parse patient_id (Option<String> -> Option<RecordId>)
+            let patient_id_thing = payload
+                .patient_id
+                .as_ref()
+                .and_then(|id| id.parse::<RecordId>().ok());
 
             // If patient_id provided, check 24-hour restriction
             if let Some(p_id) = payload.patient_id.as_ref() {
@@ -217,9 +229,9 @@ async fn calculate_glasgow(
 
             match db.create("glasgow_assessments").content(assessment).await {
                 Ok(saved) => {
-                    let saved: Vec<GlasgowAssessment> = saved; // Explicit type annotation
-                                                               // saved is a Vec<GlasgowAssessment> because we created on a table
-                    if let Some(saved_assessment) = saved.first() {
+                    // SurrealDB 2.x returns Option<T> for single create
+                    let saved: Option<GlasgowAssessment> = saved;
+                    if let Some(saved_assessment) = saved {
                         tracing::info!("✅ Saved assessment with ID: {:?}", saved_assessment.id);
                     }
                 }
@@ -279,7 +291,10 @@ async fn calculate_apache(
             };
 
             // Parse patient_id
-            let patient_id_thing = payload.patient_id.as_ref().and_then(|id| thing(id).ok());
+            let patient_id_thing = payload
+                .patient_id
+                .as_ref()
+                .and_then(|id| id.parse::<RecordId>().ok());
 
             // Check 24-hour restriction
             if let Some(p_id) = payload.patient_id.as_ref() {
@@ -321,8 +336,9 @@ async fn calculate_apache(
 
             match db.create("apache_assessments").content(assessment).await {
                 Ok(saved) => {
-                    let saved: Vec<ApacheAssessment> = saved;
-                    if let Some(saved_assessment) = saved.first() {
+                    // SurrealDB 2.x returns Option<T>
+                    let saved: Option<ApacheAssessment> = saved;
+                    if let Some(saved_assessment) = saved {
                         tracing::info!(
                             "✅ Saved APACHE II assessment with ID: {:?}",
                             saved_assessment.id
@@ -362,7 +378,10 @@ async fn calculate_sofa(
             };
 
             // Parse patient_id
-            let patient_id_thing = payload.patient_id.as_ref().and_then(|id| thing(id).ok());
+            let patient_id_thing = payload
+                .patient_id
+                .as_ref()
+                .and_then(|id| id.parse::<RecordId>().ok());
 
             // Check 24-hour restriction
             if let Some(p_id) = payload.patient_id.as_ref() {
@@ -393,8 +412,8 @@ async fn calculate_sofa(
 
             match db.create("sofa_assessments").content(assessment).await {
                 Ok(saved) => {
-                    let saved: Vec<SofaAssessment> = saved;
-                    if let Some(saved_assessment) = saved.first() {
+                    let saved: Option<SofaAssessment> = saved;
+                    if let Some(saved_assessment) = saved {
                         tracing::info!(
                             "✅ Saved SOFA assessment with ID: {:?}",
                             saved_assessment.id
@@ -457,7 +476,10 @@ async fn calculate_saps(
             };
 
             // Parse patient_id
-            let patient_id_thing = payload.patient_id.as_ref().and_then(|id| thing(id).ok());
+            let patient_id_thing = payload
+                .patient_id
+                .as_ref()
+                .and_then(|id| id.parse::<RecordId>().ok());
 
             // Check 24-hour restriction
             if let Some(p_id) = payload.patient_id.as_ref() {
@@ -499,8 +521,8 @@ async fn calculate_saps(
 
             match db.create("saps_assessments").content(assessment).await {
                 Ok(saved) => {
-                    let saved: Vec<SapsAssessment> = saved;
-                    if let Some(saved_assessment) = saved.first() {
+                    let saved: Option<SapsAssessment> = saved;
+                    if let Some(saved_assessment) = saved {
                         tracing::info!(
                             "✅ Saved SAPS II assessment with ID: {:?}",
                             saved_assessment.id
@@ -551,8 +573,8 @@ async fn create_patient(
 
     match db.create("patients").content(patient).await {
         Ok(saved) => {
-            let saved: Vec<Patient> = saved;
-            Json(saved.into_iter().next())
+            // saved is Option<Patient>
+            Json(saved)
         }
         Err(e) => {
             tracing::error!("❌ Failed to create patient: {}", e);
@@ -577,7 +599,7 @@ async fn get_patient(
     State(db): State<Surreal<Client>>,
     Path(id): Path<String>,
 ) -> Json<Option<Patient>> {
-    let id_thing = thing(&id).ok();
+    let id_thing = id.parse::<RecordId>().ok();
     if let Some(thing) = id_thing {
         match db.select(thing).await {
             Ok(patient) => Json(patient),
@@ -597,7 +619,7 @@ async fn update_patient(
     Path(id): Path<String>,
     Json(payload): Json<Patient>,
 ) -> Json<Option<Patient>> {
-    let id_thing = thing(&id).ok();
+    let id_thing = id.parse::<RecordId>().ok();
     if let Some(thing) = id_thing {
         // We use .update to replace or merge. .content replaces.
         match db.update(thing).content(payload).await {
@@ -614,7 +636,7 @@ async fn update_patient(
 
 /// Handler to delete a patient
 async fn delete_patient(State(db): State<Surreal<Client>>, Path(id): Path<String>) -> StatusCode {
-    let id_thing = thing(&id).ok();
+    let id_thing = id.parse::<RecordId>().ok();
     if let Some(thing) = id_thing {
         match db.delete::<Option<Patient>>(thing).await {
             Ok(_) => StatusCode::NO_CONTENT,
@@ -634,7 +656,7 @@ async fn check_assessment_eligibility(
     Path((patient_id, scale_type)): Path<(String, String)>,
 ) -> Json<validation::ValidationResult> {
     // Validate patient_id format
-    if thing(&patient_id).is_err() {
+    if patient_id.parse::<RecordId>().is_err() {
         return Json(validation::ValidationResult {
             can_assess: false,
             hours_since_last: None,
@@ -665,7 +687,10 @@ async fn check_assessment_eligibility(
         table_name
     );
 
-    let mut resp = match db.query(&sql).bind(("id", &patient_id)).await {
+    let mut params = std::collections::BTreeMap::new();
+    params.insert("id".to_string(), patient_id.to_string());
+
+    let mut resp = match db.query(&sql).bind(params).await {
         Ok(r) => r,
         Err(_) => {
             return Json(validation::ValidationResult {
@@ -703,7 +728,7 @@ async fn get_patient_history(
     Path(id): Path<String>,
 ) -> Json<PatientHistoryResponse> {
     // Validate ID format first
-    if thing(&id).is_err() {
+    if id.parse::<RecordId>().is_err() {
         return Json(PatientHistoryResponse {
             glasgow: vec![],
             apache: vec![],
@@ -728,7 +753,10 @@ async fn get_patient_history(
         sql: &str,
         id: &str,
     ) -> Vec<T> {
-        let mut response = match db.query(sql).bind(("id", id)).await {
+        let mut params = std::collections::BTreeMap::new();
+        params.insert("id".to_string(), id.to_string());
+
+        let mut response = match db.query(sql).bind(params).await {
             Ok(r) => r,
             Err(e) => {
                 tracing::error!("Query failed: {}", e);

@@ -8,4 +8,4 @@ Write-Host ""
 Write-Host "Presiona Ctrl+C para detener el servidor" -ForegroundColor Gray
 Write-Host ""
 
-.\surreal.exe start --log info --user root --pass root file:uci.db
+surreal start --log info --user root --pass root file:uci.db

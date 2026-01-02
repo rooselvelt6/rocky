@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 #[cfg(feature = "ssr")]
-use surrealdb::sql::Thing;
+use surrealdb::RecordId;
 
 #[cfg(not(feature = "ssr"))]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash, Default)]
@@ -26,9 +26,15 @@ impl ToString for Thing {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SapsAssessment {
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[cfg(feature = "ssr")]
+    pub id: Option<RecordId>,
+    #[cfg(not(feature = "ssr"))]
     pub id: Option<Thing>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub patient_id: Option<Thing>, // Link to Patient record
+    #[cfg(feature = "ssr")]
+    pub patient_id: Option<RecordId>, // Link to Patient record
+    #[cfg(not(feature = "ssr"))]
+    pub patient_id: Option<Thing>,
 
     // SAPS II parameters
     pub age: u8,
