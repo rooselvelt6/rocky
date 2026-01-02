@@ -78,6 +78,48 @@ pub fn check_assessment_eligibility(last_assessment_time: Option<&str>) -> Valid
     }
 }
 
+/// Validates if vital signs are within compatible physiological ranges
+pub fn validate_vitals(
+    temp: Option<f64>,
+    mean_bp: Option<f64>,
+    heart_rate: Option<f64>,
+    resp_rate: Option<f64>,
+) -> Result<(), String> {
+    if let Some(t) = temp {
+        if !(15.0..=45.0).contains(&t) {
+            return Err(format!(
+                "Temperature {:.1}°C is physiologically unlikely (15-45°C)",
+                t
+            ));
+        }
+    }
+    if let Some(bp) = mean_bp {
+        if !(10.0..=300.0).contains(&bp) {
+            return Err(format!(
+                "Mean BP {:.0} mmHg is physiologically unlikely (10-300 mmHg)",
+                bp
+            ));
+        }
+    }
+    if let Some(hr) = heart_rate {
+        if !(0.0..=300.0).contains(&hr) {
+            return Err(format!(
+                "Heart Rate {:.0} bpm is physiologically unlikely (0-300 bpm)",
+                hr
+            ));
+        }
+    }
+    if let Some(rr) = resp_rate {
+        if !(0.0..=100.0).contains(&rr) {
+            return Err(format!(
+                "Respiratory Rate {:.0} bpm is physiologically unlikely (0-100 bpm)",
+                rr
+            ));
+        }
+    }
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

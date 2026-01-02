@@ -182,6 +182,17 @@ pub fn SapsForm() -> impl IntoView {
                                         </div>
                                         <div class="font-semibold text-sm">{data.recommendation}</div>
                                     </div>
+                                    <div class="px-4 pb-4 flex justify-end no-print w-full col-span-1 md:col-span-3">
+                                        <button
+                                            class="flex items-center space-x-2 bg-white/20 hover:bg-white/30 text-white font-semibold py-2 px-4 rounded-lg transition-colors border border-white/30 backdrop-blur-sm"
+                                            on:click=move |_| {
+                                                let _ = web_sys::window().unwrap().print();
+                                            }
+                                        >
+                                            <i class="fas fa-print"></i>
+                                            <span>"Print Report"</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         }.into_view()

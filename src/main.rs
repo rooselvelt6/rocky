@@ -6,6 +6,7 @@ use axum::{
     routing::{get, post},
     Json, Router,
 };
+use std::sync::Arc;
 use surrealdb::engine::remote::ws::Client;
 use surrealdb::sql::thing;
 use surrealdb::Surreal;
@@ -17,11 +18,14 @@ use uci::uci::scale::saps::{SAPSIIRequest, SAPSIIResponse};
 use uci::uci::scale::sofa::{SOFARequest, SOFAResponse};
 
 // Import our new modules
+mod auth;
 mod db;
+mod error;
 // mod models; // Moved to lib.rs
 
 use uci::models::apache::ApacheAssessment;
 use uci::models::glasgow::GlasgowAssessment;
+use uci::models::history::PatientHistoryResponse;
 use uci::models::patient::Patient;
 use uci::models::saps::SapsAssessment;
 use uci::models::sofa::SofaAssessment;
@@ -29,9 +33,9 @@ use uci::models::sofa::SofaAssessment;
 #[cfg(feature = "ssr")]
 use uci::services::validation;
 
-#[cfg(feature = "ssr")]
-use tower_governor::{governor::GovernorConfigBuilder, GovernorLayer};
-
+// Rate limiting desactivado temporalmente por incompatibilidad con Axum 0.8
+// #[cfg(feature = "ssr")]
+// use tower_governor::{governor::GovernorConfigBuilder, GovernorLayer};
 #[tokio::main]
 async fn main() {
     // Initialize tracing
@@ -60,19 +64,22 @@ async fn main() {
     use tower_http::compression::CompressionLayer;
     use tower_http::cors::CorsLayer;
 
-    // Rate Limiting Configuration (100ms per IP approx 10 reqs/sec burst)
-    let governor_conf = Box::new(
+    // ⚠️ Rate Limiting Configuration
+    // TODO: tower_governor 0.4.3 tiene incompatibilidad con Axum 0.8
+    // Necesita actualizar a tower_governor 0.5+ cuando esté disponible
+    // Ver: https://github.com/benwis/tower-governor/issues
+    /*
+    let governor_conf = Arc::new(
         GovernorConfigBuilder::default()
             .per_second(10)
             .burst_size(20)
             .finish()
-            .unwrap(),
+            .expect("Failed to create rate limiter configuration"),
     );
+    */
 
     let app = Router::new()
-        .layer(GovernorLayer {
-            config: Box::leak(governor_conf),
-        })
+        // .layer(GovernorLayer { config: governor_conf })
         .layer(CompressionLayer::new()) // Auto-compress responses (Gzip/Brotli/Deflate)
         // API Endpoints
         .route("/api/glasgow", post(calculate_glasgow))
@@ -93,7 +100,25 @@ async fn main() {
         .fallback_service(
             ServeDir::new("dist").not_found_service(ServeFile::new("dist/index.html")),
         )
-        .layer(CorsLayer::permissive()) // Enable CORS for all origins
+        .layer(
+            CorsLayer::new()
+                .allow_origin([
+                    "http://localhost:3000".parse().unwrap(),
+                    "http://127.0.0.1:3000".parse().unwrap(),
+                    // Para producción, agregar el dominio real:
+                    // "https://uci.hospital.com".parse().unwrap(),
+                ])
+                .allow_methods([
+                    axum::http::Method::GET,
+                    axum::http::Method::POST,
+                    axum::http::Method::PUT,
+                    axum::http::Method::DELETE,
+                ])
+                .allow_headers([
+                    axum::http::header::AUTHORIZATION,
+                    axum::http::header::CONTENT_TYPE,
+                ]),
+        )
         .with_state(db); // Add database to app state
 
     println!("¡Servidor Axum arrancando...");
@@ -220,9 +245,31 @@ async fn calculate_apache(
 ) -> Json<ApacheIIResponse> {
     match payload.to_apache() {
         Ok(apache) => {
+            // Validate physiological ranges
+            if let Err(e) = uci::services::validation::validate_vitals(
+                Some(payload.temperature as f64),
+                Some(payload.mean_arterial_pressure as f64),
+                Some(payload.heart_rate as f64),
+                Some(payload.respiratory_rate as f64),
+            ) {
+                return Json(ApacheIIResponse {
+                    score: 0,
+                    predicted_mortality: 0.0,
+                    severity: "Error".to_string(),
+                    recommendation: e,
+                });
+            }
+
             let score = apache.calculate_score();
             let mortality = apache.predicted_mortality();
-            let (severity, recommendation) = apache.severity();
+            let (severity, base_recommendation) = apache.severity();
+
+            // Smart Clinical Analysis
+            let smart_analysis = uci::services::clinical::analyze_mortality(mortality as f64);
+            let recommendation = format!(
+                "{}\n\n[AI INSIGHT]: {}",
+                base_recommendation, smart_analysis
+            );
 
             let response = ApacheIIResponse {
                 score,
@@ -376,9 +423,31 @@ async fn calculate_saps(
 ) -> Json<SAPSIIResponse> {
     match payload.to_saps() {
         Ok(saps) => {
+            // Validate physiological ranges
+            if let Err(e) = uci::services::validation::validate_vitals(
+                Some(payload.temperature as f64),
+                Some(payload.systolic_bp as f64), // SAPS uses systolic, validating as mean for now or just checking general range
+                Some(payload.heart_rate as f64),
+                None, // SAPS doesn't use RR in the same way or optional
+            ) {
+                return Json(SAPSIIResponse {
+                    score: 0,
+                    predicted_mortality: 0.0,
+                    severity: "Error".to_string(),
+                    recommendation: e,
+                });
+            }
+
             let score = saps.calculate_score();
             let mortality = saps.predicted_mortality();
-            let (severity, recommendation) = saps.interpretation();
+            let (severity, base_recommendation) = saps.interpretation();
+
+            // Smart Clinical Analysis
+            let smart_analysis = uci::services::clinical::analyze_mortality(mortality as f64);
+            let recommendation = format!(
+                "{}\n\n[AI INSIGHT]: {}",
+                base_recommendation, smart_analysis
+            );
 
             let response = SAPSIIResponse {
                 score,
@@ -626,13 +695,7 @@ async fn check_assessment_eligibility(
     })
 }
 
-#[derive(serde::Serialize)]
-struct PatientHistoryResponse {
-    glasgow: Vec<GlasgowAssessment>,
-    apache: Vec<ApacheAssessment>,
-    sofa: Vec<SofaAssessment>,
-    saps: Vec<SapsAssessment>,
-}
+// Used from uci::models::history::PatientHistoryResponse
 
 /// Handler to get patient history (all assessments)
 async fn get_patient_history(

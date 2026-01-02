@@ -1,6 +1,7 @@
 // Frontend components module
 pub mod apache_form;
 pub mod app;
+pub mod components;
 pub mod glasgow_form;
 pub mod i18n;
 pub mod patient_detail;

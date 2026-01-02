@@ -143,8 +143,43 @@ pub fn ApacheForm() -> impl IntoView {
                             view! { <i class="fas fa-calculator mr-2"></i> }.into_view()
                         }}
                         {move || if loading.get() { t(lang.get(), "calculating") } else { t(lang.get(), "calculate_apache") }}
-                    </button>
+                    </button> // End of buttons div
                 </div>
+
+                // qSOFA Alert
+                {move || {
+                    let gcs = glasgow_coma_score.get();
+                    let rr = respiratory_rate.get();
+                    // qSOFA: RR >= 22, GCS < 15, SBP <= 100.
+                    // We use MAP <= 75 as proxy for SBP <= 100 if SBP is missing, or just rely on RR and GCS.
+                    // For safety, let's only warn if RR and GCS are definitely abnormal.
+
+                    let high_risk = (if rr >= 22 {1} else {0}) +
+                                    (if gcs < 15 {1} else {0}) +
+                                    (if mean_arterial_pressure.get() <= 70 {1} else {0}) >= 2;
+
+                    if high_risk {
+                        view! {
+                             <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg shadow-sm animate-pulse-slow">
+                                <div class="flex items-start">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-exclamation-triangle text-red-500 text-xl mt-1"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <h3 class="text-sm font-bold text-red-800 uppercase tracking-wide">
+                                            {move || t(lang.get(), "sepsis_alert")}
+                                        </h3>
+                                        <p class="text-sm text-red-700 mt-1">
+                                            "High risk of sepsis (qSOFA ≥ 2)"
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        }.into_view()
+                    } else {
+                        view! { <div/> }.into_view()
+                    }
+                }}
 
                 // Results (Top)
                 <div class="min-h-[100px] mb-8">
@@ -227,6 +262,14 @@ pub fn ApacheForm() -> impl IntoView {
                                            class="flex items-center px-4 py-2 bg-white text-orange-600 border border-orange-200 rounded-lg hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-colors duration-200 shadow-sm text-sm font-bold">
                                            <i class="fas fa-notes-medical mr-2"></i>"SAPS II"
                                         </a>
+                                        <button
+                                            class="flex items-center px-4 py-2 bg-white text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-600 hover:text-white hover:border-gray-600 transition-colors duration-200 shadow-sm text-sm font-bold no-print"
+                                            on:click=move |_| {
+                                                let _ = web_sys::window().unwrap().print();
+                                            }
+                                        >
+                                            <i class="fas fa-print mr-2"></i>"Print"
+                                        </button>
                                     </div>
                                 </div>
                             }.into_view()
