@@ -17,8 +17,6 @@ pub async fn connect() -> Result<Surreal<Client>, Error> {
     let db_db = std::env::var("DB_DB").unwrap_or_else(|_| "uci".to_string());
 
     // Connect to SurrealDB instance using explicit Ws client
-    // In 2.x, Surreal::init() returns Surreal<Any>.
-    // Surreal::new::<Ws>(address) returns Surreal<Client> (where Client=WsClient).
     let db = Surreal::new::<Ws>(db_host).await?;
 
     // Sign in with credentials
