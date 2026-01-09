@@ -41,9 +41,20 @@ pub fn SapsForm() -> impl IntoView {
         if let Some(id) = patient_id() {
             let id_clone = id.clone();
             spawn_local(async move {
+                let token = window()
+                    .local_storage()
+                    .ok()
+                    .flatten()
+                    .and_then(|s| s.get_item("uci_token").ok().flatten());
+
                 // 1. Fetch Patient Data for Age Pre-fill
                 let pat_url = format!("/api/patients/{}", id_clone);
-                if let Ok(res) = Request::get(&pat_url).send().await {
+                let mut pat_req = Request::get(&pat_url);
+                if let Some(t) = &token {
+                    pat_req = pat_req.header("Authorization", &format!("Bearer {}", t));
+                }
+
+                if let Ok(res) = pat_req.send().await {
                     if let Ok(patient) = res.json::<crate::models::patient::Patient>().await {
                         if let Ok(dob) =
                             chrono::NaiveDate::parse_from_str(&patient.date_of_birth, "%Y-%m-%d")
@@ -57,7 +68,12 @@ pub fn SapsForm() -> impl IntoView {
 
                 // 2. Fetch History for Glasgow Pre-fill
                 let hist_url = format!("/api/patients/{}/history", id_clone);
-                if let Ok(res) = Request::get(&hist_url).send().await {
+                let mut hist_req = Request::get(&hist_url);
+                if let Some(t) = &token {
+                    hist_req = hist_req.header("Authorization", &format!("Bearer {}", t));
+                }
+
+                if let Ok(res) = hist_req.send().await {
                     #[derive(serde::Deserialize)]
                     struct PartialHistory {
                         glasgow: Vec<crate::models::glasgow::GlasgowAssessment>,
@@ -100,8 +116,19 @@ pub fn SapsForm() -> impl IntoView {
         };
 
         spawn_local(async move {
-            let response = Request::post("/api/saps")
-                .header("Content-Type", "application/json")
+            let token = window()
+                .local_storage()
+                .ok()
+                .flatten()
+                .and_then(|s| s.get_item("uci_token").ok().flatten());
+
+            let mut req = Request::post("/api/saps").header("Content-Type", "application/json");
+
+            if let Some(t) = token {
+                req = req.header("Authorization", &format!("Bearer {}", t));
+            }
+
+            let response = req
                 .body(serde_json::to_string(&request).unwrap())
                 .send()
                 .await;

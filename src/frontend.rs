@@ -4,6 +4,7 @@ pub mod app;
 pub mod components;
 pub mod glasgow_form;
 pub mod i18n;
+pub mod login;
 pub mod patient_detail;
 pub mod patient_form;
 pub mod patient_list;

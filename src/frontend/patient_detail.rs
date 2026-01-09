@@ -40,15 +40,23 @@ pub fn PatientDetail() -> impl IntoView {
     let (sofa_eligible, set_sofa_eligible) = create_signal(ValidationResult::default());
     let (saps_eligible, set_saps_eligible) = create_signal(ValidationResult::default());
 
-    // Fetch data
     create_effect(move |_| {
         let p_id = id();
         if !p_id.is_empty() {
             spawn_local(async move {
+                let token = window()
+                    .local_storage()
+                    .ok()
+                    .flatten()
+                    .and_then(|s| s.get_item("uci_token").ok().flatten());
+
                 // Fetch Patient
-                let p_res = reqwasm::http::Request::get(&format!("/api/patients/{}", p_id))
-                    .send()
-                    .await;
+                let mut p_req = reqwasm::http::Request::get(&format!("/api/patients/{}", p_id));
+                if let Some(t) = &token {
+                    p_req = p_req.header("Authorization", &format!("Bearer {}", t));
+                }
+                let p_res = p_req.send().await;
+
                 if let Ok(resp) = p_res {
                     if resp.ok() {
                         if let Ok(p) = resp.json::<Option<Patient>>().await {
@@ -58,9 +66,13 @@ pub fn PatientDetail() -> impl IntoView {
                 }
 
                 // Fetch History
-                let h_res = reqwasm::http::Request::get(&format!("/api/patients/{}/history", p_id))
-                    .send()
-                    .await;
+                let mut h_req =
+                    reqwasm::http::Request::get(&format!("/api/patients/{}/history", p_id));
+                if let Some(t) = &token {
+                    h_req = h_req.header("Authorization", &format!("Bearer {}", t));
+                }
+                let h_res = h_req.send().await;
+
                 if let Ok(resp) = h_res {
                     if resp.ok() {
                         if let Ok(h) = resp.json::<HistoryResponse>().await {
@@ -72,12 +84,14 @@ pub fn PatientDetail() -> impl IntoView {
                 // Fetch eligibility for each assessment type
                 let scales = vec!["glasgow", "apache", "sofa", "saps"];
                 for scale in scales {
-                    let elig_res = reqwasm::http::Request::get(&format!(
+                    let mut elig_req = reqwasm::http::Request::get(&format!(
                         "/api/patients/{}/can-assess/{}",
                         p_id, scale
-                    ))
-                    .send()
-                    .await;
+                    ));
+                    if let Some(t) = &token {
+                        elig_req = elig_req.header("Authorization", &format!("Bearer {}", t));
+                    }
+                    let elig_res = elig_req.send().await;
 
                     if let Ok(resp) = elig_res {
                         if resp.ok() {

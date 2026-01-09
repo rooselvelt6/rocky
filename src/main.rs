@@ -3,6 +3,7 @@
 use axum::{
     extract::{Path, State},
     http::StatusCode,
+    middleware::from_fn,
     routing::{get, post},
     Json, Router,
 };
@@ -19,6 +20,7 @@ use uci::uci::scale::saps::{SAPSIIRequest, SAPSIIResponse};
 use uci::uci::scale::sofa::{SOFARequest, SOFAResponse};
 
 // Import our new modules
+mod audit;
 mod auth;
 mod db;
 mod error;
@@ -102,6 +104,9 @@ async fn main() {
             "/api/patients/{id}/can-assess/{scale_type}",
             get(check_assessment_eligibility),
         )
+        .route("/api/export/patients", get(export_patients_csv))
+        .route("/api/login", post(login_handler))
+        .layer(from_fn(crate::auth::auth_middleware))
         // Servir archivos estáticos desde dist
         .fallback_service(
             ServeDir::new("dist").not_found_service(ServeFile::new("dist/index.html")),
@@ -548,22 +553,25 @@ async fn calculate_saps(
 /// Handler para crear un nuevo paciente
 async fn create_patient(
     State(db): State<Surreal<Client>>,
+    parts: axum::http::request::Parts,
     Json(payload): Json<Patient>,
 ) -> Json<Option<Patient>> {
+    let auth_user = parts.extensions.get::<crate::auth::AuthenticatedUser>();
+    let user_id = auth_user.map(|u| u.id.clone());
     // Ensure we are creating a new record with the payload data
     // We might want to overwrite the ID or other fields if they are passed,
     // but for now let's trust the payload or better yet, reconstruct it to ensure safety.
     // Ideally we'd have a CreatePatientRequest DTO, but reusing Patient for now.
 
     let patient = Patient::new(
-        payload.first_name,
-        payload.last_name,
+        validation::sanitize_input(&payload.first_name),
+        validation::sanitize_input(&payload.last_name),
         payload.date_of_birth,
         payload.gender,
         payload.hospital_admission_date,
         payload.uci_admission_date,
         payload.skin_color,
-        payload.principal_diagnosis,
+        validation::sanitize_input(&payload.principal_diagnosis),
         payload.mechanical_ventilation,
         payload.uci_history,
         payload.transfer_from_other_center,
@@ -572,8 +580,23 @@ async fn create_patient(
     );
 
     match db.create("patients").content(patient).await {
-        Ok(saved) => {
+        Ok(response) => {
             // saved is Option<Patient>
+            let saved: Option<Patient> = response;
+            if let Some(p) = &saved {
+                if let Some(id) = &p.id {
+                    let id_str = format!("{}", id);
+                    crate::audit::log_action(
+                        &db,
+                        "CREATE",
+                        "patients",
+                        &id_str,
+                        Some("Created new patient".to_string()),
+                        user_id,
+                    )
+                    .await;
+                }
+            }
             Json(saved)
         }
         Err(e) => {
@@ -616,14 +639,38 @@ async fn get_patient(
 /// Handler to update a patient
 async fn update_patient(
     State(db): State<Surreal<Client>>,
+    parts: axum::http::request::Parts,
     Path(id): Path<String>,
     Json(payload): Json<Patient>,
 ) -> Json<Option<Patient>> {
+    let auth_user = parts.extensions.get::<crate::auth::AuthenticatedUser>();
+    let user_id = auth_user.map(|u| u.id.clone());
     let id_thing = id.parse::<RecordId>().ok();
     if let Some(thing) = id_thing {
+        // Sanitize payload before update
+        let mut sanitized_payload = payload;
+        sanitized_payload.first_name = validation::sanitize_input(&sanitized_payload.first_name);
+        sanitized_payload.last_name = validation::sanitize_input(&sanitized_payload.last_name);
+        sanitized_payload.principal_diagnosis =
+            validation::sanitize_input(&sanitized_payload.principal_diagnosis);
+        // uci_history is bool, no sanitization needed
+        // sanitized_payload.uci_history = validation::sanitize_input(&sanitized_payload.uci_history);
+
         // We use .update to replace or merge. .content replaces.
-        match db.update(thing).content(payload).await {
-            Ok(saved) => Json(saved),
+        match db.update(thing).content(sanitized_payload).await {
+            Ok(response) => {
+                let saved: Option<Patient> = response;
+                crate::audit::log_action(
+                    &db,
+                    "UPDATE",
+                    "patients",
+                    &id,
+                    Some("Updated patient details".to_string()),
+                    user_id,
+                )
+                .await;
+                Json(saved)
+            }
             Err(e) => {
                 tracing::error!("❌ Failed to update patient {}: {}", id, e);
                 Json(None)
@@ -635,11 +682,28 @@ async fn update_patient(
 }
 
 /// Handler to delete a patient
-async fn delete_patient(State(db): State<Surreal<Client>>, Path(id): Path<String>) -> StatusCode {
+async fn delete_patient(
+    State(db): State<Surreal<Client>>,
+    parts: axum::http::request::Parts,
+    Path(id): Path<String>,
+) -> StatusCode {
+    let auth_user = parts.extensions.get::<crate::auth::AuthenticatedUser>();
+    let user_id = auth_user.map(|u| u.id.clone());
     let id_thing = id.parse::<RecordId>().ok();
     if let Some(thing) = id_thing {
         match db.delete::<Option<Patient>>(thing).await {
-            Ok(_) => StatusCode::NO_CONTENT,
+            Ok(_) => {
+                crate::audit::log_action(
+                    &db,
+                    "DELETE",
+                    "patients",
+                    &id,
+                    Some("Deleted patient record".to_string()),
+                    user_id,
+                )
+                .await;
+                StatusCode::NO_CONTENT
+            }
             Err(e) => {
                 tracing::error!("❌ Failed to delete patient {}: {}", id, e);
                 StatusCode::INTERNAL_SERVER_ERROR
@@ -779,4 +843,78 @@ async fn get_patient_history(
         sofa,
         saps,
     })
+}
+
+/// Handler to export patients to CSV
+async fn export_patients_csv(
+    State(db): State<Surreal<Client>>,
+) -> impl axum::response::IntoResponse {
+    match db.select("patients").await {
+        Ok(patients) => {
+            // patients is Vec<Patient>
+            match uci::services::export::patients_to_csv(patients) {
+                Ok(csv_data) => (
+                    [
+                        (axum::http::header::CONTENT_TYPE, "text/csv"),
+                        (
+                            axum::http::header::CONTENT_DISPOSITION,
+                            "attachment; filename=\"patients.csv\"",
+                        ),
+                    ],
+                    csv_data,
+                ),
+                Err(_) => (
+                    [
+                        (axum::http::header::CONTENT_TYPE, "text/plain"),
+                        (axum::http::header::CONTENT_DISPOSITION, "inline"),
+                    ],
+                    "Error generating CSV".to_string(),
+                ),
+            }
+        }
+        Err(_) => (
+            [
+                (axum::http::header::CONTENT_TYPE, "text/plain"),
+                (axum::http::header::CONTENT_DISPOSITION, "inline"),
+            ],
+            "Error fetching patients".to_string(),
+        ),
+    }
+}
+
+#[derive(serde::Deserialize)]
+pub struct LoginRequest {
+    pub username: String,
+    pub password: String,
+}
+
+#[derive(serde::Serialize)]
+pub struct LoginResponse {
+    pub token: String,
+    pub user: crate::auth::AuthenticatedUser,
+}
+
+/// Handler para el inicio de sesión de usuario
+async fn login_handler(
+    Json(payload): Json<LoginRequest>,
+) -> Result<Json<LoginResponse>, StatusCode> {
+    // Autenticación mock para desarrollo (admin/admin)
+    // En producción, esto debería validar contra la base de datos con contraseñas hasheadas.
+    if payload.username == "admin" && payload.password == "admin" {
+        let user_id = "user:admin";
+        let role = crate::auth::UserRole::Admin;
+
+        match crate::auth::generate_token(user_id, role.clone()) {
+            Ok(token) => Ok(Json(LoginResponse {
+                token,
+                user: crate::auth::AuthenticatedUser {
+                    id: user_id.to_string(),
+                    role,
+                },
+            })),
+            Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+        }
+    } else {
+        Err(StatusCode::UNAUTHORIZED)
+    }
 }

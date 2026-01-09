@@ -20,6 +20,12 @@ pub fn GlasgowForm() -> impl IntoView {
     let glasgow_resource = create_resource(
         move || (eye_value.get(), verbal_value.get(), motor_value.get()),
         move |(eye, verbal, motor)| async move {
+            let token = window()
+                .local_storage()
+                .ok()
+                .flatten()
+                .and_then(|s| s.get_item("uci_token").ok().flatten());
+
             let request = GlasgowRequest {
                 eye,
                 verbal,
@@ -28,8 +34,13 @@ pub fn GlasgowForm() -> impl IntoView {
             };
 
             // Call the API
-            let response = Request::post("/api/glasgow")
-                .header("Content-Type", "application/json")
+            let mut req = Request::post("/api/glasgow").header("Content-Type", "application/json");
+
+            if let Some(t) = token {
+                req = req.header("Authorization", &format!("Bearer {}", t));
+            }
+
+            let response = req
                 .body(serde_json::to_string(&request).unwrap())
                 .send()
                 .await;
@@ -61,8 +72,16 @@ pub fn GlasgowForm() -> impl IntoView {
                     on:click=move |_| {
                         if let Some(id) = patient_id() {
                             spawn_local(async move {
+                                let token = window().local_storage().ok().flatten()
+                                    .and_then(|s| s.get_item("uci_token").ok().flatten());
+
                                 let url = format!("/api/patients/{}/history", id);
-                                if let Ok(res) = Request::get(&url).send().await {
+                                let mut req = Request::get(&url);
+                                if let Some(t) = token {
+                                    req = req.header("Authorization", &format!("Bearer {}", t));
+                                }
+
+                                if let Ok(res) = req.send().await {
                                      #[derive(serde::Deserialize)]
                                      struct PartialHistory {
                                          glasgow: Vec<crate::models::glasgow::GlasgowAssessment>,

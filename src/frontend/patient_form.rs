@@ -86,8 +86,16 @@ pub fn PatientForm() -> impl IntoView {
 
         let navigate = navigate.clone();
         spawn_local(async move {
-            let client = reqwasm::http::Request::post("/api/patients")
-                .header("Content-Type", "application/json")
+            let mut req = reqwasm::http::Request::post("/api/patients")
+                .header("Content-Type", "application/json");
+
+            if let Some(storage) = window().local_storage().ok().flatten() {
+                if let Some(token) = storage.get_item("uci_token").ok().flatten() {
+                    req = req.header("Authorization", &format!("Bearer {}", token));
+                }
+            }
+
+            let client = req
                 .body(serde_json::to_string(&patient).unwrap())
                 .send()
                 .await;

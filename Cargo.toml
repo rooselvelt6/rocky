@@ -36,6 +36,9 @@ leptos_axum = { version = "0.6", optional = true }
 surrealdb = { version = "2.4", optional = true }
 chrono = { version = "0.4", features = ["serde"], optional = true }
 dotenvy = { version = "0.15", optional = true }
+ammonia = "4.1.2"
+csv = "1.4.0"
+jsonwebtoken = { version = "10.2.0", features = ["rust_crypto", "pem"], default-features = false }
 # tower_governor = { version = "0.4.3", optional = true } # Incompatible with Axum 0.8
 
 [features]

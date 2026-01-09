@@ -152,3 +152,8 @@ mod tests {
         assert_eq!(result.hours_since_last, None);
     }
 }
+
+/// Sanitizes input string to remove potentially malicious HTML/JS
+pub fn sanitize_input(input: &str) -> String {
+    ammonia::clean(input)
+}

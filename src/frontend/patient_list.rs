@@ -30,10 +30,17 @@ pub fn PatientList() -> impl IntoView {
         }
     };
 
-    // Fetch patients on mount
     create_effect(move |_| {
         spawn_local(async move {
-            let res = reqwasm::http::Request::get("/api/patients").send().await;
+            let mut req = reqwasm::http::Request::get("/api/patients");
+
+            if let Some(storage) = window().local_storage().ok().flatten() {
+                if let Some(token) = storage.get_item("uci_token").ok().flatten() {
+                    req = req.header("Authorization", &format!("Bearer {}", token));
+                }
+            }
+
+            let res = req.send().await;
 
             if let Ok(resp) = res {
                 if resp.ok() {
@@ -61,9 +68,14 @@ pub fn PatientList() -> impl IntoView {
                     <h2 class="text-3xl font-bold text-gray-800">{move || t(lang.get(), "patient_list")}</h2>
                     <p class="text-gray-500 mt-1">"Overview of all active patients"</p>
                 </div>
-                <a href="/register" class="bg-indigo-600 text-white px-6 py-3 rounded-xl hover:bg-indigo-700 shadow-md flex items-center transition-all hover:scale-105">
-                    <i class="fas fa-user-plus mr-2"></i> {move || t(lang.get(), "add_patient")}
-                </a>
+                <div class="flex gap-4">
+                    <a href="/api/export/patients" class="bg-green-600 text-white px-6 py-3 rounded-xl hover:bg-green-700 shadow-md flex items-center transition-all hover:scale-105">
+                        <i class="fas fa-file-csv mr-2"></i> {move || if lang.get() == crate::frontend::i18n::Language::En { "Export CSV" } else { "Exportar CSV" }}
+                    </a>
+                    <a href="/register" class="bg-indigo-600 text-white px-6 py-3 rounded-xl hover:bg-indigo-700 shadow-md flex items-center transition-all hover:scale-105">
+                        <i class="fas fa-user-plus mr-2"></i> {move || t(lang.get(), "add_patient")}
+                    </a>
+                </div>
             </div>
 
             // Search Box

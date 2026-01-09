@@ -16,7 +16,18 @@ pub fn WardView() -> impl IntoView {
     // For now we will rely on a resource or just fetch on mount + interval
     let fetch_patients = move || {
         spawn_local(async move {
-            let res = reqwasm::http::Request::get("/api/patients").send().await;
+            let token = window()
+                .local_storage()
+                .ok()
+                .flatten()
+                .and_then(|s| s.get_item("uci_token").ok().flatten());
+
+            let mut req = reqwasm::http::Request::get("/api/patients");
+            if let Some(t) = token {
+                req = req.header("Authorization", &format!("Bearer {}", t));
+            }
+
+            let res = req.send().await;
             if let Ok(resp) = res {
                 if let Ok(list) = resp.json::<Vec<Patient>>().await {
                     set_patients.set(list);

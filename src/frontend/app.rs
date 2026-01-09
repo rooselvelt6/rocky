@@ -1,6 +1,7 @@
 use crate::frontend::apache_form::ApacheForm;
 use crate::frontend::glasgow_form::GlasgowForm;
 use crate::frontend::i18n::{t, Language};
+use crate::frontend::login::Login;
 use crate::frontend::patient_detail::PatientDetail;
 use crate::frontend::patient_form::PatientForm;
 use crate::frontend::patient_list::PatientList;
@@ -29,6 +30,29 @@ pub fn App() -> impl IntoView {
                 Language::En
             }
         });
+    };
+
+    let (user_id, set_user_id) = create_signal(None::<String>);
+
+    create_effect(move |_| {
+        if let Some(storage) = window().local_storage().ok().flatten() {
+            set_user_id.set(storage.get_item("uci_user_id").ok().flatten());
+        }
+    });
+
+    let on_logout = move |_| {
+        if let Some(storage) = window().local_storage().ok().flatten() {
+            let _ = storage.remove_item("uci_token");
+            let _ = storage.remove_item("uci_user_id");
+            let _ = storage.remove_item("uci_role");
+            set_user_id.set(None);
+
+            // Redirect to home using window location to force reload state if needed,
+            // but navigated is better if we have access to it.
+            // Since we are in the App component, we might not have navigate easily here without a subcomponent,
+            // but we can just use window().location().set_href("/")
+            let _ = window().location().set_href("/");
+        }
     };
 
     view! {
@@ -64,7 +88,25 @@ pub fn App() -> impl IntoView {
                                     </A>
                                 </div>
                             </div>
-                            <div>
+                            <div class="flex items-center space-x-4">
+                                {move || match user_id.get() {
+                                    Some(id) => view! {
+                                        <div class="flex items-center gap-4">
+                                            <span class="text-xs text-indigo-300 font-mono">{id}</span>
+                                            <button
+                                                on:click=on_logout
+                                                class="px-3 py-1 rounded-lg bg-red-800/50 hover:bg-red-700 transition-colors border border-red-500/30 text-xs"
+                                            >
+                                                <i class="fas fa-sign-out-alt"></i>
+                                            </button>
+                                        </div>
+                                    }.into_view(),
+                                    None => view! {
+                                        <A href="/login" class="px-3 py-1 rounded-lg bg-green-600 hover:bg-green-700 transition-colors text-xs font-bold">
+                                            <i class="fas fa-sign-in-alt mr-1"></i> "Login"
+                                        </A>
+                                    }.into_view()
+                                }}
                                 <button
                                     on:click=toggle_lang
                                     class="flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-800 hover:bg-indigo-700 transition-colors border border-indigo-600"
@@ -115,6 +157,7 @@ pub fn App() -> impl IntoView {
                         <Route path="/sofa" view=SofaForm/>
                         <Route path="/saps" view=SapsForm/>
                         <Route path="/ward" view=WardView/>
+                        <Route path="/login" view=Login/>
                     </Routes>
                 </main>
 

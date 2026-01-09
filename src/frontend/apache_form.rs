@@ -36,44 +36,51 @@ pub fn ApacheForm() -> impl IntoView {
     create_effect(move |_| {
         if let Some(id) = patient_id() {
             let id_clone = id.clone();
-            spawn_local(async move {
-                // 1. Fetch Patient Data for Age Pre-fill
-                let pat_url = format!("/api/patients/{}", id_clone);
-                if let Ok(res) = Request::get(&pat_url).send().await {
-                    if let Ok(patient) = res.json::<crate::models::patient::Patient>().await {
-                        // Calculate age from DOB
-                        if let Ok(dob) =
-                            chrono::NaiveDate::parse_from_str(&patient.date_of_birth, "%Y-%m-%d")
-                        {
-                            let now = chrono::Local::now().naive_local().date();
-                            // Simple year diff calculation
-                            let age_val = now.years_since(dob).unwrap_or(50) as u8;
-                            set_age.set(age_val.clamp(18, 100));
-                        }
+            let token = window()
+                .local_storage()
+                .ok()
+                .flatten()
+                .and_then(|s| s.get_item("uci_token").ok().flatten());
+
+            // 1. Fetch Patient Data for Age Pre-fill
+            let pat_url = format!("/api/patients/{}", id_clone);
+            let mut pat_req = Request::get(&pat_url);
+            if let Some(t) = &token {
+                pat_req = pat_req.header("Authorization", &format!("Bearer {}", t));
+            }
+
+            if let Ok(res) = pat_req.send().await {
+                if let Ok(patient) = res.json::<crate::models::patient::Patient>().await {
+                    // ...
+                    if let Ok(dob) =
+                        chrono::NaiveDate::parse_from_str(&patient.date_of_birth, "%Y-%m-%d")
+                    {
+                        let now = chrono::Local::now().naive_local().date();
+                        let age_val = now.years_since(dob).unwrap_or(50) as u8;
+                        set_age.set(age_val.clamp(18, 100));
                     }
                 }
+            }
 
-                // 2. Fetch History for Glasgow Pre-fill
-                let hist_url = format!("/api/patients/{}/history", id_clone);
-                if let Ok(res) = Request::get(&hist_url).send().await {
-                    // We define a transient struct to parse just what we need
-                    #[derive(serde::Deserialize)]
-                    struct PartialHistory {
-                        glasgow: Vec<crate::models::glasgow::GlasgowAssessment>,
-                    }
+            // 2. Fetch History for Glasgow Pre-fill
+            let hist_url = format!("/api/patients/{}/history", id_clone);
+            let mut hist_req = Request::get(&hist_url);
+            if let Some(t) = &token {
+                hist_req = hist_req.header("Authorization", &format!("Bearer {}", t));
+            }
 
-                    if let Ok(history) = res.json::<PartialHistory>().await {
-                        // Find latest assessment (assuming sorted by DB or we sort here)
-                        // For safety, let's look for the most recent 'assessed_at' if available
-                        // But typically the API returns them. Let's just take the first one if the API sorts them,
-                        // or we can iterate. Master plan says "recent value < 1h", for now we just take the latest.
-                        if let Some(latest) = history.glasgow.first() {
-                            // Assuming GlasgowAssessment has a score field or method
-                            set_glasgow_coma_score.set(latest.score as u8);
-                        }
+            if let Ok(res) = hist_req.send().await {
+                #[derive(serde::Deserialize)]
+                struct PartialHistory {
+                    glasgow: Vec<crate::models::glasgow::GlasgowAssessment>,
+                }
+
+                if let Ok(history) = res.json::<PartialHistory>().await {
+                    if let Some(latest) = history.glasgow.first() {
+                        set_glasgow_coma_score.set(latest.score as u8);
                     }
                 }
-            });
+            }
         }
     });
 
@@ -101,8 +108,19 @@ pub fn ApacheForm() -> impl IntoView {
         };
 
         spawn_local(async move {
-            let response = Request::post("/api/apache")
-                .header("Content-Type", "application/json")
+            let token = window()
+                .local_storage()
+                .ok()
+                .flatten()
+                .and_then(|s| s.get_item("uci_token").ok().flatten());
+
+            let mut req = Request::post("/api/apache").header("Content-Type", "application/json");
+
+            if let Some(t) = token {
+                req = req.header("Authorization", &format!("Bearer {}", t));
+            }
+
+            let response = req
                 .body(serde_json::to_string(&request).unwrap())
                 .send()
                 .await;
