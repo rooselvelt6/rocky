@@ -20,7 +20,7 @@ pub fn GlasgowForm() -> impl IntoView {
     let glasgow_resource = create_resource(
         move || (eye_value.get(), verbal_value.get(), motor_value.get()),
         move |(eye, verbal, motor)| async move {
-            let token = window()
+            let token: Option<String> = window()
                 .local_storage()
                 .ok()
                 .flatten()
@@ -72,7 +72,7 @@ pub fn GlasgowForm() -> impl IntoView {
                     on:click=move |_| {
                         if let Some(id) = patient_id() {
                             spawn_local(async move {
-                                let token = window().local_storage().ok().flatten()
+                                let token: Option<String> = window().local_storage().ok().flatten()
                                     .and_then(|s| s.get_item("uci_token").ok().flatten());
 
                                 let url = format!("/api/patients/{}/history", id);

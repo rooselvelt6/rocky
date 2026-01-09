@@ -25,6 +25,7 @@ pub fn Login() -> impl IntoView {
 
         let user = username.get();
         let pass = password.get();
+        let navigate = navigate.clone();
 
         spawn_local(async move {
             let res = reqwasm::http::Request::post("/api/login")

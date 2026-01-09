@@ -90,7 +90,7 @@ pub fn PatientForm() -> impl IntoView {
                 .header("Content-Type", "application/json");
 
             if let Some(storage) = window().local_storage().ok().flatten() {
-                if let Some(token) = storage.get_item("uci_token").ok().flatten() {
+                if let Some(token) = storage.get_item("uci_token").unwrap_or(None) {
                     req = req.header("Authorization", &format!("Bearer {}", token));
                 }
             }

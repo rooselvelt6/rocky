@@ -41,7 +41,7 @@ pub fn SapsForm() -> impl IntoView {
         if let Some(id) = patient_id() {
             let id_clone = id.clone();
             spawn_local(async move {
-                let token = window()
+                let token: Option<String> = window()
                     .local_storage()
                     .ok()
                     .flatten()
@@ -116,7 +116,7 @@ pub fn SapsForm() -> impl IntoView {
         };
 
         spawn_local(async move {
-            let token = window()
+            let token: Option<String> = window()
                 .local_storage()
                 .ok()
                 .flatten()

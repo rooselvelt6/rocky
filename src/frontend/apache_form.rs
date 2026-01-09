@@ -36,51 +36,52 @@ pub fn ApacheForm() -> impl IntoView {
     create_effect(move |_| {
         if let Some(id) = patient_id() {
             let id_clone = id.clone();
-            let token = window()
-                .local_storage()
-                .ok()
-                .flatten()
-                .and_then(|s| s.get_item("uci_token").ok().flatten());
+            spawn_local(async move {
+                let token: Option<String> = window()
+                    .local_storage()
+                    .ok()
+                    .flatten()
+                    .and_then(|s| s.get_item("uci_token").ok().flatten());
 
-            // 1. Fetch Patient Data for Age Pre-fill
-            let pat_url = format!("/api/patients/{}", id_clone);
-            let mut pat_req = Request::get(&pat_url);
-            if let Some(t) = &token {
-                pat_req = pat_req.header("Authorization", &format!("Bearer {}", t));
-            }
+                // 1. Fetch Patient Data for Age Pre-fill
+                let pat_url = format!("/api/patients/{}", id_clone);
+                let mut pat_req = Request::get(&pat_url);
+                if let Some(t) = &token {
+                    pat_req = pat_req.header("Authorization", &format!("Bearer {}", t));
+                }
 
-            if let Ok(res) = pat_req.send().await {
-                if let Ok(patient) = res.json::<crate::models::patient::Patient>().await {
-                    // ...
-                    if let Ok(dob) =
-                        chrono::NaiveDate::parse_from_str(&patient.date_of_birth, "%Y-%m-%d")
-                    {
-                        let now = chrono::Local::now().naive_local().date();
-                        let age_val = now.years_since(dob).unwrap_or(50) as u8;
-                        set_age.set(age_val.clamp(18, 100));
+                if let Ok(res) = pat_req.send().await {
+                    if let Ok(patient) = res.json::<crate::models::patient::Patient>().await {
+                        if let Ok(dob) =
+                            chrono::NaiveDate::parse_from_str(&patient.date_of_birth, "%Y-%m-%d")
+                        {
+                            let now = chrono::Local::now().naive_local().date();
+                            let age_val = now.years_since(dob).unwrap_or(50) as u8;
+                            set_age.set(age_val.clamp(18, 100));
+                        }
                     }
                 }
-            }
 
-            // 2. Fetch History for Glasgow Pre-fill
-            let hist_url = format!("/api/patients/{}/history", id_clone);
-            let mut hist_req = Request::get(&hist_url);
-            if let Some(t) = &token {
-                hist_req = hist_req.header("Authorization", &format!("Bearer {}", t));
-            }
-
-            if let Ok(res) = hist_req.send().await {
-                #[derive(serde::Deserialize)]
-                struct PartialHistory {
-                    glasgow: Vec<crate::models::glasgow::GlasgowAssessment>,
+                // 2. Fetch History for Glasgow Pre-fill
+                let hist_url = format!("/api/patients/{}/history", id_clone);
+                let mut hist_req = Request::get(&hist_url);
+                if let Some(t) = &token {
+                    hist_req = hist_req.header("Authorization", &format!("Bearer {}", t));
                 }
 
-                if let Ok(history) = res.json::<PartialHistory>().await {
-                    if let Some(latest) = history.glasgow.first() {
-                        set_glasgow_coma_score.set(latest.score as u8);
+                if let Ok(res) = hist_req.send().await {
+                    #[derive(serde::Deserialize)]
+                    struct PartialHistory {
+                        glasgow: Vec<crate::models::glasgow::GlasgowAssessment>,
+                    }
+
+                    if let Ok(history) = res.json::<PartialHistory>().await {
+                        if let Some(latest) = history.glasgow.first() {
+                            set_glasgow_coma_score.set(latest.score as u8);
+                        }
                     }
                 }
-            }
+            });
         }
     });
 
@@ -108,7 +109,7 @@ pub fn ApacheForm() -> impl IntoView {
         };
 
         spawn_local(async move {
-            let token = window()
+            let token: Option<String> = window()
                 .local_storage()
                 .ok()
                 .flatten()

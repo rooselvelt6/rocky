@@ -44,7 +44,7 @@ pub fn PatientDetail() -> impl IntoView {
         let p_id = id();
         if !p_id.is_empty() {
             spawn_local(async move {
-                let token = window()
+                let token: Option<String> = window()
                     .local_storage()
                     .ok()
                     .flatten()

@@ -16,7 +16,7 @@ pub fn WardView() -> impl IntoView {
     // For now we will rely on a resource or just fetch on mount + interval
     let fetch_patients = move || {
         spawn_local(async move {
-            let token = window()
+            let token: Option<String> = window()
                 .local_storage()
                 .ok()
                 .flatten()
