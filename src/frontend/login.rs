@@ -55,8 +55,13 @@ pub fn Login() -> impl IntoView {
                             let _ = storage.set_item("uci_role", role);
                         }
 
-                        // Redirect to home
-                        navigate("/", Default::default());
+                        // Try to trigger auth update in parent
+                        if let Some(set_trigger) = use_context::<WriteSignal<i32>>() {
+                            set_trigger.update(|v| *v += 1);
+                        }
+
+                        // Redirect to Dashboard
+                        navigate("/dashboard", Default::default());
                     }
                 }
                 _ => {

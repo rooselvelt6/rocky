@@ -41,6 +41,28 @@ pub fn t(lang: Language, key: &str) -> String {
         (Language::Es, "made_with_love") => {
             "Hecho con ❤️ para mejorar el cuidado en UCI".to_string()
         }
+        (Language::En, "clinical_dashboard") => "Clinical Dashboard".to_string(),
+        (Language::Es, "clinical_dashboard") => "Panel Clínico".to_string(),
+        (Language::En, "dashboard_subtitle") => {
+            "Access clinical tools and patient records".to_string()
+        }
+        (Language::Es, "dashboard_subtitle") => {
+            "Acceso a herramientas clínicas y registros de pacientes".to_string()
+        }
+        (Language::En, "icu_info_title") => "About our ICU".to_string(),
+        (Language::Es, "icu_info_title") => "Sobre nuestra UCI".to_string(),
+        (Language::En, "icu_info_desc") => {
+            "The Intensive Care Unit provides specialized care for patients with life-threatening illnesses or injuries.".to_string()
+        }
+        (Language::Es, "icu_info_desc") => {
+            "La Unidad de Cuidados Intensivos brinda atención especializada para pacientes con enfermedades o lesiones potencialmente mortales.".to_string()
+        }
+        (Language::En, "login_required_desc") => {
+            "Access to clinical scales and patient data is restricted to authorized medical staff.".to_string()
+        }
+        (Language::Es, "login_required_desc") => {
+            "El acceso a las escalas clínicas y datos de pacientes está restringido al personal médico autorizado.".to_string()
+        }
 
         // Actions
         (Language::En, "calculate") => "Calculate".to_string(),

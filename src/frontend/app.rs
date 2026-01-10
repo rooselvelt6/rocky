@@ -1,4 +1,5 @@
 use crate::frontend::apache_form::ApacheForm;
+use crate::frontend::dashboard::Dashboard;
 use crate::frontend::glasgow_form::GlasgowForm;
 use crate::frontend::i18n::{t, Language};
 use crate::frontend::login::Login;
@@ -14,8 +15,6 @@ use leptos_router::*;
 /// Main application component
 #[component]
 pub fn App() -> impl IntoView {
-    // ... existing code ...
-
     // Initialize language signal
     let (lang, set_lang) = create_signal(Language::default());
 
@@ -33,12 +32,18 @@ pub fn App() -> impl IntoView {
     };
 
     let (user_id, set_user_id) = create_signal(None::<String>);
+    let (auth_trigger, set_auth_trigger) = create_signal(0);
 
+    // Check auth whenever trigger changes or on mount
     create_effect(move |_| {
+        auth_trigger.get(); // Subscribe to trigger
         if let Some(storage) = window().local_storage().ok().flatten() {
             set_user_id.set(storage.get_item("uci_user_id").ok().flatten());
         }
     });
+
+    // Provide auth trigger to children so Login can update it
+    provide_context(set_auth_trigger);
 
     let on_logout = move |_| {
         if let Some(storage) = window().local_storage().ok().flatten() {
@@ -46,64 +51,52 @@ pub fn App() -> impl IntoView {
             let _ = storage.remove_item("uci_user_id");
             let _ = storage.remove_item("uci_role");
             set_user_id.set(None);
-
-            // Redirect to home using window location to force reload state if needed,
-            // but navigated is better if we have access to it.
-            // Since we are in the App component, we might not have navigate easily here without a subcomponent,
-            // but we can just use window().location().set_href("/")
             let _ = window().location().set_href("/");
         }
     };
 
     view! {
         <Router>
-            <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 font-sans">
-                <nav class="bg-indigo-900 text-white shadow-lg">
+            <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 font-sans flex flex-col">
+                <nav class="bg-indigo-900 text-white shadow-lg sticky top-0 z-50">
                     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div class="flex items-center justify-between h-16">
                             <div class="flex items-center">
-                                <A href="/" class="text-xl font-bold tracking-wider">"UCI System"</A>
-                                <div class="ml-10 flex items-baseline space-x-4">
-                                    <A href="/patients" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors">
-                                        {move || t(lang.get(), "patient_list")}
-                                    </A>
-                                    <A href="/register" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors">
-                                        {move || t(lang.get(), "register_patient")}
-                                    </A>
-                                    <A href="/glasgow" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors">
-                                        {move || t(lang.get(), "glasgow_scale")}
-                                    </A>
-                                    <A href="/apache" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors">
-                                        {move || t(lang.get(), "apache_ii")}
-                                    </A>
-                                    <A href="/sofa" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors">
-                                        {move || t(lang.get(), "sofa_score")}
-                                    </A>
-                                    <A href="/saps" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors">
-                                        "SAPS II"
-                                    </A>
-                                    <A href="/ward" class="px-3 py-2 rounded-md text-sm font-medium bg-indigo-800 text-green-300 hover:bg-indigo-700 hover:text-green-200 transition-colors border border-green-500/30 flex items-center gap-2">
-                                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                        "Ward Monitor"
-                                    </A>
+                                <A href="/" class="text-xl font-bold tracking-wider hover:text-indigo-200 transition-colors">"UCI System"</A>
+                                <div class="ml-10 flex items-baseline space-x-2">
+                                    {move || user_id.get().is_some().then(|| view! {
+                                        <>
+                                            <A href="/patients" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors">
+                                                <i class="fas fa-users mr-2"></i>"Pacientes"
+                                            </A>
+                                            <A href="/dashboard" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors">
+                                                <i class="fas fa-chart-line mr-2"></i>"Escalas"
+                                            </A>
+                                            <A href="/ward" class="px-3 py-2 rounded-md text-sm font-medium bg-indigo-800 text-green-300 hover:bg-indigo-700 hover:text-green-200 transition-colors border border-green-500/30 flex items-center gap-2">
+                                                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                                <i class="fas fa-hospital mr-1"></i>"Monitor"
+                                            </A>
+                                        </>
+                                    })}
                                 </div>
                             </div>
                             <div class="flex items-center space-x-4">
                                 {move || match user_id.get() {
                                     Some(id) => view! {
                                         <div class="flex items-center gap-4">
-                                            <span class="text-xs text-indigo-300 font-mono">{id}</span>
+                                            <span class="text-xs text-indigo-300 font-mono hidden md:inline">{id}</span>
                                             <button
                                                 on:click=on_logout
-                                                class="px-3 py-1 rounded-lg bg-red-800/50 hover:bg-red-700 transition-colors border border-red-500/30 text-xs"
+                                                class="px-3 py-1 rounded-lg bg-red-800/50 hover:bg-red-700 transition-colors border border-red-500/30 text-xs flex items-center gap-2"
                                             >
                                                 <i class="fas fa-sign-out-alt"></i>
+                                                <span class="hidden sm:inline">"Cerrar Sesión"</span>
                                             </button>
                                         </div>
                                     }.into_view(),
                                     None => view! {
-                                        <A href="/login" class="px-3 py-1 rounded-lg bg-green-600 hover:bg-green-700 transition-colors text-xs font-bold">
-                                            <i class="fas fa-sign-in-alt mr-1"></i> "Login"
+                                        <A href="/login" class="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 transition-colors text-sm font-bold shadow-md shadow-green-900/20">
+                                            <i class="fas fa-sign-in-alt mr-2"></i> "Acceder"
                                         </A>
                                     }.into_view()
                                 }}
@@ -119,52 +112,86 @@ pub fn App() -> impl IntoView {
                     </div>
                 </nav>
 
-                <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+                <main class="flex-grow">
                     <Routes>
                         <Route path="/" view=move || view! {
-                            <div class="text-center mt-20">
-                                <h1 class="text-4xl font-bold text-indigo-900 mb-4">{move || t(lang.get(), "welcome_title")}</h1>
-                                <p class="text-xl text-indigo-600 mb-8">{move || t(lang.get(), "welcome_subtitle")}</p>
-                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto px-4">
-                                    <A href="/register" class="bg-indigo-600 text-white px-6 py-4 rounded-lg hover:bg-indigo-700 transition shadow-md">
-                                        <i class="fas fa-user-plus text-2xl mb-2"></i>
-                                        <div class="font-bold">{move || t(lang.get(), "register_patient")}</div>
-                                    </A>
-                                    <A href="/glasgow" class="bg-purple-600 text-white px-6 py-4 rounded-lg hover:bg-purple-700 transition shadow-md">
-                                        <i class="fas fa-brain text-2xl mb-2"></i>
-                                        <div class="font-bold">{move || t(lang.get(), "glasgow_scale")}</div>
-                                    </A>
-                                    <A href="/apache" class="bg-red-600 text-white px-6 py-4 rounded-lg hover:bg-red-700 transition shadow-md">
-                                        <i class="fas fa-heartbeat text-2xl mb-2"></i>
-                                        <div class="font-bold">{move || t(lang.get(), "apache_ii")}</div>
-                                    </A>
-                                    <A href="/sofa" class="bg-teal-600 text-white px-6 py-4 rounded-lg hover:bg-teal-700 transition shadow-md">
-                                        <i class="fas fa-procedures text-2xl mb-2"></i>
-                                        <div class="font-bold">{move || t(lang.get(), "sofa_score")}</div>
-                                    </A>
-                                     <A href="/saps" class="bg-orange-600 text-white px-6 py-4 rounded-lg hover:bg-orange-700 transition shadow-md">
-                                        <i class="fas fa-notes-medical text-2xl mb-2"></i>
-                                        <div class="font-bold">"SAPS II"</div>
-                                    </A>
+                            <div class="max-w-5xl mx-auto px-4 py-16">
+                                <div class="text-center mb-16">
+                                    <div class="inline-block p-4 bg-indigo-100 rounded-3xl mb-8">
+                                        <i class="fas fa-hospital text-6xl text-indigo-600"></i>
+                                    </div>
+                                    <h1 class="text-5xl font-extrabold text-indigo-950 mb-6 tracking-tight">
+                                        {move || t(lang.get(), "welcome_title")}
+                                    </h1>
+                                    <p class="text-2xl text-indigo-700 mb-4 font-light max-w-3xl mx-auto">
+                                        {move || t(lang.get(), "icu_info_desc")}
+                                    </p>
+                                </div>
+
+                                <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                                    <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 border border-indigo-100 shadow-lg hover:shadow-xl transition-shadow">
+                                        <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
+                                            <i class="fas fa-heartbeat text-indigo-600 text-xl"></i>
+                                        </div>
+                                        <h3 class="text-xl font-bold text-gray-800 mb-3">"Monitoreo Continuo"</h3>
+                                        <p class="text-gray-600 leading-relaxed">"Vigilancia 24/7 de signos vitales y parámetros críticos en pacientes con condiciones potencialmente mortales."</p>
+                                    </div>
+
+                                    <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 border border-indigo-100 shadow-lg hover:shadow-xl transition-shadow">
+                                        <div class="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center mb-4">
+                                            <i class="fas fa-user-md text-teal-600 text-xl"></i>
+                                        </div>
+                                        <h3 class="text-xl font-bold text-gray-800 mb-3">"Equipo Especializado"</h3>
+                                        <p class="text-gray-600 leading-relaxed">"Personal médico altamente capacitado en cuidados críticos y medicina intensiva."</p>
+                                    </div>
+
+                                    <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 border border-indigo-100 shadow-lg hover:shadow-xl transition-shadow">
+                                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+                                            <i class="fas fa-chart-line text-purple-600 text-xl"></i>
+                                        </div>
+                                        <h3 class="text-xl font-bold text-gray-800 mb-3">"Escalas Clínicas"</h3>
+                                        <p class="text-gray-600 leading-relaxed">"Evaluación objetiva mediante APACHE II, SOFA, SAPS II y Glasgow para optimizar tratamientos."</p>
+                                    </div>
                                 </div>
                             </div>
                         }/>
-                        <Route path="/register" view=PatientForm/>
-                        <Route path="/patients" view=PatientList/>
-                        <Route path="/patients/:id" view=PatientDetail/>
-                        <Route path="/glasgow" view=GlasgowForm/>
-                        <Route path="/apache" view=ApacheForm/>
-                        <Route path="/sofa" view=SofaForm/>
-                        <Route path="/saps" view=SapsForm/>
-                        <Route path="/ward" view=WardView/>
                         <Route path="/login" view=Login/>
+
+                        // Protected Routes
+                        <Route path="/dashboard" view=|| view! { <Protected><Dashboard/></Protected> }/>
+                        <Route path="/patients" view=|| view! { <Protected><PatientList/></Protected> }/>
+                        <Route path="/register" view=|| view! { <Protected><PatientForm/></Protected> }/>
+                        <Route path="/patients/:id" view=|| view! { <Protected><PatientDetail/></Protected> }/>
+                        <Route path="/glasgow" view=|| view! { <Protected><GlasgowForm/></Protected> }/>
+                        <Route path="/apache" view=|| view! { <Protected><ApacheForm/></Protected> }/>
+                        <Route path="/sofa" view=|| view! { <Protected><SofaForm/></Protected> }/>
+                        <Route path="/saps" view=|| view! { <Protected><SapsForm/></Protected> }/>
+                        <Route path="/ward" view=|| view! { <Protected><WardView/></Protected> }/>
                     </Routes>
                 </main>
 
-                <footer class="text-center py-4 text-gray-500 text-sm">
-                    <p>{move || t(lang.get(), "made_with_love")}</p>
+                <footer class="bg-indigo-950 text-indigo-300 py-8 border-t border-indigo-900">
+                    <div class="max-w-7xl mx-auto px-4 text-center">
+                        <p class="text-sm opacity-70 mb-2">{move || t(lang.get(), "made_with_love")}</p>
+                        <p class="text-xs opacity-50">"© 2026 UCI System • Medical Decision Support Tool"</p>
+                    </div>
                 </footer>
             </div>
         </Router>
     }
+}
+
+#[component]
+fn Protected(children: Children) -> impl IntoView {
+    let navigate = use_navigate();
+
+    create_effect(move |_| {
+        if let Some(storage) = window().local_storage().ok().flatten() {
+            if storage.get_item("uci_token").unwrap_or(None).is_none() {
+                navigate("/login", Default::default());
+            }
+        }
+    });
+
+    children()
 }
