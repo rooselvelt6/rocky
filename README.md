@@ -9,6 +9,10 @@
 
 Una aplicación web de alto rendimiento desarrollada en **Rust** para automatizar el cálculo e interpretación de escalas médicas críticas en la UCI, con enfoque en **seguridad**, **velocidad** y **fiabilidad**.
 
+> [!CAUTION]
+> ### ⚠️ AVISO MÉDICO IMPORTANTE
+> Esta es una **herramienta de apoyo a la decisión clínica**. NO reemplaza el juicio clínico profesional. Todas las puntuaciones y cálculos generados por este sistema **DEBEN ser verificados por personal médico calificado** antes de cualquier aplicación clínica o toma de decisiones sobre pacientes. El autor no se hace responsable por el uso indebido de esta herramienta.
+
 ---
 
 ## 📋 Tabla de Contenidos
@@ -185,64 +189,49 @@ La aplicación ha sido sometida a una auditoría técnica de seguridad y rendimi
 
 ---
 
-## 📦 Instalación
+## 🚀 Instalación Rápida (Para Entornos Hospitalarios)
 
-### Prerrequisitos
+Si desea ejecutar la aplicación sin compilar el código fuente:
 
-```bash
-# Rust 1.70+
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-
-# Trunk (para compilar frontend Leptos)
-cargo install trunk
-
-# SurrealDB (incluido en el proyecto como surreal.exe)
-# O descargar manualmente: https://surrealdb.com/install
-```
-
-### Clonar e Instalar
-
-```bash
-git clone <your-repo-url>
-cd uci
-
-# Compilar el proyecto
-cargo build --release
-
-# Compilar el frontend (genera dist/)
-trunk build --release
-```
+1.  **Requisitos**: Tener los archivos `uci-server.exe`, `surreal.exe` y la carpeta `dist/` en el mismo directorio.
+2.  **Iniciar Base de Datos**: Ejecute el siguiente comando en una terminal:
+    ```powershell
+    .\surreal.exe start --user root --pass root file:uci.db
+    ```
+3.  **Iniciar Servidor**: Abra otra terminal y ejecute:
+    ```powershell
+    .\uci-server.exe
+    ```
+4.  **Acceder**: Abra su navegador en `http://localhost:3000`.
 
 ---
 
-## 🚀 Uso
+## 🛠️ Configuración de Desarrollo
 
-### 1. Iniciar la Base de Datos
+Si desea compilar el proyecto desde el código fuente:
 
-```powershell
-# Windows PowerShell
-.\start-db.ps1
+### Prerrequisitos
+- [Rust](https://www.rust-lang.org/) 1.75+
+- [Trunk](https://trunkrs.dev/) (para compilar el frontend Leptos)
+- [SurrealDB](https://surrealdb.com/install) 2.x
 
-# O manualmente:
-.\surreal.exe start --user root --pass root file:uci.db
-```
-
-**Salida esperada:**
-```
-🚀 Iniciando SurrealDB...
-📊 Interfaz web: http://localhost:8000
-🔑 Usuario: root | Contraseña: root
-```
-
-### 2. Iniciar el Servidor Backend
-
+### Clonar y Compilar
 ```bash
-# Asegúrate de que dist/ existe (trunk build)
-cargo run --bin uci-server
+git clone https://github.com/rooselvelt6/uci.git
+cd uci
 
-# O especificar rutas:
-cargo run --bin uci-server --release
+# 1. Compilar el frontend (genera carpeta dist/)
+trunk build --release
+
+# 2. Compilar y ejecutar el servidor
+cargo run --release --bin uci-server
 ```
+
+### Usuarios por Defecto
+- **Usuario:** `admin` | **Contraseña:** `admin`
+- **Usuario:** `nurse` | **Contraseña:** `nurse123`
+
+---
 
 **Salida esperada:**
 ```

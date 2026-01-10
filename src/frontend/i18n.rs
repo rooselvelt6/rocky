@@ -57,6 +57,12 @@ pub fn t(lang: Language, key: &str) -> String {
         (Language::Es, "icu_info_desc") => {
             "La Unidad de Cuidados Intensivos brinda atención especializada para pacientes con enfermedades o lesiones potencialmente mortales.".to_string()
         }
+        (Language::En, "medical_disclaimer_title") => "Medical Disclaimer".to_string(),
+        (Language::Es, "medical_disclaimer_title") => "Aviso Médico".to_string(),
+        (Language::En, "medical_disclaimer_text") => "This is a clinical decision support tool. It does NOT replace professional medical judgment. All scores and calculations must be verified by qualified medical personnel before clinical application.".to_string(),
+        (Language::Es, "medical_disclaimer_text") => "Esta es una herramienta de apoyo a la decisión clínica. NO reemplaza el juicio médico profesional. Todas las puntuaciones y cálculos deben ser verificados por personal médico calificado antes de su aplicación clínica.".to_string(),
+        (Language::En, "footer_license") => "Licensed under GNU GPL v3.0".to_string(),
+        (Language::Es, "footer_license") => "Licenciado bajo GNU GPL v3.0".to_string(),
         (Language::En, "login_required_desc") => {
             "Access to clinical scales and patient data is restricted to authorized medical staff.".to_string()
         }

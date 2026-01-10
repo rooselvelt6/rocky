@@ -170,10 +170,23 @@ pub fn App() -> impl IntoView {
                     </Routes>
                 </main>
 
-                <footer class="bg-indigo-950 text-indigo-300 py-8 border-t border-indigo-900">
-                    <div class="max-w-7xl mx-auto px-4 text-center">
+                <footer class="bg-indigo-950 text-indigo-300 py-12 border-t border-indigo-900">
+                    <div class="max-w-4xl mx-auto px-4 text-center">
+                        <div class="mb-6 pb-6 border-b border-indigo-900/50">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-indigo-100 mb-2">
+                                <i class="fas fa-exclamation-triangle mr-2 text-amber-500"></i>
+                                {move || t(lang.get(), "medical_disclaimer_title")}
+                            </h4>
+                            <p class="text-xs leading-relaxed opacity-70">
+                                {move || t(lang.get(), "medical_disclaimer_text")}
+                            </p>
+                        </div>
                         <p class="text-sm opacity-70 mb-2">{move || t(lang.get(), "made_with_love")}</p>
-                        <p class="text-xs opacity-50">"© 2026 UCI System • Medical Decision Support Tool"</p>
+                        <div class="flex items-center justify-center gap-4 text-xs opacity-50">
+                            <span>"© 2026 UCI System"</span>
+                            <span>"•"</span>
+                            <span>{move || t(lang.get(), "footer_license")}</span>
+                        </div>
                     </div>
                 </footer>
             </div>
