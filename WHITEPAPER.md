@@ -44,7 +44,7 @@ La visión a largo plazo es convertir este sistema en el estándar abierto para 
 - [x] Internacionalización completa (ES/EN).
 
 ### 🟡 Q2 2026: Inteligencia Clínica y Conectividad
-- [ ] **Módulo de Analítica Visual:** Dashboard con gráficos de tendencia de severidad por paciente utilizando `charts.js`.
+- [ ] **Módulo de Analítica Visual:** Dashboard con gráficos de tendencia de severidad por paciente utilizando el crate **`plotters`** (Rust-native rendering).
 - [ ] **Exportación Profesional:** Generación de reportes clínicos certificados en PDF con firma digital opcional.
 - [ ] **API Pública (OpenAPI):** Documentación para la integración con sistemas HIS (Hospital Information Systems) existentes.
 

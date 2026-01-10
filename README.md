@@ -121,7 +121,7 @@ Para un análisis profundo de la arquitectura, impacto clínico y visión a larg
 
 ### Resumen del Roadmap 2026
 *   **Q1 (Actual):** Consolidación de escalas críticas, Docker y Auth JWT.
-*   **Q2:** Dashboards de analítica visual y API REST pública (OpenAPI).
+*   **Q2:** Dashboards de analítica visual (Rust-native) y API REST pública (OpenAPI).
 *   **Q3:** Aplicación móvil nativa (Tauri) y sistema de alertas tempranas.
 *   **Q4:** Inteligencia Artificial para predicción de sepsis y soporte multi-hospital.
 
