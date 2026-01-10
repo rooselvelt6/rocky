@@ -119,6 +119,9 @@ graph TD
 
 Para un análisis profundo de la arquitectura, impacto clínico y visión a largo plazo, consulte nuestro **[Technical Whitepaper](WHITEPAPER.md)**.
 
+### 🌍 Democratización y Bajo Costo
+Este sistema está optimizado para correr en **Hardware Edge (Raspberry Pi / Banana Pi)**, permitiendo digitalizar una UCI con una inversión de hardware de solo **$10 - $35 USD**, sin depender de la nube y manteniendo la soberanía de los datos médicos.
+
 ### Resumen del Roadmap 2026
 *   **Q1 (Actual):** Consolidación de escalas críticas, Docker y Auth JWT.
 *   **Q2:** Dashboards de analítica visual (Rust-native) y API REST pública (OpenAPI).

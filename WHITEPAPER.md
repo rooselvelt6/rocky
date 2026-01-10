@@ -31,9 +31,17 @@ Cada creación, modificación o lectura de datos clínicos es registrada de form
 ### 4.3. Aislamiento y Portabilidad
 El sistema está diseñado para correr en redes privadas hospitalarias (Air-gapped) mediante contenedores **Docker**, garantizando que los datos de salud nunca salgan de la infraestructura local del hospital.
 
+## 5. Democratización: Despliegue de Bajo Costo (Edge Medical)
+Una de las mayores ventajas competitivas de este sistema es su capacidad de operar en hardware de ultra-bajo costo sin sacrificar rendimiento:
+
+*   **Hardware Soportado:** Raspberry Pi (3/4/5), Banana Pi, Orange Pi y otros SBC (Single Board Computers) basados en ARM64.
+*   **Coste de Implementación:** Una unidad clínica puede ser digitalizada con una inversión de hardware de entre **$10 y $35 USD**.
+*   **Consumo Energético:** Menor a 15W, permitiendo operación continua 24/7 con un gasto eléctrico insignificante.
+*   **Autonomía Total:** Al ser una aplicación compilada en Rust, no depende de la nube. Funciona localmente, asegurando que el hospital mantenga la propiedad total de sus datos clínicos.
+
 ---
 
-## 5. Roadmap de Desarrollo 2026
+## 6. Roadmap de Desarrollo 2026
 
 La visión a largo plazo es convertir este sistema en el estándar abierto para la gestión de datos críticos en hospitales públicos.
 
