@@ -1,0 +1,17 @@
+services:
+  uci-app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=http://surrealdb:8000
+    depends_on:
+      - surrealdb
+
+  surrealdb:
+    image: surrealdb/surrealdb:v2.1.4
+    ports:
+      - "8000:8000"
+    command: start --user root --pass root file:uci.db
+    volumes:
+      - ./uci-data:/uci.db

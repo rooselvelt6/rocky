@@ -189,20 +189,33 @@ La aplicación ha sido sometida a una auditoría técnica de seguridad y rendimi
 
 ---
 
-## 🚀 Instalación Rápida (Para Entornos Hospitalarios)
+## 🚀 Instalación Rápida
 
-Si desea ejecutar la aplicación sin compilar el código fuente:
-
+### En Windows (Sin compilación)
 1.  **Requisitos**: Tener los archivos `uci-server.exe`, `surreal.exe` y la carpeta `dist/` en el mismo directorio.
-2.  **Iniciar Base de Datos**: Ejecute el siguiente comando en una terminal:
+2.  **Iniciar Base de Datos**: 
     ```powershell
     .\surreal.exe start --user root --pass root file:uci.db
     ```
-3.  **Iniciar Servidor**: Abra otra terminal y ejecute:
+3.  **Iniciar Servidor**: 
     ```powershell
     .\uci-server.exe
     ```
-4.  **Acceder**: Abra su navegador en `http://localhost:3000`.
+
+### En Linux (Usando Docker - Recomendado 🐋)
+Si el hospital usa Linux, la forma más sencilla es usar Docker para evitar problemas de dependencias:
+1.  **Requisitos**: Tener instalado [Docker](https://docs.docker.com/get-docker/) y [Docker Compose](https://docs.docker.com/compose/install/).
+2.  **Ejecutar**: En la carpeta del proyecto, corra:
+    ```bash
+    docker-compose up --build -d
+    ```
+3.  **Listo**: La aplicación estará disponible en `http://localhost:3000`.
+
+### En Linux (Manual)
+Si prefieren correrlo nativamente, el departamento de sistemas debe compilarlo:
+1.  **Compilar**: Siga los pasos de [Configuración de Desarrollo](#-configuración-de-desarrollo).
+2.  **Servidor**: El binario resultante estará en `target/release/uci-server`.
+3.  **Ejecutar**: `./uci-server` (Asegúrese de que la carpeta `dist/` esté presente).
 
 ---
 
