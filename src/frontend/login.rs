@@ -65,7 +65,7 @@ pub fn Login() -> impl IntoView {
                     }
                 }
                 _ => {
-                    set_error_msg.set(Some("Invalid username or password".to_string()));
+                    set_error_msg.set(Some(t(lang.get(), "invalid_credentials")));
                 }
             }
         });
@@ -78,13 +78,13 @@ pub fn Login() -> impl IntoView {
                     <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-indigo-50 text-indigo-600 rounded-xl sm:rounded-2xl mb-4 sm:mb-6 shadow-sm border border-indigo-100/50">
                         <i class="fas fa-user-shield text-2xl sm:text-3xl"></i>
                     </div>
-                    <h2 class="text-2xl sm:text-3xl font-extrabold text-indigo-950 tracking-tight">"Acceso Seguro"</h2>
-                    <p class="text-indigo-600/60 mt-2 sm:mt-3 font-medium text-sm sm:text-base">"Ingrese al panel de control UCI"</p>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-indigo-950 tracking-tight">{move || t(lang.get(), "secure_access")}</h2>
+                    <p class="text-indigo-600/60 mt-2 sm:mt-3 font-medium text-sm sm:text-base">{move || t(lang.get(), "login_subtitle")}</p>
                 </div>
 
                 <form on:submit=on_submit class="space-y-4 sm:space-y-6">
                     <div class="space-y-1.5 sm:space-y-2">
-                        <label class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-indigo-900/50 ml-1">"Usuario"</label>
+                        <label class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-indigo-900/50 ml-1">{move || t(lang.get(), "username")}</label>
                         <div class="relative group">
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                 <i class="fas fa-at text-indigo-300 group-focus-within:text-indigo-500 transition-colors"></i>
@@ -94,14 +94,14 @@ pub fn Login() -> impl IntoView {
                                 on:input=move |ev| set_username.set(event_target_value(&ev))
                                 prop:value=username
                                 class="w-full pl-11 sm:pl-12 pr-4 py-3 sm:py-3.5 bg-indigo-50/50 border border-indigo-100 rounded-xl sm:rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:bg-white transition-all outline-none"
-                                placeholder="Nombre de usuario"
+                                placeholder=move || t(lang.get(), "username_placeholder")
                                 required
                             />
                         </div>
                     </div>
 
                     <div class="space-y-1.5 sm:space-y-2">
-                        <label class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-indigo-900/50 ml-1">"Contraseña"</label>
+                        <label class="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-indigo-900/50 ml-1">{move || t(lang.get(), "password")}</label>
                         <div class="relative group">
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                 <i class="fas fa-fingerprint text-indigo-300 group-focus-within:text-indigo-500 transition-colors"></i>
@@ -111,7 +111,7 @@ pub fn Login() -> impl IntoView {
                                 on:input=move |ev| set_password.set(event_target_value(&ev))
                                 prop:value=password
                                 class="w-full pl-11 sm:pl-12 pr-4 py-3 sm:py-3.5 bg-indigo-50/50 border border-indigo-100 rounded-xl sm:rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:bg-white transition-all outline-none"
-                                placeholder="••••••••"
+                                placeholder=move || t(lang.get(), "password_placeholder")
                                 required
                             />
                         </div>
@@ -129,7 +129,7 @@ pub fn Login() -> impl IntoView {
                         class="w-full bg-indigo-600 text-white py-3.5 sm:py-4 rounded-xl sm:rounded-2xl font-black text-base sm:text-lg hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-200 active:scale-[0.98] flex items-center justify-center gap-2 sm:gap-3"
                     >
                         <i class="fas fa-sign-in-alt"></i>
-                        "ENTRAR AL SISTEMA"
+                        {move || t(lang.get(), "login_btn")}
                     </button>
                 </form>
 

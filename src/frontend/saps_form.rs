@@ -217,7 +217,7 @@ pub fn SapsForm() -> impl IntoView {
                                             }
                                         >
                                             <i class="fas fa-print"></i>
-                                            <span>"Print Report"</span>
+                                            <span>{move || t(lang.get(), "print_report")}</span>
                                         </button>
                                     </div>
                                 </div>
@@ -244,7 +244,7 @@ pub fn SapsForm() -> impl IntoView {
                         <input type="range" min="20" max="250" step="1" prop:value=move || heart_rate.get()
                             on:input=move |ev| set_heart_rate.set(event_target_value(&ev).parse().unwrap_or(0))
                             class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-orange-600"/>
-                         <p class="text-xs text-gray-400 mt-1">"<40: 11pts | <70: 2pts | <120: 0pts | <160: 4pts | >160: 7pts"</p>
+                         <p class="text-xs text-gray-400 mt-1">{move || t(lang.get(), "hr_hint")}</p>
                     </div>
                      <div class="mb-4">
                         <label class="flex justify-between text-sm font-medium text-gray-700 mb-1">
@@ -292,7 +292,7 @@ pub fn SapsForm() -> impl IntoView {
                              </div>
                          }.into_view()
                      } else {
-                         view! { <div class="text-sm text-gray-500 italic p-3 bg-gray-50 rounded border border-gray-200 text-center">"Not applicable for non-ventilated patients"</div> }.into_view()
+                         view! { <div class="text-sm text-gray-500 italic p-3 bg-gray-50 rounded border border-gray-200 text-center">{move || t(lang.get(), "not_applicable_non_vent")}</div> }.into_view()
                      }}
                 </div>
 
@@ -383,7 +383,7 @@ pub fn SapsForm() -> impl IntoView {
                         <input type="range" min="3" max="15" prop:value=move || glasgow.get()
                             on:input=move |ev| set_glasgow.set(event_target_value(&ev).parse().unwrap_or(15))
                              class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"/>
-                        <p class="text-xs text-gray-400 mt-1">"<6: Severe | 6-8: Moderate | 9-10: Mild | 11-13: Normal"</p>
+                        <p class="text-xs text-gray-400 mt-1">{move || t(lang.get(), "gcs_saps_hint")}</p>
                      </div>
                 </div>
 

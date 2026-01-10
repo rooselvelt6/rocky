@@ -1,4 +1,5 @@
 // Frontend components module
+pub mod admin;
 pub mod apache_form;
 pub mod app;
 pub mod components;

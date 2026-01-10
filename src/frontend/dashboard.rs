@@ -37,7 +37,7 @@ pub fn Dashboard() -> impl IntoView {
                     <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-green-600 transition-colors">
                         <i class="fas fa-chart-line text-green-600 text-2xl group-hover:text-white"></i>
                     </div>
-                    <span class="text-lg font-bold text-gray-800">"Ward Monitor"</span>
+                    <span class="text-lg font-bold text-gray-800">{move || t(lang.get(), "nav_monitor")}</span>
                 </A>
 
                 <A href="/glasgow" class="flex flex-col items-center justify-center bg-white p-8 rounded-2xl shadow-xl border border-indigo-100 hover:border-indigo-300 hover:shadow-2xl transition-all group">
@@ -65,7 +65,7 @@ pub fn Dashboard() -> impl IntoView {
                     <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-orange-600 transition-colors">
                         <i class="fas fa-notes-medical text-orange-600 text-2xl group-hover:text-white"></i>
                     </div>
-                    <span class="text-lg font-bold text-gray-800">"SAPS II"</span>
+                    <span class="text-lg font-bold text-gray-800">{move || t(lang.get(), "saps_ii")}</span>
                 </A>
             </div>
         </div>

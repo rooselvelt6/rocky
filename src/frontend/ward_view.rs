@@ -1,4 +1,4 @@
-use crate::frontend::i18n::use_i18n;
+use crate::frontend::i18n::{t, use_i18n};
 use crate::models::patient::Patient;
 use leptos::*;
 use std::time::Duration;
@@ -12,8 +12,7 @@ pub fn WardView() -> impl IntoView {
 
     let (patients, set_patients) = create_signal(Vec::<Patient>::new());
 
-    // Simulate fetching data (placeholder for actual API call reuse)
-    // For now we will rely on a resource or just fetch on mount + interval
+    // ... (logic remains same)
     let fetch_patients = move || {
         spawn_local(async move {
             let token: Option<String> = window()
@@ -56,13 +55,13 @@ pub fn WardView() -> impl IntoView {
                 <div class="flex items-center gap-4">
                    <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_#22c55e]"></div>
                    <h1 class="text-3xl font-bold tracking-tight text-white uppercase">
-                       "UCI Central Monitor"
+                       {move || t(lang.get(), "uci_monitor_title")}
                    </h1>
                 </div>
                 <div class="text-slate-400 font-mono text-sm">
                    {move || {
                        let count = patients.get().len();
-                       format!("PATIENTS ACTIVE: {:02}", count)
+                       format!("{}: {:02}", t(lang.get(), "patients_active"), count)
                    }}
                 </div>
             </div>
@@ -73,13 +72,10 @@ pub fn WardView() -> impl IntoView {
                     each=move || patients.get()
                     key=|p| p.id.clone()
                     children=move |patient| {
-                        // Mock data for demo purposes (since we don't have real live scores in basic patient struct yet)
-                        // In real impl, this would come from the API
                         let id_str = patient.id.as_ref().map(|id| id.to_string()).unwrap_or_default();
-                        let is_critical = id_str.len() % 2 == 0; // Randomly assign critical status for visual demo
+                        let is_critical = id_str.len() % 2 == 0;
 
                         let card_border = if is_critical { "border-red-500 shadow-[0_0_20px_rgba(239,68,68,0.3)]" } else { "border-slate-700 hover:border-slate-500" };
-                        let status_color = if is_critical { "text-red-400" } else { "text-green-400" };
                         let pulse_class = if is_critical { "animate-pulse" } else { "" };
 
                         view! {
@@ -101,13 +97,13 @@ pub fn WardView() -> impl IntoView {
                                 // Vitals / Scores Grid
                                 <div class="grid grid-cols-2 gap-4 mb-4">
                                     <div class="bg-slate-700/50 p-3 rounded-lg">
-                                        <div class="text-xs text-slate-400 uppercase">"SOFA"</div>
+                                        <div class="text-xs text-slate-400 uppercase">{move || t(lang.get(), "sofa_score")}</div>
                                         <div class=format!("text-2xl font-mono font-bold {}", if is_critical { "text-red-400" } else { "text-white" })>
                                             {if is_critical { "12" } else { "4" }}
                                         </div>
                                     </div>
                                     <div class="bg-slate-700/50 p-3 rounded-lg">
-                                        <div class="text-xs text-slate-400 uppercase">"GCS"</div>
+                                        <div class="text-xs text-slate-400 uppercase">{move || t(lang.get(), "glasgow_scale")}</div>
                                         <div class="text-2xl font-mono font-bold text-white">
                                             {if is_critical { "9" } else { "14" }}
                                         </div>
@@ -116,7 +112,7 @@ pub fn WardView() -> impl IntoView {
 
                                 // Next Assessment Timer
                                 <div class="flex items-center justify-between text-xs font-mono bg-slate-900/50 p-2 rounded">
-                                    <span class="text-slate-500">"NEXT CHECK:"</span>
+                                    <span class="text-slate-500">{move || t(lang.get(), "next_check")}</span>
                                     <span class=format!("font-bold {}", if is_critical { "text-red-400" } else { "text-yellow-400" })>
                                         {if is_critical { "-00:15:00" } else { "03:45:00" }}
                                     </span>
@@ -124,7 +120,7 @@ pub fn WardView() -> impl IntoView {
 
                                 <div class="mt-4 pt-3 border-t border-slate-700/50 flex justify-end">
                                     <a href=format!("/patients/{}", id_str) class="text-xs text-cyan-400 hover:text-cyan-300 font-bold uppercase tracking-wider">
-                                        "View Details >"
+                                        {move || t(lang.get(), "view_details")}
                                     </a>
                                 </div>
                             </div>

@@ -99,7 +99,7 @@ pub fn GlasgowForm() -> impl IntoView {
                         }
                     }
                     class="px-4 py-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg text-sm font-semibold transition-colors flex items-center shadow-sm border border-indigo-100"
-                    title="Load previous assessment">
+                    title=move || t(lang.get(), "load_previous_desc")>
                     <i class="fas fa-clock-rotate-left mr-2"></i>
                     {move || t(lang.get(), "load_last")}
                 </button>
@@ -170,15 +170,15 @@ pub fn GlasgowForm() -> impl IntoView {
                                 <div class="flex flex-wrap gap-3">
                                      <a href=format!("/apache?patient_id={}", pid)
                                        class="flex items-center px-4 py-2 bg-white text-indigo-600 border border-indigo-200 rounded-lg hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-colors duration-200 shadow-sm text-sm font-bold">
-                                       <i class="fas fa-chart-bar mr-2"></i>"APACHE II"
+                                       <i class="fas fa-chart-bar mr-2"></i>{move || t(lang.get(), "apache_ii")}
                                     </a>
                                     <a href=format!("/sofa?patient_id={}", pid)
                                        class="flex items-center px-4 py-2 bg-white text-teal-600 border border-teal-200 rounded-lg hover:bg-teal-600 hover:text-white hover:border-teal-600 transition-colors duration-200 shadow-sm text-sm font-bold">
-                                       <i class="fas fa-procedures mr-2"></i>"SOFA"
+                                       <i class="fas fa-procedures mr-2"></i>{move || t(lang.get(), "sofa_score")}
                                     </a>
                                     <a href=format!("/saps?patient_id={}", pid)
                                        class="flex items-center px-4 py-2 bg-white text-orange-600 border border-orange-200 rounded-lg hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-colors duration-200 shadow-sm text-sm font-bold">
-                                       <i class="fas fa-notes-medical mr-2"></i>"SAPS II"
+                                       <i class="fas fa-notes-medical mr-2"></i>{move || t(lang.get(), "saps_ii")}
                                     </a>
                                 </div>
                             </div>

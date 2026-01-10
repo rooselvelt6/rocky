@@ -1,3 +1,4 @@
+use crate::frontend::admin::AdminPanel;
 use crate::frontend::apache_form::ApacheForm;
 use crate::frontend::dashboard::Dashboard;
 use crate::frontend::glasgow_form::GlasgowForm;
@@ -9,6 +10,7 @@ use crate::frontend::patient_list::PatientList;
 use crate::frontend::saps_form::SapsForm;
 use crate::frontend::sofa_form::SofaForm;
 use crate::frontend::ward_view::WardView;
+use crate::models::config::SystemConfig;
 use leptos::*;
 use leptos_router::*;
 
@@ -32,6 +34,7 @@ pub fn App() -> impl IntoView {
     };
 
     let (user_id, set_user_id) = create_signal(None::<String>);
+    let (user_role, set_user_role) = create_signal(None::<String>);
     let (auth_trigger, set_auth_trigger) = create_signal(0);
 
     // Check auth whenever trigger changes or on mount
@@ -39,7 +42,30 @@ pub fn App() -> impl IntoView {
         auth_trigger.get(); // Subscribe to trigger
         if let Some(storage) = window().local_storage().ok().flatten() {
             set_user_id.set(storage.get_item("uci_user_id").ok().flatten());
+            set_user_role.set(storage.get_item("uci_role").ok().flatten());
         }
+    });
+
+    // Zero-JS Theme Sync Effect
+    create_effect(move |_| {
+        spawn_local(async move {
+            let res = reqwasm::http::Request::get("/api/admin/config")
+                .send()
+                .await;
+
+            if let Ok(resp) = res {
+                if let Ok(conf) = resp.json::<SystemConfig>().await {
+                    if let Some(el) = window().document().and_then(|doc| doc.document_element()) {
+                        use wasm_bindgen::JsCast;
+                        if let Ok(html_el) = el.dyn_into::<web_sys::HtmlElement>() {
+                            let _ = html_el
+                                .style()
+                                .set_property("--primary-color", &conf.primary_color);
+                        }
+                    }
+                }
+            }
+        });
     });
 
     // Provide auth trigger to children so Login can update it
@@ -67,15 +93,20 @@ pub fn App() -> impl IntoView {
                                     {move || user_id.get().is_some().then(|| view! {
                                         <>
                                             <A href="/patients" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors">
-                                                <i class="fas fa-users mr-2"></i>"Pacientes"
+                                                <i class="fas fa-users mr-2"></i>{move || t(lang.get(), "nav_patients")}
                                             </A>
                                             <A href="/dashboard" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors">
-                                                <i class="fas fa-chart-line mr-2"></i>"Escalas"
+                                                <i class="fas fa-chart-line mr-2"></i>{move || t(lang.get(), "nav_scales")}
                                             </A>
                                             <A href="/ward" class="px-3 py-2 rounded-md text-sm font-medium bg-indigo-800 text-green-300 hover:bg-indigo-700 hover:text-green-200 transition-colors border border-green-500/30 flex items-center gap-2">
                                                 <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                                <i class="fas fa-hospital mr-1"></i>"Monitor"
+                                                <i class="fas fa-hospital mr-1"></i>{move || t(lang.get(), "nav_monitor")}
                                             </A>
+                                            {move || (user_role.get() == Some("Admin".to_string())).then(|| view! {
+                                                <A href="/admin" class="px-3 py-2 rounded-md text-sm font-medium text-amber-300 hover:bg-indigo-700 hover:text-amber-200 transition-colors border border-amber-500/20">
+                                                    <i class="fas fa-user-shield mr-2"></i>{move || t(lang.get(), "nav_admin")}
+                                                </A>
+                                            })}
                                         </>
                                     })}
                                 </div>
@@ -90,13 +121,13 @@ pub fn App() -> impl IntoView {
                                                 class="px-3 py-1 rounded-lg bg-red-800/50 hover:bg-red-700 transition-colors border border-red-500/30 text-xs flex items-center gap-2"
                                             >
                                                 <i class="fas fa-sign-out-alt"></i>
-                                                <span class="hidden sm:inline">"Cerrar Sesión"</span>
+                                                <span class="hidden sm:inline">{move || t(lang.get(), "nav_logout")}</span>
                                             </button>
                                         </div>
                                     }.into_view(),
                                     None => view! {
                                         <A href="/login" class="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 transition-colors text-sm font-bold shadow-md shadow-green-900/20">
-                                            <i class="fas fa-sign-in-alt mr-2"></i> "Acceder"
+                                            <i class="fas fa-sign-in-alt mr-2"></i> {move || t(lang.get(), "nav_login")}
                                         </A>
                                     }.into_view()
                                 }}
@@ -124,7 +155,7 @@ pub fn App() -> impl IntoView {
                                         {move || t(lang.get(), "welcome_title")}
                                     </h1>
                                     <p class="text-2xl text-indigo-700 mb-4 font-light max-w-3xl mx-auto">
-                                        {move || t(lang.get(), "icu_info_desc")}
+                                        {move || t(lang.get(), "welcome_subtitle")}
                                     </p>
                                 </div>
 
@@ -133,24 +164,24 @@ pub fn App() -> impl IntoView {
                                         <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
                                             <i class="fas fa-heartbeat text-indigo-600 text-xl"></i>
                                         </div>
-                                        <h3 class="text-xl font-bold text-gray-800 mb-3">"Monitoreo Continuo"</h3>
-                                        <p class="text-gray-600 leading-relaxed">"Vigilancia 24/7 de signos vitales y parámetros críticos en pacientes con condiciones potencialmente mortales."</p>
+                                        <h3 class="text-xl font-bold text-gray-800 mb-3">{move || t(lang.get(), "feature_monitoring")}</h3>
+                                        <p class="text-gray-600 leading-relaxed">{move || t(lang.get(), "feature_monitoring_desc")}</p>
                                     </div>
 
                                     <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 border border-indigo-100 shadow-lg hover:shadow-xl transition-shadow">
                                         <div class="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center mb-4">
                                             <i class="fas fa-user-md text-teal-600 text-xl"></i>
                                         </div>
-                                        <h3 class="text-xl font-bold text-gray-800 mb-3">"Equipo Especializado"</h3>
-                                        <p class="text-gray-600 leading-relaxed">"Personal médico altamente capacitado en cuidados críticos y medicina intensiva."</p>
+                                        <h3 class="text-xl font-bold text-gray-800 mb-3">{move || t(lang.get(), "feature_team")}</h3>
+                                        <p class="text-gray-600 leading-relaxed">{move || t(lang.get(), "feature_team_desc")}</p>
                                     </div>
 
                                     <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 border border-indigo-100 shadow-lg hover:shadow-xl transition-shadow">
                                         <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
                                             <i class="fas fa-chart-line text-purple-600 text-xl"></i>
                                         </div>
-                                        <h3 class="text-xl font-bold text-gray-800 mb-3">"Escalas Clínicas"</h3>
-                                        <p class="text-gray-600 leading-relaxed">"Evaluación objetiva mediante APACHE II, SOFA, SAPS II y Glasgow para optimizar tratamientos."</p>
+                                        <h3 class="text-xl font-bold text-gray-800 mb-3">{move || t(lang.get(), "feature_scales")}</h3>
+                                        <p class="text-gray-600 leading-relaxed">{move || t(lang.get(), "feature_scales_desc")}</p>
                                     </div>
                                 </div>
                             </div>
@@ -167,6 +198,7 @@ pub fn App() -> impl IntoView {
                         <Route path="/sofa" view=|| view! { <Protected><SofaForm/></Protected> }/>
                         <Route path="/saps" view=|| view! { <Protected><SapsForm/></Protected> }/>
                         <Route path="/ward" view=|| view! { <Protected><WardView/></Protected> }/>
+                        <Route path="/admin" view=|| view! { <Protected><AdminPanel/></Protected> }/>
                     </Routes>
                 </main>
 

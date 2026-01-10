@@ -116,7 +116,9 @@ pub fn PatientDetail() -> impl IntoView {
     view! {
         <div class="max-w-7xl mx-auto p-6 space-y-8">
             <Show when=move || !loading.get() fallback=|| view! { <div class="text-center p-10"><i class="fas fa-spinner fa-spin text-4xl text-indigo-600"></i></div> }>
-                {move || patient.get().map(|p| view! {
+                {move || patient.get().map(|p| {
+                    let gender = p.gender.clone();
+                    view! {
                     // Patient Header / Bio
                     <div class="bg-white rounded-2xl shadow-md p-6 border-l-8 border-indigo-600 flex justify-between items-start">
                         <div>
@@ -128,8 +130,13 @@ pub fn PatientDetail() -> impl IntoView {
                             </div>
                             <div class="flex gap-6 text-gray-600 mt-2">
                                 <span class="flex items-center"><i class="fas fa-birthday-cake mr-2 text-indigo-400"></i> {p.date_of_birth.clone()}</span>
-                                <span class="flex items-center"><i class="fas fa-venus-mars mr-2 text-indigo-400"></i> {p.gender.clone()}</span>
-                                <span class="flex items-center"><i class="fas fa-bed mr-2 text-indigo-400"></i> "Bed 1"</span>
+                                <span class="flex items-center"><i class="fas fa-venus-mars mr-2 text-indigo-400"></i> {move || {
+                                    let g = gender.to_lowercase();
+                                    if g == "male" { t(lang.get(), "male") }
+                                    else if g == "female" { t(lang.get(), "female") }
+                                    else { t(lang.get(), "other") }
+                                }}</span>
+                                <span class="flex items-center"><i class="fas fa-bed mr-2 text-indigo-400"></i> {move || t(lang.get(), "bed")} " 1"</span>
                             </div>
                         </div>
                         <div class="text-right">
@@ -144,19 +151,19 @@ pub fn PatientDetail() -> impl IntoView {
                          // SOFA Trend
                         <div class="bg-white rounded-xl shadow-sm p-6">
                             <h3 class="font-bold text-gray-800 mb-4 flex items-center">
-                                <i class="fas fa-chart-line mr-2 text-teal-500"></i> "SOFA Trend (Last 24h)"
+                                <i class="fas fa-chart-line mr-2 text-teal-500"></i> {move || t(lang.get(), "sofa_trend")}
                             </h3>
                             <div class="h-32 bg-gray-50 rounded-lg flex items-center justify-center text-gray-400">
-                                "Visual Trends Chart (Coming Soon)"
+                                {move || t(lang.get(), "visual_trends_soon")}
                             </div>
                         </div>
                          // APACHE Trend
                         <div class="bg-white rounded-xl shadow-sm p-6">
                             <h3 class="font-bold text-gray-800 mb-4 flex items-center">
-                                <i class="fas fa-chart-area mr-2 text-red-500"></i> "APACHE II Trend"
+                                <i class="fas fa-chart-area mr-2 text-red-500"></i> {move || t(lang.get(), "apache_trend")}
                             </h3>
                             <div class="h-32 bg-gray-50 rounded-lg flex items-center justify-center text-gray-400">
-                                "Visual Trends Chart (Coming Soon)"
+                                {move || t(lang.get(), "visual_trends_soon")}
                             </div>
                         </div>
                     </div>
@@ -182,7 +189,7 @@ pub fn PatientDetail() -> impl IntoView {
                                             title=sofa_elig.message.unwrap_or_default()
                                         >
                                             <i class="fas fa-heart"></i>
-                                            <span class="font-semibold">"SOFA"</span>
+                                            <span class="font-semibold">{t(lang.get(), "sofa_score")}</span>
                                             {if sofa_elig.can_assess {
                                                 view! { <i class="fas fa-check-circle text-sm"></i> }.into_view()
                                             } else if let Some(hrs) = sofa_elig.hours_remaining {
@@ -197,7 +204,7 @@ pub fn PatientDetail() -> impl IntoView {
                                             title=apache_elig.message.unwrap_or_default()
                                         >
                                             <i class="fas fa-heartbeat"></i>
-                                            <span class="font-semibold">"APACHE"</span>
+                                            <span class="font-semibold">{t(lang.get(), "apache_ii")}</span>
                                             {if apache_elig.can_assess {
                                                 view! { <i class="fas fa-check-circle text-sm"></i> }.into_view()
                                             } else if let Some(hrs) = apache_elig.hours_remaining {
@@ -212,7 +219,7 @@ pub fn PatientDetail() -> impl IntoView {
                                             title=glasgow_elig.message.unwrap_or_default()
                                         >
                                             <i class="fas fa-brain"></i>
-                                            <span class="font-semibold">"Glasgow"</span>
+                                            <span class="font-semibold">{t(lang.get(), "glasgow_scale")}</span>
                                             {if glasgow_elig.can_assess {
                                                 view! { <i class="fas fa-check-circle text-sm"></i> }.into_view()
                                             } else if let Some(hrs) = glasgow_elig.hours_remaining {
@@ -227,7 +234,7 @@ pub fn PatientDetail() -> impl IntoView {
                                             title=saps_elig.message.unwrap_or_default()
                                         >
                                             <i class="fas fa-procedures"></i>
-                                            <span class="font-semibold">"SAPS II"</span>
+                                            <span class="font-semibold">{t(lang.get(), "saps_ii")}</span>
                                             {if saps_elig.can_assess {
                                                 view! { <i class="fas fa-check-circle text-sm"></i> }.into_view()
                                             } else if let Some(hrs) = saps_elig.hours_remaining {
@@ -246,14 +253,14 @@ pub fn PatientDetail() -> impl IntoView {
                         <div class="space-y-8">
                             // SOFA History
                             <section>
-                                <h3 class="text-lg font-bold text-teal-800 border-b border-teal-100 pb-2 mb-4">"SOFA"</h3>
+                                <h3 class="text-lg font-bold text-teal-800 border-b border-teal-100 pb-2 mb-4">{move || t(lang.get(), "sofa_score")}</h3>
                                 <div class="overflow-x-auto">
                                     <table class="min-w-full divide-y divide-gray-200">
                                         <thead class="bg-gray-50">
                                             <tr>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Severity</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{move || t(lang.get(), "table_date")}</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{move || t(lang.get(), "table_score")}</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{move || t(lang.get(), "table_severity")}</th>
                                             </tr>
                                         </thead>
                                         <tbody class="bg-white divide-y divide-gray-200">
@@ -276,14 +283,14 @@ pub fn PatientDetail() -> impl IntoView {
 
                             // APACHE History
                              <section>
-                                <h3 class="text-lg font-bold text-red-800 border-b border-red-100 pb-2 mb-4">"APACHE II"</h3>
+                                <h3 class="text-lg font-bold text-red-800 border-b border-red-100 pb-2 mb-4">{move || t(lang.get(), "apache_ii")}</h3>
                                 <div class="overflow-x-auto">
                                     <table class="min-w-full divide-y divide-gray-200">
                                         <thead class="bg-gray-50">
                                             <tr>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mortality</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{move || t(lang.get(), "table_date")}</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{move || t(lang.get(), "table_score")}</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{move || t(lang.get(), "table_mortality")}</th>
                                             </tr>
                                         </thead>
                                         <tbody class="bg-white divide-y divide-gray-200">
@@ -296,13 +303,16 @@ pub fn PatientDetail() -> impl IntoView {
                                                     </tr>
                                                 }
                                             }/>
+                                            <Show when=move || history.get().apache.is_empty() fallback=|| view!{}>
+                                                <tr><td colspan="3" class="px-6 py-4 text-center text-gray-400 italic">{move || t(lang.get(), "no_history")}</td></tr>
+                                            </Show>
                                         </tbody>
                                     </table>
                                 </div>
                             </section>
                         </div>
                     </div>
-                })}
+                }})}
             </Show>
         </div>
     }

@@ -66,11 +66,11 @@ pub fn PatientList() -> impl IntoView {
             <div class="flex justify-between items-center mb-8">
                 <div>
                     <h2 class="text-3xl font-bold text-gray-800">{move || t(lang.get(), "patient_list")}</h2>
-                    <p class="text-gray-500 mt-1">"Overview of all active patients"</p>
+                    <p class="text-gray-500 mt-1">{move || t(lang.get(), "patient_list_overview")}</p>
                 </div>
                 <div class="flex gap-4">
                     <a href="/api/export/patients" class="bg-green-600 text-white px-6 py-3 rounded-xl hover:bg-green-700 shadow-md flex items-center transition-all hover:scale-105">
-                        <i class="fas fa-file-csv mr-2"></i> {move || if lang.get() == crate::frontend::i18n::Language::En { "Export CSV" } else { "Exportar CSV" }}
+                        <i class="fas fa-file-csv mr-2"></i> {move || t(lang.get(), "export_csv")}
                     </a>
                     <a href="/register" class="bg-indigo-600 text-white px-6 py-3 rounded-xl hover:bg-indigo-700 shadow-md flex items-center transition-all hover:scale-105">
                         <i class="fas fa-user-plus mr-2"></i> {move || t(lang.get(), "add_patient")}
@@ -86,7 +86,7 @@ pub fn PatientList() -> impl IntoView {
                     </div>
                     <input
                         type="text"
-                        placeholder="Buscar por nombre, apellido, diagnóstico o ID..."
+                        placeholder=move || t(lang.get(), "search_placeholder")
                         class="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                         on:input=move |ev| {
                             set_search_query.set(event_target_value(&ev));
@@ -100,14 +100,14 @@ pub fn PatientList() -> impl IntoView {
                     if search_query.get().is_empty() {
                         view! {
                             <p class="text-sm text-gray-500 mt-2">
-                                {format!("Mostrando {} pacientes", total)}
+                                {move || t(lang.get(), "showing_n_patients").replace("{}", &total.to_string())}
                             </p>
                         }.into_view()
                     } else {
                         view! {
                             <p class="text-sm text-gray-600 mt-2">
                                 <span class="font-semibold">{count}</span>
-                                {format!(" de {} pacientes", total)}
+                                {move || t(lang.get(), "of_n_patients").replace("{}", &total.to_string())}
                             </p>
                         }.into_view()
                     }

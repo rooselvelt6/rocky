@@ -189,7 +189,7 @@ pub fn ApacheForm() -> impl IntoView {
                                             {move || t(lang.get(), "sepsis_alert")}
                                         </h3>
                                         <p class="text-sm text-red-700 mt-1">
-                                            "High risk of sepsis (qSOFA ≥ 2)"
+                                            {move || t(lang.get(), "qsofa_high_risk")}
                                         </p>
                                     </div>
                                 </div>
@@ -271,15 +271,15 @@ pub fn ApacheForm() -> impl IntoView {
                                     <div class="flex flex-wrap gap-3">
                                         <a href=format!("/glasgow?patient_id={}", pid)
                                            class="flex items-center px-4 py-2 bg-white text-purple-600 border border-purple-200 rounded-lg hover:bg-purple-600 hover:text-white hover:border-purple-600 transition-colors duration-200 shadow-sm text-sm font-bold">
-                                           <i class="fas fa-brain mr-2"></i>"Glasgow"
+                                           <i class="fas fa-brain mr-2"></i>{move || t(lang.get(), "glasgow_scale")}
                                         </a>
                                         <a href=format!("/sofa?patient_id={}", pid)
                                            class="flex items-center px-4 py-2 bg-white text-teal-600 border border-teal-200 rounded-lg hover:bg-teal-600 hover:text-white hover:border-teal-600 transition-colors duration-200 shadow-sm text-sm font-bold">
-                                           <i class="fas fa-procedures mr-2"></i>"SOFA"
+                                           <i class="fas fa-procedures mr-2"></i>{move || t(lang.get(), "sofa_score")}
                                         </a>
                                         <a href=format!("/saps?patient_id={}", pid)
                                            class="flex items-center px-4 py-2 bg-white text-orange-600 border border-orange-200 rounded-lg hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-colors duration-200 shadow-sm text-sm font-bold">
-                                           <i class="fas fa-notes-medical mr-2"></i>"SAPS II"
+                                           <i class="fas fa-notes-medical mr-2"></i>{move || t(lang.get(), "saps_ii")}
                                         </a>
                                         <button
                                             class="flex items-center px-4 py-2 bg-white text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-600 hover:text-white hover:border-gray-600 transition-colors duration-200 shadow-sm text-sm font-bold no-print"
@@ -287,7 +287,7 @@ pub fn ApacheForm() -> impl IntoView {
                                                 let _ = web_sys::window().unwrap().print();
                                             }
                                         >
-                                            <i class="fas fa-print mr-2"></i>"Print"
+                                            <i class="fas fa-print mr-2"></i>{move || t(lang.get(), "print")}
                                         </button>
                                     </div>
                                 </div>

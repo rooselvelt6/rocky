@@ -88,12 +88,12 @@ pub fn PatientCard(patient: Patient) -> impl IntoView {
                             if data.len() > 1 {
                                 view! {
                                     <div class="absolute inset-0 flex items-center justify-center opacity-20 pointer-events-none">
-                                        <span class="text-[10px] uppercase tracking-widest text-gray-400">"Trend"</span>
+                                        <span class="text-[10px] uppercase tracking-widest text-gray-400">{move || t(lang.get(), "trend")}</span>
                                     </div>
                                     <Sparkline data=data color="blue" width=200 height=40 />
                                 }.into_view()
                             } else {
-                                view! { <span class="text-xs text-gray-400 italic">"No trend data"</span> }.into_view()
+                                view! { <span class="text-xs text-gray-400 italic">{move || t(lang.get(), "no_trend_data")}</span> }.into_view()
                             }
                         }}
                     </div>
@@ -106,14 +106,14 @@ pub fn PatientCard(patient: Patient) -> impl IntoView {
                             class="bg-purple-50 text-purple-700 text-center py-2 px-2 rounded-lg hover:bg-purple-600 hover:text-white text-xs font-semibold transition-all flex items-center justify-center gap-1"
                         >
                             <i class="fas fa-brain text-xs"></i>
-                            "Glasgow"
+                            {move || t(lang.get(), "glasgow_scale")}
                         </a>
                         <a
                             href=format!("/apache?patient_id={}", id_str)
                             class="bg-red-50 text-red-700 text-center py-2 px-2 rounded-lg hover:bg-red-600 hover:text-white text-xs font-semibold transition-all flex items-center justify-center gap-1"
                         >
                             <i class="fas fa-heartbeat text-xs"></i>
-                            "APACHE"
+                            {move || t(lang.get(), "apache_ii")}
                         </a>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
@@ -122,14 +122,14 @@ pub fn PatientCard(patient: Patient) -> impl IntoView {
                             class="bg-teal-50 text-teal-700 text-center py-2 px-2 rounded-lg hover:bg-teal-600 hover:text-white text-xs font-semibold transition-all flex items-center justify-center gap-1"
                         >
                             <i class="fas fa-heart text-xs"></i>
-                            "SOFA"
+                            {move || t(lang.get(), "sofa_score")}
                         </a>
                         <a
                             href=format!("/saps?patient_id={}", id_str)
                             class="bg-orange-50 text-orange-700 text-center py-2 px-2 rounded-lg hover:bg-orange-600 hover:text-white text-xs font-semibold transition-all flex items-center justify-center gap-1"
                         >
                             <i class="fas fa-procedures text-xs"></i>
-                            "SAPS II"
+                            {move || t(lang.get(), "saps_ii")}
                         </a>
                     </div>
                     <a
@@ -143,7 +143,7 @@ pub fn PatientCard(patient: Patient) -> impl IntoView {
             </div>
             <div class="px-6 py-2 border-t border-gray-50 flex justify-between items-center text-xs text-gray-400 mt-auto">
                 <span>"ID: " {id_str.split(':').last().unwrap_or("?").to_string()}</span>
-                <span>"Updated: Today"</span>
+                <span>{move || t(lang.get(), "updated_today")}</span>
             </div>
         </div>
     }

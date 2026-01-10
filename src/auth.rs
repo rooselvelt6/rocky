@@ -20,14 +20,8 @@ pub struct Claims {
     pub role: UserRole, // Rol del usuario
 }
 
-/// Roles de usuario en el sistema
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-pub enum UserRole {
-    Admin,    // Acceso completo
-    Doctor,   // Puede crear/editar pacientes y evaluaciones
-    Nurse,    // Puede crear evaluaciones, solo lectura de pacientes
-    ReadOnly, // Solo consulta
-}
+// Use shared UserRole from the uci library
+pub use uci::models::user::UserRole;
 
 /// Estructura de usuario autenticado
 #[derive(Debug, Clone, Serialize, Deserialize)]

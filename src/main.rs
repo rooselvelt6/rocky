@@ -4,7 +4,7 @@ use axum::{
     extract::{Path, State},
     http::StatusCode,
     middleware::from_fn,
-    routing::{get, post},
+    routing::{get, post, put},
     Json, Router,
 };
 // use std::sync::Arc;
@@ -27,11 +27,13 @@ mod error;
 // mod models; // Moved to lib.rs
 
 use uci::models::apache::ApacheAssessment;
+use uci::models::config::SystemConfig;
 use uci::models::glasgow::GlasgowAssessment;
 use uci::models::history::PatientHistoryResponse;
 use uci::models::patient::Patient;
 use uci::models::saps::SapsAssessment;
 use uci::models::sofa::SofaAssessment;
+use uci::models::user::User;
 
 #[cfg(feature = "ssr")]
 use uci::services::validation;
@@ -106,6 +108,13 @@ async fn main() {
         )
         .route("/api/export/patients", get(export_patients_csv))
         .route("/api/login", post(login_handler))
+        // Admin Routes
+        .route("/api/admin/config", get(get_config).put(update_config))
+        .route("/api/admin/users", get(get_users).post(create_user))
+        .route(
+            "/api/admin/users/{id}",
+            put(update_user).delete(delete_user),
+        )
         .layer(from_fn(crate::auth::auth_middleware))
         // Servir archivos estáticos desde dist
         .fallback_service(
@@ -130,7 +139,22 @@ async fn main() {
                     axum::http::header::CONTENT_TYPE,
                 ]),
         )
-        .with_state(db); // Add database to app state
+        .with_state(db.clone()); // Add database to app state
+
+    // --- INITIALIZE SYSTEM CONFIG ---
+    let init_db = db.clone();
+    tokio::spawn(async move {
+        let configs: Vec<SystemConfig> = init_db.select("system_config").await.unwrap_or_default();
+        if configs.is_empty() {
+            let id = RecordId::from(("system_config", "settings"));
+            let _: Option<SystemConfig> = init_db
+                .update(id)
+                .content(SystemConfig::default())
+                .await
+                .unwrap_or_default();
+            println!("DEBUG: Initialized default system configuration.");
+        }
+    });
 
     println!("¡Servidor Axum arrancando...");
     println!("http://localhost:3000 → Aplicación UCI (Leptos + Axum)");
@@ -902,7 +926,7 @@ async fn login_handler(
     // En producción, esto debería validar contra la base de datos con contraseñas hasheadas.
     if payload.username == "admin" && payload.password == "admin" {
         let user_id = "user:admin";
-        let role = crate::auth::UserRole::Admin;
+        let role = uci::models::user::UserRole::Admin;
 
         match crate::auth::generate_token(user_id, role.clone()) {
             Ok(token) => Ok(Json(LoginResponse {
@@ -917,4 +941,112 @@ async fn login_handler(
     } else {
         Err(StatusCode::UNAUTHORIZED)
     }
+}
+
+// --- ADMIN HANDLERS ---
+
+/// Helper to ensure the user is an Admin
+fn ensure_admin(parts: &axum::http::request::Parts) -> Result<(), StatusCode> {
+    let auth_user = parts
+        .extensions
+        .get::<crate::auth::AuthenticatedUser>()
+        .ok_or(StatusCode::UNAUTHORIZED)?;
+
+    if auth_user.role != uci::models::user::UserRole::Admin {
+        return Err(StatusCode::FORBIDDEN);
+    }
+    Ok(())
+}
+
+async fn get_config(
+    State(db): State<Surreal<Client>>,
+    parts: axum::http::request::Parts,
+) -> Result<Json<SystemConfig>, StatusCode> {
+    ensure_admin(&parts)?;
+    let configs: Vec<SystemConfig> = db
+        .select("system_config")
+        .await
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+    Ok(Json(configs.into_iter().next().unwrap_or_default()))
+}
+
+async fn update_config(
+    State(db): State<Surreal<Client>>,
+    parts: axum::http::request::Parts,
+    Json(payload): Json<SystemConfig>,
+) -> Result<Json<SystemConfig>, StatusCode> {
+    ensure_admin(&parts)?;
+    let mut config = payload;
+    config.updated_at = chrono::Utc::now();
+
+    // We update the record with ID "system_config:settings" or similar to ensure one entry
+    let id = RecordId::from(("system_config", "settings"));
+    let updated: Option<SystemConfig> = db
+        .update(id)
+        .content(config)
+        .await
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+    Ok(Json(updated.unwrap_or_default()))
+}
+
+async fn get_users(
+    State(db): State<Surreal<Client>>,
+    parts: axum::http::request::Parts,
+) -> Result<Json<Vec<User>>, StatusCode> {
+    ensure_admin(&parts)?;
+    let users = db
+        .select("users")
+        .await
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+    Ok(Json(users))
+}
+
+async fn create_user(
+    State(db): State<Surreal<Client>>,
+    parts: axum::http::request::Parts,
+    Json(payload): Json<User>,
+) -> Result<Json<Option<User>>, StatusCode> {
+    ensure_admin(&parts)?;
+    let mut user = payload;
+    user.created_at = chrono::Utc::now();
+    // In a real app we would hash the password here if provided in the DTO
+    let created: Option<User> = db
+        .create("users")
+        .content(user)
+        .await
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+    Ok(Json(created))
+}
+
+async fn update_user(
+    State(db): State<Surreal<Client>>,
+    parts: axum::http::request::Parts,
+    Path(id): Path<String>,
+    Json(payload): Json<User>,
+) -> Result<Json<Option<User>>, StatusCode> {
+    ensure_admin(&parts)?;
+    let id_thing = id
+        .parse::<RecordId>()
+        .map_err(|_| StatusCode::BAD_REQUEST)?;
+    let updated: Option<User> = db
+        .update(id_thing)
+        .content(payload)
+        .await
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+    Ok(Json(updated))
+}
+
+async fn delete_user(
+    State(db): State<Surreal<Client>>,
+    parts: axum::http::request::Parts,
+    Path(id): Path<String>,
+) -> Result<StatusCode, StatusCode> {
+    ensure_admin(&parts)?;
+    let id_thing = id
+        .parse::<RecordId>()
+        .map_err(|_| StatusCode::BAD_REQUEST)?;
+    db.delete::<Option<User>>(id_thing)
+        .await
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+    Ok(StatusCode::NO_CONTENT)
 }
