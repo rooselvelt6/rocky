@@ -21,6 +21,7 @@ Una aplicación web de alto rendimiento desarrollada en **Rust** para automatiza
 - [Arquitectura Técnica](#-arquitectura-técnica)
 - [Características Principales](#-características-principales)
 - [Tecnologías](#️-tecnologías)
+- [Whitepaper y Roadmap 2026](#-whitepaper-y-roadmap-2026)
 - [Instalación y Despliegue](#-instalación-y-despliegue)
 - [Licencia y Autor](#-licencia-y-autor)
 
@@ -111,6 +112,18 @@ graph TD
 | **Backend API** | Axum + Tokio Runtime |
 | **Base de Datos** | SurrealDB v2.4 (Multi-modelo) |
 | **Seguridad** | JWT, Tower-HTTP, Ammonia (Sanitization) |
+
+---
+
+## 📄 Whitepaper y Roadmap 2026
+
+Para un análisis profundo de la arquitectura, impacto clínico y visión a largo plazo, consulte nuestro **[Technical Whitepaper](WHITEPAPER.md)**.
+
+### Resumen del Roadmap 2026
+*   **Q1 (Actual):** Consolidación de escalas críticas, Docker y Auth JWT.
+*   **Q2:** Dashboards de analítica visual y API REST pública (OpenAPI).
+*   **Q3:** Aplicación móvil nativa (Tauri) y sistema de alertas tempranas.
+*   **Q4:** Inteligencia Artificial para predicción de sepsis y soporte multi-hospital.
 
 ---
 
