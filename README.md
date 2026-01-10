@@ -21,10 +21,26 @@ Una aplicación web de alto rendimiento desarrollada en **Rust** para automatiza
 - [Evaluación del Sistema](#-evaluación-del-sistema)
 - [Arquitectura Técnica](#-arquitectura-técnica)
 - [Análisis de Seguridad e Integridad](#-análisis-de-seguridad-e-integridad)
+- [Escalabilidad y Futuro](#-escalabilidad-y-futuro)
 - [Tecnologías](#️-tecnologías)
 - [Instalación Rápida](#-instalación-rápida)
 - [Despliegue en Linux/Docker](#en-linux-usando-docker---recomendado-)
 - [Licencia](#-licencia)
+
+---
+
+## 📈 Escalabilidad y Futuro
+
+El sistema ha sido diseñado pensando en el crecimiento del hospital y la integración con otras tecnologías:
+
+### 1. Escalabilidad Horizontal
+La arquitectura de **Axum** permite que el servidor pueda ser clonado en múltiples instancias detrás de un balanceador de carga si el hospital crece a miles de camas. Al usar **SurrealDB**, el escalado de datos puede pasar de un archivo local a un cluster distribuido sin cambiar una sola línea de lógica médica.
+
+### 2. Futuro: Integración con Monitores (IoT)
+Gracias al alto rendimiento de Rust y el soporte de WebSockets en Axum, el sistema está preparado para recibir flujos de datos en tiempo real directamente de monitores de signos vitales, automatizando aún más el llenado de escalas como SOFA o APACHE II.
+
+### 3. Mantenibilidad
+Al usar tipos estrictos y una arquitectura modular, añadir nuevas escalas (como EuroSCORE o escala de NIHSS) es un proceso seguro que no afecta la estabilidad de las escalas ya existentes.
 
 ---
 
