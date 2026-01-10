@@ -19,11 +19,50 @@ Una aplicación web de alto rendimiento desarrollada en **Rust** para automatiza
 
 - [Características](#-características)
 - [Evaluación del Sistema](#-evaluación-del-sistema)
-- [Análisis de Seguridad](#-análisis-de-seguridad)
+- [Arquitectura Técnica](#-arquitectura-técnica)
+- [Análisis de Seguridad e Integridad](#-análisis-de-seguridad-e-integridad)
 - [Tecnologías](#️-tecnologías)
 - [Instalación Rápida](#-instalación-rápida)
 - [Despliegue en Linux/Docker](#en-linux-usando-docker---recomendado-)
 - [Licencia](#-licencia)
+
+---
+
+## 🏗️ Arquitectura Técnica
+
+El sistema utiliza una arquitectura de **Estado Sólido** y **Reactividad Basada en Señales**:
+
+```mermaid
+graph TD
+    User((Personal Médico)) -->|WASM UI| Frontend[Leptos Frontend]
+    Frontend -->|Signals/Reactivity| UI_Update[Update UI]
+    Frontend -->|Auth: JWT| Backend[Axum API Server]
+    
+    subgraph "Backend (Rust Core)"
+        Backend -->|Middleware| AuthCheck[Auth & RBAC]
+        Backend -->|Sanitization| Ammonia[XSS Prevention]
+        Backend -->|Business Logic| ClinicalScales[Scales Engine: Apache/Sofa/Saps]
+        Backend -->|Audit| AuditLogs[Audit Logging System]
+    end
+    
+    Backend -->|SurrealQL| Database[(SurrealDB v2.4)]
+    Database -->|Persistence| Storage[File: uci.db]
+```
+
+### Análisis de la Arquitectura
+*   **Separación de Preocupaciones:** El motor de cálculo clínico está aislado de la capa de API, permitiendo pruebas unitarias rigurosas de las escalas médicas.
+*   **Flujo de Datos Unidireccional:** La reactividad basada en señales de Leptos garantiza que no existan inconsistencias de estado en la UI, crítico para la precisión de los datos ingresados.
+
+---
+
+## 🔒 Análisis de Seguridad e Integridad
+
+### 1. Integridad de Datos (ACID)
+El uso de **SurrealDB** garantiza que cada evaluación clínica sea una transacción atómica. Si falla la conexión durante el guardado de una escala SOFA, el sistema no permite estados parciales, protegiendo la integridad del historial médico del paciente.
+
+### 2. Análisis de Sensibilidad y Resiliencia
+*   **Validación de Dominios:** Los parámetros fisiológicos (pH, Signos Vitales, Escala de Coma) están validados mediante tipos de datos estrictos y comprobaciones de rango. Esto evita que errores de digitación generen predicciones biológicamente imposibles.
+*   **Seguridad de Memoria (Zero Unsafe):** Al usar Rust en todo el stack, el proyecto elimina vulnerabilidades de desbordamiento de búfer, las cuales representan el 70% de los fallos de seguridad en software de salud convencional.
 
 ---
 
