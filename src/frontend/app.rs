@@ -143,7 +143,7 @@ pub fn App() -> impl IntoView {
                     </div>
                 </nav>
 
-                <main class="flex-grow">
+                <main class="flex-grow py-8 md:py-12">
                     <Routes>
                         <Route path="/" view=move || view! {
                             <div class="max-w-5xl mx-auto px-4 py-16">
@@ -189,14 +189,16 @@ pub fn App() -> impl IntoView {
                         <Route path="/login" view=Login/>
 
                         // Protected Routes
-                        <Route path="/dashboard" view=|| view! { <Protected><Dashboard/></Protected> }/>
                         <Route path="/patients" view=|| view! { <Protected><PatientList/></Protected> }/>
                         <Route path="/register" view=|| view! { <Protected><PatientForm/></Protected> }/>
                         <Route path="/patients/:id" view=|| view! { <Protected><PatientDetail/></Protected> }/>
-                        <Route path="/glasgow" view=|| view! { <Protected><GlasgowForm/></Protected> }/>
-                        <Route path="/apache" view=|| view! { <Protected><ApacheForm/></Protected> }/>
-                        <Route path="/sofa" view=|| view! { <Protected><SofaForm/></Protected> }/>
-                        <Route path="/saps" view=|| view! { <Protected><SapsForm/></Protected> }/>
+
+                        // Scale Routes Nested Context - Restricted to specific patient
+                        <Route path="/patients/:id/assess/glasgow" view=|| view! { <Protected><GlasgowForm/></Protected> }/>
+                        <Route path="/patients/:id/assess/apache" view=|| view! { <Protected><ApacheForm/></Protected> }/>
+                        <Route path="/patients/:id/assess/sofa" view=|| view! { <Protected><SofaForm/></Protected> }/>
+                        <Route path="/patients/:id/assess/saps" view=|| view! { <Protected><SapsForm/></Protected> }/>
+
                         <Route path="/ward" view=|| view! { <Protected><WardView/></Protected> }/>
                         <Route path="/admin" view=|| view! { <Protected><AdminPanel/></Protected> }/>
                     </Routes>

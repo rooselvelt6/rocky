@@ -133,3 +133,23 @@ html {
         padding: 1.5rem;
     }
 }
+
+/* Print Styles */
+@media print {
+
+    .no-print,
+    .no-print * {
+        display: none !important;
+    }
+
+    body {
+        background: white;
+        color: black;
+    }
+
+    main {
+        box-shadow: none;
+        padding: 0;
+        margin: 0;
+    }
+}

@@ -1,15 +1,16 @@
+use crate::frontend::components::export_button::ExportButton;
 use crate::frontend::i18n::{t, use_i18n};
 use crate::uci::scale::apache::{ApacheIIRequest, ApacheIIResponse};
 use leptos::*;
-use leptos_router::use_query_map;
+use leptos_router::use_params_map;
 use reqwasm::http::Request;
 
 /// APACHE II Score form component - Comprehensive ICU severity assessment
 #[component]
 pub fn ApacheForm() -> impl IntoView {
     let lang = use_i18n();
-    let query = use_query_map();
-    let patient_id = move || query.get().get("patient_id").cloned();
+    let params = use_params_map();
+    let patient_id = move || params.get().get("id").cloned();
 
     // Reactive signals for form inputs
     let (temperature, set_temperature) = create_signal(37.0f32);
@@ -141,7 +142,7 @@ pub fn ApacheForm() -> impl IntoView {
     };
 
     view! {
-            <div class="w-full max-w-7xl mx-auto px-4">
+            <div class="w-full max-w-7xl mx-auto px-4 pb-8">
                 // Header
                 <div class="text-center mb-6">
                     <h2 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent">
@@ -269,26 +270,52 @@ pub fn ApacheForm() -> impl IntoView {
                                         <i class="fas fa-forward mr-2"></i>{t(lang.get(), "continue_assessment")}
                                     </h4>
                                     <div class="flex flex-wrap gap-3">
-                                        <a href=format!("/glasgow?patient_id={}", pid)
+                                        <a href=format!("/patients/{}/assess/glasgow", pid)
                                            class="flex items-center px-4 py-2 bg-white text-purple-600 border border-purple-200 rounded-lg hover:bg-purple-600 hover:text-white hover:border-purple-600 transition-colors duration-200 shadow-sm text-sm font-bold">
                                            <i class="fas fa-brain mr-2"></i>{move || t(lang.get(), "glasgow_scale")}
                                         </a>
-                                        <a href=format!("/sofa?patient_id={}", pid)
+                                        <a href=format!("/patients/{}/assess/sofa", pid)
                                            class="flex items-center px-4 py-2 bg-white text-teal-600 border border-teal-200 rounded-lg hover:bg-teal-600 hover:text-white hover:border-teal-600 transition-colors duration-200 shadow-sm text-sm font-bold">
                                            <i class="fas fa-procedures mr-2"></i>{move || t(lang.get(), "sofa_score")}
                                         </a>
-                                        <a href=format!("/saps?patient_id={}", pid)
+                                        <a href=format!("/patients/{}/assess/saps", pid)
                                            class="flex items-center px-4 py-2 bg-white text-orange-600 border border-orange-200 rounded-lg hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-colors duration-200 shadow-sm text-sm font-bold">
                                            <i class="fas fa-notes-medical mr-2"></i>{move || t(lang.get(), "saps_ii")}
                                         </a>
-                                        <button
-                                            class="flex items-center px-4 py-2 bg-white text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-600 hover:text-white hover:border-gray-600 transition-colors duration-200 shadow-sm text-sm font-bold no-print"
-                                            on:click=move |_| {
-                                                let _ = web_sys::window().unwrap().print();
-                                            }
-                                        >
-                                            <i class="fas fa-print mr-2"></i>{move || t(lang.get(), "print")}
-                                        </button>
+                                        <Show when=move || result.get().is_some()>
+                                            {move || {
+                                                let data = serde_json::json!({
+                                                    "type": "APACHE II",
+                                                    "patient_id": patient_id(),
+                                                    "inputs": {
+                                                        "temperature": temperature.get(),
+                                                        "map": mean_arterial_pressure.get(),
+                                                        "heart_rate": heart_rate.get(),
+                                                        "respiratory_rate": respiratory_rate.get(),
+                                                        "oxygenation": {
+                                                            "type": oxygenation_type.get(),
+                                                            "value": oxygenation_value.get()
+                                                        },
+                                                        "ph": arterial_ph.get(),
+                                                        "sodium": serum_sodium.get(),
+                                                        "potassium": serum_potassium.get(),
+                                                        "creatinine": serum_creatinine.get(),
+                                                        "hematocrit": hematocrit.get(),
+                                                        "wbc": white_blood_count.get(),
+                                                        "gcs": glasgow_coma_score.get(),
+                                                        "age": age.get(),
+                                                        "chronic_health": chronic_health.get()
+                                                    },
+                                                    "results": result.get().unwrap()
+                                                });
+                                                view! {
+                                                    <ExportButton
+                                                        data=data
+                                                        filename=format!("apache_ii_{}", patient_id().unwrap_or_else(|| "anonymous".to_string()))
+                                                    />
+                                                }
+                                            }}
+                                        </Show>
                                     </div>
                                 </div>
                             }.into_view()

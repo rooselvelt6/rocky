@@ -1873,6 +1873,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "gloo-timers"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bbb143cf96099802033e0d4f4963b19fd2e0b728bcf076cd9cf7f6634f092994"
+dependencies = [
+ "js-sys",
+ "wasm-bindgen",
+]
+
+[[package]]
 name = "gloo-utils"
 version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5666,6 +5676,8 @@ dependencies = [
  "console_error_panic_hook",
  "csv",
  "dotenvy",
+ "gloo-timers",
+ "js-sys",
  "jsonwebtoken 10.2.0",
  "leptos",
  "leptos_axum",
@@ -5676,6 +5688,7 @@ dependencies = [
  "serde_json",
  "surrealdb",
  "tokio",
+ "toml",
  "tower-http",
  "tracing",
  "tracing-subscriber",

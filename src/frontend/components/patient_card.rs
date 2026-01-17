@@ -102,14 +102,14 @@ pub fn PatientCard(patient: Patient) -> impl IntoView {
                 <div class="space-y-2">
                     <div class="grid grid-cols-2 gap-2">
                         <a
-                            href=format!("/glasgow?patient_id={}", id_str)
+                            href=format!("/patients/{}/assess/glasgow", id_str)
                             class="bg-purple-50 text-purple-700 text-center py-2 px-2 rounded-lg hover:bg-purple-600 hover:text-white text-xs font-semibold transition-all flex items-center justify-center gap-1"
                         >
                             <i class="fas fa-brain text-xs"></i>
                             {move || t(lang.get(), "glasgow_scale")}
                         </a>
                         <a
-                            href=format!("/apache?patient_id={}", id_str)
+                            href=format!("/patients/{}/assess/apache", id_str)
                             class="bg-red-50 text-red-700 text-center py-2 px-2 rounded-lg hover:bg-red-600 hover:text-white text-xs font-semibold transition-all flex items-center justify-center gap-1"
                         >
                             <i class="fas fa-heartbeat text-xs"></i>
@@ -118,14 +118,14 @@ pub fn PatientCard(patient: Patient) -> impl IntoView {
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <a
-                            href=format!("/sofa?patient_id={}", id_str)
+                            href=format!("/patients/{}/assess/sofa", id_str)
                             class="bg-teal-50 text-teal-700 text-center py-2 px-2 rounded-lg hover:bg-teal-600 hover:text-white text-xs font-semibold transition-all flex items-center justify-center gap-1"
                         >
                             <i class="fas fa-heart text-xs"></i>
                             {move || t(lang.get(), "sofa_score")}
                         </a>
                         <a
-                            href=format!("/saps?patient_id={}", id_str)
+                            href=format!("/patients/{}/assess/saps", id_str)
                             class="bg-orange-50 text-orange-700 text-center py-2 px-2 rounded-lg hover:bg-orange-600 hover:text-white text-xs font-semibold transition-all flex items-center justify-center gap-1"
                         >
                             <i class="fas fa-procedures text-xs"></i>

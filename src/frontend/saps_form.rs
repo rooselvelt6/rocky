@@ -1,15 +1,16 @@
+use crate::frontend::components::export_button::ExportButton;
 use crate::frontend::i18n::{t, use_i18n};
 use crate::uci::scale::saps::{SAPSIIRequest, SAPSIIResponse};
 use leptos::*;
-use leptos_router::use_query_map;
+use leptos_router::use_params_map;
 use reqwasm::http::Request;
 
 /// SAPS II Score form component
 #[component]
 pub fn SapsForm() -> impl IntoView {
     let lang = use_i18n();
-    let query = use_query_map();
-    let patient_id = move || query.get().get("patient_id").cloned();
+    let params = use_params_map();
+    let patient_id = move || params.get().get("id").cloned();
 
     // Signals
     let (age, set_age) = create_signal(50u8);
@@ -148,7 +149,7 @@ pub fn SapsForm() -> impl IntoView {
     };
 
     view! {
-        <div class="w-full max-w-6xl mx-auto px-4 pb-20">
+        <div class="w-full max-w-6xl mx-auto px-4 pb-8">
             // Header
             <div class="text-center mb-6">
                 <h2 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-orange-600 to-red-500 bg-clip-text text-transparent">
@@ -210,15 +211,37 @@ pub fn SapsForm() -> impl IntoView {
                                         <div class="font-semibold text-sm">{data.recommendation}</div>
                                     </div>
                                     <div class="px-4 pb-4 flex justify-end no-print w-full col-span-1 md:col-span-3">
-                                        <button
-                                            class="flex items-center space-x-2 bg-white/20 hover:bg-white/30 text-white font-semibold py-2 px-4 rounded-lg transition-colors border border-white/30 backdrop-blur-sm"
-                                            on:click=move |_| {
-                                                let _ = web_sys::window().unwrap().print();
+                                        {move || {
+                                            let data = serde_json::json!({
+                                                "type": "SAPS II",
+                                                "patient_id": patient_id(),
+                                                "inputs": {
+                                                    "age": age.get(),
+                                                    "heart_rate": heart_rate.get(),
+                                                    "systolic_bp": systolic_bp.get(),
+                                                    "temperature": temperature.get(),
+                                                    "ventilated": ventilated.get(),
+                                                    "pao2_fio2": if ventilated.get() { Some(pao2_fio2.get()) } else { None },
+                                                    "urinary_output": urinary_output.get(),
+                                                    "serum_urea": serum_urea.get(),
+                                                    "wbc": white_blood_count.get(),
+                                                    "potassium": serum_potassium.get(),
+                                                    "sodium": serum_sodium.get(),
+                                                    "bicarbonate": serum_bicarbonate.get(),
+                                                    "bilirubin": bilirubin.get(),
+                                                    "glasgow": glasgow.get(),
+                                                    "chronic_disease": chronic_disease.get(),
+                                                    "admission_type": admission_type.get()
+                                                },
+                                                "results": result.get().unwrap()
+                                            });
+                                            view! {
+                                                <ExportButton
+                                                    data=data
+                                                    filename=format!("saps_ii_{}", patient_id().unwrap_or_else(|| "anonymous".to_string()))
+                                                />
                                             }
-                                        >
-                                            <i class="fas fa-print"></i>
-                                            <span>{move || t(lang.get(), "print_report")}</span>
-                                        </button>
+                                        }}
                                     </div>
                                 </div>
                             </div>

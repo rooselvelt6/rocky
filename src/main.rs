@@ -115,6 +115,23 @@ async fn main() {
             "/api/admin/users/{id}",
             put(update_user).delete(delete_user),
         )
+        // Assessment deletion routes
+        .route(
+            "/api/assessments/glasgow/{id}",
+            axum::routing::delete(delete_glasgow_assessment),
+        )
+        .route(
+            "/api/assessments/apache/{id}",
+            axum::routing::delete(delete_apache_assessment),
+        )
+        .route(
+            "/api/assessments/sofa/{id}",
+            axum::routing::delete(delete_sofa_assessment),
+        )
+        .route(
+            "/api/assessments/saps/{id}",
+            axum::routing::delete(delete_saps_assessment),
+        )
         .layer(from_fn(crate::auth::auth_middleware))
         // Servir archivos estáticos desde dist
         .fallback_service(
@@ -1049,4 +1066,142 @@ async fn delete_user(
         .await
         .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
     Ok(StatusCode::NO_CONTENT)
+}
+
+// --- ASSESSMENT DELETION HANDLERS ---
+
+/// Handler to delete a Glasgow assessment
+async fn delete_glasgow_assessment(
+    State(db): State<Surreal<Client>>,
+    parts: axum::http::request::Parts,
+    Path(id): Path<String>,
+) -> StatusCode {
+    let auth_user = parts.extensions.get::<crate::auth::AuthenticatedUser>();
+    let user_id = auth_user.map(|u| u.id.clone());
+
+    let id_thing = match id.parse::<RecordId>() {
+        Ok(thing) => thing,
+        Err(_) => return StatusCode::BAD_REQUEST,
+    };
+
+    match db.delete::<Option<GlasgowAssessment>>(id_thing).await {
+        Ok(_) => {
+            crate::audit::log_action(
+                &db,
+                "DELETE",
+                "glasgow_assessments",
+                &id,
+                Some("Deleted Glasgow assessment".to_string()),
+                user_id,
+            )
+            .await;
+            StatusCode::NO_CONTENT
+        }
+        Err(e) => {
+            tracing::error!("❌ Failed to delete Glasgow assessment {}: {}", id, e);
+            StatusCode::INTERNAL_SERVER_ERROR
+        }
+    }
+}
+
+/// Handler to delete an Apache assessment
+async fn delete_apache_assessment(
+    State(db): State<Surreal<Client>>,
+    parts: axum::http::request::Parts,
+    Path(id): Path<String>,
+) -> StatusCode {
+    let auth_user = parts.extensions.get::<crate::auth::AuthenticatedUser>();
+    let user_id = auth_user.map(|u| u.id.clone());
+
+    let id_thing = match id.parse::<RecordId>() {
+        Ok(thing) => thing,
+        Err(_) => return StatusCode::BAD_REQUEST,
+    };
+
+    match db.delete::<Option<ApacheAssessment>>(id_thing).await {
+        Ok(_) => {
+            crate::audit::log_action(
+                &db,
+                "DELETE",
+                "apache_assessments",
+                &id,
+                Some("Deleted Apache assessment".to_string()),
+                user_id,
+            )
+            .await;
+            StatusCode::NO_CONTENT
+        }
+        Err(e) => {
+            tracing::error!("❌ Failed to delete Apache assessment {}: {}", id, e);
+            StatusCode::INTERNAL_SERVER_ERROR
+        }
+    }
+}
+
+/// Handler to delete a SOFA assessment
+async fn delete_sofa_assessment(
+    State(db): State<Surreal<Client>>,
+    parts: axum::http::request::Parts,
+    Path(id): Path<String>,
+) -> StatusCode {
+    let auth_user = parts.extensions.get::<crate::auth::AuthenticatedUser>();
+    let user_id = auth_user.map(|u| u.id.clone());
+
+    let id_thing = match id.parse::<RecordId>() {
+        Ok(thing) => thing,
+        Err(_) => return StatusCode::BAD_REQUEST,
+    };
+
+    match db.delete::<Option<SofaAssessment>>(id_thing).await {
+        Ok(_) => {
+            crate::audit::log_action(
+                &db,
+                "DELETE",
+                "sofa_assessments",
+                &id,
+                Some("Deleted SOFA assessment".to_string()),
+                user_id,
+            )
+            .await;
+            StatusCode::NO_CONTENT
+        }
+        Err(e) => {
+            tracing::error!("❌ Failed to delete SOFA assessment {}: {}", id, e);
+            StatusCode::INTERNAL_SERVER_ERROR
+        }
+    }
+}
+
+/// Handler to delete a SAPS assessment
+async fn delete_saps_assessment(
+    State(db): State<Surreal<Client>>,
+    parts: axum::http::request::Parts,
+    Path(id): Path<String>,
+) -> StatusCode {
+    let auth_user = parts.extensions.get::<crate::auth::AuthenticatedUser>();
+    let user_id = auth_user.map(|u| u.id.clone());
+
+    let id_thing = match id.parse::<RecordId>() {
+        Ok(thing) => thing,
+        Err(_) => return StatusCode::BAD_REQUEST,
+    };
+
+    match db.delete::<Option<SapsAssessment>>(id_thing).await {
+        Ok(_) => {
+            crate::audit::log_action(
+                &db,
+                "DELETE",
+                "saps_assessments",
+                &id,
+                Some("Deleted SAPS assessment".to_string()),
+                user_id,
+            )
+            .await;
+            StatusCode::NO_CONTENT
+        }
+        Err(e) => {
+            tracing::error!("❌ Failed to delete SAPS assessment {}: {}", id, e);
+            StatusCode::INTERNAL_SERVER_ERROR
+        }
+    }
 }

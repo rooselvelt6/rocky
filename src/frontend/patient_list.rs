@@ -69,9 +69,15 @@ pub fn PatientList() -> impl IntoView {
                     <p class="text-gray-500 mt-1">{move || t(lang.get(), "patient_list_overview")}</p>
                 </div>
                 <div class="flex gap-4">
-                    <a href="/api/export/patients" class="bg-green-600 text-white px-6 py-3 rounded-xl hover:bg-green-700 shadow-md flex items-center transition-all hover:scale-105">
-                        <i class="fas fa-file-csv mr-2"></i> {move || t(lang.get(), "export_csv")}
-                    </a>
+                    {move || {
+                        let current_list = filtered_patients();
+                        view! {
+                            <crate::frontend::components::export_button::ExportButton
+                                data=current_list
+                                filename="patients_export".to_string()
+                            />
+                        }
+                    }}
                     <a href="/register" class="bg-indigo-600 text-white px-6 py-3 rounded-xl hover:bg-indigo-700 shadow-md flex items-center transition-all hover:scale-105">
                         <i class="fas fa-user-plus mr-2"></i> {move || t(lang.get(), "add_patient")}
                     </a>

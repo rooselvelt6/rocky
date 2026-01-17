@@ -561,6 +561,19 @@ pub fn t(lang: Language, key: &str) -> String {
         (Language::En, "table_mortality") => "Mortality".to_string(),
         (Language::Es, "table_mortality") => "Mortalidad".to_string(),
 
+        (Language::En, "no_data") => "No data enough for chart".to_string(),
+        (Language::Es, "no_data") => "Sin datos suficientes".to_string(),
+
+        // Delete functionality
+        (Language::En, "delete") => "Delete".to_string(),
+        (Language::Es, "delete") => "Eliminar".to_string(),
+        (Language::En, "confirm_delete") => "Are you sure you want to delete this assessment?".to_string(),
+        (Language::Es, "confirm_delete") => "¿Está seguro de eliminar esta evaluación?".to_string(),
+        (Language::En, "delete_success") => "Assessment deleted successfully".to_string(),
+        (Language::Es, "delete_success") => "Evaluación eliminada exitosamente".to_string(),
+        (Language::En, "delete_error") => "Error deleting assessment".to_string(),
+        (Language::Es, "delete_error") => "Error al eliminar evaluación".to_string(),
+
         _ => key.to_string(),
     }
 }

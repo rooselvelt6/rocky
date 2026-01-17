@@ -1,15 +1,16 @@
+use crate::frontend::components::export_button::ExportButton;
 use crate::frontend::i18n::{t, use_i18n};
 use crate::uci::scale::glasgow::{GlasgowRequest, GlasgowResponse};
 use leptos::*;
-use leptos_router::use_query_map;
+use leptos_router::use_params_map;
 use reqwasm::http::Request;
 
 /// Glasgow Coma Scale form component - Compact, Responsive & Smooth
 #[component]
 pub fn GlasgowForm() -> impl IntoView {
     let lang = use_i18n();
-    let query = use_query_map();
-    let patient_id = move || query.get().get("patient_id").cloned();
+    let params = use_params_map();
+    let patient_id = move || params.get().get("id").cloned();
 
     // Reactive signals for form inputs
     let (eye_value, set_eye_value) = create_signal(4u8);
@@ -59,7 +60,7 @@ pub fn GlasgowForm() -> impl IntoView {
     );
 
     view! {
-        <div class="w-full max-w-6xl mx-auto px-4">
+        <div class="w-full max-w-6xl mx-auto px-4 pb-12">
             // Header with Load Last
             <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                 <div class="text-center md:text-left">
@@ -168,18 +169,39 @@ pub fn GlasgowForm() -> impl IntoView {
                                     <i class="fas fa-forward mr-2"></i>{t(lang.get(), "continue_assessment")}
                                 </h4>
                                 <div class="flex flex-wrap gap-3">
-                                     <a href=format!("/apache?patient_id={}", pid)
+                                     <a href=format!("/patients/{}/assess/apache", pid)
                                        class="flex items-center px-4 py-2 bg-white text-indigo-600 border border-indigo-200 rounded-lg hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-colors duration-200 shadow-sm text-sm font-bold">
                                        <i class="fas fa-chart-bar mr-2"></i>{move || t(lang.get(), "apache_ii")}
                                     </a>
-                                    <a href=format!("/sofa?patient_id={}", pid)
+                                    <a href=format!("/patients/{}/assess/sofa", pid)
                                        class="flex items-center px-4 py-2 bg-white text-teal-600 border border-teal-200 rounded-lg hover:bg-teal-600 hover:text-white hover:border-teal-600 transition-colors duration-200 shadow-sm text-sm font-bold">
                                        <i class="fas fa-procedures mr-2"></i>{move || t(lang.get(), "sofa_score")}
                                     </a>
-                                    <a href=format!("/saps?patient_id={}", pid)
+                                    <a href=format!("/patients/{}/assess/saps", pid)
                                        class="flex items-center px-4 py-2 bg-white text-orange-600 border border-orange-200 rounded-lg hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-colors duration-200 shadow-sm text-sm font-bold">
                                        <i class="fas fa-notes-medical mr-2"></i>{move || t(lang.get(), "saps_ii")}
                                     </a>
+
+                                    <Show when=move || glasgow_resource.get().flatten().is_some()>
+                                        {move || {
+                                            let data = serde_json::json!({
+                                                "type": "Glasgow Coma Scale",
+                                                "patient_id": patient_id(),
+                                                "inputs": {
+                                                    "eye": eye_value.get(),
+                                                    "verbal": verbal_value.get(),
+                                                    "motor": motor_value.get()
+                                                },
+                                                "results": glasgow_resource.get().flatten().unwrap()
+                                            });
+                                            view! {
+                                                <ExportButton
+                                                    data=data
+                                                    filename=format!("glasgow_{}", patient_id().unwrap_or_else(|| "anonymous".to_string()))
+                                                />
+                                            }
+                                        }}
+                                    </Show>
                                 </div>
                             </div>
                         }.into_view()

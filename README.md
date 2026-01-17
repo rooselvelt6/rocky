@@ -97,6 +97,7 @@ graph TD
 
 ### Gestión Clínica Avanzada
 - ✅ **Gestión de Pacientes:** Registro completo, historial de evaluaciones y búsqueda.
+- ✅ **Gestión de Evaluaciones:** Eliminación individual de registros (Glasgow, APACHE, SOFA, SAPS) con trazabilidad de auditoría.
 - ✅ **Audit Logging:** Registro de todas las acciones críticas para auditoría médica.
 - ✅ **Internacionalización:** Interfaz totalmente bilingüe (Español / Inglés).
 - ✅ **Monitor de Sala (Ward View):** Visualización en tiempo real del estado de la unidad.
@@ -184,4 +185,4 @@ Este proyecto está bajo la licencia **GNU General Public License v3.0**. El sof
 *Desarrollado con ❤️ y Rust para mejorar la precisión clínica en Unidades de Cuidados Intensivos.*
 
 ---
-*Última actualización: Enero 2026*
+*Última actualización: 17 de Enero, 2026*

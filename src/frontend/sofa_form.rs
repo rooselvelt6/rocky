@@ -1,15 +1,16 @@
+use crate::frontend::components::export_button::ExportButton;
 use crate::frontend::i18n::{t, use_i18n};
 use crate::uci::scale::sofa::{SOFARequest, SOFAResponse};
 use leptos::*;
-use leptos_router::use_query_map;
+use leptos_router::use_params_map;
 use reqwasm::http::Request;
 
 /// SOFA Score form component - Sequential Organ Failure Assessment
 #[component]
 pub fn SofaForm() -> impl IntoView {
     let lang = use_i18n();
-    let query = use_query_map();
-    let patient_id = move || query.get().get("patient_id").cloned();
+    let params = use_params_map();
+    let patient_id = move || params.get().get("id").cloned();
 
     // Reactive signals for form inputs
     let (pao2_fio2, set_pao2_fio2) = create_signal(400i32);
@@ -104,7 +105,7 @@ pub fn SofaForm() -> impl IntoView {
     };
 
     view! {
-        <div class="w-full max-w-6xl mx-auto px-4">
+        <div class="w-full max-w-6xl mx-auto px-4 pb-8">
             // Header
             <div class="text-center mb-6">
                 <h2 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-teal-600 to-cyan-500 bg-clip-text text-transparent">
@@ -178,6 +179,61 @@ pub fn SofaForm() -> impl IntoView {
                     }
                 }}
             </div>
+
+            // Chaining & Export
+            {move || {
+                if result.get().is_some() {
+                    if let Some(pid) = patient_id() {
+                        view! {
+                            <div class="mb-8 p-4 bg-gradient-to-r from-teal-50 to-cyan-50 border border-teal-100 rounded-xl animate-fade-in shadow-sm">
+                                <h4 class="text-sm font-bold text-teal-800 mb-3 flex items-center">
+                                    <i class="fas fa-forward mr-2"></i>{t(lang.get(), "continue_assessment")}
+                                </h4>
+                                <div class="flex flex-wrap gap-3">
+                                    <a href=format!("/patients/{}/assess/apache", pid)
+                                       class="flex items-center px-4 py-2 bg-white text-red-600 border border-red-200 rounded-lg hover:bg-red-600 hover:text-white hover:border-red-600 transition-colors duration-200 shadow-sm text-sm font-bold">
+                                       <i class="fas fa-heartbeat mr-2"></i>{move || t(lang.get(), "apache_ii")}
+                                    </a>
+                                    <a href=format!("/patients/{}/assess/glasgow", pid)
+                                       class="flex items-center px-4 py-2 bg-white text-purple-600 border border-purple-200 rounded-lg hover:bg-purple-600 hover:text-white hover:border-purple-600 transition-colors duration-200 shadow-sm text-sm font-bold">
+                                       <i class="fas fa-brain mr-2"></i>{move || t(lang.get(), "glasgow_scale")}
+                                    </a>
+                                    <a href=format!("/patients/{}/assess/saps", pid)
+                                       class="flex items-center px-4 py-2 bg-white text-orange-600 border border-orange-200 rounded-lg hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-colors duration-200 shadow-sm text-sm font-bold">
+                                       <i class="fas fa-notes-medical mr-2"></i>{move || t(lang.get(), "saps_ii")}
+                                    </a>
+
+                                    {move || {
+                                        let data = serde_json::json!({
+                                            "type": "SOFA Score",
+                                            "patient_id": patient_id(),
+                                            "inputs": {
+                                                "pao2_fio2": pao2_fio2.get(),
+                                                "platelets": platelets.get(),
+                                                "bilirubin": bilirubin.get(),
+                                                "cardiovascular": cardiovascular.get(),
+                                                "glasgow": glasgow.get(),
+                                                "renal": renal.get()
+                                            },
+                                            "results": result.get().unwrap()
+                                        });
+                                        view! {
+                                            <ExportButton
+                                                data=data
+                                                filename=format!("sofa_{}", patient_id().unwrap_or_else(|| "anonymous".to_string()))
+                                            />
+                                        }
+                                    }}
+                                </div>
+                            </div>
+                        }.into_view()
+                    } else {
+                        view! { <div/> }.into_view()
+                    }
+                } else {
+                    view! { <div/> }.into_view()
+                }
+            }}
 
             // Form Sections - Organ Systems
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">

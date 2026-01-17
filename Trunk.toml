@@ -2,5 +2,3 @@
 target = "index.html"
 dist = "dist"
 
-[watch]
-ignore = ["./src/bin/uci-server.rs"]
