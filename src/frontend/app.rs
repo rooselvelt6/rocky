@@ -191,6 +191,7 @@ pub fn App() -> impl IntoView {
                         // Protected Routes
                         <Route path="/patients" view=|| view! { <Protected><PatientList/></Protected> }/>
                         <Route path="/register" view=|| view! { <Protected><PatientForm/></Protected> }/>
+                        <Route path="/edit-patient/:id" view=|| view! { <Protected><PatientForm/></Protected> }/>
                         <Route path="/patients/:id" view=|| view! { <Protected><PatientDetail/></Protected> }/>
 
                         // Scale Routes Nested Context - Restricted to specific patient

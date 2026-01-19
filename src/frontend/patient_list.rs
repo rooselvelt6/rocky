@@ -7,6 +7,7 @@ pub fn PatientList() -> impl IntoView {
     let lang = use_i18n();
     let (patients, set_patients) = create_signal(Vec::<Patient>::new());
     let (search_query, set_search_query) = create_signal(String::new());
+    let (refresh_trigger, set_refresh_trigger) = create_signal(0);
 
     // Filtered patients based on search query
     let filtered_patients = move || {
@@ -31,6 +32,7 @@ pub fn PatientList() -> impl IntoView {
     };
 
     create_effect(move |_| {
+        refresh_trigger.get();
         spawn_local(async move {
             let mut req = reqwasm::http::Request::get("/api/patients");
 
@@ -127,7 +129,10 @@ pub fn PatientList() -> impl IntoView {
                     key=|p| p.id.clone()
                     children=move |patient| {
                         view! {
-                            <crate::frontend::components::patient_card::PatientCard patient=patient />
+                            <crate::frontend::components::patient_card::PatientCard
+                                patient=patient
+                                on_delete=Callback::new(move |_| set_refresh_trigger.update(|n| *n += 1))
+                            />
                         }
                     }
                 />

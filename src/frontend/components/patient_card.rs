@@ -6,7 +6,10 @@ use leptos::*;
 use reqwasm::http::Request;
 
 #[component]
-pub fn PatientCard(patient: Patient) -> impl IntoView {
+pub fn PatientCard(
+    patient: Patient,
+    #[prop(optional)] on_delete: Option<Callback<()>>,
+) -> impl IntoView {
     let lang = use_i18n();
     let id = patient.id.clone();
     let id_str = id.clone().map(|t| t.to_string()).unwrap_or_default();
@@ -142,7 +145,47 @@ pub fn PatientCard(patient: Patient) -> impl IntoView {
                 </div>
             </div>
             <div class="px-6 py-2 border-t border-gray-50 flex justify-between items-center text-xs text-gray-400 mt-auto">
-                <span>"ID: " {id_str.split(':').last().unwrap_or("?").to_string()}</span>
+                <div class="flex items-center gap-4">
+                    <span>"ID: " {id_str.split(':').last().unwrap_or("?").to_string()}</span>
+                    <button
+                        on:click=move |ev| {
+                            ev.stop_propagation();
+                            let p_id = id_str.clone();
+                            let lang = lang;
+                            let on_delete = on_delete;
+                            spawn_local(async move {
+                                if !window().confirm_with_message(&t(lang.get(), "confirm_delete_patient")).unwrap_or(false) {
+                                    return;
+                                }
+
+                                let token: Option<String> = window()
+                                    .local_storage()
+                                    .ok()
+                                    .flatten()
+                                    .and_then(|s| s.get_item("uci_token").ok().flatten());
+
+                                let mut req = reqwasm::http::Request::delete(&format!("/api/patients/{}", p_id));
+                                if let Some(t) = &token {
+                                    req = req.header("Authorization", &format!("Bearer {}", t));
+                                }
+
+                                if let Ok(resp) = req.send().await {
+                                    if resp.ok() {
+                                        if let Some(cb) = on_delete {
+                                            cb.call(());
+                                        }
+                                    } else {
+                                        window().alert_with_message(&t(lang.get(), "delete_error")).ok();
+                                    }
+                                }
+                            });
+                        }
+                        class="text-red-400 hover:text-red-600 transition-colors p-1"
+                        title=move || t(lang.get(), "delete")
+                    >
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
                 <span>{move || t(lang.get(), "updated_today")}</span>
             </div>
         </div>

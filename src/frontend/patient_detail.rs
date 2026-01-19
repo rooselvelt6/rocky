@@ -118,7 +118,37 @@ pub fn PatientDetail() -> impl IntoView {
             <Show when=move || !loading.get() fallback=|| view! { <div class="text-center p-10"><i class="fas fa-spinner fa-spin text-4xl text-indigo-600"></i></div> }>
                 {move || patient.get().map(|p| {
                     let gender = p.gender.clone();
-                    // Helper function to delete an assessment
+                    let delete_patient = store_value(move || {
+                        let p_id = id.get();
+                        let lang = lang;
+                        let navigate = use_navigate();
+                        spawn_local(async move {
+                            if !window().confirm_with_message(&t(lang.get(), "confirm_delete_patient")).unwrap_or(false) {
+                                return;
+                            }
+
+                            let token: Option<String> = window()
+                                .local_storage()
+                                .ok()
+                                .flatten()
+                                .and_then(|s| s.get_item("uci_token").ok().flatten());
+
+                            let mut req = reqwasm::http::Request::delete(&format!("/api/patients/{}", p_id));
+                            if let Some(t) = &token {
+                                req = req.header("Authorization", &format!("Bearer {}", t));
+                            }
+
+                            match req.send().await {
+                                Ok(resp) if resp.ok() => {
+                                    navigate("/patients", Default::default());
+                                }
+                                _ => {
+                                    window().alert_with_message(&t(lang.get(), "delete_error")).ok();
+                                }
+                            }
+                        });
+                    });
+
                     let delete_assessment = store_value(move |assessment_type: String, assessment_id: String| {
                         let patient_id = id.get();
                         let lang = lang;
@@ -162,8 +192,7 @@ pub fn PatientDetail() -> impl IntoView {
                     });
 
                     view! {
-                    // Patient Header / Bio
-                    <div class="bg-white rounded-2xl shadow-md p-6 border-l-8 border-indigo-600 flex justify-between items-start">
+                    <div class="bg-white rounded-2xl shadow-md p-6 border-l-8 border-indigo-600 flex justify-between items-center">
                         <div>
                             <div class="flex items-center gap-4 mb-2">
                                 <h1 class="text-4xl font-bold text-gray-900">{p.first_name.clone()} {p.last_name.clone()}</h1>
@@ -182,9 +211,26 @@ pub fn PatientDetail() -> impl IntoView {
                                 <span class="flex items-center"><i class="fas fa-bed mr-2 text-indigo-400"></i> {move || t(lang.get(), "bed")} " 1"</span>
                             </div>
                         </div>
-                        <div class="text-right">
-                            <div class="text-sm text-gray-500">{move || t(lang.get(), "days_in_hospital")}</div>
-                             <div class="text-3xl font-black text-indigo-600">{p.days_in_hospital()}</div>
+
+                        <div class="flex items-center gap-8">
+                            <div class="text-right">
+                                <div class="text-sm text-gray-500">{move || t(lang.get(), "days_in_hospital")}</div>
+                                <div class="text-3xl font-black text-indigo-600">{p.days_in_hospital()}</div>
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <A
+                                    href=format!("/edit-patient/{}", id.get())
+                                    class="bg-amber-100 text-amber-700 px-4 py-2 rounded-xl hover:bg-amber-600 hover:text-white transition-all flex items-center justify-center gap-2 font-bold shadow-sm text-sm"
+                                >
+                                    <i class="fas fa-edit"></i> {move || t(lang.get(), "edit_patient")}
+                                </A>
+                                <button
+                                    on:click=move |_| delete_patient.with_value(|f| f())
+                                    class="bg-red-100 text-red-700 px-4 py-2 rounded-xl hover:bg-red-600 hover:text-white transition-all flex items-center justify-center gap-2 font-bold shadow-sm text-sm"
+                                >
+                                    <i class="fas fa-trash-alt"></i> {move || t(lang.get(), "delete")}
+                                </button>
+                            </div>
                         </div>
                     </div>
 

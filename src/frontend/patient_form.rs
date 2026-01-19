@@ -12,6 +12,8 @@ pub fn PatientForm() -> impl IntoView {
     // However, we can use `Batch` or `Signal`?
     // Let's try wrapping it in Rc to be safe.
     let navigate = std::rc::Rc::new(navigate);
+    let params = leptos_router::use_params_map();
+    let patient_id_param = create_memo(move |_| params.get().get("id").cloned());
     let (first_name, set_first_name) = create_signal(String::new());
     let (last_name, set_last_name) = create_signal(String::new());
     let (dob, set_dob) = create_signal(String::new());
@@ -29,6 +31,61 @@ pub fn PatientForm() -> impl IntoView {
     let (invasive, set_invasive) = create_signal(false);
 
     let (submit_status, set_submit_status) = create_signal(Option::<String>::None);
+
+    // Fetch patient data if editing
+    create_effect(move |_| {
+        if let Some(id) = patient_id_param.get() {
+            spawn_local(async move {
+                let mut req = reqwasm::http::Request::get(&format!("/api/patients/{}", id));
+
+                if let Some(storage) = window().local_storage().ok().flatten() {
+                    if let Some(token) = storage.get_item("uci_token").unwrap_or(None) {
+                        req = req.header("Authorization", &format!("Bearer {}", token));
+                    }
+                }
+
+                if let Ok(resp) = req.send().await {
+                    if resp.ok() {
+                        if let Ok(Some(p)) = resp.json::<Option<Patient>>().await {
+                            set_first_name.set(p.first_name);
+                            set_last_name.set(p.last_name);
+                            set_dob.set(p.date_of_birth);
+                            set_gender.set(p.gender);
+                            set_hospital_admission.set(
+                                p.hospital_admission_date
+                                    .split('T')
+                                    .next()
+                                    .unwrap_or_default()
+                                    .to_string(),
+                            );
+                            set_uci_admission.set(
+                                p.uci_admission_date
+                                    .split('T')
+                                    .next()
+                                    .unwrap_or_default()
+                                    .to_string(),
+                            );
+                            set_skin_color.set(match p.skin_color {
+                                SkinColor::White => "White".to_string(),
+                                SkinColor::Mixed => "Mixed".to_string(),
+                                SkinColor::Black => "Black".to_string(),
+                            });
+                            set_diagnosis.set(p.principal_diagnosis);
+                            set_mech_vent.set(p.mechanical_ventilation);
+                            set_uci_hist.set(p.uci_history);
+                            set_transfer.set(p.transfer_from_other_center);
+                            set_admission_type.set(match p.admission_type {
+                                AdmissionType::Urgent => "Urgent".to_string(),
+                                AdmissionType::Programmed => "Programmed".to_string(),
+                                AdmissionType::Transfer => "Transfer".to_string(),
+                            });
+                            set_invasive.set(p.invasive_processes);
+                        }
+                    }
+                }
+            });
+        }
+    });
 
     // Derived signal for days in hospital
     let days_in_hospital = move || {
@@ -84,10 +141,23 @@ pub fn PatientForm() -> impl IntoView {
             invasive.get(),
         );
 
+        let is_edit = patient_id_param.get().is_some();
+        let p_id = patient_id_param.get().unwrap_or_default();
+
         let navigate = navigate.clone();
         spawn_local(async move {
-            let mut req = reqwasm::http::Request::post("/api/patients")
-                .header("Content-Type", "application/json");
+            let url = if is_edit {
+                format!("/api/patients/{}", p_id)
+            } else {
+                "/api/patients".to_string()
+            };
+
+            let mut req = if is_edit {
+                reqwasm::http::Request::put(&url)
+            } else {
+                reqwasm::http::Request::post(&url)
+            };
+            req = req.header("Content-Type", "application/json");
 
             if let Some(storage) = window().local_storage().ok().flatten() {
                 if let Some(token) = storage.get_item("uci_token").unwrap_or(None) {
@@ -134,10 +204,10 @@ pub fn PatientForm() -> impl IntoView {
         <div class="bg-white p-8 rounded-2xl shadow-xl max-w-5xl mx-auto border-t-8 border-indigo-600">
             <div class="text-center mb-8">
                 <h2 class="text-3xl font-bold text-gray-800 flex items-center justify-center gap-3">
-                    <i class="fas fa-user-plus text-indigo-600 text-4xl"></i>
-                    {move || t(lang.get(), "patient_registration")}
+                    <i class="fas fa-user-edit text-indigo-600 text-4xl"></i>
+                    {move || if patient_id_param.get().is_some() { t(lang.get(), "edit_patient") } else { t(lang.get(), "patient_registration") }}
                 </h2>
-                <p class="text-gray-500 mt-2 text-lg">{move || t(lang.get(), "enter_clinical_details")}</p>
+                <p class="text-gray-500 mt-2 text-lg">{move || if patient_id_param.get().is_some() { t(lang.get(), "update_clinical_details") } else { t(lang.get(), "enter_clinical_details") }}</p>
             </div>
 
             <form on:submit=on_submit class="space-y-8">
@@ -293,7 +363,7 @@ pub fn PatientForm() -> impl IntoView {
 
                 <div class="pt-6">
                     <button type="submit" class="w-full flex items-center justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transform hover:scale-[1.02] transition-all duration-200">
-                        <i class="fas fa-save mr-3 text-2xl"></i> {move || t(lang.get(), "register_patient_btn")}
+                        <i class="fas fa-save mr-3 text-2xl"></i> {move || if patient_id_param.get().is_some() { t(lang.get(), "save_changes") } else { t(lang.get(), "register_patient_btn") }}
                     </button>
                 </div>
             </form>
