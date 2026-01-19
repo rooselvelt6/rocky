@@ -95,9 +95,6 @@ pub fn App() -> impl IntoView {
                                             <A href="/patients" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors">
                                                 <i class="fas fa-users mr-2"></i>{move || t(lang.get(), "nav_patients")}
                                             </A>
-                                            <A href="/dashboard" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors">
-                                                <i class="fas fa-chart-line mr-2"></i>{move || t(lang.get(), "nav_scales")}
-                                            </A>
                                             <A href="/ward" class="px-3 py-2 rounded-md text-sm font-medium bg-indigo-800 text-green-300 hover:bg-indigo-700 hover:text-green-200 transition-colors border border-green-500/30 flex items-center gap-2">
                                                 <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                                                 <i class="fas fa-hospital mr-1"></i>{move || t(lang.get(), "nav_monitor")}

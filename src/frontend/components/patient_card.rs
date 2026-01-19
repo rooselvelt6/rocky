@@ -59,7 +59,7 @@ pub fn PatientCard(
     };
 
     view! {
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 pb-2 flex flex-col h-full">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl hover:scale-[1.01] transition-all duration-300 group flex flex-col h-full">
             <div class="p-6 pb-4 flex-grow">
                 <div class="flex justify-between items-start mb-4">
                     <div class="flex items-center">

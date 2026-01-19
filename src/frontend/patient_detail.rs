@@ -192,7 +192,12 @@ pub fn PatientDetail() -> impl IntoView {
                     });
 
                     view! {
-                    <div class="bg-white rounded-2xl shadow-md p-6 border-l-8 border-indigo-600 flex justify-between items-center">
+                    <div class="flex flex-col gap-4">
+                        <A href="/patients" class="text-indigo-600 hover:text-indigo-800 flex items-center gap-2 font-semibold transition-colors w-fit">
+                            <i class="fas fa-arrow-left"></i>
+                            {move || t(lang.get(), "patient_list")}
+                        </A>
+                        <div class="bg-white rounded-2xl shadow-md p-6 border-l-8 border-indigo-600 flex justify-between items-center transition-all hover:shadow-lg">
                         <div>
                             <div class="flex items-center gap-4 mb-2">
                                 <h1 class="text-4xl font-bold text-gray-900">{p.first_name.clone()} {p.last_name.clone()}</h1>
@@ -546,7 +551,8 @@ pub fn PatientDetail() -> impl IntoView {
                             </section>
                         </div>
                     </div>
-                }})}
+                </div>
+            }})}
             </Show>
         </div>
     }
