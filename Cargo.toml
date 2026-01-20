@@ -15,6 +15,7 @@ required-features = ["csr"]
 [[bin]]
 name = "uci-server"
 path = "src/main.rs"
+required-features = ["ssr"]
 
 [dependencies]
 serde = { version = "1.0.228", features = ["derive"] }
