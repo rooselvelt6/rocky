@@ -158,7 +158,7 @@ where
                     ExportFormat::Pdf => unreachable!(),
                 };
 
-                let mut bag = BlobPropertyBag::new();
+                let bag = BlobPropertyBag::new();
                 bag.set_type(mime);
 
                 let blob = Blob::new_with_str_sequence_and_options(
