@@ -15,8 +15,8 @@ pub fn Sparkline(
             // Normalize y to height (assuming val is 0-max range or relative)
             // Let's assume max value is 15 (for Glasgow) or 50 (Apache) or dynamic?
             // Dynamic max for better visualization
-            let max_val = data.iter().cloned().fold(0. / 0., f32::max).max(1.0);
-            let min_val = data.iter().cloned().fold(0. / 0., f32::min).min(0.0);
+            let max_val = data.iter().cloned().fold(f32::NAN, f32::max).max(1.0);
+            let min_val = data.iter().cloned().fold(f32::NAN, f32::min).min(0.0);
             let range = (max_val - min_val).max(1.0);
 
             let y = height as f32 - ((val - min_val) / range) * (height as f32 - 4.0) - 2.0;
@@ -40,8 +40,8 @@ pub fn Sparkline(
             {
                if let Some(last_val) = data.last() {
                     let last_x = width;
-                    let max_val = data.iter().cloned().fold(0./0., f32::max).max(1.0);
-                    let min_val = data.iter().cloned().fold(0./0., f32::min).min(0.0);
+                    let max_val = data.iter().cloned().fold(f32::NAN, f32::max).max(1.0);
+                    let min_val = data.iter().cloned().fold(f32::NAN, f32::min).min(0.0);
                     let range = (max_val - min_val).max(1.0);
                     let last_y = height as f32 - ((last_val - min_val) / range) * (height as f32 - 4.0) - 2.0;
                     view! {

@@ -1,6 +1,5 @@
 use crate::frontend::admin::AdminPanel;
 use crate::frontend::apache_form::ApacheForm;
-use crate::frontend::dashboard::Dashboard;
 use crate::frontend::glasgow_form::GlasgowForm;
 use crate::frontend::i18n::{t, Language};
 use crate::frontend::login::Login;

@@ -161,7 +161,7 @@ fn ThemeSettings() -> impl IntoView {
 
     let (primary, set_primary) = create_signal("#4F46E5".to_string());
 
-    let config_val = config.clone();
+    let config_val = config;
     let set_primary_val = set_primary;
     create_effect(move |_| {
         if let Some(Some(conf)) = config_val.get() {

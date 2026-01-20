@@ -1,15 +1,10 @@
 use leptos::*;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Default, Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Language {
+    #[default]
+    Es, // Default to Spanish as requested
     En,
-    Es,
-}
-
-impl Default for Language {
-    fn default() -> Self {
-        Language::Es // Default to Spanish as requested implicitly by "cambiar el idioma... a español"
-    }
 }
 
 pub fn use_i18n() -> Signal<Language> {
