@@ -4,6 +4,7 @@ use crate::frontend::dashboard::Dashboard;
 use crate::frontend::glasgow_form::GlasgowForm;
 use crate::frontend::i18n::{t, Language};
 use crate::frontend::login::Login;
+use crate::frontend::news2_form::News2Form;
 use crate::frontend::patient_detail::PatientDetail;
 use crate::frontend::patient_form::PatientForm;
 use crate::frontend::patient_list::PatientList;
@@ -196,6 +197,7 @@ pub fn App() -> impl IntoView {
                         <Route path="/patients/:id/assess/apache" view=|| view! { <Protected><ApacheForm/></Protected> }/>
                         <Route path="/patients/:id/assess/sofa" view=|| view! { <Protected><SofaForm/></Protected> }/>
                         <Route path="/patients/:id/assess/saps" view=|| view! { <Protected><SapsForm/></Protected> }/>
+                        <Route path="/patients/:id/assess/news2" view=|| view! { <Protected><News2Form/></Protected> }/>
 
                         <Route path="/ward" view=|| view! { <Protected><WardView/></Protected> }/>
                         <Route path="/admin" view=|| view! { <Protected><AdminPanel/></Protected> }/>

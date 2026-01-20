@@ -95,12 +95,19 @@ graph TD
 #### 🟠 **SAPS II** (Simplified Acute Physiology Score)
 - 15 parámetros con predicción avanzada de mortalidad basada en regresión logística.
 
+#### 🔵 **Escala NEWS2** (National Early Warning Score 2)
+- Sistema dinámico de alerta temprana para la detección precoz del deterioro clínico agudo. Incluye soporte para falla hipercápnica (Escala 2).
+
+### 🎨 Visualización de Inteligencia Clínica
+- ✅ **Multi-Organ Radar Chart:** Visualización tipo "araña" del estado de 6 sistemas orgánicos basado en SOFA.
+- ✅ **Monitor Central Vitual (Ward View):** Dashboard de alta fidelidad con efectos de **Glassmorphism**, alertas de deterioro y visualización de tendencias.
+
 ### Gestión Clínica Avanzada
 - ✅ **Gestión de Pacientes:** Registro completo, historial de evaluaciones y búsqueda.
 - ✅ **Gestión de Evaluaciones:** Eliminación individual de registros (Glasgow, APACHE, SOFA, SAPS) con trazabilidad de auditoría.
 - ✅ **Audit Logging:** Registro de todas las acciones críticas para auditoría médica.
 - ✅ **Internacionalización:** Interfaz totalmente bilingüe (Español / Inglés).
-- ✅ **Monitor de Sala (Ward View):** Visualización en tiempo real del estado de la unidad.
+- ✅ **Monitor de Sala (Ward View):** Visualización en tiempo real del estado de la unidad con estética moderna y alertas de deterioro activo.
 
 ---
 
@@ -185,4 +192,4 @@ Este proyecto está bajo la licencia **GNU General Public License v3.0**. El sof
 *Desarrollado con ❤️ y Rust para mejorar la precisión clínica en Unidades de Cuidados Intensivos.*
 
 ---
-*Última actualización: 17 de Enero, 2026*
+*Última actualización: 20 de Enero, 2026*

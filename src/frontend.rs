@@ -7,6 +7,7 @@ pub mod dashboard;
 pub mod glasgow_form;
 pub mod i18n;
 pub mod login;
+pub mod news2_form;
 pub mod patient_detail;
 pub mod patient_form;
 pub mod patient_list;

@@ -30,6 +30,7 @@ use uci::models::apache::ApacheAssessment;
 use uci::models::config::SystemConfig;
 use uci::models::glasgow::GlasgowAssessment;
 use uci::models::history::PatientHistoryResponse;
+use uci::models::news2::{ConsciousnessLevel, News2Assessment, News2RiskLevel};
 use uci::models::patient::Patient;
 use uci::models::saps::SapsAssessment;
 use uci::models::sofa::SofaAssessment;
@@ -96,6 +97,7 @@ async fn main() {
         .route("/api/apache", post(calculate_apache))
         .route("/api/sofa", post(calculate_sofa))
         .route("/api/saps", post(calculate_saps))
+        .route("/api/news2", post(calculate_news2))
         .route("/api/patients", post(create_patient).get(get_patients))
         .route(
             "/api/patients/{id}",
@@ -131,6 +133,10 @@ async fn main() {
         .route(
             "/api/assessments/saps/{id}",
             axum::routing::delete(delete_saps_assessment),
+        )
+        .route(
+            "/api/assessments/news2/{id}",
+            axum::routing::delete(delete_news2_assessment),
         )
         .layer(from_fn(crate::auth::auth_middleware))
         // Servir archivos estáticos desde dist
@@ -588,6 +594,103 @@ async fn calculate_saps(
             severity: "Error".to_string(),
             recommendation: e,
         }),
+    }
+}
+
+#[derive(serde::Deserialize)]
+pub struct News2Request {
+    pub respiration_rate: u8,
+    pub spo2_scale: u8,
+    pub spo2: u8,
+    pub air_or_oxygen: bool,
+    pub systolic_bp: u16,
+    pub heart_rate: u16,
+    pub consciousness: ConsciousnessLevel,
+    pub temperature: f32,
+    pub patient_id: Option<String>,
+}
+
+#[derive(serde::Serialize)]
+pub struct News2Response {
+    pub score: u8,
+    pub risk_level: News2RiskLevel,
+    pub recommendation: String,
+}
+
+/// Handler para calcular NEWS2 y guardar en DB
+async fn calculate_news2(
+    State(db): State<Surreal<Client>>,
+    Json(payload): Json<News2Request>,
+) -> Json<News2Response> {
+    let mut assessment_data = News2Assessment {
+        id: None,
+        patient_id: payload.patient_id.clone().unwrap_or_default(),
+        assessed_at: chrono::Utc::now().to_rfc3339(),
+        respiration_rate: payload.respiration_rate,
+        spo2_scale: payload.spo2_scale,
+        spo2: payload.spo2,
+        air_or_oxygen: payload.air_or_oxygen,
+        systolic_bp: payload.systolic_bp,
+        heart_rate: payload.heart_rate,
+        consciousness: payload.consciousness.clone(),
+        temperature: payload.temperature,
+        score: 0,
+        risk_level: News2RiskLevel::Low,
+    };
+
+    assessment_data.calculate_score();
+
+    let score = assessment_data.score;
+    let risk_level = assessment_data.risk_level.clone();
+
+    let recommendation = match risk_level {
+        News2RiskLevel::Low => "Continue routine clinical monitoring.".to_string(),
+        News2RiskLevel::LowMedium => {
+            "Increased frequency of monitoring and clinical review.".to_string()
+        }
+        News2RiskLevel::Medium => {
+            "Urgent clinical review by a clinician with core skills in assessment of acute illness."
+                .to_string()
+        }
+        News2RiskLevel::High => {
+            "Emergency assessment by a team with critical care skills!".to_string()
+        }
+    };
+
+    // Save to database
+    if let Some(_p_id_str) = payload.patient_id.as_ref() {
+        match db
+            .create("news2_assessments")
+            .content(assessment_data)
+            .await
+        {
+            Ok(saved) => {
+                let saved: Option<News2Assessment> = saved;
+                if let Some(s) = saved {
+                    tracing::info!("✅ Saved NEWS2 assessment: {:?}", s.id);
+                }
+            }
+            Err(e) => tracing::error!("❌ Failed to save NEWS2: {}", e),
+        }
+    }
+
+    Json(News2Response {
+        score,
+        risk_level,
+        recommendation,
+    })
+}
+
+async fn delete_news2_assessment(
+    State(db): State<Surreal<Client>>,
+    Path(id): Path<String>,
+) -> StatusCode {
+    match db
+        .delete::<Option<News2Assessment>>(("news2_assessments", id))
+        .await
+    {
+        Ok(_) => StatusCode::OK,
+        Err(_) => StatusCode::INTERNAL_SERVER_ERROR,
     }
 }
 

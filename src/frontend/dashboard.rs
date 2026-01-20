@@ -67,6 +67,13 @@ pub fn Dashboard() -> impl IntoView {
                     </div>
                     <span class="text-lg font-bold text-gray-800">{move || t(lang.get(), "saps_ii")}</span>
                 </A>
+
+                <A href="/patients" class="flex flex-col items-center justify-center bg-white p-8 rounded-2xl shadow-xl border border-indigo-100 hover:border-indigo-300 hover:shadow-2xl transition-all group border-dashed">
+                    <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-indigo-600 transition-colors">
+                        <i class="fas fa-plus-circle text-indigo-600 text-2xl group-hover:text-white"></i>
+                    </div>
+                    <span class="text-lg font-bold text-gray-800 italic">"NEWS2 & More"</span>
+                </A>
             </div>
         </div>
     }

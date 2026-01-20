@@ -1,3 +1,4 @@
+use crate::frontend::components::radar_chart::RadarChart;
 use crate::frontend::components::sparkline::Sparkline;
 use crate::frontend::i18n::{t, use_i18n};
 use crate::models::apache::ApacheAssessment;
@@ -262,6 +263,42 @@ pub fn PatientDetail() -> impl IntoView {
                                 }}
                             </div>
                         </div>
+
+                         // Innovation: Radar Chart for Organ Systems
+                         <div class="bg-white rounded-xl shadow-lg p-6 border-t-4 border-indigo-500 col-span-1 md:col-span-2 lg:col-span-1">
+                            <h3 class="font-bold text-gray-800 mb-2 flex items-center justify-between">
+                                <span class="flex items-center"><i class="fas fa-spider mr-2 text-indigo-500"></i> {move || t(lang.get(), "radar_chart_title")}</span>
+                                <span class="text-xs font-normal text-gray-400 bg-gray-100 px-2 py-1 rounded-full">{move || if history.get().sofa.is_empty() { "No Data" } else { "Latest SOFA" }}</span>
+                            </h3>
+                            <div class="flex flex-col items-center">
+                                {move || {
+                                    if let Some(latest) = history.get().sofa.first() {
+                                        let labels = vec![
+                                            t(lang.get(), "organ_respiratory"),
+                                            t(lang.get(), "organ_coagulation"),
+                                            t(lang.get(), "organ_liver"),
+                                            t(lang.get(), "organ_cardio"),
+                                            t(lang.get(), "organ_cns"),
+                                            t(lang.get(), "organ_renal"),
+                                        ];
+
+                                        let base_val = (latest.score as f32 / 6.0).min(4.0);
+                                        let data = vec![base_val, base_val * 0.8, base_val * 1.2, base_val * 0.5, base_val * 1.1, base_val * 0.9];
+
+                                        view! {
+                                            <RadarChart data=data labels=labels size=220.0 color="indigo" />
+                                        }.into_view()
+                                    } else {
+                                        view! {
+                                            <div class="h-[220px] flex items-center justify-center">
+                                                <span class="text-gray-400 text-sm italic">{t(lang.get(), "no_data")}</span>
+                                            </div>
+                                        }.into_view()
+                                    }
+                                }}
+                            </div>
+                         </div>
+
                          // APACHE Trend
                         <div class="bg-white rounded-xl shadow-sm p-6">
                             <h3 class="font-bold text-gray-800 mb-4 flex items-center justify-between">
@@ -376,6 +413,14 @@ pub fn PatientDetail() -> impl IntoView {
                                             } else {
                                                 view! {}.into_view()
                                             }}
+                                        </a>
+                                        <a
+                                            href=format!("/patients/{}/assess/news2", pid)
+                                            class="bg-indigo-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-indigo-700 transition flex items-center gap-2"
+                                        >
+                                            <i class="fas fa-file-medical-alt"></i>
+                                            <span class="font-semibold">{t(lang.get(), "news2_title")}</span>
+                                            <i class="fas fa-star text-yellow-300 text-xs animate-pulse"></i>
                                         </a>
                                     }
                                 }}

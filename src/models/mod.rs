@@ -2,6 +2,7 @@ pub mod apache;
 pub mod config;
 pub mod glasgow;
 pub mod history;
+pub mod news2;
 pub mod patient;
 pub mod saps;
 pub mod sofa;
