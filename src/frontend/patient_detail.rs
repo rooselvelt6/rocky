@@ -1,4 +1,7 @@
 use crate::frontend::components::radar_chart::RadarChart;
+use crate::frontend::components::severity_badge::{
+    ApacheBadge, GlasgowBadge, SapsBadge, SofaBadge,
+};
 use crate::frontend::components::sparkline::Sparkline;
 use crate::frontend::i18n::{t, use_i18n};
 use crate::models::apache::ApacheAssessment;
@@ -451,7 +454,9 @@ pub fn PatientDetail() -> impl IntoView {
                                                     <tr>
                                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.assessed_at.split('T').next().unwrap_or("").to_string()}</td>
                                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">{item.score}</td>
-                                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.severity}</td>
+                                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                            <SofaBadge score={item.score} />
+                                                        </td>
                                                         <td class="px-6 py-4 whitespace-nowrap text-sm">
                                                             <button
                                                                 on:click=move |_| delete_assessment.with_value(|f| f("sofa".to_string(), item_id.clone()))
@@ -491,7 +496,12 @@ pub fn PatientDetail() -> impl IntoView {
                                                 view! {
                                                     <tr>
                                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.assessed_at.split('T').next().unwrap_or("").to_string()}</td>
-                                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">{item.score}</td>
+                                                        <td class="px-6 py-4 whitespace-nowrap">
+                                                            <div class="flex items-center gap-2">
+                                                                <span class="text-sm font-bold text-gray-900">{item.score}</span>
+                                                                <ApacheBadge score={item.score} />
+                                                            </div>
+                                                        </td>
                                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{format!("{:.1}%", item.predicted_mortality)}</td>
                                                         <td class="px-6 py-4 whitespace-nowrap text-sm">
                                                             <button
@@ -532,8 +542,13 @@ pub fn PatientDetail() -> impl IntoView {
                                                 view! {
                                                     <tr>
                                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.assessed_at.split('T').next().unwrap_or("").to_string()}</td>
-                                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">{item.score}</td>
-                                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.diagnosis.clone()}</td>
+                                                        <td class="px-6 py-4 whitespace-nowrap">
+                                                            <div class="flex items-center gap-2">
+                                                                <span class="text-sm font-bold text-gray-900">{item.score}</span>
+                                                                <GlasgowBadge score={item.score} />
+                                                            </div>
+                                                        </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.diagnosis.clone()}</td>
                                                         <td class="px-6 py-4 whitespace-nowrap text-sm">
                                                             <button
                                                                 on:click=move |_| delete_assessment.with_value(|f| f("glasgow".to_string(), item_id.clone()))
@@ -573,7 +588,12 @@ pub fn PatientDetail() -> impl IntoView {
                                                 view! {
                                                     <tr>
                                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.assessed_at.split('T').next().unwrap_or("").to_string()}</td>
-                                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">{item.score}</td>
+                                                        <td class="px-6 py-4 whitespace-nowrap">
+                                                            <div class="flex items-center gap-2">
+                                                                <span class="text-sm font-bold text-gray-900">{item.score}</span>
+                                                                <SapsBadge score={item.score} />
+                                                            </div>
+                                                        </td>
                                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{format!("{:.1}%", item.predicted_mortality)}</td>
                                                         <td class="px-6 py-4 whitespace-nowrap text-sm">
                                                             <button
