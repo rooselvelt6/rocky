@@ -1,226 +1,88 @@
-﻿# UCI - ICU Medical Scales System
-### Sistema de Automatización de Escalas Médicas para Unidades de Cuidados Intensivos
+﻿# 🩺 UCI - ICU Medical Scales System
+### Infraestructura Crítica de Automatización Clínica para Unidades de Cuidados Intensivos
 
-![Rust](https://img.shields.io/badge/Rust-1.70+-orange?logo=rust)
+![Rust](https://img.shields.io/badge/Rust-2021-orange?logo=rust)
 ![Axum](https://img.shields.io/badge/Axum-0.8-blue)
-![Leptos](https://img.shields.io/badge/Leptos-0.6-purple)
-![License](https://img.shields.io/badge/License-GPL--3.0-green)
-![Docker](https://img.shields.io/badge/Docker-Enabled-blue?logo=docker)
-
-Una aplicación web de alto rendimiento desarrollada en **Rust** para automatizar el cálculo e interpretación de escalas médicas críticas en la UCI, con enfoque en **seguridad**, **velocidad** y **fiabilidad**.
-
-> [!CAUTION]
-> ### ⚠️ AVISO MÉDICO IMPORTANTE
-> Esta es una **herramienta de apoyo a la decisión clínica**. NO reemplaza el juicio clínico profesional. Todas las puntuaciones y cálculos generados por este sistema **DEBEN ser verificados por personal médico calificado** antes de cualquier aplicación clínica o toma de decisiones sobre pacientes. El autor no se hace responsable por el uso indebido de esta herramienta.
+![Leptos](https://img.shields.io/badge/Leptos-WASM-purple)
+![SurrealDB](https://img.shields.io/badge/SurrealDB-v2.1.4-cc00ff)
+![Portability](https://img.shields.io/badge/Portability-Universal-green?logo=docker)
 
 ---
 
-## 📋 Tabla de Contenidos
+## 🚀 "Born for Performance, Built for Portability"
+**UCI System** es una solución de ingeniería de software de grado industrial diseñada para automatizar el cálculo e interpretación de escalas médicas críticas (Glasgow, APACHE II, SOFA, SAPS II, NEWS2). 
 
-- [Evaluación y Análisis del Sistema](#-evaluación-y-análisis-del-sistema)
-- [Arquitectura Técnica](#-arquitectura-técnica)
-- [Características Principales](#-características-principales)
-- [Tecnologías](#️-tecnologías)
-- [Whitepaper y Roadmap 2026](#-whitepaper-y-roadmap-2026)
-- [Instalación y Despliegue](#-instalación-y-despliegue)
-- [Licencia y Autor](#-licencia-y-autor)
+Tras las últimas actualizaciones, el sistema ahora es **Universalmente Portable**, capaz de correr con el mismo rendimiento y estabilidad en un servidor potente, una estación de trabajo Windows, o hardware Edge como **Raspberry Pi** y **Banana Pi**.
 
 ---
 
-## 📊 Evaluación y Análisis del Sistema
+## ✨ Características que lo hacen Único
 
-Este proyecto ha sido analizado bajo estándares de ingeniería de software profesional, evaluando su viabilidad para entornos clínicos críticos.
+### 🏗️ Arquitectura de Estado Sólido
+- **Core en Rust**: Garantía total de seguridad de memoria y ausencia de errores en tiempo de ejecución.
+- **Frontend WASM**: Una interfaz ultra-fluida construida con **Leptos**, sin la sobrecarga de los frameworks tradicionales de JS.
+- **Binarios Estáticos (musl)**: El programa se compila de forma que no depende de las librerías de tu Linux. Funciona en Fedora, Arch, Debian o Alpine por igual.
 
-### 1. Robustez y Fiabilidad Técnica (9.5/10)
-Al ser una aplicación **Full-Stack Rust**, el sistema hereda garantías de seguridad que otros lenguajes no poseen:
-*   **Integridad de Memoria (Zero Unsafe):** El uso de Rust elimina el 70% de las vulnerabilidades comunes (buffer overflows, memory leaks), garantizando un tiempo de actividad (uptime) crítico para hospitales.
-*   **Validación de Dominio Clínico:** Los algoritmos integran validaciones de rangos fisiológicos ("fencing"), previniendo puntuaciones erróneas por datos de entrada fuera de la realidad médica.
-
-### 2. Compatibilidad Multiplataforma (10/10)
-El sistema es **universalmente desplegable**, eliminando la barrera del sistema operativo:
-*   **Windows:** Ejecución nativa mediante binarios compilados de alto rendimiento.
-*   **Linux / Servidores:** Soporte de primer nivel mediante **Docker y Docker Compose**, ideal para infraestructuras de nube privada hospitalaria.
-*   **WASM:** El frontend en **WebAssembly** garantiza una experiencia fluida e idéntica en cualquier navegador moderno.
-
-### 3. Rendimiento (Benchmarking)
-| Métrica | Resultado | Notas |
-|---------|-----------|-------|
-| **Tamaño Frontend (WASM)** | ~850 KB | Comprimido, carga instantánea |
-| **Latencia API (Local)** | < 1ms | Respuesta inmediata del servidor Axum |
-| **Uso de RAM (Servidor)** | 40-60 MB | Eficiencia extrema para hardware modesto |
-| **Uso de CPU (Idle)** | < 0.1% | Runtime Tokio de alto rendimiento |
-
-### 4. Seguridad y Resiliencia
-*   **Transacciones ACID:** El uso de **SurrealDB** garantiza que cada evaluación clínica sea una transacción atómica, protegiendo los datos contra fallos de energía.
-*   **Seguridad Hardened:** Implementación de **JWT con roles (RBAC)**, **CORS restrictivo**, **Audit Logging** para trazabilidad completa, y **Sanitización Anti-XSS**.
-
----
-
-## 🏗️ Arquitectura Técnica
-
-El sistema utiliza una arquitectura de **Estado Sólido** y **Reactividad Basada en Señales**:
-
-```mermaid
-graph TD
-    User((Personal Médico)) -->|WASM UI| Frontend[Leptos Frontend]
-    Frontend -->|Signals/Reactivity| UI_Update[Update UI]
-    Frontend -->|Auth: JWT| Backend[Axum API Server]
-    
-    subgraph "Backend (Rust Core)"
-        Backend -->|Middleware| AuthCheck[Auth & RBAC]
-        Backend -->|Sanitization| Ammonia[XSS Prevention]
-        Backend -->|Business Logic| ClinicalScales[Scales Engine: Apache/Sofa/Saps]
-        Backend -->|Audit| AuditLogs[Audit Logging System]
-    end
-    
-    Backend -->|SurrealQL| Database[(SurrealDB v2.4)]
-    Database -->|Persistence| Storage[File: uci.db]
-```
-
----
-
-## ✨ Características Principales
-
-### Escalas Médicas Implementadas
-
-#### 🧠 **Escala de Coma de Glasgow (GCS)**
-- Evaluación neurológica completa con clasificación de severidad automática y recomendaciones clínicas.
-
-#### 🔴 **APACHE II** (Acute Physiology and Chronic Health Evaluation)
-- Predicción de mortalidad con modelo logístico y **AI Insight** para análisis de riesgo.
-
-#### 🟢 **Escala SOFA** (Sequential Organ Failure Assessment)
-- Evaluación de 6 sistemas orgánicos e interpretación automática de falla orgánica.
-
-#### 🟠 **SAPS II** (Simplified Acute Physiology Score)
-- 15 parámetros con predicción avanzada de mortalidad basada en regresión logística.
-
-#### 🔵 **Escala NEWS2** (National Early Warning Score 2)
-- Sistema dinámico de alerta temprana para la detección precoz del deterioro clínico agudo. Incluye soporte para falla hipercápnica (Escala 2).
+### 🛡️ Resiliencia de Datos con SurrealDB
+- **Conexión Inteligente**: Lógica de reintento integrada que espera a la base de datos si esta tarda en arrancar.
+- **Persistencia Robusta**: Uso de volúmenes industriales y motores de almacenamiento de alto rendimiento.
 
 ### 🎨 Visualización de Inteligencia Clínica
-- ✅ **Multi-Organ Radar Chart:** Visualización tipo "araña" del estado de 6 sistemas orgánicos basado en SOFA.
-- ✅ **Monitor Central Vitual (Ward View):** Dashboard de alta fidelidad con efectos de **Glassmorphism**, alertas de deterioro y visualización de tendencias.
-
-### Gestión Clínica Avanzada
-- ✅ **Gestión de Pacientes:** Registro completo, historial de evaluaciones y búsqueda.
-- ✅ **Gestión de Evaluaciones:** Eliminación individual de registros (Glasgow, APACHE, SOFA, SAPS) con trazabilidad de auditoría.
-- ✅ **Audit Logging:** Registro de todas las acciones críticas para auditoría médica.
-- ✅ **Internacionalización:** Interfaz totalmente bilingüe (Español / Inglés).
-- ✅ **Monitor de Sala (Ward View):** Visualización en tiempo real del estado de la unidad con estética moderna y alertas de deterioro activo.
+- **Gráficos de Radar Dinámicos**: Visualiza el estado multi-orgánico de un paciente de un vistazo.
+- **Seguridad RBAC y Auditoría**: Control de acceso granular y registro histórico (Audit Logs) de cada acción clínica.
 
 ---
 
-## 🛠️ Tecnologías
+## 🛠️ Stack Tecnológico
 
-| Capa | Tecnologías |
-|------|-------------|
-| **Lenguaje** | Rust Edition 2021 |
-| **Frontend** | Leptos (WASM) + Tailwind CSS |
-| **Backend API** | Axum + Tokio Runtime |
-| **Base de Datos** | SurrealDB v2.4 (Multi-modelo) |
-| **Seguridad** | JWT, Tower-HTTP, Ammonia (Sanitization) |
-
----
-
-## 📄 Whitepaper y Roadmap 2026
-
-Para un análisis profundo de la arquitectura, impacto clínico y visión a largo plazo, consulte nuestro **[Technical Whitepaper](WHITEPAPER.md)**.
-
-### 🌍 Democratización y Bajo Costo
-Este sistema está optimizado para correr en **Hardware Edge (Raspberry Pi / Banana Pi)**, permitiendo digitalizar una UCI con una inversión de hardware de solo **$10 - $35 USD**, sin depender de la nube y manteniendo la soberanía de los datos médicos.
-
-### 🗓️ Roadmap Detallado 2026
-
-#### 🟢 Q1 2026: Consolidación y Calidad (Actual)
-**Enfoque:** *Estabilidad, Documentación y Experiencia de Usuario*
-
-*   ✅ **Base Completa:** Glasgow, APACHE II, SOFA, SAPS II, NEWS2, gestión de pacientes, JWT/RBAC
-*   🔄 **Mejoras de Usabilidad:** Búsqueda avanzada, filtros, indicadores visuales mejorados
-*   📄 **Exportación:** Reportes PDF profesionales con firma digital, CSV/Excel para análisis
-*   💾 **Backup Automático:** Rotación de backups encriptados (diario/semanal/mensual)
-*   📚 **Documentación:** Manual de usuario completo, API REST con OpenAPI 3.0
-
-#### 🟡 Q2 2026: Inteligencia Clínica
-**Enfoque:** *Análisis Visual y Toma de Decisiones*
-
-*   📈 **Dashboard Analítico:** Gráficos de tendencias Rust-native (`plotters`)
-*   📊 **KPIs Clínicos:** Tasa de mortalidad, ocupación, distribución de severidad
-*   🎯 **Comparador de Escalas:** Vista lado a lado de evaluaciones, análisis automático de cambios
-*   🖥️ **Ward View Mejorado:** Alertas visuales en tiempo real, modo pantalla completa
-
-#### 🟠 Q3 2026: Movilidad y Alertas Tempranas
-**Enfoque:** *Acceso Móvil y Detección Proactiva*
-
-*   📱 **Progressive Web App (PWA):** Instalable en iOS/Android, funciona offline
-*   🔔 **Notificaciones Push:** Alertas de deterioro, recordatorios de evaluaciones
-*   🩺 **Integración Dispositivos:** API para ingesta automática de signos vitales (HL7 FHIR)
-*   🌙 **Modo Nocturno:** UI optimizada para turnos 24/7
-
-#### 🔴 Q4 2026: IA y Escalabilidad
-**Enfoque:** *Predicción Avanzada y Gestión Multi-Hospital*
-
-*   🤖 **ML para Predicción de Sepsis:** Modelo Rust-native (`linfa`/`smartcore`), score de riesgo 24h
-*   🏥 **Multi-Tenancy:** Soporte para red hospitalaria con aislamiento total de datos
-*   📜 **Cumplimiento HIPAA:** Auditoría de seguridad, encriptación end-to-end, logs de 7 años
-*   ⚡ **Optimizaciones:** Caché Redis, paginación eficiente, índices DB optimizados
-
-> 📋 **Documento Completo:** Para estimaciones de esfuerzo y detalles técnicos, consulte [ROADMAP_OPTIMIZADO_2026.md](docs/ROADMAP_OPTIMIZADO_2026.md)
+| Capa | Tecnologías | Ventajas Clínicas |
+| :--- | :--- | :--- |
+| **Lenguaje** | Rust (Edition 2021) | Cero fallos de segmentación y máxima velocidad. |
+| **Backend** | Axum + Tokio | Capacidad para manejar cientos de peticiones simultáneas sin latencia. |
+| **Frontend** | Leptos (WebAssembly) | Interfaz instantánea con reactividad de grano fino. |
+| **Base de Datos** | SurrealDB | Base de datos multi-modelo con relaciones de grafo ultra-rápidas. |
+| **Portabilidad** | Docker + Musl Static | Despliegue en 10 segundos en cualquier sistema operativo. |
 
 ---
 
-## 🚀 Instalación y Despliegue
+## 🌀 Instalación Universal (En un suspiro)
 
-### En Windows (Uso Directo)
-1.  **Requisitos**: Tener `uci-server.exe`, `surreal.exe` y la carpeta `dist/` en el mismo directorio.
-2.  **Iniciar Base de Datos**: 
-    ```powershell
-    .\surreal.exe start --user root --pass root file:uci.db
-    ```
-3.  **Iniciar Servidor**: 
-    ```powershell
-    .\uci-server.exe
-    ```
+### Mediante Docker (Recomendado para Producción)
+El sistema está optimizado para levantarse en cualquier distro de Linux o Windows con Docker Desktop:
 
-### En Linux (Usando Docker 🐋)
-Ideal para servidores hospitalarios. Ejecute en la raíz:
 ```bash
-docker-compose up --build -d
+# Otorgar permisos al script de inicio universal
+chmod +x start.sh
+
+# ¡Y listo! El sistema detectará tu arquitectura y lo configurará todo
+./start.sh
 ```
-La aplicación estará disponible en `http://localhost:3000`.
 
----
-
-## 🛠️ Configuración de Desarrollo
+### Ejecución Nativa
+Si prefieres no usar Docker y tienes el entorno de Rust instalado:
 ```bash
-git clone https://github.com/rooselvelt6/uci.git
-cd uci
-
-# 1. Compilar frontend (WASM)
-trunk build --release
-
-# 2. Ejecutar base de datos
-# (Asegúrese de tener surreal instalado)
+# 1. Iniciar la base de datos (SurrealDB local)
 surreal start --user root --pass root file:uci.db
 
-# 3. Ejecutar servidor backend
+# 2. Iniciar el servidor
 cargo run --release --bin uci-server
 ```
 
-### Usuarios por Defecto
-- **Administrador:** `admin` | **Pass:** `admin`
-- **Enfermería:** `nurse` | **Pass:** `nurse123`
+La aplicación estará disponible inmediatamente en `http://localhost:3000`.
 
 ---
 
-## 📝 Licencia y Autor
-
-### Licencia
-Este proyecto está bajo la licencia **GNU General Public License v3.0**. El software se entrega "tal cual", sin garantías de ningún tipo. Consulte el archivo [LICENSE](LICENSE) para más detalles.
-
-### Autor
-**rooselvelt6** - [GitHub](https://github.com/rooselvelt6)
-*Desarrollado con ❤️ y Rust para mejorar la precisión clínica en Unidades de Cuidados Intensivos.*
+## 📈 Roadmap y Visión 2026
+- [x] **Portabilidad Universal**: Binarios estáticos y soporte ARM/x86.
+- [x] **Endpoints de Salud**: Monitoreo automático mediante `/api/health`.
+- [ ] **AI Sepsis Prediction**: Integración de modelos de ML nativos en Rust.
+- [ ] **HL7 FHIR Integration**: Interoperabilidad con otros sistemas hospitalarios.
 
 ---
-*Última actualización: 20 de Enero, 2026*
+
+## 👨‍💻 Autor y Visión
+Desarrollado por **rooselvelt6** con el objetivo de democratizar la tecnología de alta precisión en entornos de cuidados críticos, manteniendo la soberanía de los datos médicos y la máxima eficiencia en costos de hardware.
+
+---
+> [!IMPORTANT]  
+> **Aviso Médico:** Este sistema es una herramienta de apoyo. Todas las decisiones clínicas deben ser validadas por personal médico calificado.
