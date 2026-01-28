@@ -4,14 +4,27 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=http://surrealdb:8000
+      - DB_HOST=surrealdb:8000
+      - DB_USER=root
+      - DB_PASS=root
+      - DB_NS=hospital
+      - DB_DB=uci
     depends_on:
-      - surrealdb
+      surrealdb:
+        condition: service_healthy
 
   surrealdb:
     image: surrealdb/surrealdb:v2.1.4
     ports:
       - "8000:8000"
-    command: start --user root --pass root file:uci.db
+    command: start --user root --pass root --bind 0.0.0.0:8000 rocksdb:uci_data
     volumes:
-      - ./uci-data:/uci.db
+      - surreal_data:/uci_data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+
+volumes:
+  surreal_data:

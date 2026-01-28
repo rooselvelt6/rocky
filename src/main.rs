@@ -110,6 +110,7 @@ async fn main() {
         )
         .route("/api/export/patients", get(export_patients_csv))
         .route("/api/login", post(login_handler))
+        .route("/api/health", get(health_check))
         // Admin Routes
         .route("/api/admin/config", get(get_config).put(update_config))
         .route("/api/admin/users", get(get_users).post(create_user))
@@ -200,6 +201,28 @@ async fn main() {
         .unwrap();
 
     println!("👋 Servidor detenido correctamente.");
+}
+
+/// Endpoint para verificar el estado emocional... digo, de salud del sistema
+async fn health_check(State(db): State<Surreal<Client>>) -> (StatusCode, Json<serde_json::Value>) {
+    match db.health().await {
+        Ok(_) => (
+            StatusCode::OK,
+            Json(serde_json::json!({
+                "status": "up",
+                "database": "connected",
+                "version": env!("CARGO_PKG_VERSION")
+            })),
+        ),
+        Err(e) => (
+            StatusCode::SERVICE_UNAVAILABLE,
+            Json(serde_json::json!({
+                "status": "down",
+                "database": "disconnected",
+                "error": e.to_string()
+            })),
+        ),
+    }
 }
 
 /// Helper function to check 24-hour restriction for any assessment type
