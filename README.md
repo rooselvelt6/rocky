@@ -130,11 +130,42 @@ Para un análisis profundo de la arquitectura, impacto clínico y visión a larg
 ### 🌍 Democratización y Bajo Costo
 Este sistema está optimizado para correr en **Hardware Edge (Raspberry Pi / Banana Pi)**, permitiendo digitalizar una UCI con una inversión de hardware de solo **$10 - $35 USD**, sin depender de la nube y manteniendo la soberanía de los datos médicos.
 
-### Resumen del Roadmap 2026
-*   **Q1 (Actual):** Consolidación de escalas críticas, Docker y Auth JWT.
-*   **Q2:** Dashboards de analítica visual (Rust-native) y API REST pública (OpenAPI).
-*   **Q3:** Aplicación móvil nativa (Tauri) y sistema de alertas tempranas.
-*   **Q4:** Inteligencia Artificial para predicción de sepsis y soporte multi-hospital.
+### 🗓️ Roadmap Detallado 2026
+
+#### 🟢 Q1 2026: Consolidación y Calidad (Actual)
+**Enfoque:** *Estabilidad, Documentación y Experiencia de Usuario*
+
+*   ✅ **Base Completa:** Glasgow, APACHE II, SOFA, SAPS II, NEWS2, gestión de pacientes, JWT/RBAC
+*   🔄 **Mejoras de Usabilidad:** Búsqueda avanzada, filtros, indicadores visuales mejorados
+*   📄 **Exportación:** Reportes PDF profesionales con firma digital, CSV/Excel para análisis
+*   💾 **Backup Automático:** Rotación de backups encriptados (diario/semanal/mensual)
+*   📚 **Documentación:** Manual de usuario completo, API REST con OpenAPI 3.0
+
+#### 🟡 Q2 2026: Inteligencia Clínica
+**Enfoque:** *Análisis Visual y Toma de Decisiones*
+
+*   📈 **Dashboard Analítico:** Gráficos de tendencias Rust-native (`plotters`)
+*   📊 **KPIs Clínicos:** Tasa de mortalidad, ocupación, distribución de severidad
+*   🎯 **Comparador de Escalas:** Vista lado a lado de evaluaciones, análisis automático de cambios
+*   🖥️ **Ward View Mejorado:** Alertas visuales en tiempo real, modo pantalla completa
+
+#### 🟠 Q3 2026: Movilidad y Alertas Tempranas
+**Enfoque:** *Acceso Móvil y Detección Proactiva*
+
+*   📱 **Progressive Web App (PWA):** Instalable en iOS/Android, funciona offline
+*   🔔 **Notificaciones Push:** Alertas de deterioro, recordatorios de evaluaciones
+*   🩺 **Integración Dispositivos:** API para ingesta automática de signos vitales (HL7 FHIR)
+*   🌙 **Modo Nocturno:** UI optimizada para turnos 24/7
+
+#### 🔴 Q4 2026: IA y Escalabilidad
+**Enfoque:** *Predicción Avanzada y Gestión Multi-Hospital*
+
+*   🤖 **ML para Predicción de Sepsis:** Modelo Rust-native (`linfa`/`smartcore`), score de riesgo 24h
+*   🏥 **Multi-Tenancy:** Soporte para red hospitalaria con aislamiento total de datos
+*   📜 **Cumplimiento HIPAA:** Auditoría de seguridad, encriptación end-to-end, logs de 7 años
+*   ⚡ **Optimizaciones:** Caché Redis, paginación eficiente, índices DB optimizados
+
+> 📋 **Documento Completo:** Para estimaciones de esfuerzo y detalles técnicos, consulte [ROADMAP_OPTIMIZADO_2026.md](docs/ROADMAP_OPTIMIZADO_2026.md)
 
 ---
 
