@@ -45,18 +45,38 @@ Tras las últimas actualizaciones, el sistema ahora es **Universalmente Portable
 
 ---
 
-## 🌀 Instalación Universal (En un suspiro)
+## 🛡️ Infraestructura Ultra-Robusta (Novedad 2026)
 
-### Mediante Docker (Recomendado para Producción)
-El sistema está optimizado para levantarse en cualquier distro de Linux o Windows con Docker Desktop:
+Tras una reingeniería completa, el sistema ahora cuenta con una arquitectura de **"Cero Fallos"**:
+
+1.  **Auto-Corrección**: Si alguno de los servicios (App o DB) falla, Docker lo reinicia automáticamente en segundos.
+2.  **Resiliencia de Conexión**: Lógica de reintento inteligente en Rust que garantiza la reconexión con SurrealDB ante cualquier parpadeo de red.
+3.  **Health Monitoring Proactivo**: Verificación continua de la salud de cada componente mediante contenedores.
+4.  **Persistencia Garantizada**: Uso de volúmenes industriales para que tus datos clínicos nunca se pierdan.
+
+---
+
+## 🌀 Instalación y Operación "Zero Friction"
+
+### 🚀 Inicio Rápido con Auto-Verificación
+Para una experiencia premium sin errores, utiliza el nuevo script de inicio robusto:
 
 ```bash
-# Otorgar permisos al script de inicio universal
-chmod +x start.sh
+# Otorgar permisos
+chmod +x start-robust.sh healthcheck.sh
 
-# ¡Y listo! El sistema detectará tu arquitectura y lo configurará todo
-./start.sh
+# Iniciar sistema con monitoreo inteligente
+./start-robust.sh
 ```
+*Este script construirá las imágenes, iniciará los servicios y esperará a que todo esté funcional antes de darte el acceso.*
+
+### 📊 Diagnóstico en Tiempo Real
+¿Quieres saber cómo está tu sistema? Ejecuta nuestra herramienta de diagnóstico:
+```bash
+./healthcheck.sh
+```
+
+---
 
 ### Ejecución Nativa
 Si prefieres no usar Docker y tienes el entorno de Rust instalado:

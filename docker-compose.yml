@@ -1,30 +1,85 @@
 services:
+  surrealdb:
+    image: surrealdb/surrealdb:v2.1.4
+    container_name: rocky-surrealdb
+    restart: always
+    ports:
+      - "8000:8000"
+    command: start --user root --pass root --bind 0.0.0.0:8000 rocksdb:data
+    volumes:
+      - surreal_data:/data
+      - ./db:/db:ro
+    environment:
+      - SURREAL_LOG=info
+      - SURREAL_CAPS_ALLOW_ALL=true
+    healthcheck:
+      test: ["CMD", "/surreal", "isready", "--conn", "http://localhost:8000"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - rocky-net
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 256M
+
   uci-app:
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: rocky-app
+    restart: always
     ports:
       - "3000:3000"
     environment:
-      - DB_HOST=surrealdb:8000
+      - RUST_LOG=info
+      - DB_HOST=surrealdb
+      - DB_PORT=8000
       - DB_USER=root
       - DB_PASS=root
       - DB_NS=hospital
       - DB_DB=uci
+      - DB_MAX_RETRIES=10
+      - DB_RETRY_DELAY=5
     depends_on:
       surrealdb:
         condition: service_healthy
-
-  surrealdb:
-    image: surrealdb/surrealdb:v2.1.4
-    ports:
-      - "8000:8000"
-    command: start --user root --pass root --bind 0.0.0.0:8000 rocksdb:uci_data
-    volumes:
-      - surreal_data:/uci_data
+        restart: true
+    networks:
+      - rocky-net
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 5s
-      timeout: 2s
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 15s
+      timeout: 10s
       retries: 5
+      start_period: 60s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 128M
+
+networks:
+  rocky-net:
+    driver: bridge
+    name: rocky-network
 
 volumes:
   surreal_data:
+    driver: local
+    name: rocky-surreal-data
