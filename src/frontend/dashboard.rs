@@ -40,28 +40,28 @@ pub fn Dashboard() -> impl IntoView {
                     <span class="text-lg font-bold text-gray-800">{move || t(lang.get(), "nav_monitor")}</span>
                 </A>
 
-                <A href="/glasgow" class="flex flex-col items-center justify-center bg-white p-8 rounded-2xl shadow-xl border border-indigo-100 hover:border-indigo-300 hover:shadow-2xl transition-all group">
+                <A href="/patients" class="flex flex-col items-center justify-center bg-white p-8 rounded-2xl shadow-xl border border-indigo-100 hover:border-indigo-300 hover:shadow-2xl transition-all group">
                     <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-purple-600 transition-colors">
                         <i class="fas fa-brain text-purple-600 text-2xl group-hover:text-white"></i>
                     </div>
                     <span class="text-lg font-bold text-gray-800">{move || t(lang.get(), "glasgow_scale")}</span>
                 </A>
 
-                <A href="/apache" class="flex flex-col items-center justify-center bg-white p-8 rounded-2xl shadow-xl border border-indigo-100 hover:border-indigo-300 hover:shadow-2xl transition-all group">
+                <A href="/patients" class="flex flex-col items-center justify-center bg-white p-8 rounded-2xl shadow-xl border border-indigo-100 hover:border-indigo-300 hover:shadow-2xl transition-all group">
                     <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-red-600 transition-colors">
                         <i class="fas fa-heartbeat text-red-600 text-2xl group-hover:text-white"></i>
                     </div>
                     <span class="text-lg font-bold text-gray-800">{move || t(lang.get(), "apache_ii")}</span>
                 </A>
 
-                <A href="/sofa" class="flex flex-col items-center justify-center bg-white p-8 rounded-2xl shadow-xl border border-indigo-100 hover:border-indigo-300 hover:shadow-2xl transition-all group">
+                <A href="/patients" class="flex flex-col items-center justify-center bg-white p-8 rounded-2xl shadow-xl border border-indigo-100 hover:border-indigo-300 hover:shadow-2xl transition-all group">
                     <div class="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-teal-600 transition-colors">
                         <i class="fas fa-procedures text-teal-600 text-2xl group-hover:text-white"></i>
                     </div>
                     <span class="text-lg font-bold text-gray-800">{move || t(lang.get(), "sofa_score")}</span>
                 </A>
 
-                <A href="/saps" class="flex flex-col items-center justify-center bg-white p-8 rounded-2xl shadow-xl border border-indigo-100 hover:border-indigo-300 hover:shadow-2xl transition-all group">
+                <A href="/patients" class="flex flex-col items-center justify-center bg-white p-8 rounded-2xl shadow-xl border border-indigo-100 hover:border-indigo-300 hover:shadow-2xl transition-all group">
                     <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-orange-600 transition-colors">
                         <i class="fas fa-notes-medical text-orange-600 text-2xl group-hover:text-white"></i>
                     </div>

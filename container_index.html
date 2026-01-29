@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UCI - ICU Medical Scales</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
+    
+<script type="module">
+import init, * as bindings from '/frontend-aa28805df7216640.js';
+const wasm = await init({ module_or_path: '/frontend-aa28805df7216640_bg.wasm' });
+
+
+window.wasmBindings = bindings;
+
+
+dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
+
+</script>
+<link rel="modulepreload" href="/frontend-aa28805df7216640.js" crossorigin="anonymous" integrity="sha384-YQRLxE2ldBp3zRxZGk3hgB4PAtwwJcfNxHGhgWu/YCaM5BsUAlnv9FozQRlOvi0V"><link rel="preload" href="/frontend-aa28805df7216640_bg.wasm" crossorigin="anonymous" integrity="sha384-C1ZtYQTgAItQB/ysRuA8+oLNnwhTemWYtYKrfTQgwD4+1BX0/E3LKk9WkH/rPutk" as="fetch" type="application/wasm"></head>
+
+<body>
+    <div id="app"></div>
+</body>
+
+</html>

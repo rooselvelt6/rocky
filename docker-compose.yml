@@ -2,22 +2,23 @@ services:
   surrealdb:
     image: surrealdb/surrealdb:v2.1.4
     container_name: rocky-surrealdb
+    user: root
     restart: always
     ports:
       - "8000:8000"
-    command: start --user root --pass root --bind 0.0.0.0:8000 rocksdb:data
+    command: start --user root --pass root --bind 0.0.0.0:8000 rocksdb:/data
     volumes:
-      - surreal_data:/data
+      - rocky_surreal_data:/data
       - ./db:/db:ro
     environment:
       - SURREAL_LOG=info
       - SURREAL_CAPS_ALLOW_ALL=true
     healthcheck:
-      test: ["CMD", "/surreal", "isready", "--conn", "http://localhost:8000"]
+      test: [ "CMD", "/surreal", "isready", "--conn", "http://localhost:8000" ]
       interval: 10s
       timeout: 5s
-      retries: 10
-      start_period: 30s
+      retries: 5
+      start_period: 20s
     networks:
       - rocky-net
     logging:
@@ -33,7 +34,7 @@ services:
           memory: 256M
 
   uci-app:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
     container_name: rocky-app
@@ -57,7 +58,7 @@ services:
     networks:
       - rocky-net
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health" ]
       interval: 15s
       timeout: 10s
       retries: 5
@@ -80,6 +81,5 @@ networks:
     name: rocky-network
 
 volumes:
-  surreal_data:
-    driver: local
-    name: rocky-surreal-data
+  rocky_surreal_data:
+    external: true

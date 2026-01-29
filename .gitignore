@@ -3,3 +3,4 @@
 /uci.db
 .env
 *.db
+/reports

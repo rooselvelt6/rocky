@@ -1,9 +1,0 @@
-En la rama master
-Tu rama está adelantada a 'origin/master' por 1 commit.
-  (usa "git push" para publicar tus commits locales)
-
-Archivos sin seguimiento:
-  (usa "git add <archivo>..." para incluirlo a lo que será confirmado)
-	git_status.txt
-
-no hay nada agregado al commit pero hay archivos sin seguimiento presentes (usa "git add" para hacerles seguimiento)

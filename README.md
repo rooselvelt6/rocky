@@ -63,16 +63,22 @@ Para una experiencia premium sin errores, utiliza el nuevo script de inicio robu
 
 ```bash
 # Otorgar permisos
-chmod +x start-robust.sh healthcheck.sh
+chmod +x bin/start-robust.sh bin/healthcheck.sh
+```
 
+```bash
 # Iniciar sistema con monitoreo inteligente
-./start-robust.sh
+./bin/start-robust.sh
+```
+
+### 3. Verificar estado (Healthcheck)
+```bash
+./bin/healthcheck.sh
 ```
 *Este script construirá las imágenes, iniciará los servicios y esperará a que todo esté funcional antes de darte el acceso.*
 
 ### 📊 Diagnóstico en Tiempo Real
 ¿Quieres saber cómo está tu sistema? Ejecuta nuestra herramienta de diagnóstico:
-```bash
 ./healthcheck.sh
 ```
 

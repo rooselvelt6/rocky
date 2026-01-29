@@ -1,5 +1,6 @@
 use crate::frontend::admin::AdminPanel;
 use crate::frontend::apache_form::ApacheForm;
+use crate::frontend::dashboard::Dashboard;
 use crate::frontend::glasgow_form::GlasgowForm;
 use crate::frontend::i18n::{t, Language};
 use crate::frontend::login::Login;
@@ -184,6 +185,7 @@ pub fn App() -> impl IntoView {
                             </div>
                         }/>
                         <Route path="/login" view=Login/>
+                        <Route path="/dashboard" view=Dashboard/>
 
                         // Protected Routes
                         <Route path="/patients" view=|| view! { <Protected><PatientList/></Protected> }/>
@@ -233,8 +235,9 @@ fn Protected(children: Children) -> impl IntoView {
 
     create_effect(move |_| {
         if let Some(storage) = window().local_storage().ok().flatten() {
-            if storage.get_item("uci_token").unwrap_or(None).is_none() {
-                navigate("/login", Default::default());
+            let token = storage.get_item("uci_token").ok().flatten();
+            if token.is_none() {
+                let _ = navigate("/login", Default::default());
             }
         }
     });

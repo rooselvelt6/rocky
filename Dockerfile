@@ -11,7 +11,11 @@ RUN apt-get update && \
 
 RUN rustup target add wasm32-unknown-unknown
 COPY . .
-RUN trunk build --release
+# Build frontend and strip integrity/crossorigin attributes that cause loading hangs
+RUN trunk build --release && \
+    sed -i 's/integrity="[^"]*"//g' dist/index.html && \
+    sed -i 's/crossorigin="anonymous"//g' dist/index.html && \
+    cp style.css dist/ 2>/dev/null || true
 
 # --- Backend Build Stage ---
 FROM rust:1.93-slim-bookworm AS backend-builder
