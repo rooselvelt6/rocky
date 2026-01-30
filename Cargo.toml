@@ -31,19 +31,25 @@ web-sys = { version = "0.3", features = ["Storage", "Window", "Document", "Eleme
 reqwasm = { version = "0.5.0", optional = true }
 
 # Backend dependencies (optional, enabled by ssr feature)
-axum = { version = "0.8.7", optional = true }
+axum = { version = "0.8.7", features = ["ws"], optional = true }
 tokio = { version = "1.48.0", features = ["macros", "rt-multi-thread", "net", "signal"], optional = true }
 tower-http = { version = "0.6.7", features = ["full", "cors"], optional = true }
 tracing = { version = "0.1.41", optional = true }
 tracing-subscriber = { version = "0.3.20", features = ["env-filter", "fmt"], optional = true }
 leptos_axum = { version = "0.6", optional = true }
-surrealdb = { version = "2.4", optional = true }
+surrealdb = { version = "2.4", features = ["any", "kv-rocksdb"], optional = true }
 chrono = { version = "0.4", features = ["serde"], optional = true }
 dotenvy = { version = "0.15", optional = true }
 ammonia = "4.1.2"
 csv = "1.4.0"
 toml = "0.8"
 jsonwebtoken = { version = "10.2.0", features = ["rust_crypto", "pem"], default-features = false }
+chacha20poly1305 = "0.10"
+zeroize = { version = "1.8", features = ["derive"] }
+argon2 = "0.5"
+blake3 = "1.5"
+base64 = "0.22"
+futures-util = { version = "0.3", features = ["sink"] }
 # tower_governor = { version = "0.4.3", optional = true } # Incompatible with Axum 0.8
 
 [features]
@@ -69,7 +75,9 @@ ssr = [
 ]
 
 [profile.release]
-opt-level = "z"
+opt-level = 3
 lto = true
 codegen-units = 1
-panic = "abort"
+panic = 'abort'
+strip = true
+

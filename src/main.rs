@@ -8,9 +8,7 @@ use axum::{
     Json, Router,
 };
 // use std::sync::Arc;
-use surrealdb::engine::remote::ws::Client;
-// use surrealdb::engine::any::Any;
-// use surrealdb::sql::thing; // Deprecated/Incompatible with select in 2.x
+use surrealdb::engine::any::Any;
 use surrealdb::{RecordId, Surreal};
 use tokio::net::TcpListener;
 use tower_http::services::{ServeDir, ServeFile};
@@ -24,6 +22,8 @@ mod audit;
 mod auth;
 mod db;
 mod error;
+mod hades;
+mod poseidon;
 // mod models; // Moved to lib.rs
 
 use uci::models::apache::ApacheAssessment;
@@ -39,9 +39,14 @@ use uci::models::user::User;
 #[cfg(feature = "ssr")]
 use uci::services::validation;
 
-// Rate limiting desactivado temporalmente por incompatibilidad con Axum 0.8
-// #[cfg(feature = "ssr")]
+#[cfg(feature = "ssr")]
 // use tower_governor::{governor::GovernorConfigBuilder, GovernorLayer};
+#[derive(Clone)]
+struct AppState {
+    db: Surreal<Any>,
+    poseidon: crate::poseidon::PoseidonHub,
+}
+
 #[tokio::main]
 async fn main() {
     // Initialize tracing
@@ -71,6 +76,9 @@ async fn main() {
             std::process::exit(1);
         }
     };
+
+    let poseidon = crate::poseidon::PoseidonHub::new();
+    let state = AppState { db, poseidon };
 
     use tower_http::compression::CompressionLayer;
     use tower_http::cors::CorsLayer;
@@ -111,6 +119,7 @@ async fn main() {
         .route("/api/export/patients", get(export_patients_csv))
         .route("/api/login", post(login_handler))
         .route("/api/health", get(health_check))
+        .route("/ws/poseidon", get(poseidon_ws_handler))
         // Admin Routes
         .route("/api/admin/config", get(get_config).put(update_config))
         .route("/api/admin/users", get(get_users).post(create_user))
@@ -163,10 +172,10 @@ async fn main() {
                     axum::http::header::CONTENT_TYPE,
                 ]),
         )
-        .with_state(db.clone()); // Add database to app state
+        .with_state(state.clone()); // Add app state
 
     // --- INITIALIZE SYSTEM CONFIG ---
-    let init_db = db.clone();
+    let init_db = state.db.clone();
     tokio::spawn(async move {
         let configs: Vec<SystemConfig> = init_db.select("system_config").await.unwrap_or_default();
         if configs.is_empty() {
@@ -203,9 +212,69 @@ async fn main() {
     println!("👋 Servidor detenido correctamente.");
 }
 
+// --- HADES SHIELDING SYSTEM ---
+use base64::{prelude::BASE64_STANDARD, Engine};
+
+fn shield_patient(mut patient_data: Patient) -> Patient {
+    let hades = crate::hades::crypto::Hades::new();
+    
+    // 1. Cifrar campos sensibles
+    if let Ok(enc_first) = hades.encrypt(&patient_data.first_name) {
+        patient_data.first_name = BASE64_STANDARD.encode(enc_first);
+    }
+    if let Ok(enc_last) = hades.encrypt(&patient_data.last_name) {
+        patient_data.last_name = BASE64_STANDARD.encode(enc_last);
+    }
+    if let Ok(enc_diag) = hades.encrypt(&patient_data.principal_diagnosis) {
+        patient_data.principal_diagnosis = BASE64_STANDARD.encode(enc_diag);
+    }
+    if let Ok(enc_dob) = hades.encrypt(&patient_data.date_of_birth) {
+        patient_data.date_of_birth = BASE64_STANDARD.encode(enc_dob);
+    }
+
+    // 2. Calcular Hilo Rojo (Integridad)
+    let integrity_string = format!(
+        "{}:{}:{}:{}",
+        patient_data.first_name, patient_data.last_name, patient_data.date_of_birth, patient_data.uci_admission_date
+    );
+    patient_data.integrity_hash = crate::hades::crypto::compute_hash(&integrity_string);
+    
+    patient_data
+}
+
+fn unshield_patient(mut patient_data: Patient) -> Patient {
+    let hades = crate::hades::crypto::Hades::new();
+    
+    // 1. Verificar integridad (Opcional, pero nivel ZEUS/HADES)
+    let check_string = format!(
+        "{}:{}:{}:{}",
+        patient_data.first_name, patient_data.last_name, patient_data.date_of_birth, patient_data.uci_admission_date
+    );
+    let current_hash = crate::hades::crypto::compute_hash(&check_string);
+    if current_hash != patient_data.integrity_hash {
+        tracing::error!("🚨 ADVERTENCIA: Violación del Hilo Rojo en paciente {:?}. Los datos podrían haber sido alterados manualmente.", patient_data.id);
+    }
+
+    // 2. Descifrar campos
+    if let Ok(bytes) = BASE64_STANDARD.decode(&patient_data.first_name) {
+        if let Ok(dec) = hades.decrypt(&bytes) { patient_data.first_name = dec; }
+    }
+    if let Ok(bytes) = BASE64_STANDARD.decode(&patient_data.last_name) {
+        if let Ok(dec) = hades.decrypt(&bytes) { patient_data.last_name = dec; }
+    }
+    if let Ok(bytes) = BASE64_STANDARD.decode(&patient_data.principal_diagnosis) {
+        if let Ok(dec) = hades.decrypt(&bytes) { patient_data.principal_diagnosis = dec; }
+    }
+    if let Ok(bytes) = BASE64_STANDARD.decode(&patient_data.date_of_birth) {
+        if let Ok(dec) = hades.decrypt(&bytes) { patient_data.date_of_birth = dec; }
+    }
+
+    patient_data
+}
+
 /// Endpoint para verificar el estado emocional... digo, de salud del sistema
-async fn health_check(State(db): State<Surreal<Client>>) -> (StatusCode, Json<serde_json::Value>) {
-    match db.health().await {
+async fn health_check(State(state): State<AppState>) -> (StatusCode, Json<serde_json::Value>) {
+    match state.db.health().await {
         Ok(_) => (
             StatusCode::OK,
             Json(serde_json::json!({
@@ -227,7 +296,7 @@ async fn health_check(State(db): State<Surreal<Client>>) -> (StatusCode, Json<se
 
 /// Helper function to check 24-hour restriction for any assessment type
 async fn check_24h_restriction<T: serde::de::DeserializeOwned>(
-    db: &Surreal<Client>,
+    db: &Surreal<Any>,
     patient_id: &str,
     table_name: &str,
 ) -> Result<(), String> {
@@ -258,7 +327,7 @@ async fn check_24h_restriction<T: serde::de::DeserializeOwned>(
 
 /// Handler para calcular la escala de Glasgow y guardar en DB
 async fn calculate_glasgow(
-    State(db): State<Surreal<Client>>,
+    State(state): State<AppState>,
     Json(payload): Json<GlasgowRequest>,
 ) -> Json<GlasgowResponse> {
     // Intentamos crear la escala con los valores recibidos
@@ -280,7 +349,7 @@ async fn calculate_glasgow(
             // If patient_id provided, check 24-hour restriction
             if let Some(p_id) = payload.patient_id.as_ref() {
                 if let Err(msg) =
-                    check_24h_restriction::<GlasgowAssessment>(&db, p_id, "glasgow_assessments")
+                    check_24h_restriction::<GlasgowAssessment>(&state.db, p_id, "glasgow_assessments")
                         .await
                 {
                     return Json(GlasgowResponse {
@@ -302,7 +371,7 @@ async fn calculate_glasgow(
             );
             assessment.patient_id = patient_id_thing;
 
-            match db.create("glasgow_assessments").content(assessment).await {
+            match state.db.create("glasgow_assessments").content(assessment).await {
                 Ok(saved) => {
                     // SurrealDB 2.x returns Option<T> for single create
                     let saved: Option<GlasgowAssessment> = saved;
@@ -327,7 +396,7 @@ async fn calculate_glasgow(
 
 /// Handler para calcular APACHE II score y guardar en DB
 async fn calculate_apache(
-    State(db): State<Surreal<Client>>,
+    State(state): State<AppState>,
     Json(payload): Json<ApacheIIRequest>,
 ) -> Json<ApacheIIResponse> {
     match payload.to_apache() {
@@ -374,7 +443,7 @@ async fn calculate_apache(
             // Check 24-hour restriction
             if let Some(p_id) = payload.patient_id.as_ref() {
                 if let Err(msg) =
-                    check_24h_restriction::<ApacheAssessment>(&db, p_id, "apache_assessments").await
+                    check_24h_restriction::<ApacheAssessment>(&state.db, p_id, "apache_assessments").await
                 {
                     return Json(ApacheIIResponse {
                         score: 0,
@@ -409,7 +478,7 @@ async fn calculate_apache(
             );
             assessment.patient_id = patient_id_thing;
 
-            match db.create("apache_assessments").content(assessment).await {
+            match state.db.create("apache_assessments").content(assessment).await {
                 Ok(saved) => {
                     // SurrealDB 2.x returns Option<T>
                     let saved: Option<ApacheAssessment> = saved;
@@ -438,7 +507,7 @@ async fn calculate_apache(
 
 /// Handler para calcular SOFA score y guardar en DB
 async fn calculate_sofa(
-    State(db): State<Surreal<Client>>,
+    State(state): State<AppState>,
     Json(payload): Json<SOFARequest>,
 ) -> Json<SOFAResponse> {
     match payload.to_sofa() {
@@ -461,7 +530,7 @@ async fn calculate_sofa(
             // Check 24-hour restriction
             if let Some(p_id) = payload.patient_id.as_ref() {
                 if let Err(msg) =
-                    check_24h_restriction::<SofaAssessment>(&db, p_id, "sofa_assessments").await
+                    check_24h_restriction::<SofaAssessment>(&state.db, p_id, "sofa_assessments").await
                 {
                     return Json(SOFAResponse {
                         score: 0,
@@ -485,7 +554,7 @@ async fn calculate_sofa(
             );
             assessment.patient_id = patient_id_thing;
 
-            match db.create("sofa_assessments").content(assessment).await {
+            match state.db.create("sofa_assessments").content(assessment).await {
                 Ok(saved) => {
                     let saved: Option<SofaAssessment> = saved;
                     if let Some(saved_assessment) = saved {
@@ -512,7 +581,7 @@ async fn calculate_sofa(
 
 /// Handler para calcular SAPS II score y guardar en DB
 async fn calculate_saps(
-    State(db): State<Surreal<Client>>,
+    State(state): State<AppState>,
     Json(payload): Json<SAPSIIRequest>,
 ) -> Json<SAPSIIResponse> {
     match payload.to_saps() {
@@ -559,7 +628,7 @@ async fn calculate_saps(
             // Check 24-hour restriction
             if let Some(p_id) = payload.patient_id.as_ref() {
                 if let Err(msg) =
-                    check_24h_restriction::<SapsAssessment>(&db, p_id, "saps_assessments").await
+                    check_24h_restriction::<SapsAssessment>(&state.db, p_id, "saps_assessments").await
                 {
                     return Json(SAPSIIResponse {
                         score: 0,
@@ -594,7 +663,7 @@ async fn calculate_saps(
             );
             assessment.patient_id = patient_id_thing;
 
-            match db.create("saps_assessments").content(assessment).await {
+            match state.db.create("saps_assessments").content(assessment).await {
                 Ok(saved) => {
                     let saved: Option<SapsAssessment> = saved;
                     if let Some(saved_assessment) = saved {
@@ -642,7 +711,7 @@ pub struct News2Response {
 
 /// Handler para calcular NEWS2 y guardar en DB
 async fn calculate_news2(
-    State(db): State<Surreal<Client>>,
+    State(state): State<AppState>,
     Json(payload): Json<News2Request>,
 ) -> Json<News2Response> {
     let mut assessment_data = News2Assessment {
@@ -705,7 +774,7 @@ async fn calculate_news2(
 }
 
 async fn delete_news2_assessment(
-    State(db): State<Surreal<Client>>,
+    State(state): State<AppState>,
     Path(id): Path<String>,
 ) -> StatusCode {
     match db
@@ -719,7 +788,7 @@ async fn delete_news2_assessment(
 
 /// Handler para crear un nuevo paciente
 async fn create_patient(
-    State(db): State<Surreal<Client>>,
+    State(state): State<AppState>,
     parts: axum::http::request::Parts,
     Json(payload): Json<Patient>,
 ) -> Json<Option<Patient>> {
@@ -730,7 +799,7 @@ async fn create_patient(
     // but for now let's trust the payload or better yet, reconstruct it to ensure safety.
     // Ideally we'd have a CreatePatientRequest DTO, but reusing Patient for now.
 
-    let patient = Patient::new(
+    let mut patient = Patient::new(
         validation::sanitize_input(&payload.first_name),
         validation::sanitize_input(&payload.last_name),
         payload.date_of_birth,
@@ -746,7 +815,10 @@ async fn create_patient(
         payload.invasive_processes,
     );
 
-    match db.create("patients").content(patient).await {
+    // BLINDAJE HADES
+    patient = shield_patient(patient);
+
+    match state.db.create("patients").content(patient).await {
         Ok(response) => {
             // saved is Option<Patient>
             let saved: Option<Patient> = response;
@@ -754,7 +826,7 @@ async fn create_patient(
                 if let Some(id) = &p.id {
                     let id_str = format!("{}", id);
                     crate::audit::log_action(
-                        &db,
+                        &state.db,
                         "CREATE",
                         "patients",
                         &id_str,
@@ -762,9 +834,13 @@ async fn create_patient(
                         user_id,
                     )
                     .await;
+                    
+                    // POSEIDON WAVE-SYNC
+                    state.poseidon.broadcast(crate::poseidon::PoseidonEvent::PatientCreated(id_str));
                 }
             }
-            Json(saved)
+            // DESBLOQUEO PARA EL CLIENTE
+            Json(saved.map(unshield_patient))
         }
         Err(e) => {
             tracing::error!("❌ Failed to create patient: {}", e);
@@ -775,24 +851,28 @@ async fn create_patient(
 
 /// Handler para obtener todos los pacientes
 async fn get_patients(
-    State(db): State<Surreal<Client>>,
+    State(state): State<AppState>,
 ) -> Result<Json<Vec<Patient>>, crate::error::AppError> {
-    let patients = db
+    let patients: Vec<Patient> = db
         .select("patients")
         .await
         .map_err(crate::error::AppError::from)?;
-    Ok(Json(patients))
+    
+    // DESBLOQUEO MASIVO PARA EL SISTEMA
+    let unshielded_patients = patients.into_iter().map(unshield_patient).collect();
+    
+    Ok(Json(unshielded_patients))
 }
 
 /// Handler to get a single patient by ID
 async fn get_patient(
-    State(db): State<Surreal<Client>>,
+    State(state): State<AppState>,
     Path(id): Path<String>,
 ) -> Json<Option<Patient>> {
     let id_thing = id.parse::<RecordId>().ok();
     if let Some(thing) = id_thing {
-        match db.select(thing).await {
-            Ok(patient) => Json(patient),
+        match state.db.select(thing).await {
+            Ok(patient) => Json(patient.map(unshield_patient)),
             Err(e) => {
                 tracing::error!("❌ Failed to fetch patient {}: {}", id, e);
                 Json(None)
@@ -805,7 +885,7 @@ async fn get_patient(
 
 /// Handler to update a patient
 async fn update_patient(
-    State(db): State<Surreal<Client>>,
+    State(state): State<AppState>,
     parts: axum::http::request::Parts,
     Path(id): Path<String>,
     Json(payload): Json<Patient>,
@@ -823,12 +903,15 @@ async fn update_patient(
         // uci_history is bool, no sanitization needed
         // sanitized_payload.uci_history = validation::sanitize_input(&sanitized_payload.uci_history);
 
+        // BLINDAJE HADES PARA ACTUALIZACIÓN
+        let patient_to_save = shield_patient(sanitized_payload);
+
         // We use .update to replace or merge. .content replaces.
-        match db.update(thing).content(sanitized_payload).await {
+        match state.db.update(thing).content(patient_to_save).await {
             Ok(response) => {
                 let saved: Option<Patient> = response;
                 crate::audit::log_action(
-                    &db,
+                    &state.db,
                     "UPDATE",
                     "patients",
                     &id,
@@ -836,7 +919,11 @@ async fn update_patient(
                     user_id,
                 )
                 .await;
-                Json(saved)
+                
+                // POSEIDON WAVE-SYNC
+                state.poseidon.broadcast(crate::poseidon::PoseidonEvent::PatientUpdated(id.clone()));
+                
+                Json(saved.map(unshield_patient))
             }
             Err(e) => {
                 tracing::error!("❌ Failed to update patient {}: {}", id, e);
@@ -850,7 +937,7 @@ async fn update_patient(
 
 /// Handler to delete a patient
 async fn delete_patient(
-    State(db): State<Surreal<Client>>,
+    State(state): State<AppState>,
     parts: axum::http::request::Parts,
     Path(id): Path<String>,
 ) -> StatusCode {
@@ -858,10 +945,10 @@ async fn delete_patient(
     let user_id = auth_user.map(|u| u.id.clone());
     let id_thing = id.parse::<RecordId>().ok();
     if let Some(thing) = id_thing {
-        match db.delete::<Option<Patient>>(thing).await {
+        match state.db.delete::<Option<Patient>>(thing).await {
             Ok(_) => {
                 crate::audit::log_action(
-                    &db,
+                    &state.db,
                     "DELETE",
                     "patients",
                     &id,
@@ -869,6 +956,10 @@ async fn delete_patient(
                     user_id,
                 )
                 .await;
+
+                // POSEIDON WAVE-SYNC
+                state.poseidon.broadcast(crate::poseidon::PoseidonEvent::PatientDeleted(id.clone()));
+
                 StatusCode::NO_CONTENT
             }
             Err(e) => {
@@ -883,7 +974,7 @@ async fn delete_patient(
 
 /// Check if a patient can perform a specific assessment (24-hour restriction)
 async fn check_assessment_eligibility(
-    State(db): State<Surreal<Client>>,
+    State(state): State<AppState>,
     Path((patient_id, scale_type)): Path<(String, String)>,
 ) -> Json<validation::ValidationResult> {
     // Validate patient_id format
@@ -921,7 +1012,7 @@ async fn check_assessment_eligibility(
     let mut params = std::collections::BTreeMap::new();
     params.insert("id".to_string(), patient_id.to_string());
 
-    let mut resp = match db.query(&sql).bind(params).await {
+    let mut resp = match state.db.query(&sql).bind(params).await {
         Ok(r) => r,
         Err(_) => {
             return Json(validation::ValidationResult {
@@ -955,7 +1046,7 @@ async fn check_assessment_eligibility(
 
 /// Handler to get patient history (all assessments)
 async fn get_patient_history(
-    State(db): State<Surreal<Client>>,
+    State(state): State<AppState>,
     Path(id): Path<String>,
 ) -> Json<PatientHistoryResponse> {
     // Validate ID format first
@@ -987,7 +1078,7 @@ async fn get_patient_history(
         let mut params = std::collections::BTreeMap::new();
         params.insert("id".to_string(), id.to_string());
 
-        let mut response = match db.query(sql).bind(params).await {
+        let mut response = match state.db.query(sql).bind(params).await {
             Ok(r) => r,
             Err(e) => {
                 tracing::error!("Query failed: {}", e);
@@ -998,10 +1089,10 @@ async fn get_patient_history(
     }
 
     let (glasgow, apache, sofa, saps) = tokio::join!(
-        fetch_records::<GlasgowAssessment>(&db, sql_glasgow, &id),
-        fetch_records::<ApacheAssessment>(&db, sql_apache, &id),
-        fetch_records::<SofaAssessment>(&db, sql_sofa, &id),
-        fetch_records::<SapsAssessment>(&db, sql_saps, &id)
+        fetch_records::<GlasgowAssessment>(&state.db, sql_glasgow, &id),
+        fetch_records::<ApacheAssessment>(&state.db, sql_apache, &id),
+        fetch_records::<SofaAssessment>(&state.db, sql_sofa, &id),
+        fetch_records::<SapsAssessment>(&state.db, sql_saps, &id)
     );
 
     Json(PatientHistoryResponse {
@@ -1014,9 +1105,9 @@ async fn get_patient_history(
 
 /// Handler to export patients to CSV
 async fn export_patients_csv(
-    State(db): State<Surreal<Client>>,
+    State(state): State<AppState>,
 ) -> impl axum::response::IntoResponse {
-    match db.select("patients").await {
+    match state.db.select("patients").await {
         Ok(patients) => {
             // patients is Vec<Patient>
             match uci::services::export::patients_to_csv(patients) {
@@ -1102,7 +1193,7 @@ fn ensure_admin(parts: &axum::http::request::Parts) -> Result<(), StatusCode> {
 }
 
 async fn get_config(
-    State(db): State<Surreal<Client>>,
+    State(state): State<AppState>,
     parts: axum::http::request::Parts,
 ) -> Result<Json<SystemConfig>, StatusCode> {
     ensure_admin(&parts)?;
@@ -1114,7 +1205,7 @@ async fn get_config(
 }
 
 async fn update_config(
-    State(db): State<Surreal<Client>>,
+    State(state): State<AppState>,
     parts: axum::http::request::Parts,
     Json(payload): Json<SystemConfig>,
 ) -> Result<Json<SystemConfig>, StatusCode> {
@@ -1133,7 +1224,7 @@ async fn update_config(
 }
 
 async fn get_users(
-    State(db): State<Surreal<Client>>,
+    State(state): State<AppState>,
     parts: axum::http::request::Parts,
 ) -> Result<Json<Vec<User>>, StatusCode> {
     ensure_admin(&parts)?;
@@ -1145,7 +1236,7 @@ async fn get_users(
 }
 
 async fn create_user(
-    State(db): State<Surreal<Client>>,
+    State(state): State<AppState>,
     parts: axum::http::request::Parts,
     Json(payload): Json<User>,
 ) -> Result<Json<Option<User>>, StatusCode> {
@@ -1162,7 +1253,7 @@ async fn create_user(
 }
 
 async fn update_user(
-    State(db): State<Surreal<Client>>,
+    State(state): State<AppState>,
     parts: axum::http::request::Parts,
     Path(id): Path<String>,
     Json(payload): Json<User>,
@@ -1180,7 +1271,7 @@ async fn update_user(
 }
 
 async fn delete_user(
-    State(db): State<Surreal<Client>>,
+    State(state): State<AppState>,
     parts: axum::http::request::Parts,
     Path(id): Path<String>,
 ) -> Result<StatusCode, StatusCode> {
@@ -1188,7 +1279,7 @@ async fn delete_user(
     let id_thing = id
         .parse::<RecordId>()
         .map_err(|_| StatusCode::BAD_REQUEST)?;
-    db.delete::<Option<User>>(id_thing)
+    state.db.delete::<Option<User>>(id_thing)
         .await
         .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
     Ok(StatusCode::NO_CONTENT)
@@ -1198,7 +1289,7 @@ async fn delete_user(
 
 /// Handler to delete a Glasgow assessment
 async fn delete_glasgow_assessment(
-    State(db): State<Surreal<Client>>,
+    State(state): State<AppState>,
     parts: axum::http::request::Parts,
     Path(id): Path<String>,
 ) -> StatusCode {
@@ -1210,10 +1301,10 @@ async fn delete_glasgow_assessment(
         Err(_) => return StatusCode::BAD_REQUEST,
     };
 
-    match db.delete::<Option<GlasgowAssessment>>(id_thing).await {
+    match state.db.delete::<Option<GlasgowAssessment>>(id_thing).await {
         Ok(_) => {
             crate::audit::log_action(
-                &db,
+                &state.db,
                 "DELETE",
                 "glasgow_assessments",
                 &id,
@@ -1232,7 +1323,7 @@ async fn delete_glasgow_assessment(
 
 /// Handler to delete an Apache assessment
 async fn delete_apache_assessment(
-    State(db): State<Surreal<Client>>,
+    State(state): State<AppState>,
     parts: axum::http::request::Parts,
     Path(id): Path<String>,
 ) -> StatusCode {
@@ -1244,10 +1335,10 @@ async fn delete_apache_assessment(
         Err(_) => return StatusCode::BAD_REQUEST,
     };
 
-    match db.delete::<Option<ApacheAssessment>>(id_thing).await {
+    match state.db.delete::<Option<ApacheAssessment>>(id_thing).await {
         Ok(_) => {
             crate::audit::log_action(
-                &db,
+                &state.db,
                 "DELETE",
                 "apache_assessments",
                 &id,
@@ -1266,7 +1357,7 @@ async fn delete_apache_assessment(
 
 /// Handler to delete a SOFA assessment
 async fn delete_sofa_assessment(
-    State(db): State<Surreal<Client>>,
+    State(state): State<AppState>,
     parts: axum::http::request::Parts,
     Path(id): Path<String>,
 ) -> StatusCode {
@@ -1278,10 +1369,10 @@ async fn delete_sofa_assessment(
         Err(_) => return StatusCode::BAD_REQUEST,
     };
 
-    match db.delete::<Option<SofaAssessment>>(id_thing).await {
+    match state.db.delete::<Option<SofaAssessment>>(id_thing).await {
         Ok(_) => {
             crate::audit::log_action(
-                &db,
+                &state.db,
                 "DELETE",
                 "sofa_assessments",
                 &id,
@@ -1300,7 +1391,7 @@ async fn delete_sofa_assessment(
 
 /// Handler to delete a SAPS assessment
 async fn delete_saps_assessment(
-    State(db): State<Surreal<Client>>,
+    State(state): State<AppState>,
     parts: axum::http::request::Parts,
     Path(id): Path<String>,
 ) -> StatusCode {
@@ -1312,10 +1403,10 @@ async fn delete_saps_assessment(
         Err(_) => return StatusCode::BAD_REQUEST,
     };
 
-    match db.delete::<Option<SapsAssessment>>(id_thing).await {
+    match state.db.delete::<Option<SapsAssessment>>(id_thing).await {
         Ok(_) => {
             crate::audit::log_action(
-                &db,
+                &state.db,
                 "DELETE",
                 "saps_assessments",
                 &id,
@@ -1331,3 +1422,29 @@ async fn delete_saps_assessment(
         }
     }
 }
+
+// --- POSEIDON WEBSOCKET HANDLER ---
+use axum::extract::ws::{Message, WebSocket, WebSocketUpgrade};
+use futures_util::{sink::SinkExt, stream::StreamExt};
+
+async fn poseidon_ws_handler(
+    ws: WebSocketUpgrade,
+    State(state): State<AppState>,
+) -> impl axum::response::IntoResponse {
+    ws.on_upgrade(|socket| handle_socket(socket, state))
+}
+
+async fn handle_socket(socket: WebSocket, state: AppState) {
+    let (mut sender, mut _receiver) = socket.split();
+    let mut rx = state.poseidon.tx.subscribe();
+
+    tokio::spawn(async move {
+        while let Ok(event) = rx.recv().await {
+            let msg = serde_json::to_string(&event).unwrap_or_default();
+            if sender.send(Message::Text(msg.into())).await.is_err() {
+                break;
+            }
+        }
+    });
+}
+

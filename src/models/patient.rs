@@ -39,6 +39,7 @@ pub struct Patient {
     pub admission_type: AdmissionType,
     pub invasive_processes: bool,
     pub created_at: String,
+    pub integrity_hash: String, // HADES: El Hilo Rojo de integridad
 }
 
 impl Patient {
@@ -73,6 +74,7 @@ impl Patient {
             admission_type,
             invasive_processes,
             created_at: chrono::Utc::now().to_rfc3339(),
+            integrity_hash: String::new(), // Se calculará antes de guardar
         }
     }
 
@@ -112,6 +114,7 @@ mod tests {
             AdmissionType::Urgent,
             false,
         );
+        patient.integrity_hash = "fake_hash".to_string(); // Mock for test
 
         assert_eq!(patient.days_in_hospital(), 4);
     }

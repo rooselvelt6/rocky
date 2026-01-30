@@ -1,6 +1,6 @@
 services:
   surrealdb:
-    image: surrealdb/surrealdb:v2.1.4
+    image: surrealdb/surrealdb:v2.4
     container_name: rocky-surrealdb
     user: root
     restart: always

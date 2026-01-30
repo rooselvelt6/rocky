@@ -1,0 +1,10 @@
+    Updating crates.io index
+error: failed to select a version for `surrealdb`.
+    ... required by package `uci v0.1.0 (/home/tdy/Documentos/rocky)`
+versions that meet the requirements `^2.4` are: 2.4.0, 2.6.0, 2.5.0, 2.4.1
+
+package `uci` depends on `surrealdb` with feature `any` but `surrealdb` does not have that feature.
+ package `surrealdb` does have feature `ml`
+
+
+failed to select a version for `surrealdb` which could resolve this conflict

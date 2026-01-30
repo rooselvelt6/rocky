@@ -4,32 +4,38 @@
 ![Rust](https://img.shields.io/badge/Rust-2021-orange?logo=rust)
 ![Axum](https://img.shields.io/badge/Axum-0.8-blue)
 ![Leptos](https://img.shields.io/badge/Leptos-WASM-purple)
-![SurrealDB](https://img.shields.io/badge/SurrealDB-v2.1.4-cc00ff)
+![SurrealDB](https://img.shields.io/badge/SurrealDB-v2.5-cc00ff)
 ![Portability](https://img.shields.io/badge/Portability-Universal-green?logo=docker)
+![Security](https://img.shields.io/badge/HADES-Military--Grade-red)
 
 ---
 
 ## 🚀 "Born for Performance, Built for Portability"
 **UCI System** es una solución de ingeniería de software de grado industrial diseñada para automatizar el cálculo e interpretación de escalas médicas críticas (Glasgow, APACHE II, SOFA, SAPS II, NEWS2). 
 
-Tras las últimas actualizaciones, el sistema ahora es **Universalmente Portable**, capaz de correr con el mismo rendimiento y estabilidad en un servidor potente, una estación de trabajo Windows, o hardware Edge como **Raspberry Pi** y **Banana Pi**.
+Tras la actualización **"Tríada Suprema"**, el sistema ha alcanzado un nivel de robustez y seguridad sin precedentes en el software médico de código abierto.
 
 ---
 
-## ✨ Características que lo hacen Único
+## 🏛️ La Tríada Suprema: El Corazón del Sistema
 
-### 🏗️ Arquitectura de Estado Sólido
-- **Core en Rust**: Garantía total de seguridad de memoria y ausencia de errores en tiempo de ejecución.
-- **Frontend WASM**: Una interfaz ultra-fluida construida con **Leptos**, sin la sobrecarga de los frameworks tradicionales de JS.
-- **Binarios Estáticos (musl)**: El programa se compila de forma que no depende de las librerías de tu Linux. Funciona en Fedora, Arch, Debian o Alpine por igual.
+### ⚡ ZEUS: Omnipresencia y Resiliencia
+ZEUS es el orquestador que garantiza que la aplicación corra en cualquier lugar:
+- **Arranque Inteligente**: El sistema detecta su entorno y autogestiona sus dependencias.
+- **Motor Dual**: Soporte nativo para **Docker** (producción) y **Modo Embebido con RocksDB** (estaciones de trabajo aisladas).
+- **Auto-Instalación**: Scripts proactivos que preparan el entorno (Winget en Windows, APT/PACMAN en Linux).
 
-### 🛡️ Resiliencia de Datos con SurrealDB
-- **Conexión Inteligente**: Lógica de reintento integrada que espera a la base de datos si esta tarda en arrancar.
-- **Persistencia Robusta**: Uso de volúmenes industriales y motores de almacenamiento de alto rendimiento.
+### 💀 HADES: El Búnker Criptográfico
+La seguridad de los datos del paciente es nuestra prioridad absoluta:
+- **Cifrado ChaCha20-Poly1305**: Información sensible (identidad, diagnósticos) cifrada en reposo.
+- **Protocolo Leteo (Zeroize)**: Borrado físico proactivo de la memoria RAM para evitar fugas de datos.
+- **El Hilo Rojo (Integridad)**: Cada registro está protegido por un hash **BLAKE3**. Cualquier alteración no autorizada en la base de datos es detectada inmediatamente.
 
-### 🎨 Visualización de Inteligencia Clínica
-- **Gráficos de Radar Dinámicos**: Visualiza el estado multi-orgánico de un paciente de un vistazo.
-- **Seguridad RBAC y Auditoría**: Control de acceso granular y registro histórico (Audit Logs) de cada acción clínica.
+### 🔱 POSEIDON: Sincronización en Tiempo Real
+Fluidez total entre el personal médico:
+- **Wave-Sync (WebSockets)**: Sincronización instantánea de eventos (<10ms).
+- **Offline-First**: La aplicación sigue funcionando sin internet y sincroniza cambios automáticamente al recuperar la conexión.
+- **Arquitectura de Eventos**: Un Hub central redistribuye cada acción médica a todos los terminales conectados.
 
 ---
 
@@ -38,77 +44,47 @@ Tras las últimas actualizaciones, el sistema ahora es **Universalmente Portable
 | Capa | Tecnologías | Ventajas Clínicas |
 | :--- | :--- | :--- |
 | **Lenguaje** | Rust (Edition 2021) | Cero fallos de segmentación y máxima velocidad. |
-| **Backend** | Axum + Tokio | Capacidad para manejar cientos de peticiones simultáneas sin latencia. |
-| **Frontend** | Leptos (WebAssembly) | Interfaz instantánea con reactividad de grano fino. |
-| **Base de Datos** | SurrealDB | Base de datos multi-modelo con relaciones de grafo ultra-rápidas. |
-| **Portabilidad** | Docker + Musl Static | Despliegue en 10 segundos en cualquier sistema operativo. |
-
----
-
-## 🛡️ Infraestructura Ultra-Robusta (Novedad 2026)
-
-Tras una reingeniería completa, el sistema ahora cuenta con una arquitectura de **"Cero Fallos"**:
-
-1.  **Auto-Corrección**: Si alguno de los servicios (App o DB) falla, Docker lo reinicia automáticamente en segundos.
-2.  **Resiliencia de Conexión**: Lógica de reintento inteligente en Rust que garantiza la reconexión con SurrealDB ante cualquier parpadeo de red.
-3.  **Health Monitoring Proactivo**: Verificación continua de la salud de cada componente mediante contenedores.
-4.  **Persistencia Garantizada**: Uso de volúmenes industriales para que tus datos clínicos nunca se pierdan.
+| **Backend** | Axum + WebSockets | Manejo de cientos de peticiones distribuidas. |
+| **Frontend** | Leptos (WASM) + IndexedDB | Interfaz instantánea con capacidad offline total. |
+| **Base de Datos** | SurrealDB (RocksDB) | Relaciones de grafo y persistencia K/V de alta velocidad. |
+| **Seguridad** | ChaCha20 + Zeroize | Privacidad total y cumplimiento de estándares médicos. |
 
 ---
 
 ## 🌀 Instalación y Operación "Zero Friction"
 
-### 🚀 Inicio Rápido con Auto-Verificación
-Para una experiencia premium sin errores, utiliza el nuevo script de inicio robusto:
+### 🚀 El Inicio Universal (Recomendado)
+Para arrancar el sistema "Nivel Dios", simplemente ejecuta el binario de ZEUS según tu plataforma:
 
+**Unix / Linux / macOS:**
 ```bash
-# Otorgar permisos
-chmod +x bin/start-robust.sh bin/healthcheck.sh
+./bin/zeus-start.sh
 ```
 
-```bash
-# Iniciar sistema con monitoreo inteligente
-./bin/start-robust.sh
+**Windows (PowerShell):**
+```powershell
+.\bin\zeus-start.ps1
 ```
-
-### 3. Verificar estado (Healthcheck)
-```bash
-./bin/healthcheck.sh
-```
-*Este script construirá las imágenes, iniciará los servicios y esperará a que todo esté funcional antes de darte el acceso.*
-
-### 📊 Diagnóstico en Tiempo Real
-¿Quieres saber cómo está tu sistema? Ejecuta nuestra herramienta de diagnóstico:
-./healthcheck.sh
-```
+*Este comando detectará Docker, lo instalará si es necesario, o en su defecto, compilará la versión nativa con base de datos embebida.*
 
 ---
 
-### Ejecución Nativa
-Si prefieres no usar Docker y tienes el entorno de Rust instalado:
-```bash
-# 1. Iniciar la base de datos (SurrealDB local)
-surreal start --user root --pass root file:uci.db
+## 📊 Manual de Operación (Walkthrough)
 
-# 2. Iniciar el servidor
-cargo run --release --bin uci-server
-```
+### 1. Seguridad Transparente
+Como médico, no verás nada diferente, pero bajo el capó, **HADES** está denegando cualquier acceso no autorizado. Si intentas leer la base de datos directamente sin las llaves del sistema, verás datos cifrados ilegibles.
 
-La aplicación estará disponible inmediatamente en `http://localhost:3000`.
+### 2. Sincronización en Directo
+Si abres la aplicación en dos tablets diferentes dentro de la misma UCI, verás cómo los datos de un paciente se actualizan instantáneamente en ambas pantallas gracias a **POSEIDON**.
 
----
-
-## 📈 Roadmap y Visión 2026
-- [x] **Portabilidad Universal**: Binarios estáticos y soporte ARM/x86.
-- [x] **Endpoints de Salud**: Monitoreo automático mediante `/api/health`.
-- [ ] **AI Sepsis Prediction**: Integración de modelos de ML nativos en Rust.
-- [ ] **HL7 FHIR Integration**: Interoperabilidad con otros sistemas hospitalarios.
+### 3. Modo Avión / Sin Conexión
+Puedes bajar al sótano del hospital sin WiFi. Realiza tus escalas, guarda los datos. Al volver a planta, POSEIDON enviará automáticamente todos los cambios al servidor central.
 
 ---
 
 ## 👨‍💻 Autor y Visión
-Desarrollado por **rooselvelt6** con el objetivo de democratizar la tecnología de alta precisión en entornos de cuidados críticos, manteniendo la soberanía de los datos médicos y la máxima eficiencia en costos de hardware.
+Desarrollado por **rooselvelt6** para democratizar la tecnología de alta precisión en entornos de cuidados críticos, manteniendo la soberanía de los datos médicos y la máxima eficiencia.
 
 ---
 > [!IMPORTANT]  
-> **Aviso Médico:** Este sistema es una herramienta de apoyo. Todas las decisiones clínicas deben ser validadas por personal médico calificado.
+> **Aviso de Seguridad:** El sistema utiliza la variable `HADES_SECRET` para el cifrado. Asegúrese de respaldar esta clave; sin ella, los datos en el disco duro serán permanentemente ilegibles.
