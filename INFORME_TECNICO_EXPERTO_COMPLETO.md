@@ -26,35 +26,63 @@ La capa de datos se ha blindado contra fallos de arranque:
 *   **Lógica de Reintento Inteligente:** El sistema ahora implementa un bucle de conexión con reintentos cada 3 segundos. Esto es vital en entornos Docker o hardware como Raspberry Pi, donde la base de datos puede tardar más en inicializarse que la aplicación.
 *   **Conexión Dinámica:** Se ha eliminado la IP cableada (`127.0.0.1`), permitiendo que el sistema se adapte dinámicamente mediante variables de entorno (`DB_HOST`).
 
+
 ---
 
-## 3. Seguridad Integral y Gestión de Riesgos
+## 3. Arquitectura de Navegación y Flujo de Usuario (UX)
 
-### 3.1 Endpoint de Salud (`/api/health`)
+El sistema ha sido diseñado con un **Flujo Direccional Estricto** para minimizar la carga cognitiva del personal médico en situaciones de estrés. La arquitectura de rutas garantiza que no existan "callejones sin salida".
+
+### 3.1 Mapa de Navegación Crítica
+El enrutamiento (`src/frontend/app.rs`) orquesta la experiencia clínica de la siguiente manera:
+
+1.  **Autenticación (`/login`)**:
+    *   **Función:** Barrera de seguridad inicial.
+    *   **Acción:** Tras validar credenciales JWT, redirige automáticamente al Dashboard.
+
+2.  **Centro de Mando (`/dashboard`)**:
+    *   **Función:** Hub central de operaciones.
+    *   **Acción:** Provee acceso directo (single-click) a:
+        *   Registrar nuevo ingreso.
+        *   Monitor de Sala (Ward View).
+        *   Buscar Paciente.
+
+3.  **Flujo de Ingreso (`/register`) -> Lista (`/patients`)**:
+    *   **Lógica:** Al completar el formulario de admisión (`patient_form.rs`), el sistema redirige automáticamente a la lista de pacientes, confirmando visualmente la creación del expediente.
+
+4.  **Evaluación Clínica (`/patients/:id`) -> Escalas**:
+    *   **Contexto:** Desde la ficha técnica del paciente (`patient_detail.rs`), el médico accede a rutas anidadas para cada escala (e.g., `/patients/1/assess/glasgow`).
+    *   **Retorno:** Al guardar una escala, el sistema regresa al detalle del paciente, actualizando instantáneamente las gráficas de evolución (Sparklines/Radar).
+
+---
+
+## 4. Seguridad Integral y Gestión de Riesgos
+
+### 4.1 Endpoint de Salud (`/api/health`)
 Se ha implementado un sistema de monitoreo interno.
 *   **Función:** Permite que orquestadores (Docker, Kubernetes) o personal técnico verifiquen en tiempo real si el motor de la base de datos y el servidor están sincronizados.
 
-### 3.2 Orquestación Hardened
+### 4.2 Orquestación Hardened
 El nuevo `docker-compose.yml` utiliza **Healthchecks** y **Volúmenes Nombrados**. 
 *   **Garantía:** Los datos médicos (`uci_data`) persisten de forma segura y aislada, protegidos contra reinicios accidentales del contenedor.
 
 ---
 
-## 4. Rendimiento y Eficiencia IoT
+## 5. Rendimiento y Eficiencia IoT
 El sistema ha sido optimizado para la **Democratización Tecnológica**:
 *   **Soporte Multi-Arquitectura:** Capacidad nativa para correr en x86_64 (Servidores) y ARM64 (Raspberry Pi / Banana Pi).
 *   **Consumo Optimizado:** El uso de imágenes base como `alpine` en producción reduce el tamaño de la imagen Docker en un 70%, permitiendo despliegues rápidos incluso con conexiones de internet limitadas.
 
 ---
 
-## 5. Auditoría de Limpieza y Profesionalismo
+## 6. Auditoría de Limpieza y Profesionalismo
 Se ha realizado una purga de residuos de desarrollo:
 *   **Eliminación de Logs Obsoletos:** Se han purgado más de 7 versiones de archivos de error acumulados, dejando un repositorio limpio y listo para producción.
 *   **Estandarización de Git:** Configuración de identidad de autoría y sincronización estricta con el repositorio remoto.
 
 ---
 
-## 6. Conclusión del Experto v3.0
+## 7. Conclusión del Experto v3.0
 Tras las mejoras de este ciclo de desarrollo, el sistema **UCI Scales** ha alcanzado su **Madurez Operativa**. Ya no es solo un prototipo funcional; es un producto listo para ser desplegado en cualquier red hospitalaria del mundo, garantizando que donde haya un puerto de red y un procesador, habrá una herramienta de salvamento médico de alta precisión.
 
 **Veredicto Final: Aprobado para Despliegue Global y Entornos IoT Críticos.**
