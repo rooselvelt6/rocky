@@ -18,7 +18,47 @@ Es una plataforma unificada que permite al personal médico evaluar la gravedad 
 
 ---
 
-## �🚀 "Born for Performance, Built for Portability"
+## 🗺️ Mapa de Arquitectura: La Tríada en Acción
+
+```mermaid
+graph TD
+    subgraph "NIVEL DE ACCESO Y ORQUESTACIÓN (ZEUS)"
+        OS[OS Detection: Linux/Win/Mac] --> ZEUS{Orquestador ZEUS}
+        ZEUS -->|Success| Docker[Motor Docker Container]
+        ZEUS -->|Fallback| Native[Build Nativa Rust]
+    end
+
+    subgraph "NÚCLEO DE INTELIGENCIA (APP)"
+        Backend[Backend: Axum + Tokio]
+        Frontend[Frontend: Leptos WASM]
+        Frontend <-->|Wave-Sync| Backend
+    end
+
+    subgraph "BÚNKER DE SEGURIDAD (HADES)"
+        Data[Datos Paciente] --> HADES[Escudo HADES: ChaCha20]
+        HADES -->|Integridad| BLAKE3[Hilo Rojo: BLAKE3 Audit]
+        HADES -->|RAM Purge| Zeroize[Zeroize: Borrado Seguro]
+    end
+
+    subgraph "FLUJO DE DATOS (POSEIDON)"
+        Backend -->|Real-Time| WS[POSEIDON Hub: WebSockets]
+        WS -->|Broadcast| Clients[Terminales Médicos]
+        Frontend -->|Cache| IDB[IndexedDB: Offline-First]
+    end
+
+    Docker --> Backend
+    Native --> Backend
+    Backend --> Data
+```
+
+### Fortalezas Visualizadas:
+- **Resiliencia ZEUS**: Garantiza que el sistema siempre encuentre un camino para ejecutarse.
+- **Inmutabilidad HADES**: Los datos nunca están desprotegidos fuera del núcleo seguro.
+- **Ubicuidad POSEIDON**: Los datos fluyen instantáneamente o permanecen latentes en el búnker local hasta sincronizar.
+
+---
+
+## 🚀 "Born for Performance, Built for Portability"
 **UCI System** es una solución de ingeniería de software de grado industrial diseñada para automatizar el cálculo e interpretación de escalas médicas críticas. 
 
 Tras la actualización **"Tríada Suprema"**, el sistema ha alcanzado un nivel de robustez y seguridad sin precedentes en el software médico de código abierto.
