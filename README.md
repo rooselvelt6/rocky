@@ -10,8 +10,16 @@
 
 ---
 
-## 🚀 "Born for Performance, Built for Portability"
-**UCI System** es una solución de ingeniería de software de grado industrial diseñada para automatizar el cálculo e interpretación de escalas médicas críticas (Glasgow, APACHE II, SOFA, SAPS II, NEWS2). 
+## � Concepto del Sistema
+**UCI Scales** es un ecosistema de software de alta precisión diseñado para la gestión y automatización de variables críticas en Unidades de Cuidados Intensivos. El sistema trasciende la simple calculadora médica, posicionándose como un **Búnker de Inteligencia Clínica** que orquesta datos sensibles con seguridad de grado militar y sincronización atómica entre dispositivos médicos.
+
+### ¿Qué es este sistema?
+Es una plataforma unificada que permite al personal médico evaluar la gravedad y pronóstico de pacientes críticos mediante escalas validadas internacionalmente (**Glasgow, APACHE II, SOFA, SAPS II, NEWS2**), garantizando la integridad total de la información y la disponibilidad inmediata incluso en condiciones de red hostiles o nulas.
+
+---
+
+## �🚀 "Born for Performance, Built for Portability"
+**UCI System** es una solución de ingeniería de software de grado industrial diseñada para automatizar el cálculo e interpretación de escalas médicas críticas. 
 
 Tras la actualización **"Tríada Suprema"**, el sistema ha alcanzado un nivel de robustez y seguridad sin precedentes en el software médico de código abierto.
 
