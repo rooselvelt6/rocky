@@ -18,12 +18,7 @@ use uci::uci::scale::saps::{SAPSIIRequest, SAPSIIResponse};
 use uci::uci::scale::sofa::{SOFARequest, SOFAResponse};
 
 // Import our new modules
-mod audit;
-mod auth;
-mod db;
-mod error;
-mod hades;
-mod poseidon;
+mod olympus;
 // mod models; // Moved to lib.rs
 
 use uci::models::apache::ApacheAssessment;
@@ -44,13 +39,71 @@ use uci::services::validation;
 #[derive(Clone)]
 struct AppState {
     db: Surreal<Any>,
-    poseidon: crate::poseidon::PoseidonHub,
+    poseidon: std::sync::Arc<crate::olympus::poseidon::Poseidon>,
+    hades: std::sync::Arc<crate::olympus::hades::Hades>,
+    artemis: std::sync::Arc<crate::olympus::artemis::Artemis>,
+    apollo: std::sync::Arc<crate::olympus::apollo::Apollo>,
 }
 
 #[tokio::main]
 async fn main() {
     // Initialize tracing
     tracing_subscriber::fmt::init();
+
+    // --- FASE 1: EL DESPERTAR DEL TRONO (OLIMPO v10) ---
+    println!("🏛️  Iniciando Jerarquía Soberana v10: La Luz Abyssal...");
+    let iris = crate::olympus::iris::Iris::new();
+    let iris_tx = iris.sender();
+    
+    let mut zeus = crate::olympus::zeus::Zeus::new(iris_tx.clone());
+    tokio::spawn(async move {
+        use crate::olympus::GodActor;
+        if let Err(e) = zeus.start().await {
+            eprintln!("🚨 Zeus falló al iniciar: {}", e);
+        }
+    });
+
+    let mut erinyes = crate::olympus::erinyes::Erinyes::new(iris_tx.subscribe());
+    tokio::spawn(async move {
+        erinyes.run().await;
+    });
+
+    // Deidades Estratégicas
+    let mut hera = crate::olympus::hera::Hera::new();
+    let mut athena = crate::olympus::athena::Athena::new();
+    let chronos = crate::olympus::chronos::Chronos::new(iris_tx.clone());
+    let mut hestia = crate::olympus::hestia::Hestia::new();
+
+    tokio::spawn(async move {
+        use crate::olympus::GodActor;
+        let _ = hera.start().await;
+        let _ = athena.start().await;
+        let _ = hestia.start().await;
+    });
+
+    tokio::spawn(async move {
+        chronos.heartbeat_loop().await;
+    });
+
+    // Panteón Operativo (v10)
+    let ops_gods = vec![
+        Box::new(crate::olympus::poseidon::Poseidon::new()) as Box<dyn crate::olympus::GodActor>,
+        Box::new(crate::olympus::hades::Hades::new()),
+        Box::new(crate::olympus::hephaestus::Hephaestus::new()),
+        Box::new(crate::olympus::artemis::Artemis::new()),
+        Box::new(crate::olympus::hermes::Hermes::new()),
+        Box::new(crate::olympus::apollo::Apollo::new()),
+        Box::new(crate::olympus::demeter::Demeter::new()),
+        Box::new(crate::olympus::ares::Ares::new()),
+        Box::new(crate::olympus::dionysus::Dionysus::new()),
+        Box::new(crate::olympus::aphrodite::Aphrodite::new()),
+    ];
+
+    for mut god in ops_gods {
+        tokio::spawn(async move {
+            let _ = god.start().await;
+        });
+    }
 
     // Verificamos que la carpeta dist exista (generada por trunk build)
     if !std::path::Path::new("dist").exists() {
@@ -59,26 +112,25 @@ async fn main() {
         std::process::exit(1);
     }
 
-    println!("DEBUG: Starting server initialization...");
-
-    // Connect to SurrealDB
-    println!("DEBUG: Connecting to DB...");
-    let db = match db::connect().await {
+    // Connect to SurrealDB via Poseidon
+    println!("DEBUG: Connecting to DB via Poseidon...");
+    let db = match crate::olympus::poseidon::Poseidon::connect_db().await {
         Ok(db) => {
-            tracing::info!("✅ Database connection established");
-            println!("DEBUG: Login success!");
+            tracing::info!("✅ Database connection established via Poseidon");
             db
         }
         Err(e) => {
             eprintln!("❌ Failed to connect to SurrealDB: {}", e);
-            println!("DEBUG: Login failed: {}", e);
-            eprintln!("   Make sure SurrealDB is running: .\\surreal.exe start --user root --pass root file:uci.db");
             std::process::exit(1);
         }
     };
 
-    let poseidon = crate::poseidon::PoseidonHub::new();
-    let state = AppState { db, poseidon };
+    let poseidon = std::sync::Arc::new(crate::olympus::poseidon::Poseidon::new());
+    let hades = std::sync::Arc::new(crate::olympus::hades::Hades::new());
+    let artemis = std::sync::Arc::new(crate::olympus::artemis::Artemis::new());
+    let apollo = std::sync::Arc::new(crate::olympus::apollo::Apollo::new());
+    
+    let state = AppState { db, poseidon, hades, artemis, apollo };
 
     use tower_http::compression::CompressionLayer;
     use tower_http::cors::CorsLayer;
@@ -148,7 +200,7 @@ async fn main() {
             "/api/assessments/news2/{id}",
             axum::routing::delete(delete_news2_assessment),
         )
-        .layer(from_fn(crate::auth::auth_middleware))
+        .layer(from_fn(crate::olympus::artemis::Artemis::auth_middleware))
         // Servir archivos estáticos desde dist
         .fallback_service(
             ServeDir::new("dist").not_found_service(ServeFile::new("dist/index.html")),
@@ -216,7 +268,7 @@ async fn main() {
 use base64::{prelude::BASE64_STANDARD, Engine};
 
 fn shield_patient(mut patient_data: Patient) -> Patient {
-    let hades = crate::hades::crypto::Hades::new();
+    let hades = crate::olympus::hades::Hades::new();
     
     // 1. Cifrar campos sensibles
     if let Ok(enc_first) = hades.encrypt(&patient_data.first_name) {
@@ -237,22 +289,22 @@ fn shield_patient(mut patient_data: Patient) -> Patient {
         "{}:{}:{}:{}",
         patient_data.first_name, patient_data.last_name, patient_data.date_of_birth, patient_data.uci_admission_date
     );
-    patient_data.integrity_hash = crate::hades::crypto::compute_hash(&integrity_string);
+    patient_data.integrity_hash = crate::olympus::hades::Hades::compute_hash(&integrity_string);
     
     patient_data
 }
 
 fn unshield_patient(mut patient_data: Patient) -> Patient {
-    let hades = crate::hades::crypto::Hades::new();
+    let hades = crate::olympus::hades::Hades::new();
     
-    // 1. Verificar integridad (Opcional, pero nivel ZEUS/HADES)
+    // 1. Verificar integridad
     let check_string = format!(
         "{}:{}:{}:{}",
         patient_data.first_name, patient_data.last_name, patient_data.date_of_birth, patient_data.uci_admission_date
     );
-    let current_hash = crate::hades::crypto::compute_hash(&check_string);
+    let current_hash = crate::olympus::hades::Hades::compute_hash(&check_string);
     if current_hash != patient_data.integrity_hash {
-        tracing::error!("🚨 ADVERTENCIA: Violación del Hilo Rojo en paciente {:?}. Los datos podrían haber sido alterados manualmente.", patient_data.id);
+        tracing::error!("🚨 ARTEMIS ADVERTENCIA: Violación del Hilo Rojo en paciente {:?}.", patient_data.id);
     }
 
     // 2. Descifrar campos
@@ -792,7 +844,7 @@ async fn create_patient(
     parts: axum::http::request::Parts,
     Json(payload): Json<Patient>,
 ) -> Json<Option<Patient>> {
-    let auth_user = parts.extensions.get::<crate::auth::AuthenticatedUser>();
+    let auth_user = parts.extensions.get::<crate::olympus::artemis::AuthenticatedUser>();
     let user_id = auth_user.map(|u| u.id.clone());
     // Ensure we are creating a new record with the payload data
     // We might want to overwrite the ID or other fields if they are passed,
@@ -825,7 +877,7 @@ async fn create_patient(
             if let Some(p) = &saved {
                 if let Some(id) = &p.id {
                     let id_str = format!("{}", id);
-                    crate::audit::log_action(
+                    state.apollo.log_action(
                         &state.db,
                         "CREATE",
                         "patients",
@@ -836,7 +888,7 @@ async fn create_patient(
                     .await;
                     
                     // POSEIDON WAVE-SYNC
-                    state.poseidon.broadcast(crate::poseidon::PoseidonEvent::PatientCreated(id_str));
+                    state.poseidon.broadcast(crate::olympus::poseidon::PoseidonEvent::PatientCreated(id_str));
                 }
             }
             // DESBLOQUEO PARA EL CLIENTE
@@ -890,7 +942,7 @@ async fn update_patient(
     Path(id): Path<String>,
     Json(payload): Json<Patient>,
 ) -> Json<Option<Patient>> {
-    let auth_user = parts.extensions.get::<crate::auth::AuthenticatedUser>();
+    let auth_user = parts.extensions.get::<crate::olympus::artemis::AuthenticatedUser>();
     let user_id = auth_user.map(|u| u.id.clone());
     let id_thing = id.parse::<RecordId>().ok();
     if let Some(thing) = id_thing {
@@ -910,7 +962,7 @@ async fn update_patient(
         match state.db.update(thing).content(patient_to_save).await {
             Ok(response) => {
                 let saved: Option<Patient> = response;
-                crate::audit::log_action(
+                state.apollo.log_action(
                     &state.db,
                     "UPDATE",
                     "patients",
@@ -921,7 +973,7 @@ async fn update_patient(
                 .await;
                 
                 // POSEIDON WAVE-SYNC
-                state.poseidon.broadcast(crate::poseidon::PoseidonEvent::PatientUpdated(id.clone()));
+                state.poseidon.broadcast(crate::olympus::poseidon::PoseidonEvent::PatientUpdated(id.clone()));
                 
                 Json(saved.map(unshield_patient))
             }
@@ -941,13 +993,13 @@ async fn delete_patient(
     parts: axum::http::request::Parts,
     Path(id): Path<String>,
 ) -> StatusCode {
-    let auth_user = parts.extensions.get::<crate::auth::AuthenticatedUser>();
+    let auth_user = parts.extensions.get::<crate::olympus::artemis::AuthenticatedUser>();
     let user_id = auth_user.map(|u| u.id.clone());
     let id_thing = id.parse::<RecordId>().ok();
     if let Some(thing) = id_thing {
         match state.db.delete::<Option<Patient>>(thing).await {
             Ok(_) => {
-                crate::audit::log_action(
+                state.apollo.log_action(
                     &state.db,
                     "DELETE",
                     "patients",
@@ -958,7 +1010,7 @@ async fn delete_patient(
                 .await;
 
                 // POSEIDON WAVE-SYNC
-                state.poseidon.broadcast(crate::poseidon::PoseidonEvent::PatientDeleted(id.clone()));
+                state.poseidon.broadcast(crate::olympus::poseidon::PoseidonEvent::PatientDeleted(id.clone()));
 
                 StatusCode::NO_CONTENT
             }
@@ -1149,7 +1201,7 @@ pub struct LoginRequest {
 #[derive(serde::Serialize)]
 pub struct LoginResponse {
     pub token: String,
-    pub user: crate::auth::AuthenticatedUser,
+    pub user: crate::olympus::artemis::AuthenticatedUser,
 }
 
 /// Handler para el inicio de sesión de usuario
@@ -1162,10 +1214,10 @@ async fn login_handler(
         let user_id = "user:admin";
         let role = uci::models::user::UserRole::Admin;
 
-        match crate::auth::generate_token(user_id, role.clone()) {
+        match state.artemis.generate_token(user_id, role.clone()) {
             Ok(token) => Ok(Json(LoginResponse {
                 token,
-                user: crate::auth::AuthenticatedUser {
+                user: crate::olympus::artemis::AuthenticatedUser {
                     id: user_id.to_string(),
                     role,
                 },
@@ -1183,7 +1235,7 @@ async fn login_handler(
 fn ensure_admin(parts: &axum::http::request::Parts) -> Result<(), StatusCode> {
     let auth_user = parts
         .extensions
-        .get::<crate::auth::AuthenticatedUser>()
+        .get::<crate::olympus::artemis::AuthenticatedUser>()
         .ok_or(StatusCode::UNAUTHORIZED)?;
 
     if auth_user.role != uci::models::user::UserRole::Admin {
@@ -1293,7 +1345,7 @@ async fn delete_glasgow_assessment(
     parts: axum::http::request::Parts,
     Path(id): Path<String>,
 ) -> StatusCode {
-    let auth_user = parts.extensions.get::<crate::auth::AuthenticatedUser>();
+    let auth_user = parts.extensions.get::<crate::olympus::artemis::AuthenticatedUser>();
     let user_id = auth_user.map(|u| u.id.clone());
 
     let id_thing = match id.parse::<RecordId>() {
@@ -1303,7 +1355,7 @@ async fn delete_glasgow_assessment(
 
     match state.db.delete::<Option<GlasgowAssessment>>(id_thing).await {
         Ok(_) => {
-            crate::audit::log_action(
+            state.apollo.log_action(
                 &state.db,
                 "DELETE",
                 "glasgow_assessments",
@@ -1327,7 +1379,7 @@ async fn delete_apache_assessment(
     parts: axum::http::request::Parts,
     Path(id): Path<String>,
 ) -> StatusCode {
-    let auth_user = parts.extensions.get::<crate::auth::AuthenticatedUser>();
+    let auth_user = parts.extensions.get::<crate::olympus::artemis::AuthenticatedUser>();
     let user_id = auth_user.map(|u| u.id.clone());
 
     let id_thing = match id.parse::<RecordId>() {
@@ -1337,7 +1389,7 @@ async fn delete_apache_assessment(
 
     match state.db.delete::<Option<ApacheAssessment>>(id_thing).await {
         Ok(_) => {
-            crate::audit::log_action(
+            state.apollo.log_action(
                 &state.db,
                 "DELETE",
                 "apache_assessments",
@@ -1361,7 +1413,7 @@ async fn delete_sofa_assessment(
     parts: axum::http::request::Parts,
     Path(id): Path<String>,
 ) -> StatusCode {
-    let auth_user = parts.extensions.get::<crate::auth::AuthenticatedUser>();
+    let auth_user = parts.extensions.get::<crate::olympus::artemis::AuthenticatedUser>();
     let user_id = auth_user.map(|u| u.id.clone());
 
     let id_thing = match id.parse::<RecordId>() {
@@ -1371,7 +1423,7 @@ async fn delete_sofa_assessment(
 
     match state.db.delete::<Option<SofaAssessment>>(id_thing).await {
         Ok(_) => {
-            crate::audit::log_action(
+            state.apollo.log_action(
                 &state.db,
                 "DELETE",
                 "sofa_assessments",
@@ -1395,7 +1447,7 @@ async fn delete_saps_assessment(
     parts: axum::http::request::Parts,
     Path(id): Path<String>,
 ) -> StatusCode {
-    let auth_user = parts.extensions.get::<crate::auth::AuthenticatedUser>();
+    let auth_user = parts.extensions.get::<crate::olympus::artemis::AuthenticatedUser>();
     let user_id = auth_user.map(|u| u.id.clone());
 
     let id_thing = match id.parse::<RecordId>() {
@@ -1405,7 +1457,7 @@ async fn delete_saps_assessment(
 
     match state.db.delete::<Option<SapsAssessment>>(id_thing).await {
         Ok(_) => {
-            crate::audit::log_action(
+            state.apollo.log_action(
                 &state.db,
                 "DELETE",
                 "saps_assessments",

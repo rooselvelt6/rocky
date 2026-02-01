@@ -37,7 +37,7 @@ tower-http = { version = "0.6.7", features = ["full", "cors"], optional = true }
 tracing = { version = "0.1.41", optional = true }
 tracing-subscriber = { version = "0.3.20", features = ["env-filter", "fmt"], optional = true }
 leptos_axum = { version = "0.6", optional = true }
-surrealdb = { version = "2.4", features = ["any", "kv-rocksdb"], optional = true }
+surrealdb = { version = "2.4", features = ["kv-rocksdb"], optional = true }
 chrono = { version = "0.4", features = ["serde"], optional = true }
 dotenvy = { version = "0.15", optional = true }
 ammonia = "4.1.2"
@@ -51,6 +51,8 @@ blake3 = "1.5"
 base64 = "0.22"
 futures-util = { version = "0.3", features = ["sink"] }
 # tower_governor = { version = "0.4.3", optional = true } # Incompatible with Axum 0.8
+async-trait = "0.1"
+
 
 [features]
 default = ["ssr"]

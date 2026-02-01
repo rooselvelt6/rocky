@@ -1,0 +1,57 @@
+En la rama main
+Tu rama está actualizada con 'origin/main'.
+
+Cambios a ser confirmados:
+  (usa "git restore --staged <archivo>..." para sacar del área de stage)
+	modificados:     Cargo.lock
+	modificados:     Cargo.toml
+	modificados:     Dockerfile
+	borrados:        INFORME_TECNICO_EXPERTO_COMPLETO.html
+	borrados:        INFORME_TECNICO_EXPERTO_COMPLETO.md
+	borrados:        SECURITY_PERFORMANCE.md
+	borrados:        SURREALDB.md
+	borrados:        WHITEPAPER.md
+	borrados:        bin/debug_docker.sh
+	borrados:        bin/healthcheck.sh
+	nuevos archivos: bin/olympus.sh
+	borrados:        bin/start-db.ps1
+	borrados:        bin/start-robust.sh
+	borrados:        bin/start.sh
+	renombrados:     surreal.exe -> bin/surreal.exe
+	borrados:        bin/zeus-start.ps1
+	borrados:        bin/zeus-start.sh
+	borrados:        check_output.txt
+	borrados:        compile_errors.txt
+	borrados:        container_index.html
+	borrados:        src/audit.rs
+	borrados:        src/auth.rs
+	borrados:        src/db.rs
+	borrados:        src/hades/mod.rs
+	modificados:     src/main.rs
+	nuevos archivos: src/olympus/aphrodite.rs
+	nuevos archivos: src/olympus/apollo.rs
+	nuevos archivos: src/olympus/ares.rs
+	nuevos archivos: src/olympus/artemis.rs
+	nuevos archivos: src/olympus/athena.rs
+	nuevos archivos: src/olympus/chaos.rs
+	nuevos archivos: src/olympus/chronos.rs
+	nuevos archivos: src/olympus/demeter.rs
+	nuevos archivos: src/olympus/dionysus.rs
+	nuevos archivos: src/olympus/erinyes.rs
+	renombrados:     src/hades/crypto.rs -> src/olympus/hades.rs
+	nuevos archivos: src/olympus/hephaestus.rs
+	nuevos archivos: src/olympus/hera.rs
+	nuevos archivos: src/olympus/hermes.rs
+	nuevos archivos: src/olympus/hestia.rs
+	nuevos archivos: src/olympus/iris.rs
+	nuevos archivos: src/olympus/mod.rs
+	nuevos archivos: src/olympus/moirai.rs
+	nuevos archivos: src/olympus/poseidon.rs
+	nuevos archivos: src/olympus/zeus.rs
+	borrados:        src/poseidon.rs
+	borrados:        subir.sh
+
+Archivos sin seguimiento:
+  (usa "git add <archivo>..." para incluirlo a lo que será confirmado)
+	git_status_out.txt
+

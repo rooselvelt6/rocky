@@ -4,3 +4,7 @@
 .env
 *.db
 /reports
+surreal.exe
+reports/txt/
+reports/technical/
+target/
