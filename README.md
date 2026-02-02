@@ -106,10 +106,10 @@ graph TB
     CHAOS[🌀 Chaos<br/>Testing Engineer] --> AURORA
     AURORA[🌅 Aurora<br/>Dawn Bringer] --> ZEUS
     
-    classDef supreme fill:#FFD700,stroke:#B8860B,stroke-width:3px
-    classDef clinical fill:#4CAF50,stroke:#2E7D32,stroke-width:2px
-    classDef technical fill:#2196F3,stroke:#FF6F00,stroke-width:2px
-    classDef operational fill:#3B82F6,stroke:#1E88E5,stroke-width:2px
+    classDef supreme fill:#E8F4FD,stroke:#4A90E2,stroke-width:3px,color:#1A365D
+    classDef clinical fill:#E8F5E9,stroke:#66BB6A,stroke-width:2px,color:#1B5E20
+    classDef technical fill:#E3F2FD,stroke:#42A5F5,stroke-width:2px,color:#1565C0
+    classDef operational fill:#FFF3E0,stroke:#FFA726,stroke-width:2px,color:#E65100
     class ZEUS,HERA,HADES supreme
     class ATHENA,APOLLO,ARTEMIS,POSEIDON,HERMES,DEMETER,DIONYSUS,IRIS,CHRONOS,HEPHAESTUS clinical
     class HESTIA,ERINYES,ARES,APHRODITE,MOIRAI,CHAOS,AURORA operational
@@ -370,9 +370,9 @@ graph LR
     ZEUS --> ATHENA[🦉 Athena<br/>Wisdom Engine]
     ZEUS --> ARTEMIS[🏹 Artemis<br/>Protection System]
     
-    classDef divine fill:#FFD700,stroke:#B8860B,stroke-width:2px
-    classDef security fill:#DC2626,stroke:#7B1FA2,stroke-width:3px
-    classDef clinical fill:#28A745,stroke:#1B5E20,stroke-width:2px
+    classDef divine fill:#E8F4FD,stroke:#4A90E2,stroke-width:2px,color:#1A365D
+    classDef security fill:#FFEBEE,stroke:#E53935,stroke-width:3px,color:#B71C1C
+    classDef clinical fill:#E8F5E9,stroke:#66BB6A,stroke-width:2px,color:#1B5E20
     class ARES,APOLLO,HERA,HADES,ZEUS divine
     class ClinicalCore,ATHENA,ARTEMIS clinical
 ```
