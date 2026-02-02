@@ -78,38 +78,41 @@ Our system rests upon three divine pillars that form the foundation of clinical 
 ```mermaid
 graph TB
     %% Supreme Trinity
-    ZEUS[⚡ Zeus<br/>Master Actor] --> |HERA|
-    ZEUS --> |HADES|
-    |HERA[👑 Hera<br/>Guardian of Invariants] --> |ATHENA|
-    |HADES[🔱 Hades<br/>Crypto Guardian] --> |APOLLO|
+    ZEUS[⚡ Zeus<br/>Master Actor] --> HERA
+    ZEUS --> HADES
+    HERA[👑 Hera<br/>Guardian of Invariants] --> ATHENA
+    HADES[🔱 Hades<br/>Crypto Guardian] --> APOLLO
     
     %% Clinical Intelligence
-    |ATHENA[🦉 Athena<br/>Strategic Intelligence] --> |ARTEMIS|
-    |APOLLO[☀️ Apollo<br/>Knowledge Processing] --> |POSEIDON|
-    |ARTEMIS[🏹 Artemis<br/>Protection System] --> |HERMES|
-    |POSEIDON[🌊 Poseidon<br/>Ocean Database] --> |DEMETER|
-    |HERMES[👟 Hermes<br/>Divine Messenger] --> |DIONYSUS|
-    |DEMETER[🌾 Demeter<br/>Resource Manager] --> |CHRONOS|
-    |DIONYSUS[🍷 Dionysus<br/>Data Analysis] --> |IRIS|
-    |CHRONOS[⏰ Chronos<br/>Time Guardian] --> |HEPHAESTUS|
+    ATHENA[🦉 Athena<br/>Strategic Intelligence] --> ARTEMIS
+    APOLLO[☀️ Apollo<br/>Knowledge Processing] --> POSEIDON
+    ARTEMIS[🏹 Artemis<br/>Protection System] --> HERMES
+    POSEIDON[🌊 Poseidon<br/>Ocean Database] --> DEMETER
+    HERMES[👟 Hermes<br/>Divine Messenger] --> DIONYSUS
+    DEMETER[🌾 Demeter<br/>Resource Manager] --> CHRONOS
+    DIONYSUS[🍷 Dionysus<br/>Data Analysis] --> IRIS
+    CHRONOS[⏰ Chronos<br/>Time Guardian] --> HEPHAESTUS
     
     %% Technical Infrastructure
-    |HEPHAESTUS[🔥 Hephaestus<br/>System Builder] --> |HESTIA|
-    |HESTIA[🏛️ Hestia<br/>Home Guardian] --> |ERINYES|
-    |IRIS[🕊️ Iris<br/>Rainbow Communication] --> |ARES|
-    |ERINYES[🏹️ Erinyes<br/>Justice Furies] --> |APHRODITE|
+    HEPHAESTUS[🔥 Hephaestus<br/>System Builder] --> HESTIA
+    HESTIA[🏛️ Hestia<br/>Home Guardian] --> ERINYES
+    IRIS[🕊️ Iris<br/>Rainbow Communication] --> ARES
+    ERINYES[🏹️ Erinyes<br/>Justice Furies] --> APHRODITE
     
     %% Operational Systems
-    |ARES[⚔️ Ares<br/>Warfare Manager] --> |MOIRAI|
-    |APHRODITE[💕️ Aphrodite<br/>Beauty Interface] --> |CHAOS|
-    |MOIRAI[🧵️ Moirai<br/>Fate Weaver] --> |AURORA|
-    |CHAOS[🌀 Chaos<br/>Testing Engineer] --> |AURORA|
-    |AURORA[🌅 Aurora<br/>Dawn Bringer] --> |ZEUS
+    ARES[⚔️ Ares<br/>Warfare Manager] --> MOIRAI
+    APHRODITE[💕️ Aphrodite<br/>Beauty Interface] --> CHAOS
+    MOIRAI[🧵️ Moirai<br/>Fate Weaver] --> AURORA
+    CHAOS[🌀 Chaos<br/>Testing Engineer] --> AURORA
+    AURORA[🌅 Aurora<br/>Dawn Bringer] --> ZEUS
     
     classDef supreme fill:#FFD700,stroke:#B8860B,stroke-width:3px
     classDef clinical fill:#4CAF50,stroke:#2E7D32,stroke-width:2px
     classDef technical fill:#2196F3,stroke:#FF6F00,stroke-width:2px
     classDef operational fill:#3B82F6,stroke:#1E88E5,stroke-width:2px
+    class ZEUS,HERA,HADES supreme
+    class ATHENA,APOLLO,ARTEMIS,POSEIDON,HERMES,DEMETER,DIONYSUS,IRIS,CHRONOS,HEPHAESTUS clinical
+    class HESTIA,ERINYES,ARES,APHRODITE,MOIRAI,CHAOS,AURORA operational
 ```
 
 ### 🔄 OTP Actor Communication Flow
@@ -130,7 +133,7 @@ sequenceDiagram
     Actor->>Zeus: 📋 Report Status
     Zeus->>Client: 🌟 System Ready
     
-    Note over Actor: Each god processes<br/>according to their divine domain
+    Note over Actor: Each god processes according to their divine domain
 ```
 
 ---
@@ -357,19 +360,21 @@ cargo test divine_orchestration  # Test 20-god harmony
 ```mermaid
 graph LR
     Internet[🌐 External Network] --> ARES[⚔️ Ares<br/>Battle Shield]
-    ARES --> |APOLLO|[☀️ Apollo<br/>Gatekeeper]
+    ARES --> APOLLO[☀️ Apollo<br/>Gatekeeper]
     
-    |APOLLO --> |HERA|[👑 Hera<br/>Invariant Guardian]
-    |HERA --> |HADES|[🔱 Hades<br/>Crypto Vault]
-    |HADES --> |ZEUS|[⚡ Zeus<br/>Master Controller]
+    APOLLO --> HERA[👑 Hera<br/>Invariant Guardian]
+    HERA --> HADES[🔱 Hades<br/>Crypto Vault]
+    HADES --> ZEUS[⚡ Zeus<br/>Master Controller]
     
-    |ZEUS --> ClinicalCore[🏥️ Clinical Data]
-    |ZEUS --> |ATHENA|[🦉 Athena<br/>Wisdom Engine]
-    |ZEUS --> |ARTEMIS|[🏹 Artemis<br/>Protection System]
+    ZEUS --> ClinicalCore[🏥️ Clinical Data]
+    ZEUS --> ATHENA[🦉 Athena<br/>Wisdom Engine]
+    ZEUS --> ARTEMIS[🏹 Artemis<br/>Protection System]
     
     classDef divine fill:#FFD700,stroke:#B8860B,stroke-width:2px
     classDef security fill:#DC2626,stroke:#7B1FA2,stroke-width:3px
     classDef clinical fill:#28A745,stroke:#1B5E20,stroke-width:2px
+    class ARES,APOLLO,HERA,HADES,ZEUS divine
+    class ClinicalCore,ATHENA,ARTEMIS clinical
 ```
 
 ### 🔐 Encryption Specifications
