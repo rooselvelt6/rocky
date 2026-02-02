@@ -10,19 +10,37 @@ NC='\033[0m' # No Color
 SERVER_BIN="./target/debug/uci-server" # Ajustar a release si es necesario
 
 function show_usage() {
-    echo -e "${GOLD}Uso: $0 {start|watchdog|health|clean|debug}${NC}"
+    echo -e "${GOLD}Uso: $0 {start|setup|watchdog|health|clean|debug}${NC}"
     echo "  start    - Inicia el servidor y la DB (Modo Soberano)"
+    echo "  setup    - Detecta el OS e instala dependencias faltantes"
     echo "  watchdog - Inicia el vigilante Aura"
     echo "  health   - Comprueba la salud de los dioses"
     echo "  clean    - Forzar limpieza de Demeter (Filesystem)"
     echo "  debug    - Inicia con logs extendidos"
 }
 
+function install_dependencies() {
+    echo -e "${GOLD}🏹 Detectando sistema operativo...${NC}"
+    if [ -f /etc/fedora-release ]; then
+        echo -e "${BLUE}Detected Fedora. Installing development tools...${NC}"
+        sudo dnf groupinstall -y "Development Tools" "C Development Tools and Libraries"
+        sudo dnf install -y gcc gcc-c++
+    elif [ -f /etc/debian_version ]; then
+        echo -e "${BLUE}Detected Debian/Ubuntu. Installing build-essential...${NC}"
+        sudo apt update && sudo apt install -y build-essential
+    else
+        echo -e "${RED}OS no reconocido automáticamente. Por favor, instala un compilador C manualmente.${NC}"
+    fi
+}
+
 function start_server() {
     echo -e "${GOLD}🏛️  Iniciando Jerarquía Soberana v10...${NC}"
-    # Iniciar DB si no está corriendo (Simulado o real)
-    # RUST_LOG=info $SERVER_BIN
-    cargo run --features ssr
+    # Verificar si cc existe
+    if ! command -v cc &> /dev/null; then
+        echo -e "${RED}Linker 'cc' no encontrado. Intentando autoinstalación...${NC}"
+        install_dependencies
+    fi
+    cargo run --bin uci-server --features ssr
 }
 
 function run_watchdog() {
@@ -48,6 +66,9 @@ function health_check() {
 case "$1" in
     start)
         start_server
+        ;;
+    setup)
+        install_dependencies
         ;;
     watchdog)
         run_watchdog
