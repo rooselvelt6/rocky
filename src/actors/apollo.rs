@@ -33,7 +33,7 @@ pub enum ApolloEventType {
     PerformanceMetric,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum EventSeverity {
     Info,
     Warning,
@@ -63,6 +63,7 @@ impl ApolloV12 {
         source: &str,
         data: serde_json::Value,
     ) {
+        let event_type_clone = event_type.clone();
         let event = ApolloEvent {
             id: uuid::Uuid::new_v4().to_string(),
             timestamp: Utc::now(),
@@ -83,7 +84,7 @@ impl ApolloV12 {
 
         tracing::info!(
             "☀️ Apollo: Evento registrado - {:?} desde {}",
-            event_type,
+            event_type_clone,
             source
         );
     }

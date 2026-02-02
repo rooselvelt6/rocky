@@ -82,6 +82,7 @@ impl ChronosV12 {
     pub fn new() -> (Self, mpsc::UnboundedReceiver<ScheduledTask>) {
         let (scheduler, task_receiver) = mpsc::unbounded_channel();
         
+        (
         Self {
             scheduler,
             task_queue: VecDeque::new(),
@@ -89,7 +90,9 @@ impl ChronosV12 {
             time_zone: "UTC".to_string(),
             system_start_time: Utc::now(),
             tick_interval: tokio::time::Duration::from_secs(1),
-        }
+        },
+        task_receiver
+        )
     }
 
     pub fn schedule_task(&mut self, task_type: TaskType, delay: Duration, description: &str, priority: TaskPriority, payload: serde_json::Value) -> Result<String, String> {
@@ -224,12 +227,14 @@ impl ChronosV12 {
                 // Actualizar estado de la tarea
                 let mut completed_task = running_task;
                 completed_task.execution_end = Some(Utc::now());
-                completed_task.status = execution_result.status;
+                let execution_status = execution_result.status.clone();
+                completed_task.status = execution_status.clone();
                 
                 // Log evento de finalización
+                let execution_start = completed_task.execution_start;
                 let completion_event = TimeEvent {
                     id: uuid::Uuid::new_v4().to_string(),
-                    event_type: match execution_result.status {
+                    event_type: match execution_status {
                         TaskStatus::Completed => TimeEventType::TaskCompleted,
                         TaskStatus::Failed => TimeEventType::TaskFailed,
                         _ => TimeEventType::TaskCompleted, // Default a completed
@@ -238,7 +243,7 @@ impl ChronosV12 {
                     source: "chronos".to_string(),
                     details: serde_json::json!({
                         "task_id": task.id,
-                        "execution_time": completed_task.execution_end.unwrap().signed_duration_since(running_task.execution_start.unwrap()).num_milliseconds(),
+                        "execution_time": completed_task.execution_end.unwrap().signed_duration_since(execution_start.unwrap()).num_milliseconds(),
                         "success": execution_result.status == TaskStatus::Completed,
                         "error": execution_result.error_message,
                     }),
@@ -248,14 +253,14 @@ impl ChronosV12 {
                 
                 // Reagendar si falló y aún se puede reintentar
                 if execution_result.status == TaskStatus::Failed && task.retry_count < 3 {
-                    let retry_delay = Duration::minutes(task.retry_count as u64 * 5); // Exponencial backoff
+                    let retry_delay = chrono::Duration::minutes(task.retry_count as i64 * 5); // Exponencial backoff
                     let mut retry_task = completed_task;
                     retry_task.status = TaskStatus::Pending;
                     retry_task.scheduled_time = Utc::now() + retry_delay;
                     retry_task.retry_count += 1;
                     
                     // Reagendar para nuevo intento
-                    match self.scheduler.send(retry_task).await {
+                    match self.scheduler.send(retry_task) {
                         Ok(_) => {
                             tracing::warn!("⏰️ Chronos: Reagendando tarea {} (intento {})", task.id, task.retry_count);
                         }
@@ -267,13 +272,13 @@ impl ChronosV12 {
                     // Programar siguiente recordatorio si es una evaluación de paciente
                     if matches!(task.task_type, TaskType::PatientAssessmentReminder) {
                         if let Some(patient_id) = task.payload.get("patient_id")
-                            .and_then(|v| v.as_str().ok()) {
+                            .and_then(|v| v.as_str()) {
                             if let Some(scale_type) = task.payload.get("scale_type")
-                                .and_then(|v| v.as_str().ok()) {
+                                .and_then(|v| v.as_str()) {
                                 // Programar siguiente evaluación en 24 horas
                                 let _ = self.schedule_patient_assessment_reminder(patient_id, scale_type, 24).await;
-                    }
-                    }
+                            }
+                        }
                     }
                 }
                 
@@ -295,9 +300,9 @@ impl ChronosV12 {
             TaskType::PatientAssessmentReminder => {
                 // Simular envío de recordatorio
                 if let Some(patient_id) = task.payload.get("patient_id")
-                    .and_then(|v| v.as_str().ok()) {
+                    .and_then(|v| v.as_str()) {
                     if let Some(scale_type) = task.payload.get("scale_type")
-                        .and_then(|v| v.as_str().ok()) {
+                        .and_then(|v| v.as_str()) {
                         tracing::info!("⏰️ Chronos: Recordatorio de evaluación {} para paciente {}", scale_type, patient_id);
                         
                         // En v13, esto enviaría una notificación real
@@ -414,7 +419,7 @@ impl ChronosV12 {
         let mut completed: Vec<&ScheduledTask> = self.task_queue.iter().filter(|task| matches!(task.status, TaskStatus::Completed)).collect();
         
         // Ordenar por tiempo de completación (más reciente primero)
-        completed.sort_by(|a, b| b.execution_end.cmp(&a.execution_end.unwrap()));
+        completed.sort_by(|a, b| b.execution_end.cmp(&a.execution_end));
         
         if let Some(limit) = limit {
             completed.truncate(limit);
@@ -447,7 +452,7 @@ impl ChronosV12 {
         let pending_count = self.get_pending_tasks().len();
         let running_count = self.get_running_tasks().len();
         let completed_count = self.get_completed_tasks(None).len();
-        let failed_count = self.task_queue.iter().filter(|task| matches!(task.status, TaskStatus::Failed)).len();
+        let failed_count = self.task_queue.iter().filter(|task| matches!(task.status, TaskStatus::Failed)).count();
         
         let mut priority_counts = HashMap::new();
         for task in &self.task_queue {
@@ -510,6 +515,15 @@ pub struct TaskStatistics {
 
 impl Default for ChronosV12 {
     fn default() -> Self {
-        Self::new()
+        let (scheduler, _) = mpsc::unbounded_channel();
+        
+        Self {
+            scheduler,
+            task_queue: VecDeque::new(),
+            time_events: Vec::new(),
+            time_zone: "UTC".to_string(),
+            system_start_time: Utc::now(),
+            tick_interval: tokio::time::Duration::from_secs(1),
+        }
     }
 }

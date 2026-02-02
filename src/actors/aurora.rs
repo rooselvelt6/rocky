@@ -8,6 +8,7 @@ use async_trait::async_trait;
 use std::collections::HashMap;
 use tokio::sync::RwLock;
 use serde::{Deserialize, Serialize};
+use chrono::Timelike;
 
 /// 🌅 Colores del amanecer
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -213,7 +214,8 @@ impl AuroraV12 {
         let base_intensity = hope_level / 100.0;
         
         // Ajustar por factores temporales y de sistema
-        let time_factor = 1.0 + (chrono::Utc::now().hour() as f64 / 24.0) * 0.3;
+        let now = chrono::Utc::now();
+        let time_factor = 1.0 + (now.hour() as f64 / 24.0) * 0.3;
         let system_factor = self.config.dawn_intensity_factor;
         
         (base_intensity * time_factor * system_factor).min(1.0)

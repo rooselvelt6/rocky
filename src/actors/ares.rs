@@ -42,7 +42,7 @@ pub enum ConflictStatus {
     Escalated,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Hash, Eq, PartialEq)]
 pub enum ResolutionStrategy {
     FirstComeFirstServed,
     LastWriterWins,
@@ -123,7 +123,8 @@ impl AresV12 {
     ) -> String {
         let conflict_id = uuid::Uuid::new_v4().to_string();
 
-        let severity = self.assess_conflict_severity(&conflict_type, &involved_parties);
+        let conflict_type_clone = conflict_type.clone();
+        let severity = self.assess_conflict_severity(&conflict_type_clone, &involved_parties);
 
         let conflict = Conflict {
             id: conflict_id.clone(),
@@ -133,14 +134,14 @@ impl AresV12 {
             involved_parties,
             timestamp: Utc::now(),
             status: ConflictStatus::Pending,
-            resolution_strategy: self.strategies.get(&conflict_type).cloned(),
+            resolution_strategy: self.strategies.get(&conflict_type_clone).cloned(),
         };
 
         self.active_conflicts.insert(conflict_id.clone(), conflict);
 
         tracing::warn!(
             "⚔️ Ares: Conflicto detectado - {:?} - {}",
-            conflict_type,
+            conflict_type_clone,
             description
         );
 
@@ -358,7 +359,7 @@ impl AresV12 {
 
         for resolution in &self.resolution_history {
             *strategy_counts
-                .entry(format!("{:?}", resolution.strategy))
+                .entry(resolution.strategy.clone())
                 .or_insert(0) += 1;
         }
 

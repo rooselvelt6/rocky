@@ -55,7 +55,7 @@ pub enum EventImpact {
 }
 
 /// 🔮 Resultados del destino
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum FateOutcome {
     Heroic,
     Tragic,

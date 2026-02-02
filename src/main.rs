@@ -9,7 +9,7 @@ use axum::{
     Json, Router,
 };
 use std::sync::Arc;
-use surrealdb::engine::any::Any;
+use surrealdb::engine::local::Db;
 use surrealdb::{RecordId, Surreal};
 use tokio::net::TcpListener;
 use tower_http::services::{ServeDir, ServeFile};
@@ -44,7 +44,7 @@ use base64::{prelude::BASE64_STANDARD, Engine};
 /// Application state with V12 unified actors
 #[derive(Clone)]
 struct AppState {
-    db: Surreal<Any>,
+    db: Surreal<Db>,
     // V12 Core actors
     artemis: Arc<ArtemisV12>,
     apollo: Arc<tokio::sync::Mutex<ApolloV12>>,
@@ -595,7 +595,7 @@ async fn olympus_auth_middleware(
 
 /// Helper function to check 24-hour restriction for any assessment type
 async fn check_24h_restriction_v12<T: serde::de::DeserializeOwned>(
-    db: &Surreal<Any>,
+    db: &Surreal<Db>,
     patient_id: &str,
     table_name: &str,
 ) -> Result<(), String> {

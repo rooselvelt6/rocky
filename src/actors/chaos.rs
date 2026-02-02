@@ -40,7 +40,7 @@ pub enum ChaosExperimentType {
 }
 
 /// 📊 Estados del experimento
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum ExperimentStatus {
     Planned,
     Running,

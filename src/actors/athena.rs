@@ -34,6 +34,17 @@ pub enum ClinicalSeverity {
     Critical,
 }
 
+impl std::fmt::Display for ClinicalSeverity {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ClinicalSeverity::Low => write!(f, "Low"),
+            ClinicalSeverity::Moderate => write!(f, "Moderate"),
+            ClinicalSeverity::High => write!(f, "High"),
+            ClinicalSeverity::Critical => write!(f, "Critical"),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PatientAnalysis {
     pub patient_id: String,
@@ -75,15 +86,16 @@ impl AthenaV12 {
         score: u16,
         additional_data: Option<serde_json::Value>,
     ) -> ClinicalInsight {
-        let (severity, risk_level, recommendation) = self.calculate_clinical_metrics(&scale_type, score);
+        let scale_type_clone = scale_type.clone();
+        let (severity, risk_level, recommendation) = self.calculate_clinical_metrics(&scale_type_clone, score);
         
         let insight = ClinicalInsight {
             patient_id: patient_id.to_string(),
-            scale_type,
+            scale_type: scale_type.clone(),
             score,
             severity,
             risk_level,
-            confidence: self.calculate_confidence(&scale_type, score, additional_data.as_ref()),
+            confidence: self.calculate_confidence(&scale_type_clone, score, additional_data.as_ref()),
             recommendation,
             timestamp: Utc::now(),
         };
@@ -99,13 +111,12 @@ impl AthenaV12 {
     }
 
     pub async fn get_patient_analysis(&mut self, patient_id: &str) -> PatientAnalysis {
-        // Si ya existe en caché, retornar
         if let Some(cached) = self.analysis_cache.get(patient_id) {
             return cached.clone();
         }
         
-        // Análisis completo del paciente
-        let insights = self.insights.get(patient_id).unwrap_or(&Vec::new());
+        let empty_insights: Vec<ClinicalInsight> = Vec::new();
+        let insights = self.insights.get(patient_id).unwrap_or(&empty_insights);
         
         let analysis = if insights.is_empty() {
             // Análisis sin datos
@@ -156,9 +167,9 @@ impl AthenaV12 {
                 
                 let recommendation = match score {
                     15 => "Conciencia normal. Monitoreo rutinario".to_string(),
-                    14..=13 => "Conciencia mínimamente alterada. Continuar observación".to_string(),
-                    12..=9 => "Conciencia moderadamente alterada. Evaluar causa".to_string(),
-                    8..=6 => "Conciencia gravemente alterada. Intervención urgente".to_string(),
+                    9..=14 => "Conciencia mínimamente alterada. Continuar observación".to_string(),
+                    6..=12 => "Conciencia moderadamente alterada. Evaluar causa".to_string(),
+                    3..=8 => "Conciencia gravemente alterada. Intervención urgente".to_string(),
                     _ => "Conciencia muy alterada o coma. Emergencia médica inmediata".to_string(),
                 };
                 
@@ -256,7 +267,7 @@ impl AthenaV12 {
         let mut scale_correlations = HashMap::new();
         if let (Some(glasgow_scores), Some(apache_scores)) = (scale_scores.get(&ScaleType::Glasgow), scale_scores.get(&ScaleType::Apache)) {
             if let (Some(&last_glasgow), Some(&last_apache)) = (glasgow_scores.last(), apache_scores.last()) {
-                let correlation = self.calculate_glasgow_apache_correlation(*last_glasgow, *last_apache);
+                let correlation = self.calculate_glasgow_apache_correlation(last_glasgow, last_apache);
                 scale_correlations.insert("glasgow_apache".to_string(), correlation);
             }
         }
@@ -346,7 +357,7 @@ impl AthenaV12 {
         let time_horizon = 24; // 24 horas
         let base_deterioration = overall_risk;
         
-        let (deterioration_prob, recovery_prob) = if overall_risk < 0.3 {
+        let (deterioration_prob, recovery_prob): (f64, f64) = if overall_risk < 0.3 {
             (0.1, 0.9)
         } else if overall_risk < 0.6 {
             (0.3, 0.7)

@@ -29,7 +29,7 @@ pub enum ViolationSeverity {
     Critical,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct HeraV12 {
     rules: Vec<HeraRule>,
     violations: RwLock<Vec<HeraViolation>>,
@@ -86,14 +86,17 @@ impl HeraV12 {
     }
 
     pub async fn report_violation(&self, violation: HeraViolation) {
+        let severity = violation.severity.clone();
+        let rule = violation.rule.clone();
+        let description = violation.description.clone();
         let mut violations = self.violations.write().await;
         violations.push(violation);
         
         tracing::warn!("👑 Hera: Violación detectada - {:?}: {}", 
-                     violation.rule, violation.description);
+                     rule, description);
         
         // Enviar notificación a Zeus si es crítica
-        match violation.severity {
+        match severity {
             ViolationSeverity::Critical => {
                 tracing::error!("🚨 Hera: Violación CRÍTICA - notificando a Zeus");
             }

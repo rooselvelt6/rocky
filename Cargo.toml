@@ -46,7 +46,7 @@ tower = { version = "0.5", features = ["full"], optional = true }
 tracing = { version = "0.1.41", features = ["max_level_trace", "release_max_level_debug", "async-await", "log", "log-always"], optional = true }
 tracing-subscriber = { version = "0.3.20", features = ["env-filter", "fmt", "json", "registry", "smallvec", "time", "tracing-log"], optional = true }
 leptos_axum = { version = "0.6", optional = true }
-surrealdb = { version = "2.4", features = ["kv-mem"], optional = true }
+surrealdb = { version = "2.4", features = ["protocol-ws", "protocol-http", "kv-mem"], optional = true }
 chrono = { version = "0.4", features = ["serde"], optional = true }
 dotenvy = { version = "0.15", optional = true }
 config = { version = "0.14", features = ["yaml", "json"], optional = true }
@@ -150,8 +150,7 @@ ssr = [
     "dep:tracing-subscriber",
     "dep:leptos_axum",
     "dep:surrealdb",
-    "surrealdb/protocol-ws", 
-    "surrealdb/protocol-http",
+    "surrealdb/kv-mem",
     "dep:chrono",
     "dep:dotenvy",
     # "dep:tower_governor",

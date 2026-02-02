@@ -166,15 +166,16 @@ impl HermesV12 {
 
         // Guardar en historial
         let sender_key = message.sender.clone();
+        let message_id = message.id.clone();
         self.message_history.entry(sender_key).or_insert_with(Vec::new).push(message.clone());
 
         // Enviar a la cola de procesamiento
-        match self.message_queue.send(message).await {
+        match self.message_queue.send(message) {
             Ok(_) => {
                 self.delivery_stats.messages_sent += 1;
                 tracing::info!("👟 Hermes: Mensaje {} enviado a {:?} con prioridad {:?}", 
-                             message.id, recipient, priority);
-                Ok(message.id)
+                             message_id, recipient, priority);
+                Ok(message_id)
             }
             Err(e) => {
                 self.delivery_stats.messages_failed += 1;
@@ -197,12 +198,13 @@ impl HermesV12 {
             metadata: HashMap::new(),
         };
 
-        match self.message_queue.send(message).await {
+        let message_id = message.id.clone();
+        match self.message_queue.send(message) {
             Ok(_) => {
                 self.delivery_stats.messages_sent += 1;
                 tracing::info!("📢 Hermes: Broadcast {} enviado con prioridad {:?}", 
-                             message.id, priority);
-                Ok(message.id)
+                             message_id, priority);
+                Ok(message_id)
             }
             Err(e) => {
                 self.delivery_stats.messages_failed += 1;
@@ -212,6 +214,7 @@ impl HermesV12 {
     }
 
     pub fn register_route(&mut self, route_pattern: &str, handlers: Vec<String>, load_balancing: LoadBalancingStrategy) {
+        let handlers_count = handlers.len();
         let route = DeliveryRoute {
             route_pattern: route_pattern.to_string(),
             handlers,
@@ -219,7 +222,7 @@ impl HermesV12 {
         };
 
         self.delivery_service.routes.insert(route_pattern.to_string(), route);
-        tracing::info!("👟 Hermes: Ruta registrada: {} con {} handlers", route_pattern, handlers.len());
+        tracing::info!("👟 Hermes: Ruta registrada: {} con {} handlers", route_pattern, handlers_count);
     }
 
     fn validate_message(&self, message: &HermesMessage) -> Result<(), String> {
@@ -238,12 +241,12 @@ impl HermesV12 {
     fn validate_priority_vs_message_type(&self, message_type: &HermesMessageType, priority: &MessagePriority) -> Result<(), String> {
         match message_type {
             HermesMessageType::EmergencyBroadcast => {
-                if priority != MessagePriority::Immediate && priority != MessagePriority::Critical {
+                if *priority != MessagePriority::Immediate && *priority != MessagePriority::Critical {
                     return Err("Broadcasts de emergencia deben tener prioridad Immediate o Critical".to_string());
                 }
             }
             HermesMessageType::SecurityAlert => {
-                if priority != MessagePriority::High && priority != MessagePriority::Critical && priority != MessagePriority::Immediate {
+                if *priority != MessagePriority::High && *priority != MessagePriority::Critical && *priority != MessagePriority::Immediate {
                     return Err("Alertas de seguridad deben tener prioridad alta o superior".to_string());
                 }
             }
@@ -298,7 +301,7 @@ impl HermesV12 {
         &self.delivery_stats
     }
 
-    pub fn get_message_history(&self, sender: &str, limit: Option<usize>) -> Vec<&HermesMessage> {
+    pub fn get_message_history(&self, sender: &str, limit: Option<usize>) -> Vec<HermesMessage> {
         if let Some(messages) = self.message_history.get(sender) {
             let mut sorted_messages = messages.clone();
             sorted_messages.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
@@ -307,7 +310,7 @@ impl HermesV12 {
                 sorted_messages.truncate(limit);
             }
             
-            sorted_messages.iter().collect()
+            sorted_messages
         } else {
             Vec::new()
         }

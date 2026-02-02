@@ -26,7 +26,7 @@ RUN rustup target add x86_64-unknown-linux-musl
 COPY . .
 COPY --from=frontend-builder /app/dist /app/dist
 # Build statically linked binary
-RUN cargo build --release --target x86_64-unknown-linux-musl --bin uci-server
+RUN cargo build --release --target x86_64-unknown-linux-musl --bin olympus-server
 
 # --- Final Production Image ---
 FROM alpine:latest
@@ -36,7 +36,7 @@ RUN addgroup -g 1000 rocky && \
     adduser -D -u 1000 -G rocky rocky && \
     chown -R rocky:rocky /app
 
-COPY --from=backend-builder --chown=rocky:rocky /app/target/x86_64-unknown-linux-musl/release/uci-server /app/uci-server
+COPY --from=backend-builder --chown=rocky:rocky /app/target/x86_64-unknown-linux-musl/release/olympus-server /app/olympus-server
 COPY --from=backend-builder --chown=rocky:rocky /app/dist /app/dist
 
 USER rocky
@@ -44,4 +44,4 @@ EXPOSE 3000
 ENV DB_HOST=surrealdb DB_PORT=8000 RUST_LOG=info
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
-CMD ["./uci-server"]
+CMD ["./olympus-server"]

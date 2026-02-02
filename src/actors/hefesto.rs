@@ -16,7 +16,7 @@ pub struct ConfigurationItem {
     pub modified_by: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum ConfigCategory {
     System,
     Database,
@@ -179,7 +179,7 @@ impl HefestoV12 {
         
         config.insert("security.session_timeout".to_string(), ConfigurationItem {
             key: "security.session_timeout".to_string(),
-            value: serde_json::Value::Number(24.0),
+            value: serde_json::json!(24.0),
             category: ConfigCategory::Security,
             data_type: ConfigDataType::Number,
             is_sensitive: false,
@@ -189,7 +189,7 @@ impl HefestoV12 {
         
         config.insert("security.max_login_attempts".to_string(), ConfigurationItem {
             key: "security.max_login_attempts".to_string(),
-            value: serde_json::Value::Number(5.0),
+            value: serde_json::json!(5.0),
             category: ConfigCategory::Security,
             data_type: ConfigDataType::Number,
             is_sensitive: false,
@@ -252,7 +252,7 @@ impl HefestoV12 {
         
         config.insert("ui.animations".to_string(), ConfigurationItem {
             key: "ui.animations".to_string(),
-            value: serde_json::Value::Boolean(true),
+            value: serde_json::json!(true),
             category: ConfigCategory::UI,
             data_type: ConfigDataType::Boolean,
             is_sensitive: false,
@@ -262,7 +262,7 @@ impl HefestoV12 {
         
         config.insert("ui.auto_refresh_interval".to_string(), ConfigurationItem {
             key: "ui.auto_refresh_interval".to_string(),
-            value: serde_json::Value::Number(30.0),
+            value: serde_json::json!(30.0),
             category: ConfigCategory::UI,
             data_type: ConfigDataType::Number,
             is_sensitive: false,
@@ -273,7 +273,7 @@ impl HefestoV12 {
         // Configuración de rendimiento
         config.insert("performance.max_concurrent_users".to_string(), ConfigurationItem {
             key: "performance.max_concurrent_users".to_string(),
-            value: serde_json::Value::Number(100.0),
+            value: serde_json::json!(100.0),
             category: ConfigCategory::Performance,
             data_type: ConfigDataType::Number,
             is_sensitive: false,
@@ -283,7 +283,7 @@ impl HefestoV12 {
         
         config.insert("performance.query_timeout".to_string(), ConfigurationItem {
             key: "performance.query_timeout".to_string(),
-            value: serde_json::Value::Number(30.0),
+            value: serde_json::json!(30.0),
             category: ConfigCategory::Performance,
             data_type: ConfigDataType::Number,
             is_sensitive: false,
@@ -378,8 +378,8 @@ impl HefestoV12 {
         let mut errors = Vec::new();
         let mut successful_updates = Vec::new();
         
-        for (key, value, reason) in updates {
-            if let Err(e) = self.update_config(key, value, modified_by, &reason).await {
+        for (key, value, _modified_by, reason) in updates {
+            if let Err(e) = self.update_config(&key, value, modified_by, &reason).await {
                 errors.push(format!("Error actualizando {}: {}", key, e));
             } else {
                 successful_updates.push(key.to_string());
@@ -497,12 +497,12 @@ impl HefestoV12 {
                 
                 // Migrar cada item con validación
                 for (key, value) in new_map {
-                    if let Err(e) = self.validate_value(key, &value) {
+                    if let Err(e) = self.validate_value(&key, &value) {
                         tracing::warn!("🏛️ Hefesto: Validación fallida para {}: {}", key, e);
                         continue;
                     }
                     
-                    if let Some(old_item) = old_configuration.get(key) {
+                    let category = if let Some(old_item) = old_configuration.get(&key) {
                         let change = ConfigurationChange {
                             config_key: key.clone(),
                             old_value: old_item.value.clone(),
@@ -513,15 +513,17 @@ impl HefestoV12 {
                         };
                         
                         self.audit_trail.push(change);
-                    }
+                        old_item.category.clone()
+                    } else {
+                        ConfigCategory::System
+                    };
                     
-                    let category = old_item.category.clone();
                     let new_item = ConfigurationItem {
                         key: key.clone(),
                         value,
                         category,
                         data_type: Self::determine_data_type(&value),
-                        is_sensitive: self.is_sensitive_key(key),
+                        is_sensitive: self.is_sensitive_key(&key),
                         last_modified: Utc::now(),
                         modified_by: Some(modified_by.to_string()),
                     };

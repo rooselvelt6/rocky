@@ -1,5 +1,5 @@
 use argon2::{
-    password_hash::{PasswordHasher, PasswordVerifier, SaltString},
+    password_hash::{Encoding, PasswordHash, PasswordHasher, PasswordVerifier, SaltString},
     Argon2,
 };
 use chacha20poly1305::{
@@ -51,6 +51,7 @@ impl HadesV12 {
 
     pub fn generate_key(&mut self, key_type: KeyType) -> String {
         let key_id = uuid::Uuid::new_v4().to_string();
+        let key_type_clone = key_type.clone();
         let key_data = self.generate_key_data(&key_type);
 
         let key = HadesKey {
@@ -65,7 +66,7 @@ impl HadesV12 {
         tracing::info!(
             "🔱 Hades: Nueva clave generada: {} ({:?})",
             key_id,
-            key_type
+            key_type_clone
         );
         key_id
     }
@@ -107,7 +108,7 @@ impl HadesV12 {
 
         match key.key_type {
             KeyType::ChaCha20Poly1305 => {
-                let key = Key::<ChaCha20Poly1305>::from_slice(&key.key_data);
+                let key = Key::from_slice(&key.key_data);
                 let cipher = ChaCha20Poly1305::new(&key);
 
                 let mut nonce_bytes = [0u8; 12];
@@ -142,7 +143,7 @@ impl HadesV12 {
 
         match key.key_type {
             KeyType::ChaCha20Poly1305 => {
-                let key = Key::<ChaCha20Poly1305>::from_slice(&key.key_data);
+                let key = Key::from_slice(&key.key_data);
                 let cipher = ChaCha20Poly1305::new(&key);
                 let nonce = Nonce::from_slice(&encrypted.nonce);
 
@@ -160,31 +161,24 @@ impl HadesV12 {
         }
     }
 
-    pub fn hash_password(&self, password: &str, salt: Option<String>) -> Result<String, String> {
+    pub fn hash_password(&self, password: &str, _salt: Option<String>) -> Result<String, String> {
         let argon2 = Argon2::default();
 
-        let password_hash = if let Some(salt_str) = salt {
-            let salt = SaltString::encode_b64(&salt_str.as_bytes())
-                .map_err(|e| format!("Error codificando salt: {}", e))?;
-            argon2.hash_password(password.as_bytes(), &salt)
-        } else {
-            argon2.hash_password(
-                password.as_bytes(),
-                &SaltString::generate(&mut rand::thread_rng()),
-            )
-        };
+        let salt = SaltString::generate(&mut rand::thread_rng());
+        let password_hash = argon2
+            .hash_password(password.as_bytes(), &salt)
+            .map_err(|e| format!("Error hasheando contraseña: {}", e))?;
 
-        match password_hash {
-            Ok(hash) => Ok(hash.to_string()),
-            Err(e) => Err(format!("Error hasheando contraseña: {}", e)),
-        }
+        Ok(password_hash.to_string())
     }
 
     pub fn verify_password(&self, password: &str, hash: &str) -> Result<bool, String> {
         let argon2 = Argon2::default();
+        let password_hash = PasswordHash::parse(hash, Encoding::Bcrypt)
+            .map_err(|e| format!("Error parsing hash: {}", e))?;
 
         argon2
-            .verify_password(password.as_bytes(), &hash)
+            .verify_password(password.as_bytes(), &password_hash)
             .map(|_| true)
             .map_err(|e| format!("Error verificando contraseña: {}", e))
     }

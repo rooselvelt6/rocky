@@ -35,7 +35,7 @@ pub struct SacredFireStatus {
     pub intensity: f64,
     pub fuel_level: f64,
     pub last_rekindled: chrono::DateTime<chrono::Utc>,
-    pub守护者: String,
+    pub guardian: String,
 }
 
 /// 🏛️ Configuración completa de Hestia
@@ -105,7 +105,7 @@ impl HestiaV12 {
             intensity: 1.0,
             fuel_level: 1.0,
             last_rekindled: chrono::Utc::now(),
-            守护者: "Hestia".to_string(),
+            guardian: "Hestia".to_string(),
         };
 
         Self {
@@ -209,9 +209,9 @@ impl HestiaV12 {
 
     /// 📊 Obtener estado completo del sistema
     pub async fn get_system_status(&self) -> OlympicResult<serde_json::Value> {
-        let hearth = self.hearth_config.read().await;
-        let params = self.system_params.read().await;
-        let fire = self.sacred_fire.read().await;
+        let hearth = self.hearth_config.read().await.clone();
+        let params = self.system_params.read().await.clone();
+        let fire = self.sacred_fire.read().await.clone();
         let history = self.configuration_history.read().await;
         
         Ok(serde_json::json!({

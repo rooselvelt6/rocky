@@ -24,6 +24,7 @@ pub enum UIComponentType {
     Navigation,
     Table,
     Alert,
+    Button,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -446,7 +447,7 @@ export const aphroditeTypography = {{
             self.design_system.spacing.md,
             self.design_system.spacing.lg,
             self.design_system.spacing.xl,
-            self.design.system.spacing["2xl"],
+            self.design_system.spacing.xxl,
             self.design_system.typography.font_families.join(", "),
             self.design_system.typography.base_size,
             self.design_system.typography.scale_ratio,
@@ -495,7 +496,7 @@ export const aphroditeTypography = {{
 }
 
 // Estructuras de soporte
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SpacingSystem {
     pub xs: String,
     pub sm: String,
@@ -506,7 +507,7 @@ pub struct SpacingSystem {
     pub xxl: String,
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ShadowSystem {
     pub sm: String,
     pub md: String,
@@ -514,7 +515,7 @@ pub struct ShadowSystem {
     pub xl: String,
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BorderSystem {
     pub width: String,
     pub radius: String,
