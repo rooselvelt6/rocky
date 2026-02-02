@@ -56,6 +56,7 @@ ammonia = "4.1.2"
 csv = "1.4.0"
 futures-util = { version = "0.3", features = ["sink"] }
 async-trait = "0.1"
+regex = "1.10"
 
 # OTP Core: Actor System and GenServer
 ractor = { version = "0.9", features = ["async-trait"] }

@@ -15,32 +15,28 @@ use tokio::net::TcpListener;
 use tower_http::services::{ServeDir, ServeFile};
 
 // Import V12 unified actors
-use uci::actors::artemis_v12::ArtemisV12;
-use uci::actors::apollo_v12::ApolloV12;
-use uci::actors::poseidon_v12::PoseidonV12;
-use uci::actors::iris_v12::IrisV12;
+use crate::actors::artemis::{ArtemisV12, LoginRequest, LoginResponse};
+use crate::actors::apollo::{ApolloV12, EventSeverity};
+use crate::actors::poseidon::{DatabaseHealth, PoseidonV12};
+use crate::actors::iris::{IrisV12, MessagePriority};
 
 // Import existing models and services (from V10)
-use uci::models::patient::Patient;
-use uci::models::user::User;
-use uci::uci::scale::apache::{ApacheIIRequest, ApacheIIResponse};
-use uci::uci::scale::glasgow::{Glasgow, GlasgowRequest, GlasgowResponse};
-use uci::uci::scale::saps::{SAPSIIRequest, SAPSIIResponse};
-use uci::uci::scale::sofa::{SOFARequest, SOFAResponse};
-use uci::models::apache::ApacheAssessment;
-use uci::models::config::SystemConfig;
-use uci::models::glasgow::GlasgowAssessment;
-use uci::models::history::PatientHistoryResponse;
-use uci::models::news2::{ConsciousnessLevel, News2Assessment, News2RiskLevel};
-use uci::models::saps::SapsAssessment;
-use uci::models::sofa::SofaAssessment;
-use uci::actors::artemis_v12;
-use uci::actors::apollo_v12;
-use uci::actors::poseidon_v12;
-use uci::actors::iris_v12;
+use crate::models::patient::Patient;
+use crate::models::user::User;
+use crate::uci::scale::apache::{ApacheIIRequest, ApacheIIResponse};
+use crate::uci::scale::glasgow::{Glasgow, GlasgowRequest, GlasgowResponse};
+use crate::uci::scale::saps::{SAPSIIRequest, SAPSIIResponse};
+use crate::uci::scale::sofa::{SOFARequest, SOFAResponse};
+use crate::models::apache::ApacheAssessment;
+use crate::models::config::SystemConfig;
+use crate::models::glasgow::GlasgowAssessment;
+use crate::models::history::PatientHistoryResponse;
+use crate::models::news2::{ConsciousnessLevel, News2Assessment, News2RiskLevel};
+use crate::models::saps::SapsAssessment;
+use crate::models::sofa::SofaAssessment;
 
 #[cfg(feature = "ssr")]
-use uci::services::validation;
+use crate::services::validation;
 
 // Import base64 for potential encryption needs
 use base64::{prelude::BASE64_STANDARD, Engine};
@@ -84,28 +80,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     
     // Initialize Poseidon - Database Manager
     println!("🌊 Initializing Poseidon v12 - Enhanced Database Manager...");
-    let mut poseidon = PoseidonV12::new()?;
-    poseidon.connect_with_config("memory", "uci", "main").await?;
+    let poseidon = PoseidonV12::new().await?;
     let poseidon = Arc::new(poseidon);
-    
-    // Configure Apollo with database
-    {
-        let mut apollo_guard = apollo.lock().await;
-        *apollo_guard = apollo_guard.clone().with_database(poseidon.as_ref().db().clone());
-    }
     
     // === PHASE 2: SYSTEM INTEGRATION ===
     println!("\n🌐 Phase 2: V12 System Integration");
     
     // Send system startup message via Iris
-    let startup_message = iris.create_system_message(
-        iris_v12::IrisMessageType::SystemStart,
+    let startup_message = iris.create_message(
+        "SystemStart".to_string(),
         serde_json::json!({
             "system": "olympus_v12",
             "version": env!("CARGO_PKG_VERSION"),
             "timestamp": chrono::Utc::now().to_rfc3339()
         }),
-        iris_v12::MessagePriority::High,
+        MessagePriority::High,
     );
     iris.broadcast(startup_message).await?;
     
@@ -119,18 +108,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         apollo,
         poseidon,
         iris,
-    };
-    
-    // === PHASE 5: APPLICATION STATE ===
-    println!("\n🏛️  Phase 5: Initializing Application State");
-    
-    let state = AppState {
-        db,
-        zeus: zeus_addr.clone(),
-        erinyes: erinyes_addr.clone(),
-        hades: hades_addr.clone(),
-        registry: registry.clone(),
-        system: Arc::new(system),
     };
     
     // === PHASE 4: DATABASE INTEGRATION ===
@@ -270,33 +247,29 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("\n👋 Olympus v12 shutdown complete");
     Ok(())
 }
-}
 
 // === V12 API HANDLERS ===
 
 /// V12 enhanced health check with system status
 async fn health_check_v12(State(state): State<AppState>) -> (StatusCode, Json<serde_json::Value>) {
-    // Database check
-    let db_status = match state.db.health().await {
-        Ok(_) => "connected",
-        Err(_) => "disconnected",
-    };
-    
     // Check Poseidon health
     let poseidon_health = state.poseidon.health_check().await;
     
-    // Get Iris metrics
-    let iris_metrics = state.iris.get_metrics();
+    // Determine overall database status
+    let db_status = match &poseidon_health {
+        DatabaseHealth::Healthy => "connected",
+        DatabaseHealth::Degraded => "degraded",
+        DatabaseHealth::Unhealthy => "disconnected",
+    };
     
     let response = serde_json::json!({
         "status": "up",
         "system": "olympus_v12",
         "version": env!("CARGO_PKG_VERSION"),
         "database": db_status,
-        "poseidon": poseidon_health,
+        "poseidon": format!("{:?}", poseidon_health),
         "iris": {
-            "messages_sent": iris_metrics.messages_sent,
-            "average_message_size": iris_metrics.average_message_size
+            "status": "operational"
         },
         "actors": {
             "artemis": "operational",
@@ -312,11 +285,9 @@ async fn health_check_v12(State(state): State<AppState>) -> (StatusCode, Json<se
 
 /// Get comprehensive Olympus v12 system status
 async fn olympus_status_v12(State(state): State<AppState>) -> (StatusCode, Json<serde_json::Value>) {
-    let poseidon_metrics = state.poseidon.get_metrics().await.unwrap_or_else(|_| {
-        poseidon_v12::DatabaseMetrics::default()
-    });
-    
-    let iris_metrics = state.iris.get_metrics();
+    // Get basic stats from Poseidon
+    let patients = state.poseidon.get_all_patients::<Patient>().await.unwrap_or_default();
+    let total_patients = patients.len();
     
     let response = serde_json::json!({
         "system": {
@@ -331,14 +302,11 @@ async fn olympus_status_v12(State(state): State<AppState>) -> (StatusCode, Json<
             "status": "operational"
         },
         "poseidon": {
-            "total_patients": poseidon_metrics.total_patients,
-            "total_assessments": poseidon_metrics.total_assessments,
-            "active_connections": poseidon_metrics.active_connections,
-            "query_performance": poseidon_metrics.query_performance
+            "total_patients": total_patients,
+            "status": "connected"
         },
         "iris": {
-            "messages_sent": iris_metrics.messages_sent,
-            "average_message_size": iris_metrics.average_message_size,
+            "status": "operational",
             "routing_enabled": true
         },
         "security": {
@@ -360,39 +328,13 @@ async fn olympus_status_v12(State(state): State<AppState>) -> (StatusCode, Json<
 }
 
 /// Get system metrics
-async fn olympus_metrics(State(state): State<AppState>) -> (StatusCode, Json<serde_json::Value>) {
-    let zeus_metrics = match state.zeus.call(
-        ZeusMessage::GetMetrics,
-        ActorId::local("metrics"),
-    ).await {
-        Ok(ZeusResponse::SystemMetrics { metrics }) => metrics,
-        _ => {
-            return (StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({
-                "error": "Failed to get Zeus metrics"
-            })));
-        }
-    };
-    
-    let erinyes_metrics = match state.erinyes.call(
-        ErinyesMessage::GetStatus,
-        ActorId::local("metrics"),
-    ).await {
-        Ok(ErinyesResponse::ProcessStatus { processes }) => {
-            serde_json::json!({
-                "monitored_processes": processes.len(),
-                "active_processes": processes.values().filter(|p| p.health_status == uci::actors::erinyes::HealthStatus::Healthy).count()
-            })
-        }
-        _ => serde_json::json!({"error": "Failed to get Erinyes metrics"}),
-    };
-    
+async fn olympus_metrics(State(_state): State<AppState>) -> (StatusCode, Json<serde_json::Value>) {
+    // TODO: Implement when Zeus and Erinyes are fully integrated
     let response = serde_json::json!({
-        "zeus": zeus_metrics,
-        "erinyes": erinyes_metrics,
         "system": {
-            "memory_usage": get_system_memory(),
-            "cpu_usage": get_system_cpu(),
-            "timestamp": chrono::Utc::now().to_rfc3339()
+            "status": "operational",
+            "timestamp": chrono::Utc::now().to_rfc3339(),
+            "note": "Full metrics available when all 20 gods are integrated"
         }
     });
     
@@ -402,14 +344,14 @@ async fn olympus_metrics(State(state): State<AppState>) -> (StatusCode, Json<ser
 /// V12 login handler with enhanced authentication
 async fn login_handler_v12(
     State(state): State<AppState>,
-    Json(payload): Json<artemis_v12::LoginRequest>,
-) -> Result<Json<artemis_v12::LoginResponse>, StatusCode> {
+    Json(payload): Json<LoginRequest>,
+) -> Result<Json<LoginResponse>, StatusCode> {
     match state.artemis.authenticate_user(&payload.username, &payload.password).await {
         Ok(user) => {
             let remember_me = payload.remember_me.unwrap_or(false);
             match state.artemis.generate_token(&user.id, user.role.clone()) {
                 Ok(token) => {
-                    let response = artemis_v12::LoginResponse::new(token, user, remember_me);
+                    let response = LoginResponse::new(token, user);
                     
                     // Log successful login
                     {
@@ -419,7 +361,7 @@ async fn login_handler_v12(
                             &format!("User {} logged in successfully", payload.username),
                             Some(user.id.clone()),
                             None,
-                            apollo_v12::AuditOutcome::Success,
+                            EventSeverity::Info,
                         ).await;
                     }
                     
@@ -437,113 +379,13 @@ async fn login_handler_v12(
                     &format!("Failed login attempt for user {}", payload.username),
                     None,
                     None,
-                    apollo_v12::AuditOutcome::Failure,
+                    EventSeverity::Warning,
                 ).await;
             }
             
             Err(StatusCode::UNAUTHORIZED)
         }
     }
-}
-
-/// Encrypt data using Hades v2
-async fn encrypt_data(
-    State(state): State<AppState>,
-    Json(payload): Json<serde_json::Value>,
-) -> (StatusCode, Json<serde_json::Value>) {
-    let data = payload.get("data")
-        .and_then(|v| v.as_str())
-        .unwrap_or("");
-    
-    let response = match state.hades.call(
-        HadesMessage::Encrypt { 
-            data: data.to_string(), 
-            key_id: None 
-        },
-        ActorId::local("api"),
-    ).await {
-        Ok(HadesResponse::EncryptedData { data, nonce, key_id }) => {
-            serde_json::json!({
-                "success": true,
-                "encrypted_data": base64::encode(&data),
-                "nonce": base64::encode(&nonce),
-                "key_id": key_id
-            })
-        }
-        Ok(HadesResponse::Error { message }) => {
-            serde_json::json!({
-                "success": false,
-                "error": message
-            })
-        }
-        Err(_) => {
-            serde_json::json!({
-                "success": false,
-                "error": "Failed to communicate with Hades"
-            })
-        }
-    };
-    
-    (StatusCode::OK, Json(response))
-}
-
-/// Generate a new key
-async fn generate_key(
-    State(state): State<AppState>,
-    Json(payload): Json<serde_json::Value>,
-) -> (StatusCode, Json<serde_json::Value>) {
-    let key_type_str = payload.get("key_type")
-        .and_then(|v| v.as_str())
-        .unwrap_or("chacha20poly1305");
-    
-    let key_type = match key_type_str {
-        "chacha20poly1305" => KeyType::ChaCha20Poly1305,
-        "ed25519" => KeyType::Ed25519,
-        _ => KeyType::ChaCha20Poly1305,
-    };
-    
-    let response = match state.hades.call(
-        HadesMessage::GenerateKey { key_type },
-        ActorId::local("api"),
-    ).await {
-        Ok(HadesResponse::KeyGenerated { key_id, key_type }) => {
-            serde_json::json!({
-                "success": true,
-                "key_id": key_id,
-                "key_type": format!("{:?}", key_type)
-            })
-        }
-        Ok(HadesResponse::Error { message }) => {
-            serde_json::json!({
-                "success": false,
-                "error": message
-            })
-        }
-        Err(_) => {
-            serde_json::json!({
-                "success": false,
-                "error": "Failed to communicate with Hades"
-            })
-        }
-    };
-    
-    (StatusCode::OK, Json(response))
-}
-
-/// Get monitoring status
-async fn monitoring_status(State(state): State<AppState>) -> (StatusCode, Json<serde_json::Value>) {
-    let response = serde_json::json!({
-        "system": "olympus_v11",
-        "monitoring": {
-            "fault_tolerance": "active",
-            "health_checks": "operational",
-            "security": "enabled",
-            "metrics": "collecting"
-        },
-        "timestamp": chrono::Utc::now().to_rfc3339()
-    });
-    
-    (StatusCode::OK, Json(response))
 }
 
 // === V12 CLINICAL ENDPOINT HANDLERS ===
@@ -724,7 +566,7 @@ async fn delete_patient_v12(
     State(state): State<AppState>,
     Path(id): Path<String>,
 ) -> StatusCode {
-    match state.poseidon.delete_patient(&id, false).await {
+    match state.poseidon.delete_patient(&id).await {
         Ok(_) => {
             tracing::info!("✅ V12: Deleted patient {}", id);
             StatusCode::NO_CONTENT
@@ -868,7 +710,7 @@ async fn create_patient_v12(
 async fn get_patients_v12(
     State(state): State<AppState>,
 ) -> Json<Vec<Patient>> {
-    match state.poseidon.get_all_patients(None, None).await {
+    match state.poseidon.get_all_patients::<Patient>().await {
         Ok(patients) => Json(patients),
         Err(e) => {
             tracing::error!("❌ V12: Failed to get patients: {}", e);

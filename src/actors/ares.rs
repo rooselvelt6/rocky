@@ -16,7 +16,7 @@ pub struct Conflict {
     pub resolution_strategy: Option<ResolutionStrategy>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Hash, PartialEq, Eq)]
 pub enum ConflictType {
     DataConflict,
     ResourceContention,

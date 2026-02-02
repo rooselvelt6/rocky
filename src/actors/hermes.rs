@@ -32,7 +32,7 @@ pub enum HermesMessageType {
     EmergencyBroadcast,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Hash, PartialEq, Eq)]
 pub enum MessagePriority {
     Low,
     Normal,

@@ -2,10 +2,10 @@
 /// Gestión de archivos y recursos del sistema
 
 use serde::{Deserialize, Serialize};
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Duration, Utc};
 use std::collections::HashMap;
-use std::path::{Path, PathBuf};
-use tokio::fs;
+use std::io::{Read, Write};
+use std::path::PathBuf;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FileResource {
@@ -20,7 +20,7 @@ pub struct FileResource {
     pub version: u32,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Hash, PartialEq, Eq)]
 pub enum ResourceType {
     PatientData,
     ClinicalAssessment,
@@ -51,7 +51,7 @@ pub struct FileOperation {
     pub affected_bytes: u64,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum FileOperationType {
     Created,
     Read,
@@ -62,7 +62,7 @@ pub enum FileOperationType {
     Accessed,
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum FileOperationStatus {
     Success,
     Failed,
@@ -96,7 +96,7 @@ pub struct StorageStatistics {
 
 impl DemeterV12 {
     pub fn new() -> Self {
-        let base_dir = std::env::current_dir().unwrap_or_else(|| PathBuf::from("/tmp/olympus"));
+        let base_dir = std::env::current_dir().unwrap_or_else(|_| PathBuf::from("/tmp/olympus"));
         
         Self {
             resources: HashMap::new(),
@@ -119,13 +119,12 @@ impl DemeterV12 {
     }
 
     pub fn with_base_directory(mut self, base_dir: PathBuf) -> Self {
-        self.base_directory = base_dir;
-        
         // Crear directorios necesarios
         if let Err(e) = std::fs::create_dir_all(&base_dir) {
             tracing::error!("🌾 Demeter: Error creando directorio base: {}", e);
         }
         
+        self.base_directory = base_dir;
         self
     }
 
@@ -141,14 +140,12 @@ impl DemeterV12 {
         }
 
         let file_size = if let Some(file_data) = data {
-            std::fs::write(&resource_path, file_data).await.map_err(|e| format!("Error escribiendo archivo: {}", e))?;
+            std::fs::write(&resource_path, file_data).map_err(|e| format!("Error escribiendo archivo: {}", e))?;
             file_data.len() as u64
         } else {
-            std::fs::File::create(&resource_path).await
-                .map_err(|e| format!("Error creando archivo: {}", e))?
-                .write_all("".as_bytes()).await
-                .map_err(|e| format!("Error escribiendo contenido por defecto: {}", e))?;
-            1
+            std::fs::File::create(&resource_path)
+                .map_err(|e| format!("Error creando archivo: {}", e))?;
+            0
         };
 
         // Crear el recurso
@@ -176,7 +173,7 @@ impl DemeterV12 {
         };
 
         self.operation_history.push(operation);
-        self.resources.insert(resource_id, resource);
+        self.resources.insert(resource_id.clone(), resource);
         
         // Actualizar estadísticas
         self.update_storage_stats();
@@ -186,73 +183,80 @@ impl DemeterV12 {
     }
 
     pub async fn read_resource(&mut self, resource_id: &str) -> Result<Vec<u8>, String> {
+        let path = if let Some(resource) = self.resources.get(resource_id) {
+            resource.path.clone()
+        } else {
+            return Err(format!("Recurso {} no encontrado", resource_id));
+        };
+        
+        // Actualizar contador de acceso
+        self.increment_access_count(resource_id);
+        
+        // Actualizar timestamp de último acceso
         if let Some(resource) = self.resources.get(resource_id) {
-            // Actualizar contador de acceso
-            self.increment_access_count(resource_id);
-            
-            // Actualizar timestamp de último acceso
             let mut updated_resource = resource.clone();
             updated_resource.last_modified = Utc::now();
             self.resources.insert(resource_id.to_string(), updated_resource);
-            
-            // Leer archivo
-            std::fs::read(&resource.path).await
-                .map_err(|e| format!("Error leyendo archivo {}: {}", resource.path.display(), e))
-        } else {
-            Err(format!("Recurso {} no encontrado", resource_id))
         }
+        
+        // Leer archivo
+        std::fs::read(&path)
+            .map_err(|e| format!("Error leyendo archivo {}: {}", path.display(), e))
     }
 
     pub async fn update_resource(&mut self, resource_id: &str, data: Option<&[u8]>) -> Result<(), String> {
-        if let Some(resource) = self.resources.get(resource_id) {
-            let file_size = if let Some(file_data) = data {
-                std::fs::write(&resource.path, file_data).await
-                    .map_err(|e| format!("Error actualizando archivo: {}", e))?;
-                file_data.len() as u64
-            } else {
-                // Truncar archivo existente
-                let mut file = std::fs::File::options().write(true).open(&resource.path).await
-                    .map_err(|e| format!("Error abriendo archivo para escritura: {}", e))?;
-                
-                let mut existing_data = Vec::new();
-                file.read_to_end(&mut existing_data).await
-                    .map_err(|e| format!("Error leyendo contenido existente: {}", e))?;
-                
-                file.set_len(0);
-                file.write_all(&existing_data).await
-                    .map_err(|e| format!("Error escribiendo contenido truncado: {}", e))?;
-                
-                existing_data.len() as u64
-            };
-
-            // Actualizar recurso
-            let mut updated_resource = resource.clone();
-            updated_resource.last_modified = Utc::now();
-            updated_resource.size_bytes = file_size;
-            updated_resource.version += 1;
-            updated_resource.metadata.insert("last_updated_by".to_string(), "demeter".to_string());
-            
-            self.resources.insert(resource_id.to_string(), updated_resource);
-            
-            // Registrar operación
-            let operation = FileOperation {
-                operation_type: FileOperationType::Updated,
-                resource_id: resource_id.to_string(),
-                timestamp: Utc::now(),
-                performed_by: "demeter".to_string(),
-                status: FileOperationStatus::Success,
-                details: Some(format!("Recurso {} actualizado", resource.path.display())),
-                affected_bytes: file_size,
-            };
-
-            self.operation_history.push(operation);
-            self.update_storage_stats();
-            
-            tracing::info!("🌾 Demeter: Recurso {} actualizado", resource_id);
-            Ok(())
+        let resource = if let Some(r) = self.resources.get(resource_id) {
+            r.clone()
         } else {
-            Err(format!("Recurso {} no encontrado", resource_id))
-        }
+            return Err(format!("Recurso {} no encontrado", resource_id));
+        };
+        
+        let path = resource.path.clone();
+        let file_size = if let Some(file_data) = data {
+            std::fs::write(&path, file_data)
+                .map_err(|e| format!("Error actualizando archivo: {}", e))?;
+            file_data.len() as u64
+        } else {
+            // Truncar archivo existente
+            let mut file = std::fs::File::options().write(true).open(&path)
+                .map_err(|e| format!("Error abriendo archivo para escritura: {}", e))?;
+            
+            let mut existing_data = Vec::new();
+            file.read_to_end(&mut existing_data)
+                .map_err(|e| format!("Error leyendo contenido existente: {}", e))?;
+            
+            file.set_len(0);
+            file.write_all(&existing_data)
+                .map_err(|e| format!("Error escribiendo contenido truncado: {}", e))?;
+            
+            existing_data.len() as u64
+        };
+
+        // Actualizar recurso
+        let mut updated_resource = resource.clone();
+        updated_resource.last_modified = Utc::now();
+        updated_resource.size_bytes = file_size;
+        updated_resource.version += 1;
+        updated_resource.metadata.insert("last_updated_by".to_string(), "demeter".to_string());
+        
+        self.resources.insert(resource_id.to_string(), updated_resource);
+        
+        // Registrar operación
+        let operation = FileOperation {
+            operation_type: FileOperationType::Updated,
+            resource_id: resource_id.to_string(),
+            timestamp: Utc::now(),
+            performed_by: "demeter".to_string(),
+            status: FileOperationStatus::Success,
+            details: Some(format!("Recurso {} actualizado", path.display())),
+            affected_bytes: file_size,
+        };
+
+        self.operation_history.push(operation);
+        self.update_storage_stats();
+        
+        tracing::info!("🌾 Demeter: Recurso {} actualizado", resource_id);
+        Ok(())
     }
 
     pub async fn delete_resource(&mut self, resource_id: &str) -> Result<(), String> {
@@ -272,7 +276,15 @@ impl DemeterV12 {
             
             // Mover a archivo si está configurado para archivar
             if let Some(policy) = self.archive_policies.get(&resource.resource_type) {
-                if policy.auto_archive {
+                if policy.auto_cleanup {
+                    // Eliminar permanentemente
+                    if let Err(e) = std::fs::remove_file(&resource.path) {
+                        tracing::error!("🌾 Demeter: Error eliminando recurso {}: {}", resource_id, e);
+                        return Err(format!("Error eliminando recurso: {}", e));
+                    }
+                    
+                    tracing::info!("🌾 Demeter: Recurso {} eliminado permanentemente", resource_id);
+                } else {
                     if let Err(e) = self.archive_resource(&resource, policy).await {
                         tracing::error!("🌾 Demeter: Error archivando recurso {}: {}", resource_id, e);
                         return Err(e);
@@ -282,7 +294,7 @@ impl DemeterV12 {
                 }
             } else {
                 // Eliminar permanentemente
-                if let Err(e) = std::fs::remove_file(&resource.path).await {
+                if let Err(e) = std::fs::remove_file(&resource.path) {
                     tracing::error!("🌾 Demeter: Error eliminando recurso {}: {}", resource_id, e);
                     return Err(format!("Error eliminando recurso: {}", e));
                 }
@@ -297,7 +309,7 @@ impl DemeterV12 {
         }
     }
 
-    async fn archive_resource(&self, resource: &FileResource, policy: &ArchivePolicy) -> Result<(), String> {
+    async fn archive_resource(&self, resource: &FileResource, _policy: &ArchivePolicy) -> Result<(), String> {
         let archive_dir = self.base_directory.join("archive");
         
         // Crear directorio de archivos si no existe
@@ -307,17 +319,20 @@ impl DemeterV12 {
         
         // Crear nombre de archivo archivado
         let timestamp = Utc::now().format("%Y%m%d_%H%M%S");
-        let file_name = resource.path.file_name().unwrap_or("unknown");
-        let archive_name = format!("{}_v{}.{}", 
+        let file_name = resource.path.file_name()
+            .and_then(|name| name.to_str())
+            .unwrap_or("unknown");
+        let archive_name = format!("{}_v{}_{}", 
                                      file_name, 
-                                     resource.version);
-        let archive_path = archive_dir.join(format!("{}.{}", resource.resource_type, archive_name));
+                                     resource.version,
+                                     timestamp);
+        let archive_path = archive_dir.join(format!("{:?}_{}", resource.resource_type, archive_name));
         
         // Mover archivo a archivo
-        std::fs::rename(&resource.path, &archive_path).await
+        std::fs::rename(&resource.path, &archive_path)
             .map_err(|e| format!("Error archivando recurso {}: {}", resource.path.display(), e))?;
         
-        tracing::info!("🌾 Demeter: Recurso {} archivado como {}", resource.name, archive_name);
+        tracing::info!("🌾 Demeter: Recurso {} archivado como {}", resource.id, archive_name);
         Ok(())
     }
 
@@ -328,7 +343,7 @@ impl DemeterV12 {
     pub fn get_resources_by_type(&self, resource_type: &ResourceType) -> Vec<&FileResource> {
         self.resources
             .values()
-            .filter(|resource| resource.resource_type == resource_type)
+            .filter(|resource| resource.resource_type == *resource_type)
             .collect()
     }
 
@@ -359,15 +374,17 @@ impl DemeterV12 {
     }
 
     pub fn set_archive_policy(&mut self, resource_type: ResourceType, policy: ArchivePolicy) {
+        let resource_type_name = format!("{:?}", resource_type);
         self.archive_policies.insert(resource_type, policy);
-        tracing::info!("🌾 Demeter: Política de archivado actualizada para {:?}", resource_type);
+        tracing::info!("🌾 Demeter: Política de archivado actualizada para {:?}", resource_type_name);
     }
 
     pub async fn cleanup_old_files(&mut self) -> Result<u64, String> {
         let cutoff_time = Utc::now();
         let mut deleted_count = 0u64;
+        let resources_to_check: Vec<FileResource> = self.resources.values().cloned().collect();
         
-        for resource in self.resources.clone() {
+        for resource in resources_to_check {
             let policy = self.archive_policies.get(&resource.resource_type);
             
             if let Some(policy) = policy {
@@ -376,15 +393,20 @@ impl DemeterV12 {
                 if resource.last_modified < retention_cutoff {
                     // Eliminar versiones antiguas
                     let versions_to_keep = policy.max_versions;
-                    let resource_base_name = resource.path.file_stem().unwrap_or("unknown");
+                    let resource_base_name = resource.path.file_stem()
+                        .and_then(|name| name.to_str())
+                        .unwrap_or("unknown")
+                        .to_string();
                     
                     // Encontrar todos los archivos con el mismo nombre base
                     let mut archive_files = Vec::new();
-                    if let Ok(entries) = std::fs::read_dir(&resource.path.parent().unwrap()).await {
-                        for entry in entries {
-                            if let Ok(file_name) = entry.file_name() {
-                                if file_name.starts_with(&resource_base_name) {
-                                    archive_files.push(file_name);
+                    if let Some(parent) = resource.path.parent() {
+                        if let Ok(entries) = std::fs::read_dir(parent) {
+                            for entry in entries.flatten() {
+                                if let Some(file_name) = entry.file_name().to_str() {
+                                    if file_name.starts_with(&resource_base_name) {
+                                        archive_files.push(file_name.to_string());
+                                    }
                                 }
                             }
                         }
@@ -393,22 +415,19 @@ impl DemeterV12 {
                     // Ordenar por nombre para identificar versiones
                     archive_files.sort();
                     
-                    // Mantener solo las versiones más recientes
-                    let files_to_keep = archive_files.iter()
-                        .rev() // Más reciente primero
-                        .take(versions_to_keep as usize);
-                    
                     // Eliminar archivos viejos
-                    for file_to_delete in archive_files.iter().skip(versions_to_keep as usize) {
-                        let file_path = resource.path.parent().unwrap().join(file_to_delete);
-                        if std::fs::remove_file(&file_path).await.is_ok() {
-                            deleted_count += 1;
+                    if let Some(parent) = resource.path.parent() {
+                        for file_to_delete in archive_files.iter().skip(versions_to_keep as usize) {
+                            let file_path = parent.join(file_to_delete);
+                            if std::fs::remove_file(&file_path).is_ok() {
+                                deleted_count += 1;
+                            }
                         }
                     }
                     
                     // Eliminar el recurso actual si está más viejo que las versiones guardadas
                     if archive_files.is_empty() || resource.last_modified < retention_cutoff {
-                        if let Err(e) = std::fs::remove_file(&resource.path).await {
+                        if let Err(e) = std::fs::remove_file(&resource.path) {
                             tracing::error!("🌾 Demeter: Error eliminando archivo antiguo: {}", e);
                         } else {
                             deleted_count += 1;
@@ -445,29 +464,30 @@ impl DemeterV12 {
     }
 
     fn update_storage_stats(&mut self) {
-        let mut stats = self.storage_stats;
+        let mut stats = self.storage_stats.clone();
         
         stats.total_files = self.resources.len() as u64;
         stats.total_size_bytes = self.resources.values().map(|r| r.size_bytes).sum();
         stats.resource_type_counts.clear();
         
-        let mut oldest_date = None;
-        let mut newest_date = None;
-        let mut accessed_count = 0;
-        let mut created_count = 0;
-        let mut updated_count = 0;
-        let mut deleted_count = 0;
+        let mut oldest_date: Option<DateTime<Utc>> = None;
+        let mut newest_date: Option<DateTime<Utc>> = None;
+        let mut accessed_count: u64 = 0;
+        let mut created_count: u64 = 0;
+        let mut updated_count: u64 = 0;
+        let mut deleted_count: u64 = 0;
         
         for resource in self.resources.values() {
-            stats.resource_type_counts.insert(format!("{:?}", resource.resource_type), 
-                                             *stats.resource_type_counts.get(&format!("{:?}", resource.resource_type)).unwrap_or(0) + 1);
+            let type_key = format!("{:?}", resource.resource_type);
+            let current_count = stats.resource_type_counts.get(&type_key).copied().unwrap_or(0);
+            stats.resource_type_counts.insert(type_key, current_count + 1);
             
-            oldest_date = std::cmp::min(oldest_date, Some(resource.created_at));
-            newest_date = std::cmp::max(newest_date, Some(resource.created_at));
+            oldest_date = oldest_date.map(|d| d.min(resource.created_at)).or(Some(resource.created_at));
+            newest_date = newest_date.map(|d| d.max(resource.created_at)).or(Some(resource.created_at));
             
             accessed_count += resource.access_count;
             created_count += 1;
-            updated_count += resource.version.saturating_sub(1) as u32;
+            updated_count += resource.version.saturating_sub(1) as u64;
             
             // Contar operaciones del historial
             for operation in &self.operation_history {
@@ -565,7 +585,7 @@ impl DemeterV12 {
         &self.storage_stats
     }
 
-    pub fn get_operation_history(&self, limit: Option<usize>) -> Vec<&FileOperation> {
+    pub fn get_operation_history(&self, limit: Option<usize>) -> Vec<FileOperation> {
         let mut history = self.operation_history.clone();
         history.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
         
@@ -573,18 +593,18 @@ impl DemeterV12 {
             history.truncate(limit);
         }
         
-        history.iter().collect()
+        history
     }
 
     pub fn cleanup_temporary_files(&mut self) -> Result<u64, String> {
         let mut deleted_count = 0u64;
         
         let temp_dir = self.base_directory.join("temp");
-        if let Ok(entries) = std::fs::read_dir(&temp_dir).await {
-            for entry in entries {
+        if let Ok(entries) = std::fs::read_dir(&temp_dir) {
+            for entry in entries.flatten() {
                 let file_path = entry.path();
                 if file_path.is_file() {
-                    if let Err(e) = std::fs::remove_file(&file_path).await {
+                    if let Err(e) = std::fs::remove_file(&file_path) {
                         tracing::warn!("🌾 Demeter: Error eliminando archivo temporal: {}", e);
                     } else {
                         deleted_count += 1;
@@ -603,7 +623,7 @@ impl DemeterV12 {
     pub fn get_file_path(&self, resource_id: &str) -> Option<String> {
         self.resources
             .get(resource_id)
-            .map(|r| r.path.to_string_lossy())
+            .map(|r| r.path.to_string_lossy().to_string())
     }
 }
 

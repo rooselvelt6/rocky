@@ -4204,6 +4204,7 @@ dependencies = [
  "ractor",
  "rand 0.8.5",
  "rayon",
+ "regex",
  "reqwasm",
  "retry",
  "ring",

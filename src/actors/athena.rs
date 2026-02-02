@@ -17,7 +17,7 @@ pub struct ClinicalInsight {
     pub timestamp: DateTime<Utc>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Hash, PartialEq, Eq)]
 pub enum ScaleType {
     Glasgow,
     Apache,

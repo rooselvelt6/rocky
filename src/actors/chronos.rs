@@ -21,7 +21,7 @@ pub struct ScheduledTask {
     pub retry_count: u32,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum TaskType {
     PatientAssessmentReminder,
     SystemMaintenance,
@@ -32,7 +32,7 @@ pub enum TaskType {
     SecurityScan,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum TaskPriority {
     Low,
     Normal,
@@ -40,7 +40,7 @@ pub enum TaskPriority {
     Critical,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum TaskStatus {
     Pending,
     Running,
@@ -58,7 +58,7 @@ pub struct TimeEvent {
     pub details: serde_json::Value,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum TimeEventType {
     TaskScheduled,
     TaskStarted,
@@ -75,7 +75,7 @@ pub struct ChronosV12 {
     time_events: Vec<TimeEvent>,
     time_zone: String,
     system_start_time: DateTime<Utc>,
-    tick_interval: Duration,
+    tick_interval: tokio::time::Duration,
 }
 
 impl ChronosV12 {
@@ -88,7 +88,7 @@ impl ChronosV12 {
             time_events: Vec::new(),
             time_zone: "UTC".to_string(),
             system_start_time: Utc::now(),
-            tick_interval: Duration::seconds(1),
+            tick_interval: tokio::time::Duration::from_secs(1),
         }
     }
 
@@ -130,7 +130,7 @@ impl ChronosV12 {
         self.time_events.push(event);
         
         // Programar la tarea
-        match self.scheduler.send(task).await {
+        match self.scheduler.send(task) {
             Ok(_) => {
                 tracing::info!("⏰️ Chronos: Tarea {} programada para {}", task_id, scheduled_time);
                 Ok(task_id)
@@ -151,7 +151,7 @@ impl ChronosV12 {
             "reminder_type": "assessment_due",
         });
         
-        self.schedule_task(TaskType::PatientAssessmentReminder, delay, &description, TaskPriority::Normal, payload).await
+        self.schedule_task(TaskType::PatientAssessmentReminder, delay, &description, TaskPriority::Normal, payload)
     }
 
     pub async fn schedule_system_maintenance(&mut self, description: &str, delay_hours: u64) -> Result<String, String> {
@@ -161,7 +161,7 @@ impl ChronosV12 {
             "description": description,
         });
         
-        self.schedule_task(TaskType::SystemMaintenance, delay, &description, TaskPriority::Low, payload).await
+        self.schedule_task(TaskType::SystemMaintenance, delay, &description, TaskPriority::Low, payload)
     }
 
     pub async fn schedule_data_backup(&mut self, backup_type: &str, delay_hours: u64) -> Result<String, String> {
@@ -172,7 +172,7 @@ impl ChronosV12 {
             "backup_target": "all_data",
         });
         
-        self.schedule_task(TaskType::DataBackup, delay, &description, TaskPriority::Normal, payload).await
+        self.schedule_task(TaskType::DataBackup, delay, &description, TaskPriority::Normal, payload)
     }
 
     pub async fn schedule_health_check(&mut self, interval_hours: u64) -> Result<String, String> {
@@ -183,7 +183,7 @@ impl ChronosV12 {
             "interval_hours": interval_hours,
         });
         
-        self.schedule_task(TaskType::HealthCheck, delay, &description, TaskPriority::Low, payload).await
+        self.schedule_task(TaskType::HealthCheck, delay, &description, TaskPriority::Low, payload)
     }
 
     pub async fn start_scheduler(&mut self, mut task_receiver: mpsc::UnboundedReceiver<ScheduledTask>) {
@@ -327,7 +327,7 @@ impl ChronosV12 {
                 tracing::info!("⏰️ Chronos: Ejecutando mantenimiento - {}", task.description);
                 
                 // Simular trabajo de mantenimiento
-                tokio::time::sleep(Duration::seconds(5)).await;
+                tokio::time::sleep(tokio::time::Duration::from_secs(5)).await;
                 
                 TaskExecutionResult {
                     status: TaskStatus::Completed,
@@ -339,7 +339,7 @@ impl ChronosV12 {
                 tracing::info!("⏰️ Chronos: Ejecutando backup - {}", task.description);
                 
                 // Simular proceso de backup
-                tokio::time::sleep(Duration::seconds(10)).await;
+                tokio::time::sleep(tokio::time::Duration::from_secs(10)).await;
                 
                 TaskExecutionResult {
                     status: TaskStatus::Completed,
@@ -351,7 +351,7 @@ impl ChronosV12 {
                 tracing::info!("⏰️ Chronos: Ejecutando health check");
                 
                 // Simular chequeos de salud
-                tokio::time::sleep(Duration::seconds(2)).await;
+                tokio::time::sleep(tokio::time::Duration::from_secs(2)).await;
                 
                 TaskExecutionResult {
                     status: TaskStatus::Completed,
@@ -363,7 +363,7 @@ impl ChronosV12 {
                 tracing::info!("⏰️ Chronos: Generando reporte - {}", task.description);
                 
                 // Simular generación de reporte
-                tokio::time::sleep(Duration::seconds(3)).await;
+                tokio::time::sleep(tokio::time::Duration::from_secs(3)).await;
                 
                 TaskExecutionResult {
                     status: TaskStatus::Completed,
@@ -375,7 +375,7 @@ impl ChronosV12 {
                 tracing::info!("⏰️ Chronos: Ejecutando limpieza - {}", task.description);
                 
                 // Simular limpieza
-                tokio::time::sleep(Duration::seconds(1)).await;
+                tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
                 
                 TaskExecutionResult {
                     status: TaskStatus::Completed,
@@ -387,7 +387,7 @@ impl ChronosV12 {
                 tracing::info!("⏰️ Chronos: Ejecutando escaneo de seguridad - {}", task.description);
                 
                 // Simular escaneo de seguridad
-                tokio::time::sleep(Duration::seconds(15)).await;
+                tokio::time::sleep(tokio::time::Duration::from_secs(15)).await;
                 
                 TaskExecutionResult {
                     status: TaskStatus::Completed,
@@ -411,7 +411,7 @@ impl ChronosV12 {
     }
 
     pub fn get_completed_tasks(&self, limit: Option<usize>) -> Vec<&ScheduledTask> {
-        let mut completed = self.task_queue.iter().filter(|task| matches!(task.status, TaskStatus::Completed)).collect();
+        let mut completed: Vec<&ScheduledTask> = self.task_queue.iter().filter(|task| matches!(task.status, TaskStatus::Completed)).collect();
         
         // Ordenar por tiempo de completación (más reciente primero)
         completed.sort_by(|a, b| b.execution_end.cmp(&a.execution_end.unwrap()));
@@ -423,12 +423,12 @@ impl ChronosV12 {
         completed
     }
 
-    pub fn get_time_events(&self, limit: Option<usize>, event_type: Option<TimeEventType>) -> Vec<&TimeEvent> {
+    pub fn get_time_events(&self, limit: Option<usize>, event_type: Option<TimeEventType>) -> Vec<TimeEvent> {
         let mut events = self.time_events.clone();
         
         // Filtrar por tipo de evento si se especifica
         if let Some(filter_type) = event_type {
-            events.retain(|event| matches!(event.event_type, filter_type));
+            events.retain(|event| event.event_type == filter_type);
         }
         
         // Ordenar por timestamp (más reciente primero)
@@ -439,7 +439,7 @@ impl ChronosV12 {
             events.truncate(limit);
         }
         
-        events.iter().collect()
+        events
     }
 
     pub fn get_task_statistics(&self) -> TaskStatistics {
@@ -462,8 +462,8 @@ impl ChronosV12 {
             completed_count,
             failed_count,
             priority_counts,
-            oldest_task: self.task_queue.iter().min_by_key(|task| task.created_at),
-            newest_task: self.task_queue.iter().max_by_key(|task| task.created_at),
+            oldest_task_id: self.task_queue.iter().min_by_key(|task| task.created_at).map(|t| t.id.clone()),
+            newest_task_id: self.task_queue.iter().max_by_key(|task| task.created_at).map(|t| t.id.clone()),
         }
     }
 
@@ -504,8 +504,8 @@ pub struct TaskStatistics {
     pub completed_count: usize,
     pub failed_count: usize,
     pub priority_counts: HashMap<String, u32>,
-    pub oldest_task: Option<&ScheduledTask>,
-    pub newest_task: Option<&ScheduledTask>,
+    pub oldest_task_id: Option<String>,
+    pub newest_task_id: Option<String>,
 }
 
 impl Default for ChronosV12 {

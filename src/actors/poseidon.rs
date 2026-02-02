@@ -36,7 +36,7 @@ impl PoseidonV12 {
 
     pub async fn create_patient<T>(&self, patient_data: T) -> Result<Option<T>, Box<dyn std::error::Error>>
     where
-        T: serde::Serialize + for<'de> serde::Deserialize<'de>,
+        T: serde::Serialize + for<'de> serde::Deserialize<'de> + Send + 'static,
     {
         let result: Option<T> = self.db.create("patients").content(patient_data).await?;
         Ok(result)
@@ -44,7 +44,7 @@ impl PoseidonV12 {
 
     pub async fn get_all_patients<T>(&self) -> Result<Vec<T>, Box<dyn std::error::Error>>
     where
-        T: for<'de> serde::Deserialize<'de>,
+        T: for<'de> serde::Deserialize<'de> + Send + 'static,
     {
         let patients: Vec<T> = self.db.select("patients").await?;
         Ok(patients)
@@ -52,31 +52,31 @@ impl PoseidonV12 {
 
     pub async fn get_patient<T>(&self, patient_id: &str) -> Result<Option<T>, Box<dyn std::error::Error>>
     where
-        T: for<'de> serde::Deserialize<'de>,
+        T: for<'de> serde::Deserialize<'de> + Send + 'static,
     {
-        let id = patient_id.parse::<surrealdb::opt::RecordId>()?;
+        let id = patient_id.parse::<surrealdb::RecordId>()?;
         let patient: Option<T> = self.db.select(id).await?;
         Ok(patient)
     }
 
     pub async fn update_patient<T>(&self, patient_id: &str, patient_data: T) -> Result<Option<T>, Box<dyn std::error::Error>>
     where
-        T: serde::Serialize + for<'de> serde::Deserialize<'de>,
+        T: serde::Serialize + for<'de> serde::Deserialize<'de> + Send + 'static,
     {
-        let id = patient_id.parse::<surrealdb::opt::RecordId>()?;
+        let id = patient_id.parse::<surrealdb::RecordId>()?;
         let result: Option<T> = self.db.update(id).content(patient_data).await?;
         Ok(result)
     }
 
     pub async fn delete_patient(&self, patient_id: &str) -> Result<(), Box<dyn std::error::Error>> {
-        let id = patient_id.parse::<surrealdb::opt::RecordId>()?;
+        let id = patient_id.parse::<surrealdb::RecordId>()?;
         self.db.delete::<Option<serde_json::Value>>(id).await?;
         Ok(())
     }
 
     pub async fn create_assessment<T>(&self, table_name: &str, assessment_data: T) -> Result<Option<T>, Box<dyn std::error::Error>>
     where
-        T: serde::Serialize + for<'de> serde::Deserialize<'de>,
+        T: serde::Serialize + for<'de> serde::Deserialize<'de> + Send + 'static,
     {
         let result: Option<T> = self.db.create(table_name).content(assessment_data).await?;
         Ok(result)
@@ -106,7 +106,7 @@ impl PoseidonV12 {
         
         let configs: Vec<SystemConfig> = self.db.select("system_config").await?;
         if configs.is_empty() {
-            let id = surrealdb::opt::RecordId::from(("system_config", "settings"));
+            let id = surrealdb::RecordId::from(("system_config", "settings"));
             let _: Option<SystemConfig> = self.db
                 .update(id)
                 .content(SystemConfig::default())

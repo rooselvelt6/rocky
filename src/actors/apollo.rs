@@ -16,7 +16,7 @@ pub struct ApolloEvent {
     pub metadata: HashMap<String, String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum ApolloEventType {
     SystemStart,
     SystemStop,

@@ -77,9 +77,10 @@ impl ArtemisV12 {
                                 _ => UserRole::Nurse,
                             };
                             
+                            let user_id = claims.sub.clone();
                             let user = AuthenticatedUser {
-                                id: claims.sub,
-                                username: claims.sub.clone(),
+                                id: user_id.clone(),
+                                username: user_id,
                                 role,
                             };
                             
