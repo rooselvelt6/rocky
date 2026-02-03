@@ -1,11 +1,11 @@
 // src/actors/poseidon/buffer.rs
-// OLYMPUS v13 - Poseidon Emergency Buffer
+// OLYMPUS v15 - Poseidon Emergency Buffer
 // Buffer de emergencia cuando la red falla (Valkey embedded)
 
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use uuid::Uuid;
-use std::time::Instant;
+use chrono::{DateTime, Utc};
 
 use super::ValkeyStore;
 
@@ -14,7 +14,7 @@ pub struct BufferedData {
     pub id: String,
     pub domain: super::DivineDomain,
     pub data: serde_json::Value,
-    pub timestamp: Instant,
+    pub timestamp: DateTime<Utc>,
     pub attempts: u32,
 }
 
@@ -24,7 +24,7 @@ impl BufferedData {
             id: Uuid::new_v4().to_string(),
             domain,
             data,
-            timestamp: Instant::now(),
+            timestamp: Utc::now(),
             attempts: 0,
         }
     }
@@ -73,6 +73,7 @@ impl EmergencyBuffer {
     }
     
     pub async fn increment_attempts(&self, id: &str) {
-        // In a real implementation, would update the buffered item
+        // En una implementación real, se actualizaría el item en Valkey
+        let _ = id;
     }
 }

@@ -1,12 +1,12 @@
 // src/actors/poseidon/async_writer.rs
-// OLYMPUS v13 - Poseidon Async Writer
+// OLYMPUS v15 - Poseidon Async Writer
 // Escritura asíncrona a SurrealDB con retry infinito
 
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
-use tokio::sync::mpsc;
 use std::time::Duration;
-use std::time::Instant;
+use tokio::sync::mpsc;
 use tracing::warn;
 
 use crate::infrastructure::SurrealStore;
@@ -16,7 +16,7 @@ pub struct WriteTask {
     pub id: String,
     pub table: String,
     pub data: serde_json::Value,
-    pub created_at: Instant,
+    pub created_at: DateTime<Utc>,
     pub attempts: u32,
 }
 
@@ -26,7 +26,7 @@ impl WriteTask {
             id: uuid::Uuid::new_v4().to_string(),
             table: table.to_string(),
             data,
-            created_at: Instant::now(),
+            created_at: Utc::now(),
             attempts: 0,
         }
     }
@@ -36,19 +36,17 @@ impl WriteTask {
 pub struct AsyncWriter {
     surreal: Option<Arc<SurrealStore>>,
     tx: mpsc::Sender<WriteTask>,
-    rx: mpsc::Receiver<WriteTask>,
     running: Arc<std::sync::atomic::AtomicBool>,
 }
 
 impl AsyncWriter {
     pub fn new() -> Self {
-        let (tx, rx) = mpsc::channel(1000);
+        let (tx, _rx) = mpsc::channel(1000);
         let running = Arc::new(std::sync::atomic::AtomicBool::new(true));
         
         Self {
             surreal: None,
             tx,
-            rx,
             running,
         }
     }
@@ -65,7 +63,10 @@ impl AsyncWriter {
     pub async fn start(&mut self) {
         let running = self.running.clone();
         let surreal = self.surreal.clone();
-        let mut rx = self.rx.clone();
+        // Create a new receiver for this task
+        let (tx, mut rx) = mpsc::channel(1000);
+        // Replace the sender with the new one
+        self.tx = tx;
         
         tokio::spawn(async move {
             while running.load(std::sync::atomic::Ordering::Relaxed) {

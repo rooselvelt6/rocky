@@ -84,6 +84,32 @@ pub trait Supervisable: Send + Sync {
     fn set_supervisor(&mut self, supervisor: GodName);
 }
 
+/// Errores de supervisión
+#[derive(Debug, Clone)]
+pub enum SupervisorError {
+    StartError(String),
+    StopError(String),
+    RestartError(String),
+    NotFound(String),
+    MaxRestartsExceeded(String),
+    StrategyError(String),
+}
+
+impl std::fmt::Display for SupervisorError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            SupervisorError::StartError(msg) => write!(f, "Start error: {}", msg),
+            SupervisorError::StopError(msg) => write!(f, "Stop error: {}", msg),
+            SupervisorError::RestartError(msg) => write!(f, "Restart error: {}", msg),
+            SupervisorError::NotFound(msg) => write!(f, "Not found: {}", msg),
+            SupervisorError::MaxRestartsExceeded(msg) => write!(f, "Max restarts exceeded: {}", msg),
+            SupervisorError::StrategyError(msg) => write!(f, "Strategy error: {}", msg),
+        }
+    }
+}
+
+impl std::error::Error for SupervisorError {}
+
 /// Métricas de supervisión
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SupervisionMetrics {

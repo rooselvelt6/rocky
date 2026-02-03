@@ -37,6 +37,7 @@ pub use supervisor_trait::{
     SupervisionMetrics,
     SupervisedActor,
     ActorSupervisionStatus,
+    SupervisorError,
 };
 
 pub use persistable::{
