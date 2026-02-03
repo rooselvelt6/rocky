@@ -17,3 +17,13 @@ pub mod models; // Also useful to share DB types if needed, but DB logic is back
 
 #[cfg(feature = "ssr")]
 pub mod services;
+
+// v13 Actor System Modules
+#[cfg(feature = "ssr")]
+pub mod traits;
+
+#[cfg(feature = "ssr")]
+pub mod errors;
+
+#[cfg(feature = "ssr")]
+pub mod infrastructure;

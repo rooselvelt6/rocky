@@ -1,91 +1,237 @@
-/// 🏛️ OLYMPUS v12 - EL PANTÉÓN DIVINO COMPLETO
+/// 🏛️ OLYMPUS v13 - EL PANTÉÓN DIVINO COMPLETO
 /// 20 dioses con dominios especializados bajo arquitectura OTP
-/// Cada dios basado en su mitología con funciones específicas
+/// Sistema autoregenerativo tolerante a fallos
 
 // 🔥 TRINIDAD SUPREMA (3 dioses)
-pub mod zeus;      // 🏛️ Zeus - Rey del Olimpo y Supervisor Principal
-pub mod hera;        // 👑 Hera - Reina de los Dioses, Guardiana de Invariantes
-pub mod hades;        // 🔱 Hades - Dios del Inframundo y Criptografía
+pub mod zeus;           // ⚡ Zeus - Rey del Olimpo y Supervisor Supremo
+pub mod erinyes;        // 🏹 Erinyes - Diosa de la Venganza y Recuperación
+pub mod poseidon;       // 🌊 Poseidón - Dios de los Mares y Flujo de Datos
 
 // 🏛️ DIOSITAS CLÍNICAS (4 dioses)
-pub mod athena;       // 🦉 Athena - Diosa de la Sabiduría y Estrategia Clínica
-pub mod apollo;        // ☀️ Apollo - Dios de las Artes, Música y Conocimiento
-pub mod artemis;       // 🏹 Artemis - Diosa de la Caza y Protección
-pub mod hermes;        // 👟 Hermes - Mensajero Divino y Rapidez
+pub mod athena;         // 🦉 Athena - Diosa de la Sabiduría Clínica
+pub mod apollo;         // ☀️ Apollo - Dios de las Artes y Eventos
+pub mod artemis;        // 🏹 Artemis - Diosa de la Caza y Búsqueda
+pub mod hermes;         // 👟 Hermes - Mensajero Divino y Routing
 
-// 🌊 DIOSITAS TÉCNICAS (4 dioses)
-pub mod poseidon;      // 🌊 Poseidón - Dios de los Mares y Bases de Datos
-pub mod demeter;       // 🌾 Demeter - Diosa de la Agricultura y Recursos
-pub mod dionysius;     // 🍷️ Dionisio - Dios del Vino, Fiestas y Análisis (implementación unificada)
+// 🔐 DIOSITAS DE SEGURIDAD (2 dioses)
+pub mod hades;          // 🔱 Hades - Dios del Inframundo y Seguridad
+pub mod hera;           // 👑 Hera - Reina de los Dioses y Validación
 
-// 🌊 DIOSITAS OPERACIONALES (6 dioses)
-pub mod iris;          // 🕊️ Iris - Diosa del Arcoíris y Comunicación
-pub mod ares;        // ⚔️ Ares - Dios de la Guerra y Conflictos
-pub mod aphrodite;      // 💕️ Aphrodite - Diosa de la Belleza y el Amor
+// ⚔️ DIOSITAS DE GOBIERNO (2 dioses)
+pub mod ares;           // ⚔️ Ares - Dios de la Guerra y Conflictos
+pub mod hefesto;        // 🔥 Hefesto - Dios de la Forja y Configuración
 
-// 🌊 DIOSITAS SISTEMAS (6 dioses)
-pub mod chronos;        // ⏰️ Chronos - Dios del Tiempo y Destino
-pub mod hefesto;        // 🔥 Hefesto - Dios de la Forja y Sistemas
-pub mod hestia;        // 🏛️ Hestia - Diosa del Hogar y Configuración
-pub mod erinyes;      // 🏹 Erinyes - Diosas de la Venganza y Justicia Retributiva
-pub mod moirai;       // 🧵 Moirai - Diosas del Destino y Hilos de la Vida
-pub mod chaos;        // 🌀 Chaos - Dios del Caos y Testing
-pub mod aurora;       // 🌅 Aurora - Diosa del Amanecer y Nuevos Comienzos
+// ⏰️ DIOSITAS DE TIEMPO (1 dios)
+pub mod chronos;        // ⏰️ Chronos - Dios del Tiempo y Scheduling
 
-// Actor interfaces for external systems
+// 🧵 DIOSITAS DE DESTINO (1 dios)
+pub mod moirai;         // 🧵 Moirai - Diosas del Destino y Predicciones
+
+// 🌀 DIOSITAS DE CAOS (1 dios)
+pub mod chaos;          // 🌀 Chaos - Dios del Caos y Testing
+
+// 🌅 DIOSITAS DE ESPERANZA (1 dios)
+pub mod aurora;         // 🌅 Aurora - Diosa del Amanecer y Nuevos Inicios
+
+// 💕 DIOSITAS DE BELLEZA (1 dios)
+pub mod aphrodite;      // 💕 Aphrodite - Diosa de la Belleza y UI
+
+// 🕊️ DIOSITAS DE COMUNICACIÓN (1 dios)
+pub mod iris;           // 🕊️ Iris - Diosa del Arcoíris y Comunicaciones
+
+// 🌾 DIOSITAS DE RECURSOS (1 dios)
+pub mod demeter;        // 🌾 Demeter - Diosa de la Agricultura y Recursos
+
+// 🍷 DIOSITAS DE ANÁLISIS (1 dios)
+pub mod dionysus;       // 🍷 Dionisio - Dios del Vino y Análisis
+
+// 🏠 PERSISTENCIA (1 dios)
+pub mod hestia;         // 🏠 Hestia - Diosa del Hogar y Persistencia
+
+// Actor interfaces for v13
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use std::sync::Arc;
+use tokio::sync::RwLock;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+// Enum de todos los nombres de dioses
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum GodName {
-    Zeus, Hera, Hades, Poseidon, Artemis, Apollo, Athena, Ares, Aphrodite, Hermes,
-    Chronos, Hestia, Demeter, Dionysus, Iris, Erinyes, Moirai, Chaos, Aurora
+    Zeus,
+    Erinyes,
+    Poseidon,
+    Athena,
+    Apollo,
+    Artemis,
+    Hermes,
+    Hades,
+    Hera,
+    Ares,
+    Hefesto,
+    Chronos,
+    Moirai,
+    Chaos,
+    Aurora,
+    Aphrodite,
+    Iris,
+    Demeter,
+    Dionysus,
+    Hestia,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+impl std::fmt::Display for GodName {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            GodName::Zeus => write!(f, "Zeus"),
+            GodName::Erinyes => write!(f, "Erinyes"),
+            GodName::Poseidon => write!(f, "Poseidon"),
+            GodName::Athena => write!(f, "Athena"),
+            GodName::Apollo => write!(f, "Apollo"),
+            GodName::Artemis => write!(f, "Artemis"),
+            GodName::Hermes => write!(f, "Hermes"),
+            GodName::Hades => write!(f, "Hades"),
+            GodName::Hera => write!(f, "Hera"),
+            GodName::Ares => write!(f, "Ares"),
+            GodName::Hefesto => write!(f, "Hefesto"),
+            GodName::Chronos => write!(f, "Chronos"),
+            GodName::Moirai => write!(f, "Moirai"),
+            GodName::Chaos => write!(f, "Chaos"),
+            GodName::Aurora => write!(f, "Aurora"),
+            GodName::Aphrodite => write!(f, "Aphrodite"),
+            GodName::Iris => write!(f, "Iris"),
+            GodName::Demeter => write!(f, "Demeter"),
+            GodName::Dionysus => write!(f, "Dionysus"),
+            GodName::Hestia => write!(f, "Hestia"),
+        }
+    }
+}
+
+// Dominio de cada dios
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum DivineDomain {
-    SystemConfig, JusticeAndRetribution, DestinyAndFate, ChaosEngineering, HopeAndRenewal,
-    DataAnalysis, Security, Communication, Warfare, Strategy, Healing,
-    TimeManagement, ResourceManagement, PerformanceMonitoring, Innovation
+    Governance,          // Zeus
+    Integrity,           // Erinyes
+    DataFlow,            // Poseidon
+    Clinical,            // Athena
+    Events,              // Apollo
+    Search,              // Artemis
+    Messaging,           // Hermes
+    Security,            // Hades
+    Validation,          // Hera
+    ConflictResolution,  // Ares
+    Configuration,       // Hefesto
+    Scheduling,          // Chronos
+    Predictions,         // Moirai
+    Testing,             // Chaos
+    NewBeginnings,       // Aurora
+    UI,                  // Aphrodite
+    Communications,      // Iris
+    Resources,           // Demeter
+    Analysis,            // Dionysus
+    Persistence,         // Hestia
 }
 
+// Estado del Olimpo
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct OlympianMessage {
-    pub sender: GodName,
-    pub command: String,
-    pub data: serde_json::Value,
-    pub metadata: HashMap<String, serde_json::Value>,
+pub struct OlympusState {
+    pub initialized: bool,
+    pub uptime_seconds: u64,
+    pub active_gods: Vec<GodName>,
+    pub dead_gods: Vec<GodName>,
+    pub last_health_check: chrono::DateTime<chrono::Utc>,
+    pub system_status: SystemStatus,
 }
 
-pub type OlympicResult<T> = Result<T, Box<dyn std::error::Error + Send + Sync>>;
-
-#[async_trait]
-pub trait OlympianGod: Send + Sync {
-    async fn process_message(&self, message: OlympianMessage) -> OlympicResult<OlympianMessage>;
-    fn get_name(&self) -> GodName;
-    fn get_domain(&self) -> DivineDomain;
-    async fn get_status(&self) -> OlympicResult<serde_json::Value>;
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub enum SystemStatus {
+    Healthy,
+    Degraded,
+    Critical,
+    Emergency,
 }
+
+impl Default for OlympusState {
+    fn default() -> Self {
+        Self {
+            initialized: false,
+            uptime_seconds: 0,
+            active_gods: Vec::new(),
+            dead_gods: Vec::new(),
+            last_health_check: chrono::Utc::now(),
+            system_status: SystemStatus::Healthy,
+        }
+    }
+}
+
+// Métricas globales del Olimpo
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct OlympusMetrics {
+    pub total_messages_processed: u64,
+    pub total_errors: u64,
+    pub total_restarts: u64,
+    pub total_recoveries: u64,
+    pub average_recovery_time_ms: u64,
+    pub dead_letters_count: u64,
+    pub memory_usage_mb: f64,
+    pub last_update: chrono::DateTime<chrono::Utc>,
+}
+
+impl Default for OlympusMetrics {
+    fn default() -> Self {
+        Self {
+            total_messages_processed: 0,
+            total_errors: 0,
+            total_restarts: 0,
+            total_recoveries: 0,
+            average_recovery_time_ms: 0,
+            dead_letters_count: 0,
+            memory_usage_mb: 0.0,
+            last_update: chrono::Utc::now(),
+        }
+    }
+}
+
+// Re-export v13 traits for external use
+pub use crate::traits::{
+    OlympianActor,
+    ActorState,
+    ActorConfig,
+    ActorStatus,
+    GodHeartbeat,
+    HealthStatus,
+    ActorMessage,
+    MessagePayload,
+    MessagePriority,
+    CommandPayload,
+    QueryPayload,
+    EventPayload,
+    ResponsePayload,
+    RecoveryStrategy,
+    Supervisor,
+    SupervisionTree,
+    Persistable,
+    PersistenceError,
+};
 
 // Re-export para uso externo
-pub use zeus::*;
-pub use hera::*;
-pub use hades::*;
-pub use athena::*;
-pub use apollo::*;
-pub use artemis::*;
-pub use hermes::*;
-pub use poseidon::*;
-pub use demeter::*;
-pub use dionysius::*;
-pub use iris::*;
-pub use ares::*;
-pub use aphrodite::*;
-pub use chronos::*;
-pub use hefesto::*;
-pub use hestia::*;
-pub use erinyes::*;
-pub use moirai::*;
-pub use chaos::*;
-pub use aurora::*;
+pub use zeus::Zeus;
+pub use erinyes::Erinyes;
+pub use poseidon::Poseidon;
+pub use athena::Athena;
+pub use apollo::Apollo;
+pub use artemis::Artemis;
+pub use hermes::Hermes;
+pub use hades::Hades;
+pub use hera::Hera;
+pub use ares::Ares;
+pub use hefesto::Hefesto;
+pub use chronos::Chronos;
+pub use moirai::Moirai;
+pub use chaos::Chaos;
+pub use aurora::Aurora;
+pub use aphrodite::Aphrodite;
+pub use iris::Iris;
+pub use demeter::Demeter;
+pub use dionysus::Dionysus;
+pub use hestia::Hestia;
