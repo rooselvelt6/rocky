@@ -203,11 +203,13 @@ pub enum EventPayload {
 /// Respuestas de los dioses
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum ResponsePayload {
-    Success { data: serde_json::Value },
+    Success { message: String },
     Error { error: String, code: i32 },
     Data { data: serde_json::Value },
     Ack { message_id: String },
     Status { status: serde_json::Value },
+    RetryScheduled { message_id: String },
+    Stats { data: serde_json::Value },
 }
 
 /// Estrategia de recuperación

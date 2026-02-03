@@ -45,4 +45,8 @@ impl Broadcaster {
             self.broadcast(message, exclude);
         }
     }
+
+    pub fn get_sender(&self) -> broadcast::Sender<BroadcastEvent> {
+        self.sender.clone()
+    }
 }

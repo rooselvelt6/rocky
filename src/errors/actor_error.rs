@@ -27,8 +27,20 @@ pub enum ActorError {
     #[error("Actor {god} not running")]
     NotRunning { god: GodName },
 
+    #[error("Actor {god} not running (cannot receive messages)")]
+    ActorNotRunning { god: GodName },
+
+    #[error("Mailbox for {god} is full (max size: {max_size})")]
+    MailboxFull { god: GodName, max_size: usize },
+
     #[error("Invalid message for actor {god}: {message}")]
     InvalidMessage { god: GodName, message: String },
+
+    #[error("Invalid command for actor {god}: {reason}")]
+    InvalidCommand { god: GodName, reason: String },
+
+    #[error("Invalid query for actor {god}: {reason}")]
+    InvalidQuery { god: GodName, reason: String },
 
     #[error("State error in actor {god}: {message}")]
     StateError { god: GodName, message: String },

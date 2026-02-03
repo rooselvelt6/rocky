@@ -42,7 +42,7 @@ impl DeliveryTracker {
         }
     }
 
-    pub fn start_tracking(&self, message_id: &str, to: GodName) -> DeliveryTrackingHandle {
+    pub async fn start_tracking(&self, message_id: &str, to: GodName) -> DeliveryTrackingHandle {
         let tracking = DeliveryTracking {
             message_id: message_id.to_string(),
             to,
@@ -62,7 +62,7 @@ impl DeliveryTracker {
         }
     }
 
-    pub fn record_delivery(&self, message_id: &str) {
+    pub async fn record_delivery(&self, message_id: &str) {
         let mut trackings = self.trackings.write().await;
         if let Some(tracking) = trackings.get_mut(message_id) {
             tracking.status = DeliveryStatus::Delivered;
@@ -70,7 +70,7 @@ impl DeliveryTracker {
         }
     }
 
-    pub fn record_failure(&self, message_id: &str, error: String) {
+    pub async fn record_failure(&self, message_id: &str, error: String) {
         let mut trackings = self.trackings.write().await;
         if let Some(tracking) = trackings.get_mut(message_id) {
             tracking.attempts += 1;
@@ -79,14 +79,19 @@ impl DeliveryTracker {
         }
     }
 
-    pub fn record_dead_letter(&self, message_id: &str) {
+    pub async fn record_dead_letter(&self, message_id: &str) {
         let mut trackings = self.trackings.write().await;
         if let Some(tracking) = trackings.get_mut(message_id) {
             tracking.status = DeliveryStatus::DeadLettered;
         }
     }
 
-    pub fn delivered_count(&self) -> u64 {
+    pub async fn get_tracking(&self, message_id: &str) -> Option<DeliveryTracking> {
+        let trackings = self.trackings.read().await;
+        trackings.get(message_id).cloned()
+    }
+
+    pub async fn delivered_count(&self) -> u64 {
         let trackings = self.trackings.read().await;
         trackings
             .values()
@@ -94,12 +99,37 @@ impl DeliveryTracker {
             .count() as u64
     }
 
-    pub fn failed_count(&self) -> u64 {
+    pub async fn failed_count(&self) -> u64 {
         let trackings = self.trackings.read().await;
         trackings
             .values()
             .filter(|t| t.status == DeliveryStatus::Failed)
             .count() as u64
+    }
+
+    pub async fn pending_count(&self) -> u64 {
+        let trackings = self.trackings.read().await;
+        trackings
+            .values()
+            .filter(|t| t.status == DeliveryStatus::Pending || t.status == DeliveryStatus::InTransit)
+            .count() as u64
+    }
+
+    pub async fn get_failed_messages(&self) -> Vec<DeliveryTracking> {
+        let trackings = self.trackings.read().await;
+        trackings
+            .values()
+            .filter(|t| t.status == DeliveryStatus::Failed)
+            .cloned()
+            .collect()
+    }
+
+    pub async fn cleanup_old_trackings(&self, max_age: std::time::Duration) {
+        let mut trackings = self.trackings.write().await;
+        let now = Instant::now();
+        trackings.retain(|_, tracking| {
+            now.duration_since(tracking.started_at) < max_age
+        });
     }
 }
 
@@ -110,7 +140,7 @@ pub struct DeliveryTrackingHandle {
 }
 
 impl DeliveryTrackingHandle {
-    pub fn record_delivery(&self) {
+    pub async fn record_delivery(&self) {
         let mut trackings = self.trackings.write().await;
         if let Some(tracking) = trackings.get_mut(&self.message_id) {
             tracking.status = DeliveryStatus::Delivered;
@@ -118,12 +148,27 @@ impl DeliveryTrackingHandle {
         }
     }
 
-    pub fn record_failure(&self, error: String) {
+    pub async fn record_failure(&self, error: String) {
         let mut trackings = self.trackings.write().await;
         if let Some(tracking) = trackings.get_mut(&self.message_id) {
             tracking.attempts += 1;
             tracking.last_error = Some(error);
             tracking.status = DeliveryStatus::Failed;
         }
+    }
+
+    pub async fn increment_attempt(&self) {
+        let mut trackings = self.trackings.write().await;
+        if let Some(tracking) = trackings.get_mut(&self.message_id) {
+            tracking.attempts += 1;
+        }
+    }
+
+    pub async fn get_attempts(&self) -> u32 {
+        let trackings = self.trackings.read().await;
+        trackings
+            .get(&self.message_id)
+            .map(|t| t.attempts)
+            .unwrap_or(0)
     }
 }
