@@ -706,4 +706,48 @@ impl Erinyes {
             0.0
         }
     }
+    
+    pub async fn is_trinity_healthy(&self) -> bool {
+        let trinity = self.trinity_members.read().await;
+        
+        for god in trinity.iter() {
+            if let Some(state) = self.heartbeat_monitor.get_state(god).await {
+                if state.status != ActorStatus::Healthy {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+        
+        true
+    }
+    
+    pub async fn get_trinity_members(&self) -> Vec<GodName> {
+        self.trinity_members.read().await.clone()
+    }
+    
+    pub async fn set_trinity_priority(&self, actor: GodName, is_trinity: bool) {
+        let mut trinity = self.trinity_members.write().await;
+        
+        if is_trinity && !trinity.contains(&actor) {
+            trinity.push(actor);
+        } else if !is_trinity {
+            trinity.retain(|g| g != &actor);
+        }
+        
+        info!("🏛️ Trinity membership updated for {:?}: {}", actor, is_trinity);
+    }
+    
+    pub fn get_heartbeat_monitor(&self) -> Arc<HeartbeatMonitor> {
+        self.heartbeat_monitor.clone()
+    }
+    
+    pub fn get_recovery_engine(&self) -> Arc<RecoveryEngine> {
+        self.recovery_engine.clone()
+    }
+    
+    pub fn get_alert_system(&self) -> Arc<AlertSystem> {
+        self.alert_system.clone()
+    }
 }
