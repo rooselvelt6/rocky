@@ -4,13 +4,13 @@
 ![Version](https://img.shields.io/badge/Version-15.0.0-gold?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 ![Actors](https://img.shields.io/badge/Actors-20-green?style=for-the-badge)
-![Progress](https://img.shields.io/badge/Progress-40%25-yellow?style=for-the-badge)
+![Progress](https://img.shields.io/badge/Progress-50%25-yellow?style=for-the-badge)
 
 ---
 
 ## 🎯 Resumen Ejecutivo
 
-**OLYMPUS v15** es un sistema distribuido de actores en Rust diseñado para alta disponibilidad, seguridad post-cuántica y procesamiento inteligente. Construido con un stack tecnológico moderno que combina rendimiento extrema con seguridad clínica.
+**OLYMPUS v15** es un sistema distribuido de actores en Rust diseñado para alta disponibilidad, seguridad post-cuántica y procesamiento inteligente. Integra el **Genesis Bootloader**, un motor de arranque que despierta a la Trinidad y al Panteón completo en milisegundos.
 
 ### Stack Tecnológico
 
@@ -57,6 +57,10 @@ Los tres pilares fundamentales más tres actores de infraestructura core:
 | Poseidón | WebSocket | Conexiones bidireccionales reales |
 | Athena | Inteligencia | Análisis clínico, escalas, predicciones |
 | Hera | Validación | Validación de esquemas y reglas de negocio |
+| Hera | Validación | Validación de esquemas y reglas de negocio |
+
+### 🚀 Novedad: Genesis Bootloader
+El sistema ahora cuenta con un orquestador de arranque (`src/system/genesis.rs`) que levanta y conecta automáticamente a los **20 Dioses** en tiempo de ejecución, estableciendo los canales de comunicación seguros (MPSC) antes de abrir el Gateway.
 
 ### ✅ Completados Semana 4 (2/20)
 
