@@ -57,7 +57,7 @@ Los tres pilares fundamentales más tres actores de infraestructura core:
 | Poseidón | WebSocket | Conexiones bidireccionales reales |
 | Athena | Inteligencia | Análisis clínico, escalas, predicciones |
 | Hera | Validación | Validación de esquemas y reglas de negocio |
-| Hera | Validación | Validación de esquemas y reglas de negocio |
+
 
 ### 🚀 Novedad: Genesis Bootloader
 El sistema ahora cuenta con un orquestador de arranque (`src/system/genesis.rs`) que levanta y conecta automáticamente a los **20 Dioses** en tiempo de ejecución, estableciendo los canales de comunicación seguros (MPSC) antes de abrir el Gateway.
