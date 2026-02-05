@@ -1,0 +1,27 @@
+En la rama master
+Tu rama está actualizada con 'origin/master'.
+
+Cambios no rastreados para el commit:
+  (usa "git add <archivo>..." para actualizar lo que será confirmado)
+  (usa "git restore <archivo>..." para descartar los cambios en el directorio de trabajo)
+	modificados:     Cargo.lock
+	modificados:     Cargo.toml
+	modificados:     README.md
+	modificados:     src/actors/athena/analysis.rs
+	modificados:     src/actors/athena/insights.rs
+	modificados:     src/actors/athena/predictions.rs
+	modificados:     src/actors/athena/scales.rs
+	modificados:     src/actors/erinyes/recovery.rs
+	modificados:     src/actors/hades/encryption.rs
+	modificados:     src/actors/hera/mod.rs
+
+Archivos sin seguimiento:
+  (usa "git add <archivo>..." para incluirlo a lo que será confirmado)
+	auth_direct.txt
+	remote_info.txt
+	src/actors/hera/rules.rs
+	src/actors/hera/schemas.rs
+	src/actors/hera/validators.rs
+	status_info.txt
+
+sin cambios agregados al commit (usa "git add" y/o "git commit -a")

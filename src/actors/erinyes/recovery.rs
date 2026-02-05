@@ -21,7 +21,7 @@ pub struct RecoveryRecord {
     pub attempt: u32,
     pub strategy: RecoveryStrategy,
     pub started_at: chrono::DateTime<chrono::Utc>,
-    pub completed_at: Option<chrono::DateTime<chrono::Utc>>>,
+    pub completed_at: Option<chrono::DateTime<chrono::Utc>>,
     pub success: bool,
     pub error: Option<String>,
     pub duration_ms: u64,

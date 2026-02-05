@@ -4,7 +4,7 @@
 ![Version](https://img.shields.io/badge/Version-15.0.0-gold?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 ![Actors](https://img.shields.io/badge/Actors-20-green?style=for-the-badge)
-![Progress](https://img.shields.io/badge/Progress-26%25-yellow?style=for-the-badge)
+![Progress](https://img.shields.io/badge/Progress-40%25-yellow?style=for-the-badge)
 
 ---
 
@@ -45,7 +45,7 @@ Los tres pilares fundamentales más tres actores de infraestructura core:
 
 ## 🏛️ Panteón Completo (20 Actores)
 
-### ✅ Implementados (6/20)
+### ✅ Implementados (8/20)
 
 | Deidad | Dominio | Descripción |
 |--------|---------|-------------|
@@ -55,8 +55,10 @@ Los tres pilares fundamentales más tres actores de infraestructura core:
 | Zeus | Supervisión | Gobernanza OTP y métricas |
 | Hades | Seguridad | Cifrado real dual + autenticación |
 | Poseidón | WebSocket | Conexiones bidireccionales reales |
+| Athena | Inteligencia | Análisis clínico, escalas, predicciones |
+| Hera | Validación | Validación de esquemas y reglas de negocio |
 
-### 🔄 Pendientes Semana 4 (2/20)
+### ✅ Completados Semana 4 (2/20)
 
 | Deidad | Dominio | Descripción |
 |--------|---------|-------------|
@@ -166,10 +168,10 @@ Usuario → Leptos WASM → Axum Gateway → Actor (Dominio) → SurrealDB/Valke
 - **Zeus**: Gobernanza OTP, métricas, supervisión
 - **Estado**: COMPLETADO
 
-### 🔄 Semana 4: Inteligencia y Validación
+### ✅ Semana 4: Inteligencia y Validación
 - **Athena**: Análisis clínico, razonamiento diagnóstico, ML
 - **Hera**: Validación de esquemas, integridad transaccional
-- **Estado**: EN PROGRESO
+- **Estado**: COMPLETADO
 
 ### ⏳ Semanas 5-12: Completar Panteón
 
@@ -297,8 +299,8 @@ WS_BIND_ADDRESS=0.0.0.0:8080
 │ ✅ Hermes:     ACTIVE    │ 1M msg/sec      │
 │ ✅ Erinyes:    ACTIVE    │ 500ms Heartbeat │
 │ ✅ Hestia:     ACTIVE    │ Cache 95% hit   │
-│ 🔄 Athena:     DEV       │ Week 4          │
-│ 🔄 Hera:       DEV       │ Week 4          │
+│ ✅ Athena:     ACTIVE    │ ML Analytics    │
+│ ✅ Hera:       ACTIVE    │ Data Validation │
 │ ⏳ 12 others:  PENDING   │ Weeks 5-12      │
 └────────────────────────────────────────────┘
 ```

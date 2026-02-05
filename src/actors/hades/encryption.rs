@@ -5,7 +5,7 @@
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tokio::sync::RwLock;
-use ring::aead::{Aes256Gcm, Nonce, UnboundKey, AES_256_GCM, NonceSequence, OpeningKey, SealingKey};
+use ring::aead::{Nonce, UnboundKey, AES_256_GCM, NonceSequence, OpeningKey, SealingKey};
 use ring::rand::{SecureRandom, SystemRandom};
 use chacha20poly1305::{ChaCha20Poly1305, Key, Nonce as ChaChaNonce};
 use chacha20poly1305::aead::{Aead, KeyInit, Payload};

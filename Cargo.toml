@@ -73,6 +73,7 @@ valkey = { version = "0.0.0-alpha5", optional = true }
 chrono = { version = "0.4", features = ["serde"], optional = true }
 dotenvy = { version = "0.15", optional = true }
 config = { version = "0.14", features = ["yaml", "json"], optional = true }
+reqwest = { version = "0.12", features = ["json"], optional = true }
 
 # Data processing and validation
 ammonia = "4.1.2"
