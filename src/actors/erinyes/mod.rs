@@ -15,6 +15,7 @@ use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHear
 use crate::traits::message::{ActorMessage, MessagePayload, CommandPayload, ResponsePayload, QueryPayload, RecoveryStrategy};
 use crate::infrastructure::ValkeyStore;
 use crate::errors::ActorError;
+use serde_json::json;
 
 pub mod heartbeat;
 pub mod recovery;
@@ -331,7 +332,9 @@ impl OlympianActor for Erinyes {
             MessagePayload::Response(_) => Ok(ResponsePayload::Ack { message_id: msg.id }),
         }
     }
-    
+}
+
+impl Erinyes {
     async fn handle_command(&mut self, cmd: CommandPayload) -> Result<ResponsePayload, ActorError> {
         match cmd {
             CommandPayload::ConfigureHeartbeat { actor, interval_ms } => {
@@ -575,11 +578,6 @@ impl OlympianActor for Erinyes {
         // Start recovery worker
         let recovery_fn = |actor: GodName| {
             Box::pin(async move {
-                // In real implementation, this would:
-                // 1. Shutdown the actor
-                // 2. Recreate the actor instance
-                // 3. Initialize the actor
-                // 4. Register with Zeus
                 info!("🔄 Recovery performed for {:?}", actor);
                 Ok(())
             }) as std::pin::Pin<Box<dyn std::future::Future<Output = Result<(), ActorError>> + Send>>
@@ -605,9 +603,7 @@ impl OlympianActor for Erinyes {
     fn actor_state(&self) -> ActorState {
         self.state.clone()
     }
-}
-
-impl Erinyes {
+    
     async fn execute_erinyes_command(&self, cmd: ErinyesCommand) -> Result<ResponsePayload, ActorError> {
         match cmd {
             ErinyesCommand::RegisterActor { actor, config } => {

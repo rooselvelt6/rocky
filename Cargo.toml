@@ -74,6 +74,7 @@ chrono = { version = "0.4", features = ["serde"], optional = true }
 dotenvy = { version = "0.15", optional = true }
 config = { version = "0.14", features = ["yaml", "json"], optional = true }
 reqwest = { version = "0.12", features = ["json"], optional = true }
+tantivy = "0.22"
 
 # Data processing and validation
 ammonia = "4.1.2"
@@ -122,6 +123,7 @@ tokio-tungstenite = "0.24"
 crossbeam = "0.8"
 rayon = "1.10"
 rand = "0.8"
+futures = "0.3"
 
 # Observability
 prometheus = "0.13"

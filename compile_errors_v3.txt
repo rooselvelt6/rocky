@@ -1,0 +1,14 @@
+    Checking olympus v13.0.0 (/home/tdy/Escritorio/rocky)
+error: unexpected closing delimiter: `}`
+   --> src/actors/hermes/mod.rs:320:1
+    |
+211 | impl Hermes {
+    |             - this delimiter might not be properly closed...
+...
+276 |     }
+    |     - ...as it matches this but it has different indentation
+...
+320 | }
+    | ^ unexpected closing delimiter
+
+error: could not compile `olympus` (lib) due to 1 previous error

@@ -9,10 +9,25 @@ use tokio::sync::RwLock;
 use std::time::{Duration, Instant};
 use tracing::{info, warn, error, debug};
 
-use super::{GodName, HeartbeatConfig};
+use super::GodName;
 use crate::traits::message::RecoveryStrategy;
 use crate::traits::actor_trait::ActorStatus;
 use crate::actors::erinyes::alerts::{AlertSeverity, AlertSystem};
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct HeartbeatConfig {
+    pub interval_ms: u64,
+    pub timeout_ms: u64,
+}
+
+impl Default for HeartbeatConfig {
+    fn default() -> Self {
+        Self {
+            interval_ms: 1000,
+            timeout_ms: 1500,
+        }
+    }
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct HeartbeatState {
@@ -186,7 +201,7 @@ impl HeartbeatMonitor {
         } else {
             // Auto-register if not found
             drop(actors);
-            let _ = self.register(actor, None).await;
+            let _ = self.register(actor.clone(), None).await;
             
             // Mark heartbeat
             let mut actors = self.actors.write().await;

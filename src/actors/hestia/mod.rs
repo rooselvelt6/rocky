@@ -454,7 +454,11 @@ impl Hestia {
         // Check SurrealDB
         match self.surreal.health_check().await {
             Ok(healthy) if healthy => {}
-            Ok(_) | Err(e) => {
+            Ok(_) => {
+                status = ActorStatus::Degraded;
+                errors.push("SurrealDB: Unhealthy".to_string());
+            }
+            Err(e) => {
                 status = ActorStatus::Degraded;
                 errors.push(format!("SurrealDB: {:?}", e));
             }

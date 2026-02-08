@@ -9,11 +9,13 @@ use std::collections::HashMap;
 use tokio::sync::{RwLock, mpsc};
 use tokio::time::{sleep, Duration};
 use tracing::{info, warn, error, debug};
+use chrono::Utc;
 
 use crate::actors::{GodName, DivineDomain};
 use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
 use crate::traits::message::{ActorMessage, MessagePayload, CommandPayload, ResponsePayload, QueryPayload};
 use crate::errors::ActorError;
+use serde_json::json;
 
 pub mod router;
 pub mod mailbox;
@@ -107,26 +109,7 @@ impl Hermes {
             default_mailbox_size: mailbox_size,
         }
     }
-}
 
-#[async_trait]
-impl OlympianActor for Hermes {
-    fn name(&self) -> GodName {
-        GodName::Hermes
-    }
-    
-    fn domain(&self) -> DivineDomain {
-        DivineDomain::Messaging
-    }
-    
-    async fn handle_message(&mut self, msg: ActorMessage) -> Result<ResponsePayload, ActorError> {
-        self.state.message_count += 1;
-        self.state.last_message_time = chrono::Utc::now();
-        
-        // Route the message
-        self.route_message(msg).await
-    }
-    
     async fn handle_command(&mut self, cmd: CommandPayload) -> Result<ResponsePayload, ActorError> {
         match cmd {
             CommandPayload::Custom(data) => {
@@ -146,7 +129,7 @@ impl OlympianActor for Hermes {
             })
         }
     }
-    
+
     async fn handle_query(&self, query: QueryPayload) -> Result<ResponsePayload, ActorError> {
         match query {
             QueryPayload::GetStats => {
@@ -226,116 +209,9 @@ impl OlympianActor for Hermes {
             })
         }
     }
-    
-    fn persistent_state(&self) -> serde_json::Value {
-        // Cannot use await in non-async function, return basic info
-        serde_json::json!({
-            "name": "Hermes",
-            "total_messages": self.state.message_count,
-            "total_errors": self.state.error_count,
-        })
-    }
-    
-    async fn persistent_state_async(&self) -> serde_json::Value {
-        let delivered = self.delivery_tracker.delivered_count().await;
-        let failed = self.delivery_tracker.failed_count().await;
-        let router = self.router.read().await;
-        
-        serde_json::json!({
-            "name": "Hermes",
-            "routes": router.route_count(),
-            "delivered": delivered,
-            "failed": failed,
-            "total_messages": self.state.message_count,
-        })
-    }
-    
-    fn load_state(&mut self, _state: &serde_json::Value) -> Result<(), ActorError> {
-        Ok(())
-    }
-    
-    fn heartbeat(&self) -> GodHeartbeat {
-        GodHeartbeat {
-            god: GodName::Hermes,
-            status: ActorStatus::Healthy,
-            last_seen: chrono::Utc::now(),
-            load: self.calculate_load(),
-            memory_usage_mb: 0.0,
-            uptime_seconds: (chrono::Utc::now() - self.state.start_time).num_seconds() as u64,
-        }
-    }
-    
-    async fn health_check(&self) -> HealthStatus {
-        let mailbox_health = self.check_mailboxes_health().await;
-        let retry_health = !self.retry_queue.is_empty().await;
-        
-        let status = if mailbox_health && !retry_health {
-            ActorStatus::Healthy
-        } else if mailbox_health {
-            ActorStatus::Degraded
-        } else {
-            ActorStatus::Critical
-        };
-        
-        HealthStatus {
-            god: GodName::Hermes,
-            status,
-            uptime_seconds: (chrono::Utc::now() - self.state.start_time).num_seconds() as u64,
-            message_count: self.state.message_count,
-            error_count: self.state.error_count,
-            last_error: self.state.last_error.as_ref().map(|e| e.to_string()),
-            memory_usage_mb: 0.0,
-            timestamp: chrono::Utc::now(),
-        }
-    }
-    
-    fn config(&self) -> Option<&ActorConfig> {
-        Some(&self.config)
-    }
-    
-    async fn initialize(&mut self) -> Result<(), ActorError> {
-        info!("👟 Hermes: Initializing message routing system v15...");
-        
-        // Start the retry worker
-        let retry_worker = RetryWorker::new(self.retry_queue.clone());
-        let deliver_fn = |msg: ActorMessage, to: GodName| async move {
-            // This would need access to the mailbox_manager
-            // For now, return Ok(()) as placeholder
-            Ok(())
-        };
-        
-        retry_worker.start(deliver_fn).await;
-        self.retry_worker = Some(retry_worker);
-        
-        info!("👟 Hermes: Retry worker started");
-        info!("👟 Hermes: Ready to route messages");
-        
-        Ok(())
-    }
-    
-    async fn shutdown(&mut self) -> Result<(), ActorError> {
-        info!("👟 Hermes: Shutting down message routing system...");
-        
-        // Stop retry worker
-        if let Some(worker) = &self.retry_worker {
-            worker.shutdown().await;
-        }
-        
-        // Clear all mailboxes
-        self.mailbox_manager.get_all_stats().await;
-        
-        info!("👟 Hermes: Shutdown complete");
-        Ok(())
-    }
-    
-    fn actor_state(&self) -> ActorState {
-        self.state.clone()
-    }
-}
 
-impl Hermes {
     async fn route_message(&self, msg: ActorMessage) -> Result<ResponsePayload, ActorError> {
-        let to = msg.to.clone();
+        let to = msg.recipient.clone();
         
         // Track delivery
         let tracking = self.delivery_tracker.start_tracking(&msg.id, to.clone()).await;
@@ -410,7 +286,7 @@ impl Hermes {
                     message: "Wildcard route registered".to_string() 
                 })
             }
-            HermesCommand::SendMessage { to, message } => {
+            HermesCommand::SendMessage { to: _, message } => {
                 self.route_message(message).await
             }
             HermesCommand::SendWithRetry { to, message, config } => {
@@ -525,5 +401,117 @@ impl Hermes {
     
     pub fn get_broadcast_sender(&self) -> tokio::sync::broadcast::Sender<BroadcastEvent> {
         self.broadcaster.get_sender()
+    }
+}
+
+#[async_trait]
+impl OlympianActor for Hermes {
+    fn name(&self) -> GodName {
+        GodName::Hermes
+    }
+    
+    fn domain(&self) -> DivineDomain {
+        DivineDomain::Messaging
+    }
+    
+    async fn handle_message(&mut self, msg: ActorMessage) -> Result<ResponsePayload, ActorError> {
+        self.state.message_count += 1;
+        self.state.last_message_time = chrono::Utc::now();
+        
+        match msg.payload {
+            MessagePayload::Command(cmd) => self.handle_command(cmd).await,
+            MessagePayload::Query(query) => self.handle_query(query).await,
+            _ => self.route_message(msg).await,
+        }
+    }
+    
+    fn persistent_state(&self) -> serde_json::Value {
+        serde_json::json!({
+            "name": "Hermes",
+            "total_messages": self.state.message_count,
+            "total_errors": self.state.error_count,
+        })
+    }
+    
+    fn load_state(&mut self, _state: &serde_json::Value) -> Result<(), ActorError> {
+        Ok(())
+    }
+    
+    fn heartbeat(&self) -> GodHeartbeat {
+        GodHeartbeat {
+            god: GodName::Hermes,
+            status: ActorStatus::Healthy,
+            last_seen: chrono::Utc::now(),
+            load: self.calculate_load(),
+            memory_usage_mb: 0.0,
+            uptime_seconds: (chrono::Utc::now() - self.state.start_time).num_seconds() as u64,
+        }
+    }
+    
+    async fn health_check(&self) -> HealthStatus {
+        let mailbox_health = self.check_mailboxes_health().await;
+        let retry_health = !self.retry_queue.is_empty().await;
+        
+        let status = if mailbox_health && !retry_health {
+            ActorStatus::Healthy
+        } else if mailbox_health {
+            ActorStatus::Degraded
+        } else {
+            ActorStatus::Critical
+        };
+        
+        HealthStatus {
+            god: GodName::Hermes,
+            status,
+            uptime_seconds: (chrono::Utc::now() - self.state.start_time).num_seconds() as u64,
+            message_count: self.state.message_count,
+            error_count: self.state.error_count,
+            last_error: self.state.last_error.as_ref().map(|e| e.to_string()),
+            memory_usage_mb: 0.0,
+            timestamp: chrono::Utc::now(),
+        }
+    }
+    
+    fn config(&self) -> Option<&ActorConfig> {
+        Some(&self.config)
+    }
+    
+    async fn initialize(&mut self) -> Result<(), ActorError> {
+        info!("👟 Hermes: Initializing message routing system v15...");
+        
+        // Start the retry worker
+        let retry_worker = RetryWorker::new(self.retry_queue.clone());
+        let deliver_fn = |msg: ActorMessage, to: GodName| async move {
+            // This would need access to the mailbox_manager
+            // For now, return Ok(()) as placeholder
+            Ok(())
+        };
+        
+        retry_worker.start(deliver_fn).await;
+        self.retry_worker = Some(retry_worker);
+        
+        info!("👟 Hermes: Retry worker started");
+        info!("👟 Hermes: Ready to route messages");
+        
+        Ok(())
+    }
+    
+    async fn shutdown(&mut self) -> Result<(), ActorError> {
+        info!("👟 Hermes: Shutting down message routing system...");
+        
+        // Stop retry worker
+        if let Some(worker) = &self.retry_worker {
+            worker.shutdown().await;
+        }
+        
+        // Clear all mailboxes
+        self.mailbox_manager.get_all_stats().await;
+        
+        info!("👟 Hermes: Shutdown complete");
+        Ok(())
+    }
+    
+    fn actor_state(&self) -> ActorState {
+        self.state.clone()
     }
 }

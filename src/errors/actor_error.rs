@@ -61,6 +61,9 @@ pub enum ActorError {
     #[error("Serialization error in actor {god}: {message}")]
     SerializationError { god: GodName, message: String },
 
+    #[error("Search error in actor {god}: {message}")]
+    SearchError { god: GodName, message: String },
+
     #[error("Unknown error in actor {god}: {message}")]
     Unknown { god: GodName, message: String },
 }

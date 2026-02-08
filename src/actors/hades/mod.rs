@@ -6,6 +6,7 @@ use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tokio::sync::RwLock;
+use std::time::Duration;
 use tracing::{info, warn, error};
 
 use crate::actors::{GodName, DivineDomain};
@@ -247,7 +248,9 @@ impl OlympianActor for Hades {
             MessagePayload::Response(_) => Ok(ResponsePayload::Ack { message_id: msg.id }),
         }
     }
-    
+}
+
+impl Hades {
     async fn handle_command(&mut self, cmd: CommandPayload) -> Result<ResponsePayload, ActorError> {
         match cmd {
             CommandPayload::Custom(data) => {

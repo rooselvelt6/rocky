@@ -291,12 +291,12 @@ impl RecoveryEngine {
             return false;
         }
         
-        let cb = circuit_breaker.read().await;
+        let cb = self.circuit_breaker.read().await;
         cb.get(actor).copied().unwrap_or(false)
     }
     
     pub async fn close_circuit_breaker(&self, actor: &GodName) {
-        let mut cb = circuit_breaker.write().await;
+        let mut cb = self.circuit_breaker.write().await;
         cb.insert(actor.clone(), false);
         
         // Also reset restart counter

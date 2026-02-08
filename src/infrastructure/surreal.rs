@@ -3,6 +3,7 @@
 // Persistencia a largo plazo
 
 use serde::{Deserialize, Serialize};
+use std::sync::Arc;
 use thiserror::Error;
 
 #[derive(Debug, Error, Serialize, Deserialize)]

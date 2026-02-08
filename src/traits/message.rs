@@ -130,6 +130,7 @@ pub enum CommandPayload {
     Configure {
         config: serde_json::Value,
     },
+    Custom(serde_json::Value),
 }
 
 /// Consultas para los dioses
@@ -148,6 +149,8 @@ pub enum QueryPayload {
     // Configuration queries
     GetConfig,
     ListActors,
+    Search { query: String },
+    Custom(serde_json::Value),
 }
 
 /// Eventos emitidos por los dioses
