@@ -149,7 +149,6 @@ pub enum QueryPayload {
     // Configuration queries
     GetConfig,
     ListActors,
-    Search { query: String },
     Custom(serde_json::Value),
 }
 
