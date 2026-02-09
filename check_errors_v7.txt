@@ -1,0 +1,1764 @@
+    Checking olympus v13.0.0 (/home/tdy/Escritorio/rocky)
+warning: unused import: `watch`
+ --> src/actors/zeus/mod.rs:8:44
+  |
+8 | use tokio::sync::{RwLock, broadcast, mpsc, watch};
+  |                                            ^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `Instant`
+ --> src/actors/zeus/mod.rs:9:39
+  |
+9 | use tokio::time::{interval, Duration, Instant};
+  |                                       ^^^^^^^
+
+warning: unused import: `debug`
+  --> src/actors/zeus/mod.rs:10:34
+   |
+10 | use tracing::{info, warn, error, debug};
+   |                                  ^^^^^
+
+warning: unused import: `SystemStatus`
+  --> src/actors/zeus/mod.rs:12:74
+   |
+12 | use crate::actors::{GodName, DivineDomain, OlympusState, OlympusMetrics, SystemStatus};
+   |                                                                          ^^^^^^^^^^^^
+
+warning: unused import: `std::sync::Arc`
+ --> src/actors/zeus/thunder.rs:6:5
+  |
+6 | use std::sync::Arc;
+  |     ^^^^^^^^^^^^^^
+
+warning: unused import: `HashSet`
+ --> src/actors/zeus/supervisor.rs:6:33
+  |
+6 | use std::collections::{HashMap, HashSet, VecDeque};
+  |                                 ^^^^^^^
+
+warning: unused import: `Instant`
+ --> src/actors/zeus/supervisor.rs:9:39
+  |
+9 | use tokio::time::{interval, Duration, Instant};
+  |                                       ^^^^^^^
+
+warning: unused import: `error`
+  --> src/actors/zeus/governance.rs:10:27
+   |
+10 | use tracing::{info, warn, error};
+   |                           ^^^^^
+
+warning: unused import: `std::path::Path`
+ --> src/actors/zeus/config.rs:8:5
+  |
+8 | use std::path::Path;
+  |     ^^^^^^^^^^^^^^^
+
+warning: unused import: `error`
+ --> src/actors/zeus/config.rs:9:27
+  |
+9 | use tracing::{info, warn, error};
+  |                           ^^^^^
+
+warning: unused import: `std::collections::HashMap`
+ --> src/actors/erinyes/mod.rs:8:5
+  |
+8 | use std::collections::HashMap;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `Instant`
+  --> src/actors/erinyes/mod.rs:10:39
+   |
+10 | use tokio::time::{interval, Duration, Instant};
+   |                                       ^^^^^^^
+
+warning: unused imports: `debug` and `error`
+  --> src/actors/erinyes/mod.rs:11:27
+   |
+11 | use tracing::{info, warn, error, debug};
+   |                           ^^^^^  ^^^^^
+
+warning: unused import: `serde_json::json`
+  --> src/actors/erinyes/mod.rs:18:5
+   |
+18 | use serde_json::json;
+   |     ^^^^^^^^^^^^^^^^
+
+warning: unused imports: `Duration` and `Instant`
+ --> src/actors/erinyes/heartbeat.rs:9:17
+  |
+9 | use std::time::{Duration, Instant};
+  |                 ^^^^^^^^  ^^^^^^^
+
+warning: unused import: `error`
+  --> src/actors/erinyes/heartbeat.rs:10:27
+   |
+10 | use tracing::{info, warn, error, debug};
+   |                           ^^^^^
+
+warning: unused import: `crate::traits::message::RecoveryStrategy`
+  --> src/actors/erinyes/heartbeat.rs:13:5
+   |
+13 | use crate::traits::message::RecoveryStrategy;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `Duration` and `sleep`
+ --> src/actors/erinyes/recovery.rs:9:19
+  |
+9 | use tokio::time::{sleep, Duration, Instant};
+  |                   ^^^^^  ^^^^^^^^
+
+warning: unused imports: `debug` and `error`
+  --> src/actors/erinyes/recovery.rs:10:27
+   |
+10 | use tracing::{info, warn, error, debug};
+   |                           ^^^^^  ^^^^^
+
+warning: unused import: `futures::future::BoxFuture`
+   --> src/actors/erinyes/recovery.rs:370:5
+    |
+370 | use futures::future::BoxFuture;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `info`
+  --> src/actors/erinyes/watchdog.rs:10:15
+   |
+10 | use tracing::{info, warn, error, debug};
+   |               ^^^^
+
+warning: unused import: `trace`
+  --> src/actors/poseidon/mod.rs:13:35
+   |
+13 | use tracing::{debug, error, info, trace, warn};
+   |                                   ^^^^^
+
+warning: unused import: `serde_json::json`
+  --> src/actors/athena/mod.rs:15:5
+   |
+15 | use serde_json::json;
+   |     ^^^^^^^^^^^^^^^^
+
+warning: unused import: `TrendDirection`
+ --> src/actors/athena/predictions.rs:5:46
+  |
+5 | use super::analysis::{PatientAnalysisResult, TrendDirection};
+  |                                              ^^^^^^^^^^^^^^
+
+warning: unused imports: `debug`, `error`, and `warn`
+ --> src/actors/apollo/mod.rs:4:21
+  |
+4 | use tracing::{info, warn, error, debug};
+  |                     ^^^^  ^^^^^  ^^^^^
+
+warning: unused imports: `Deserialize` and `Serialize`
+ --> src/actors/apollo/mod.rs:5:13
+  |
+5 | use serde::{Deserialize, Serialize};
+  |             ^^^^^^^^^^^  ^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/apollo/mod.rs:8:61
+  |
+8 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `std::collections::HashMap`
+ --> src/actors/hermes/mod.rs:8:5
+  |
+8 | use std::collections::HashMap;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `mpsc`
+ --> src/actors/hermes/mod.rs:9:27
+  |
+9 | use tokio::sync::{RwLock, mpsc};
+  |                           ^^^^
+
+warning: unused import: `sleep`
+  --> src/actors/hermes/mod.rs:10:19
+   |
+10 | use tokio::time::{sleep, Duration};
+   |                   ^^^^^
+
+warning: unused import: `error`
+  --> src/actors/hermes/mod.rs:11:27
+   |
+11 | use tracing::{info, warn, error, debug};
+   |                           ^^^^^
+
+warning: unused import: `chrono::Utc`
+  --> src/actors/hermes/mod.rs:12:5
+   |
+12 | use chrono::Utc;
+   |     ^^^^^^^^^^^
+
+warning: unused import: `std::time::Instant`
+ --> src/actors/hermes/mailbox.rs:6:5
+  |
+6 | use std::time::Instant;
+  |     ^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `info`
+  --> src/actors/hermes/mailbox.rs:10:15
+   |
+10 | use tracing::{info, warn, debug};
+   |               ^^^^
+
+warning: unused import: `std::time::Instant`
+ --> src/actors/hermes/delivery.rs:8:5
+  |
+8 | use std::time::Instant;
+  |     ^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `std::sync::Arc`
+ --> src/actors/hermes/broadcast.rs:6:5
+  |
+6 | use std::sync::Arc;
+  |     ^^^^^^^^^^^^^^
+
+warning: unused import: `std::collections::HashMap`
+ --> src/actors/hermes/retry.rs:6:5
+  |
+6 | use std::collections::HashMap;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `mpsc`
+ --> src/actors/hermes/retry.rs:9:19
+  |
+9 | use tokio::sync::{mpsc, RwLock};
+  |                   ^^^^
+
+warning: unused import: `error`
+  --> src/actors/hermes/retry.rs:11:27
+   |
+11 | use tracing::{info, warn, error};
+   |                           ^^^^^
+
+warning: unused import: `DeliveryStatus`
+  --> src/actors/hermes/retry.rs:13:39
+   |
+13 | use super::{GodName, DeliveryTracker, DeliveryStatus};
+   |                                       ^^^^^^^^^^^^^^
+
+warning: unused imports: `error` and `warn`
+  --> src/actors/hades/mod.rs:10:21
+   |
+10 | use tracing::{info, warn, error};
+   |                     ^^^^  ^^^^^
+
+warning: unused import: `Payload`
+  --> src/actors/hades/encryption.rs:11:45
+   |
+11 | use chacha20poly1305::aead::{Aead, KeyInit, Payload};
+   |                                             ^^^^^^^
+
+warning: unused imports: `error` and `warn`
+  --> src/actors/hades/encryption.rs:13:21
+   |
+13 | use tracing::{info, warn, error};
+   |                     ^^^^  ^^^^^
+
+warning: unused import: `KeyType`
+  --> src/actors/hades/encryption.rs:15:46
+   |
+15 | use crate::actors::hades::keys::{KeyManager, KeyType};
+   |                                              ^^^^^^^
+
+warning: unused import: `errors::Error as JwtError`
+  --> src/actors/hades/auth.rs:11:93
+   |
+11 | ... Validation, EncodingKey, DecodingKey, errors::Error as JwtError};
+   |                                           ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `error`
+  --> src/actors/hades/auth.rs:12:27
+   |
+12 | use tracing::{info, warn, error};
+   |                           ^^^^^
+
+warning: unused import: `crate::actors::GodName`
+  --> src/actors/hades/auth.rs:14:5
+   |
+14 | use crate::actors::GodName;
+   |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `AuditEntry`
+  --> src/actors/hades/auth.rs:15:48
+   |
+15 | use crate::actors::hades::audit::{AuditLogger, AuditEntry, AuditResult};
+   |                                                ^^^^^^^^^^
+
+warning: unused import: `ZeroizeOnDrop`
+  --> src/actors/hades/keys.rs:10:24
+   |
+10 | use zeroize::{Zeroize, ZeroizeOnDrop};
+   |                        ^^^^^^^^^^^^^
+
+warning: unused import: `error`
+  --> src/actors/hades/keys.rs:11:27
+   |
+11 | use tracing::{info, warn, error};
+   |                           ^^^^^
+
+warning: unused imports: `ActorMessage`, `CommandPayload`, `MessagePayload`, `QueryPayload`, `RecoveryStrategy`, and `ResponsePayload`
+ --> src/actors/hades/audit.rs:9:30
+  |
+9 | ...age::{ActorMessage, MessagePayload, CommandPayload, ResponsePayload, QueryPayload, RecoveryStrategy};
+  |          ^^^^^^^^^^^^  ^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^  ^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^
+
+warning: unused import: `crate::infrastructure::ValkeyStore`
+  --> src/actors/hades/audit.rs:10:5
+   |
+10 | use crate::infrastructure::ValkeyStore;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `error`
+  --> src/actors/hades/audit.rs:12:27
+   |
+12 | use tracing::{info, warn, error, debug};
+   |                           ^^^^^
+
+warning: unused import: `crate::actors::GodName`
+  --> src/actors/hades/audit.rs:15:5
+   |
+15 | use crate::actors::GodName;
+   |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `warn`
+ --> src/actors/hera/mod.rs:9:21
+  |
+9 | use tracing::{info, warn};
+  |                     ^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/ares/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/ares/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/hefesto/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/hefesto/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused imports: `Deserialize` and `Serialize`
+  --> src/actors/hefesto/mod.rs:50:13
+   |
+50 | use serde::{Deserialize, Serialize};
+   |             ^^^^^^^^^^^  ^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/chronos/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/chronos/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `std::collections::HashMap`
+  --> src/actors/chronos/mod.rs:68:5
+   |
+68 | use std::collections::HashMap;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/moirai/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/moirai/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/chaos/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/chaos/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/aurora/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/aurora/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/aphrodite/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/aphrodite/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/iris/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/iris/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/demeter/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/demeter/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/dionysus/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/dionysus/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `Mutex`
+  --> src/actors/hestia/mod.rs:17:27
+   |
+17 | use tokio::sync::{RwLock, Mutex, mpsc};
+   |                           ^^^^^
+
+warning: unused imports: `SystemTime` and `UNIX_EPOCH`
+ --> src/actors/hestia/memory_store.rs:7:17
+  |
+7 | use std::time::{SystemTime, UNIX_EPOCH};
+  |                 ^^^^^^^^^^  ^^^^^^^^^^
+
+warning: unused import: `Instant`
+ --> src/actors/hestia/cache.rs:9:39
+  |
+9 | use tokio::time::{interval, Duration, Instant};
+  |                                       ^^^^^^^
+
+warning: unused import: `error`
+  --> src/actors/hestia/cache.rs:10:34
+   |
+10 | use tracing::{debug, info, warn, error};
+   |                                  ^^^^^
+
+warning: unused imports: `SyncRecord` and `SyncStatus`
+  --> src/actors/hestia/cache.rs:14:48
+   |
+14 | use crate::actors::hestia::sync::{SyncManager, SyncRecord, SyncStatus};
+   |                                                ^^^^^^^^^^  ^^^^^^^^^^
+
+warning: unused import: `timeout`
+  --> src/actors/hestia/async_buffer.rs:10:36
+   |
+10 | use tokio::time::{interval, sleep, timeout};
+   |                                    ^^^^^^^
+
+warning: unused import: `Mutex`
+  --> src/actors/hestia/sync.rs:10:27
+   |
+10 | use tokio::sync::{RwLock, Mutex, mpsc};
+   |                           ^^^^^
+
+warning: unused import: `timeout`
+  --> src/actors/hestia/sync.rs:11:36
+   |
+11 | use tokio::time::{interval, sleep, timeout};
+   |                                    ^^^^^^^
+
+warning: unused import: `async_trait::async_trait`
+  --> src/actors/mod.rs:52:5
+   |
+52 | use async_trait::async_trait;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `std::collections::HashMap`
+  --> src/actors/mod.rs:54:5
+   |
+54 | use std::collections::HashMap;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `std::sync::Arc`
+  --> src/actors/mod.rs:55:5
+   |
+55 | use std::sync::Arc;
+   |     ^^^^^^^^^^^^^^
+
+warning: unused import: `tokio::sync::RwLock`
+  --> src/actors/mod.rs:56:5
+   |
+56 | use tokio::sync::RwLock;
+   |     ^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `crate::errors::OlympusError`
+  --> src/traits/supervisor_trait.rs:10:5
+   |
+10 | use crate::errors::OlympusError;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `std::time::Duration`
+ --> src/infrastructure/valkey.rs:6:5
+  |
+6 | use std::time::Duration;
+  |     ^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `tokio::sync::RwLock`
+ --> src/infrastructure/valkey.rs:8:5
+  |
+8 | use tokio::sync::RwLock;
+  |     ^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `base64::encode`: Use Engine::encode
+   --> src/actors/hades/encryption.rs:285:20
+    |
+285 |         Ok(base64::encode(json))
+    |                    ^^^^^^
+    |
+    = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated function `base64::decode`: Use Engine::decode
+   --> src/actors/hades/encryption.rs:290:28
+    |
+290 |         let json = base64::decode(ciphertext)
+    |                            ^^^^^^
+
+error[E0382]: borrow of moved value: `policy`
+   --> src/actors/zeus/governance.rs:868:53
+    |
+860 |     pub async fn create_access_policy(&self, policy: AccessPolicy) -> Result<(), String> {
+    |                                              ------ move occurs because `policy` has type `AccessPolicy`, which does not implement the `Copy` trait
+...
+867 |         policies.policies.insert(policy.name.clone(), policy);
+    |                                                       ------ value moved here
+868 |         info!("⚡ Zeus: Access policy '{}' created", policy.name);
+    |                                                      ^^^^^^^^^^^ value borrowed here after move
+    |
+    = note: this error originates in the macro `$crate::__macro_support::format_args` which comes from the expansion of the macro `info` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: consider cloning the value if the performance cost is acceptable
+    |
+867 |         policies.policies.insert(policy.name.clone(), policy.clone());
+    |                                                             ++++++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `serde_yaml`
+   --> src/actors/zeus/config.rs:288:34
+    |
+288 |         let config: ZeusConfig = serde_yaml::from_str(&content)
+    |                                  ^^^^^^^^^^ use of unresolved module or unlinked crate `serde_yaml`
+    |
+    = help: if you wanted to use a crate named `serde_yaml`, use `cargo add serde_yaml` to add it to your `Cargo.toml`
+
+error[E0282]: type annotations needed
+   --> src/actors/zeus/config.rs:290:23
+    |
+290 |             .map_err(|e| ConfigError::ParseError { 
+    |                       ^
+291 |                 path: path.to_string(), 
+292 |                 error: e.to_string() 
+    |                        - type must be known at this point
+    |
+help: consider giving this closure parameter an explicit type
+    |
+290 |             .map_err(|e: /* Type */| ConfigError::ParseError { 
+    |                        ++++++++++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `serde_yaml`
+   --> src/actors/zeus/config.rs:303:23
+    |
+303 |         let content = serde_yaml::to_string(self)
+    |                       ^^^^^^^^^^ use of unresolved module or unlinked crate `serde_yaml`
+    |
+    = help: if you wanted to use a crate named `serde_yaml`, use `cargo add serde_yaml` to add it to your `Cargo.toml`
+
+error[E0282]: type annotations needed
+   --> src/actors/zeus/config.rs:304:23
+    |
+304 |             .map_err(|e| ConfigError::SerializeError(e.to_string()))?;
+    |                       ^                              - type must be known at this point
+    |
+help: consider giving this closure parameter an explicit type
+    |
+304 |             .map_err(|e: /* Type */| ConfigError::SerializeError(e.to_string()))?;
+    |                        ++++++++++++
+
+error[E0282]: type annotations needed
+   --> src/actors/zeus/config.rs:306:9
+    |
+306 |         tokio::fs::write(path, content).await
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ cannot infer type
+
+error[E0282]: type annotations needed
+   --> src/actors/zeus/config.rs:307:23
+    |
+307 |             .map_err(|e| ConfigError::FileError { 
+    |                       ^
+308 |                 path: path.to_string(), 
+309 |                 error: e.to_string() 
+    |                        - type must be known at this point
+    |
+help: consider giving this closure parameter an explicit type
+    |
+307 |             .map_err(|e: /* Type */| ConfigError::FileError { 
+    |                        ++++++++++++
+
+error[E0308]: mismatched types
+   --> src/actors/zeus/mod.rs:229:13
+    |
+229 |             event_tx,
+    |             ^^^^^^^^ expected `Sender<ZeusEvent>`, found `Sender<ThunderEvent>`
+    |
+    = note: expected struct `tokio::sync::broadcast::Sender<ZeusEvent>`
+               found struct `tokio::sync::broadcast::Sender<ThunderEvent>`
+
+error[E0599]: no variant named `ActorStarted` found for enum `LifecycleEvent`
+   --> src/actors/zeus/mod.rs:492:37
+    |
+492 |                     LifecycleEvent::ActorStarted { actor } => {
+    |                                     ^^^^^^^^^^^^ variant not found in `LifecycleEvent`
+    |
+   ::: src/actors/zeus/supervisor.rs:41:1
+    |
+ 41 | pub enum LifecycleEvent {
+    | ----------------------- variant `ActorStarted` not found here
+
+error[E0599]: no variant named `ActorStopped` found for enum `LifecycleEvent`
+   --> src/actors/zeus/mod.rs:498:37
+    |
+498 |                     LifecycleEvent::ActorStopped { actor, reason } => {
+    |                                     ^^^^^^^^^^^^ variant not found in `LifecycleEvent`
+    |
+   ::: src/actors/zeus/supervisor.rs:41:1
+    |
+ 41 | pub enum LifecycleEvent {
+    | ----------------------- variant `ActorStopped` not found here
+
+error[E0599]: no variant named `ActorRecovered` found for enum `LifecycleEvent`
+   --> src/actors/zeus/mod.rs:505:37
+    |
+505 |                     LifecycleEvent::ActorRecovered { actor, attempt } => {
+    |                                     ^^^^^^^^^^^^^^ variant not found in `LifecycleEvent`
+    |
+   ::: src/actors/zeus/supervisor.rs:41:1
+    |
+ 41 | pub enum LifecycleEvent {
+    | ----------------------- variant `ActorRecovered` not found here
+
+error[E0599]: no variant named `InvalidConfig` found for enum `ActorError`
+   --> src/actors/zeus/mod.rs:758:46
+    |
+758 |                     .map_err(|e| ActorError::InvalidConfig { 
+    |                                              ^^^^^^^^^^^^^ variant not found in `ActorError`
+    |
+   ::: src/errors/actor_error.rs:10:1
+    |
+ 10 | pub enum ActorError {
+    | ------------------- variant `InvalidConfig` not found here
+
+error[E0599]: no variant named `InvalidConfig` found for enum `ActorError`
+   --> src/actors/zeus/mod.rs:763:46
+    |
+763 |                     .map_err(|e| ActorError::InvalidConfig { 
+    |                                              ^^^^^^^^^^^^^ variant not found in `ActorError`
+    |
+   ::: src/errors/actor_error.rs:10:1
+    |
+ 10 | pub enum ActorError {
+    | ------------------- variant `InvalidConfig` not found here
+
+error[E0382]: borrow of moved value: `flag`
+   --> src/actors/zeus/mod.rs:863:67
+    |
+856 |             ZeusCommand::EnableFeatureFlag { flag, modified_by } => {
+    |                                              ---- move occurs because `flag` has type `std::string::String`, which does not implement the `Copy` trait
+...
+860 |                 self.thunderstrike(ZeusEvent::FeatureFlagChanged { flag, enabled: true });
+    |                                                                    ---- value moved here
+...
+863 |                     message: format!("Feature flag '{}' enabled", flag) 
+    |                                                                   ^^^^ value borrowed here after move
+    |
+    = note: this error originates in the macro `$crate::__export::format_args` which comes from the expansion of the macro `format` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: consider cloning the value if the performance cost is acceptable
+    |
+860 |                 self.thunderstrike(ZeusEvent::FeatureFlagChanged { flag: flag.clone(), enabled: true });
+    |                                                                        ++++++++++++++
+
+error[E0382]: borrow of moved value: `flag`
+   --> src/actors/zeus/mod.rs:874:68
+    |
+867 |             ZeusCommand::DisableFeatureFlag { flag, modified_by } => {
+    |                                               ---- move occurs because `flag` has type `std::string::String`, which does not implement the `Copy` trait
+...
+871 |                 self.thunderstrike(ZeusEvent::FeatureFlagChanged { flag, enabled: false });
+    |                                                                    ---- value moved here
+...
+874 |                     message: format!("Feature flag '{}' disabled", flag) 
+    |                                                                    ^^^^ value borrowed here after move
+    |
+    = note: this error originates in the macro `$crate::__export::format_args` which comes from the expansion of the macro `format` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: consider cloning the value if the performance cost is acceptable
+    |
+871 |                 self.thunderstrike(ZeusEvent::FeatureFlagChanged { flag: flag.clone(), enabled: false });
+    |                                                                        ++++++++++++++
+
+error[E0277]: the trait bound `TrinityState: serde::Serialize` is not satisfied
+   --> src/actors/zeus/mod.rs:983:60
+    |
+983 | ...                   data: serde_json::to_value(trinity).unwrap_or_default() 
+    |                             -------------------- ^^^^^^^ unsatisfied trait bound
+    |                             |
+    |                             required by a bound introduced by this call
+    |
+help: the trait `actors::_::_serde::Serialize` is not implemented for `TrinityState`
+   --> src/actors/zeus/mod.rs:143:1
+    |
+143 | pub struct TrinityState {
+    | ^^^^^^^^^^^^^^^^^^^^^^^
+    = note: for local types consider adding `#[derive(serde::Serialize)]` to your `TrinityState` type
+    = note: for types from other crates check whether the crate offers a `serde` feature flag
+    = help: the following other types implement trait `actors::_::_serde::Serialize`:
+              &'a T
+              &'a mut T
+              ()
+              (T,)
+              (T0, T1)
+              (T0, T1, T2)
+              (T0, T1, T2, T3)
+              (T0, T1, T2, T3, T4)
+            and 1060 others
+note: required by a bound in `serde_json::to_value`
+   --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.148/src/value/mod.rs:997:8
+    |
+995 | pub fn to_value<T>(value: T) -> Result<Value, Error>
+    |        -------- required by a bound in this function
+996 | where
+997 |     T: Serialize,
+    |        ^^^^^^^^^ required by this bound in `to_value`
+
+error[E0277]: the trait bound `TrinityState: serde::Serialize` is not satisfied
+    --> src/actors/zeus/mod.rs:1051:27
+     |
+1051 |                       data: serde_json::json!({
+     |  ___________________________^
+1052 | |                         "state": trinity,
+1053 | |                         "metrics": trinity_metrics,
+1054 | |                     })
+     | |                      ^
+     | |                      |
+     | |______________________unsatisfied trait bound
+     |                        required by a bound introduced by this call
+     |
+help: the trait `actors::_::_serde::Serialize` is not implemented for `TrinityState`
+    --> src/actors/zeus/mod.rs:143:1
+     |
+ 143 | pub struct TrinityState {
+     | ^^^^^^^^^^^^^^^^^^^^^^^
+     = note: for local types consider adding `#[derive(serde::Serialize)]` to your `TrinityState` type
+     = note: for types from other crates check whether the crate offers a `serde` feature flag
+     = help: the following other types implement trait `actors::_::_serde::Serialize`:
+               &'a T
+               &'a mut T
+               ()
+               (T,)
+               (T0, T1)
+               (T0, T1, T2)
+               (T0, T1, T2, T3)
+               (T0, T1, T2, T3, T4)
+             and 1060 others
+     = note: required for `&TrinityState` to implement `actors::_::_serde::Serialize`
+note: required by a bound in `serde_json::to_value`
+    --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.148/src/value/mod.rs:997:8
+     |
+ 995 | pub fn to_value<T>(value: T) -> Result<Value, Error>
+     |        -------- required by a bound in this function
+ 996 | where
+ 997 |     T: Serialize,
+     |        ^^^^^^^^^ required by this bound in `to_value`
+     = note: this error originates in the macro `$crate::json_internal` which comes from the expansion of the macro `serde_json::json` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0559]: variant `ActorError::NotFound` has no field named `message`
+    --> src/actors/zeus/mod.rs:1088:25
+     |
+1088 |                         message: "Actor not found in supervision tree".to_string() 
+     |                         ^^^^^^^ `ActorError::NotFound` does not have this field
+     |
+     = note: all struct fields are already assigned
+
+error[E0559]: variant `ActorError::NotFound` has no field named `message`
+    --> src/actors/zeus/mod.rs:1124:25
+     |
+1124 |                         message: "No metrics found for actor".to_string() 
+     |                         ^^^^^^^ `ActorError::NotFound` does not have this field
+     |
+     = note: all struct fields are already assigned
+
+error[E0599]: no variant or associated item named `Critical` found for enum `ActorStatus` in the current scope
+   --> src/actors/erinyes/heartbeat.rs:241:55
+    |
+241 |                 if state_clone.status == ActorStatus::Critical && previous_status != ActorStatus::Critical {
+    |                                                       ^^^^^^^^ variant or associated item not found in `ActorStatus`
+    |
+   ::: src/traits/actor_trait.rs:28:1
+    |
+ 28 | pub enum ActorStatus {
+    | -------------------- variant or associated item `Critical` not found for this enum
+
+error[E0599]: no variant or associated item named `Critical` found for enum `ActorStatus` in the current scope
+   --> src/actors/erinyes/heartbeat.rs:241:99
+    |
+241 |                 if state_clone.status == ActorStatus::Critical && previous_status != ActorStatus::Critical {
+    |                                                                                                   ^^^^^^^^ variant or associated item not found in `ActorStatus`
+    |
+   ::: src/traits/actor_trait.rs:28:1
+    |
+ 28 | pub enum ActorStatus {
+    | -------------------- variant or associated item `Critical` not found for this enum
+
+error[E0599]: no variant or associated item named `Critical` found for enum `ActorStatus` in the current scope
+   --> src/actors/erinyes/heartbeat.rs:304:30
+    |
+304 |                 ActorStatus::Critical => critical += 1,
+    |                              ^^^^^^^^ variant or associated item not found in `ActorStatus`
+    |
+   ::: src/traits/actor_trait.rs:28:1
+    |
+ 28 | pub enum ActorStatus {
+    | -------------------- variant or associated item `Critical` not found for this enum
+
+error[E0599]: the method `get` exists for struct `RwLockReadGuard<'_, HashMap<WatchdogEventType, Vec<...>>>`, but its trait bounds were not satisfied
+   --> src/actors/erinyes/watchdog.rs:128:47
+    |
+ 26 | pub enum WatchdogEventType {
+    | -------------------------- doesn't satisfy `WatchdogEventType: std::cmp::Eq` or `WatchdogEventType: std::hash::Hash`
+...
+128 |         if let Some(handlers_list) = handlers.get(&event_type) {
+    |                                               ^^^ method cannot be called due to unsatisfied trait bounds
+    |
+    = note: the following trait bounds were not satisfied:
+            `WatchdogEventType: std::cmp::Eq`
+            `WatchdogEventType: std::hash::Hash`
+    = note: the full name for the type has been written to '/home/tdy/Escritorio/rocky/target/debug/deps/olympus-2f1f8ad3a8d914ab.long-type-15536304637159328070.txt'
+    = note: consider using `--verbose` to print the full type name to the console
+help: consider annotating `WatchdogEventType` with `#[derive(Eq, Hash, PartialEq)]`
+    |
+ 26 + #[derive(Eq, Hash, PartialEq)]
+ 27 | pub enum WatchdogEventType {
+    |
+
+error[E0308]: mismatched types
+   --> src/actors/erinyes/watchdog.rs:296:76
+    |
+295 |             let cutoff = Instant::now() - duration;
+    |                          ------------------------- here the type of `cutoff` is inferred to be `std::time::Instant`
+296 |             let recent: Vec<_> = actor_log.iter().filter(|a| a.last_seen > cutoff).collect();
+    |                                                                            ^^^^^^ expected `DateTime<_>`, found `Instant`
+    |
+    = note: expected struct `chrono::DateTime<_>`
+               found struct `std::time::Instant`
+
+error[E0599]: no method named `duration_since` found for struct `chrono::DateTime<Tz>` in the current scope
+   --> src/actors/erinyes/watchdog.rs:306:48
+    |
+306 |                 let time_span = last.last_seen.duration_since(first.last_seen).as_secs_f64();
+    |                                                ^^^^^^^^^^^^^^
+    |
+help: there is a method `signed_duration_since` with a similar name
+    |
+306 |                 let time_span = last.last_seen.signed_duration_since(first.last_seen).as_secs_f64();
+    |                                                +++++++
+
+error[E0599]: no method named `duration_since` found for struct `chrono::DateTime<Tz>` in the current scope
+   --> src/actors/erinyes/watchdog.rs:317:48
+    |
+317 |                 let time_span = last.last_seen.duration_since(first.last_seen).as_secs_f64();
+    |                                                ^^^^^^^^^^^^^^
+    |
+help: there is a method `signed_duration_since` with a similar name
+    |
+317 |                 let time_span = last.last_seen.signed_duration_since(first.last_seen).as_secs_f64();
+    |                                                +++++++
+
+error[E0599]: the method `entry` exists for struct `RwLockWriteGuard<'_, HashMap<WatchdogEventType, ...>>`, but its trait bounds were not satisfied
+   --> src/actors/erinyes/watchdog.rs:358:14
+    |
+ 26 |   pub enum WatchdogEventType {
+    |   -------------------------- doesn't satisfy `WatchdogEventType: std::cmp::Eq` or `WatchdogEventType: std::hash::Hash`
+...
+357 | /         handlers
+358 | |             .entry(event_type)
+    | |             -^^^^^ method cannot be called due to unsatisfied trait bounds
+    | |_____________|
+    |
+    |
+    = note: the following trait bounds were not satisfied:
+            `WatchdogEventType: std::cmp::Eq`
+            `WatchdogEventType: std::hash::Hash`
+    = note: the full name for the type has been written to '/home/tdy/Escritorio/rocky/target/debug/deps/olympus-2f1f8ad3a8d914ab.long-type-12531680675705179463.txt'
+    = note: consider using `--verbose` to print the full type name to the console
+help: consider annotating `WatchdogEventType` with `#[derive(Eq, Hash, PartialEq)]`
+    |
+ 26 + #[derive(Eq, Hash, PartialEq)]
+ 27 | pub enum WatchdogEventType {
+    |
+
+error[E0277]: `WatchdogSeverity` doesn't implement `std::fmt::Display`
+   --> src/actors/erinyes/watchdog.rs:380:25
+    |
+374 |                         "{},{},{:?},{:?},{},{}\n",
+    |                                             -- required by this formatting parameter
+...
+380 |                         event.severity
+    |                         ^^^^^^^^^^^^^^ `WatchdogSeverity` cannot be formatted with the default formatter
+    |
+help: the trait `std::fmt::Display` is not implemented for `WatchdogSeverity`
+   --> src/actors/erinyes/watchdog.rs:44:1
+    |
+ 44 | pub enum WatchdogSeverity {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^
+    = note: in format strings you may be able to use `{:?}` (or {:#?} for pretty-print) instead
+    = note: this error originates in the macro `$crate::__export::format_args` which comes from the expansion of the macro `format` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: variable does not need to be mutable
+   --> src/actors/erinyes/mod.rs:115:13
+    |
+115 |         let mut erinyes = Self {
+    |             ----^^^^^^^
+    |             |
+    |             help: remove this `mut`
+    |
+    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: variable does not need to be mutable
+   --> src/actors/erinyes/mod.rs:158:13
+    |
+158 |         let mut erinyes = Self {
+    |             ----^^^^^^^
+    |             |
+    |             help: remove this `mut`
+
+error[E0308]: mismatched types
+   --> src/actors/erinyes/mod.rs:656:49
+    |
+656 |                 self.watchdog.clear_old_records(max_age).await;
+    |                               ----------------- ^^^^^^^ expected `TimeDelta`, found `Duration`
+    |                               |
+    |                               arguments to this method are incorrect
+    |
+note: method defined here
+   --> src/actors/erinyes/watchdog.rs:343:18
+    |
+343 |     pub async fn clear_old_records(&self, max_age: chrono::Duration) {
+    |                  ^^^^^^^^^^^^^^^^^        -------------------------
+
+error[E0308]: `?` operator has incompatible types
+  --> src/infrastructure/surreal.rs:92:52
+   |
+92 |           let result: Result<serde_json::Value, _> = client.as_ref()
+   |  ____________________________________________________^
+93 | |             .ok_or_else(|| SurrealError::ConnectionFailed("Not connected".to_string()))?
+94 | |             .query(format!("CREATE {} CONTENT {}", table, data))
+95 | |             .await
+96 | |             .map_err(|e| SurrealError::QueryFailed(e.to_string()))?;
+   | |___________________________________________________________________^ expected `Result<Value, _>`, found `Response`
+   |
+   = note: `?` operator cannot convert from `surrealdb::Response` to `Result<serde_json::Value, _>`
+   = note: expected enum `Result<serde_json::Value, _>`
+            found struct `surrealdb::Response`
+help: try wrapping the expression in `Err`
+   |
+92 ~         let result: Result<serde_json::Value, _> = Err(client.as_ref()
+93 |             .ok_or_else(|| SurrealError::ConnectionFailed("Not connected".to_string()))?
+94 |             .query(format!("CREATE {} CONTENT {}", table, data))
+95 |             .await
+96 ~             .map_err(|e| SurrealError::QueryFailed(e.to_string()))?);
+   |
+
+error[E0382]: use of moved value: `domain`
+   --> src/actors/poseidon/mod.rs:514:86
+    |
+511 |                 let domain = DivineDomain::DataFlow;
+    |                     ------ move occurs because `domain` has type `DivineDomain`, which does not implement the `Copy` trait
+512 |                 match self.connect(&url, domain).await {
+    |                                          ------ value moved here
+513 |                     Ok(id) => {
+514 |                         let _ = self.command_tx.send(PoseidonCommand::Connect { url, domain }).await;
+    |                                                                                      ^^^^^^ value used here after move
+    |
+note: consider changing this parameter type in method `connect` to borrow instead if owning the value isn't necessary
+   --> src/actors/poseidon/mod.rs:196:52
+    |
+196 |     pub async fn connect(&self, url: &str, domain: DivineDomain) -> Result<String, WebSocketError> {
+    |                  ------- in this method            ^^^^^^^^^^^^ this parameter takes ownership of the value
+help: consider cloning the value if the performance cost is acceptable
+    |
+512 |                 match self.connect(&url, domain.clone()).await {
+    |                                                ++++++++
+
+error[E0609]: no field `recipient` on type `ActorMessage`
+   --> src/actors/hermes/mod.rs:214:22
+    |
+214 |         let to = msg.recipient.clone();
+    |                      ^^^^^^^^^ unknown field
+    |
+    = note: available fields are: `id`, `from`, `to`, `payload`, `timestamp` ... and 2 others
+
+error[E0061]: this method takes 1 argument but 2 arguments were supplied
+   --> src/actors/hermes/mod.rs:341:38
+    |
+341 |                 self.mailbox_manager.create_mailbox(god.clone(), size).await;
+    |                                      ^^^^^^^^^^^^^^              ---- unexpected argument #2 of type `usize`
+    |
+note: method defined here
+   --> src/actors/hermes/mailbox.rs:185:18
+    |
+185 |     pub async fn create_mailbox(&self, god: GodName) -> mpsc::Sender<ActorMessage> {
+    |                  ^^^^^^^^^^^^^^
+help: remove the extra argument
+    |
+341 -                 self.mailbox_manager.create_mailbox(god.clone(), size).await;
+341 +                 self.mailbox_manager.create_mailbox(god.clone()).await;
+    |
+
+error[E0308]: mismatched types
+   --> src/actors/hermes/mod.rs:361:61
+    |
+361 |                 self.delivery_tracker.cleanup_old_trackings(max_age).await;
+    |                                       --------------------- ^^^^^^^ expected `TimeDelta`, found `Duration`
+    |                                       |
+    |                                       arguments to this method are incorrect
+    |
+note: method defined here
+   --> src/actors/hermes/delivery.rs:127:18
+    |
+127 |     pub async fn cleanup_old_trackings(&self, max_age: chrono::Duration) {
+    |                  ^^^^^^^^^^^^^^^^^^^^^        -------------------------
+
+error[E0599]: the function or associated item `new` exists for struct `ring::aead::SealingKey<_>`, but its trait bounds were not satisfied
+   --> src/actors/hades/encryption.rs:152:43
+    |
+152 |         let mut sealing_key = SealingKey::new(unbound_key, AesGcmNonceSequence::new(nonce_bytes));
+    |                                           ^^^ function or associated item cannot be called on `ring::aead::SealingKey<_>` due to unsatisfied trait bounds
+    |
+   ::: /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ring-0.17.14/src/aead/sealing_key.rs:32:1
+    |
+ 32 | pub struct SealingKey<N: NonceSequence> {
+    | --------------------------------------- doesn't satisfy `_: InnerInit`, `_: InnerUser` or `ring::aead::SealingKey<_>: KeyInit`
+    |
+    = note: the following trait bounds were not satisfied:
+            `ring::aead::SealingKey<_>: crypto_common::InnerInit`
+            which is required by `ring::aead::SealingKey<_>: KeyInit`
+            `ring::aead::SealingKey<_>: crypto_common::InnerUser`
+            which is required by `ring::aead::SealingKey<_>: KeyInit`
+            `&ring::aead::SealingKey<_>: crypto_common::InnerInit`
+            which is required by `&ring::aead::SealingKey<_>: KeyInit`
+            `&ring::aead::SealingKey<_>: crypto_common::InnerUser`
+            which is required by `&ring::aead::SealingKey<_>: KeyInit`
+            `&mut ring::aead::SealingKey<_>: crypto_common::InnerInit`
+            which is required by `&mut ring::aead::SealingKey<_>: KeyInit`
+            `&mut ring::aead::SealingKey<_>: crypto_common::InnerUser`
+            which is required by `&mut ring::aead::SealingKey<_>: KeyInit`
+    = help: items from traits can only be used if the trait is in scope
+help: the following traits which provide `new` are implemented but not in scope; perhaps you want to import one of them
+    |
+  5 + use ring::aead::BoundKey;
+    |
+  5 + use yansi::Paint;
+    |
+
+error[E0599]: the function or associated item `new` exists for struct `ring::aead::OpeningKey<_>`, but its trait bounds were not satisfied
+   --> src/actors/hades/encryption.rs:198:43
+    |
+198 |         let mut opening_key = OpeningKey::new(unbound_key, AesGcmNonceSequence::new(nonce_bytes));
+    |                                           ^^^ function or associated item cannot be called on `ring::aead::OpeningKey<_>` due to unsatisfied trait bounds
+    |
+   ::: /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ring-0.17.14/src/aead/opening_key.rs:33:1
+    |
+ 33 | pub struct OpeningKey<N: NonceSequence> {
+    | --------------------------------------- doesn't satisfy `_: InnerInit`, `_: InnerUser` or `ring::aead::OpeningKey<_>: KeyInit`
+    |
+    = note: the following trait bounds were not satisfied:
+            `ring::aead::OpeningKey<_>: crypto_common::InnerInit`
+            which is required by `ring::aead::OpeningKey<_>: KeyInit`
+            `ring::aead::OpeningKey<_>: crypto_common::InnerUser`
+            which is required by `ring::aead::OpeningKey<_>: KeyInit`
+            `&ring::aead::OpeningKey<_>: crypto_common::InnerInit`
+            which is required by `&ring::aead::OpeningKey<_>: KeyInit`
+            `&ring::aead::OpeningKey<_>: crypto_common::InnerUser`
+            which is required by `&ring::aead::OpeningKey<_>: KeyInit`
+            `&mut ring::aead::OpeningKey<_>: crypto_common::InnerInit`
+            which is required by `&mut ring::aead::OpeningKey<_>: KeyInit`
+            `&mut ring::aead::OpeningKey<_>: crypto_common::InnerUser`
+            which is required by `&mut ring::aead::OpeningKey<_>: KeyInit`
+    = help: items from traits can only be used if the trait is in scope
+help: the following traits which provide `new` are implemented but not in scope; perhaps you want to import one of them
+    |
+  5 + use ring::aead::BoundKey;
+    |
+  5 + use yansi::Paint;
+    |
+
+warning: variable does not need to be mutable
+   --> src/actors/hades/encryption.rs:308:13
+    |
+308 |         let mut key_manager = self.key_manager.write().await;
+    |             ----^^^^^^^^^^^
+    |             |
+    |             help: remove this `mut`
+
+error[E0502]: cannot borrow `history` as immutable because it is also borrowed as mutable
+  --> src/actors/hera/mod.rs:97:30
+   |
+97 |             history.drain(0..history.len() - 1000);
+   |             ------- -----    ^^^^^^^ immutable borrow occurs here
+   |             |       |
+   |             |       mutable borrow later used by call
+   |             mutable borrow occurs here
+
+error[E0308]: `?` operator has incompatible types
+   --> src/infrastructure/surreal.rs:104:44
+    |
+104 |           let result: Result<Option<T>, _> = client.as_ref()
+    |  ____________________________________________^
+105 | |             .ok_or_else(|| SurrealError::ConnectionFailed("Not connected".to_string()))?
+106 | |             .query(format!("SELECT * FROM {} WHERE id = $id", table))
+107 | |             .bind(("id", id))
+108 | |             .await
+109 | |             .map_err(|e| SurrealError::QueryFailed(e.to_string()))?;
+    | |___________________________________________________________________^ expected `Result<Option<T>, _>`, found `Response`
+    |
+    = note: `?` operator cannot convert from `surrealdb::Response` to `Result<std::option::Option<T>, _>`
+    = note: expected enum `Result<std::option::Option<T>, _>`
+             found struct `surrealdb::Response`
+help: try wrapping the expression in `Err`
+    |
+104 ~         let result: Result<Option<T>, _> = Err(client.as_ref()
+105 |             .ok_or_else(|| SurrealError::ConnectionFailed("Not connected".to_string()))?
+...
+108 |             .await
+109 ~             .map_err(|e| SurrealError::QueryFailed(e.to_string()))?);
+    |
+
+error[E0308]: `?` operator has incompatible types
+   --> src/infrastructure/surreal.rs:119:52
+    |
+119 |           let result: Result<serde_json::Value, _> = client.as_ref()
+    |  ____________________________________________________^
+120 | |             .ok_or_else(|| SurrealError::ConnectionFailed("Not connected".to_string()))?
+121 | |             .query(format!("UPDATE {} CONTENT {}", id, data))
+122 | |             .await
+123 | |             .map_err(|e| SurrealError::QueryFailed(e.to_string()))?;
+    | |___________________________________________________________________^ expected `Result<Value, _>`, found `Response`
+    |
+    = note: `?` operator cannot convert from `surrealdb::Response` to `Result<serde_json::Value, _>`
+    = note: expected enum `Result<serde_json::Value, _>`
+             found struct `surrealdb::Response`
+help: try wrapping the expression in `Err`
+    |
+119 ~         let result: Result<serde_json::Value, _> = Err(client.as_ref()
+120 |             .ok_or_else(|| SurrealError::ConnectionFailed("Not connected".to_string()))?
+121 |             .query(format!("UPDATE {} CONTENT {}", id, data))
+122 |             .await
+123 ~             .map_err(|e| SurrealError::QueryFailed(e.to_string()))?);
+    |
+
+error[E0596]: cannot borrow `*self` as mutable, as it is behind a `&` reference
+   --> src/actors/hestia/mod.rs:701:17
+    |
+701 |                 self.shutdown().await?;
+    |                 ^^^^ `self` is a `&` reference, so it cannot be borrowed as mutable
+    |
+help: consider changing this to be a mutable reference
+    |
+688 |     async fn handle_command(&mut self, cmd: CommandPayload) -> Result<ResponsePayload, ActorError> {
+    |                              +++
+
+error[E0308]: `?` operator has incompatible types
+   --> src/infrastructure/surreal.rs:143:41
+    |
+143 |           let result: Result<Vec<T>, _> = client.as_ref()
+    |  _________________________________________^
+144 | |             .ok_or_else(|| SurrealError::ConnectionFailed("Not connected".to_string()))?
+145 | |             .query(query)
+146 | |             .await
+147 | |             .map_err(|e| SurrealError::QueryFailed(e.to_string()))?;
+    | |___________________________________________________________________^ expected `Result<Vec<T>, _>`, found `Response`
+    |
+    = note: `?` operator cannot convert from `surrealdb::Response` to `Result<std::vec::Vec<T>, _>`
+    = note: expected enum `Result<std::vec::Vec<T>, _>`
+             found struct `surrealdb::Response`
+help: try wrapping the expression in `Err`
+    |
+143 ~         let result: Result<Vec<T>, _> = Err(client.as_ref()
+144 |             .ok_or_else(|| SurrealError::ConnectionFailed("Not connected".to_string()))?
+145 |             .query(query)
+146 |             .await
+147 ~             .map_err(|e| SurrealError::QueryFailed(e.to_string()))?);
+    |
+
+error[E0277]: the trait bound `tokio::sync::RwLock<TrinityState>: serde::Serialize` is not satisfied
+   --> src/actors/zeus/mod.rs:597:9
+    |
+597 | /         serde_json::json!({
+598 | |             "name": "Zeus",
+599 | |             "uptime_seconds": (chrono::Utc::now() - self.state.start_time).num_seconds(),
+600 | |             "trinity_state": self.trinity_state.clone(),
+601 | |             "olympus_state": self.olympus_state.clone(),
+602 | |         })
+    | |          ^
+    | |          |
+    | |__________the trait `actors::_::_serde::Serialize` is not implemented for `tokio::sync::RwLock<TrinityState>`
+    |            required by a bound introduced by this call
+    |
+    = note: for local types consider adding `#[derive(serde::Serialize)]` to your `tokio::sync::RwLock<TrinityState>` type
+    = note: for types from other crates check whether the crate offers a `serde` feature flag
+    = help: the following other types implement trait `actors::_::_serde::Serialize`:
+              &'a T
+              &'a mut T
+              ()
+              (T,)
+              (T0, T1)
+              (T0, T1, T2)
+              (T0, T1, T2, T3)
+              (T0, T1, T2, T3, T4)
+            and 1060 others
+    = note: required for `Arc<tokio::sync::RwLock<TrinityState>>` to implement `actors::_::_serde::Serialize`
+    = note: 1 redundant requirement hidden
+    = note: required for `&Arc<tokio::sync::RwLock<TrinityState>>` to implement `actors::_::_serde::Serialize`
+note: required by a bound in `serde_json::to_value`
+   --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.148/src/value/mod.rs:997:8
+    |
+995 | pub fn to_value<T>(value: T) -> Result<Value, Error>
+    |        -------- required by a bound in this function
+996 | where
+997 |     T: Serialize,
+    |        ^^^^^^^^^ required by this bound in `to_value`
+    = note: this error originates in the macro `$crate::json_internal` which comes from the expansion of the macro `serde_json::json` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `tokio::sync::RwLock<OlympusState>: serde::Serialize` is not satisfied
+   --> src/actors/zeus/mod.rs:597:9
+    |
+597 | /         serde_json::json!({
+598 | |             "name": "Zeus",
+599 | |             "uptime_seconds": (chrono::Utc::now() - self.state.start_time).num_seconds(),
+600 | |             "trinity_state": self.trinity_state.clone(),
+601 | |             "olympus_state": self.olympus_state.clone(),
+602 | |         })
+    | |          ^
+    | |          |
+    | |__________the trait `actors::_::_serde::Serialize` is not implemented for `tokio::sync::RwLock<OlympusState>`
+    |            required by a bound introduced by this call
+    |
+    = note: for local types consider adding `#[derive(serde::Serialize)]` to your `tokio::sync::RwLock<OlympusState>` type
+    = note: for types from other crates check whether the crate offers a `serde` feature flag
+    = help: the following other types implement trait `actors::_::_serde::Serialize`:
+              &'a T
+              &'a mut T
+              ()
+              (T,)
+              (T0, T1)
+              (T0, T1, T2)
+              (T0, T1, T2, T3)
+              (T0, T1, T2, T3, T4)
+            and 1060 others
+    = note: required for `Arc<tokio::sync::RwLock<OlympusState>>` to implement `actors::_::_serde::Serialize`
+    = note: 1 redundant requirement hidden
+    = note: required for `&Arc<tokio::sync::RwLock<OlympusState>>` to implement `actors::_::_serde::Serialize`
+note: required by a bound in `serde_json::to_value`
+   --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.148/src/value/mod.rs:997:8
+    |
+995 | pub fn to_value<T>(value: T) -> Result<Value, Error>
+    |        -------- required by a bound in this function
+996 | where
+997 |     T: Serialize,
+    |        ^^^^^^^^^ required by this bound in `to_value`
+    = note: this error originates in the macro `$crate::json_internal` which comes from the expansion of the macro `serde_json::json` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0599]: no variant or associated item named `Critical` found for enum `ActorStatus` in the current scope
+   --> src/actors/zeus/mod.rs:627:26
+    |
+627 |             ActorStatus::Critical
+    |                          ^^^^^^^^ variant or associated item not found in `ActorStatus`
+    |
+   ::: src/traits/actor_trait.rs:28:1
+    |
+ 28 | pub enum ActorStatus {
+    | -------------------- variant or associated item `Critical` not found for this enum
+
+error[E0609]: no field `last_error` on type `ActorState`
+   --> src/actors/zeus/mod.rs:640:36
+    |
+640 |             last_error: self.state.last_error.as_ref().map(|e| e.to_string()),
+    |                                    ^^^^^^^^^^ unknown field
+    |
+    = note: available fields are: `god`, `status`, `message_count`, `error_count`, `start_time`, `last_message_time`
+
+error[E0282]: type annotations needed
+   --> src/actors/zeus/mod.rs:640:61
+    |
+640 |             last_error: self.state.last_error.as_ref().map(|e| e.to_string()),
+    |                                                             ^  - type must be known at this point
+    |
+help: consider giving this closure parameter an explicit type
+    |
+640 |             last_error: self.state.last_error.as_ref().map(|e: /* Type */| e.to_string()),
+    |                                                              ++++++++++++
+
+error[E0599]: no variant or associated item named `Critical` found for enum `ActorStatus` in the current scope
+  --> src/actors/erinyes/heartbeat.rs:90:40
+   |
+90 |             self.status = ActorStatus::Critical;
+   |                                        ^^^^^^^^ variant or associated item not found in `ActorStatus`
+   |
+  ::: src/traits/actor_trait.rs:28:1
+   |
+28 | pub enum ActorStatus {
+   | -------------------- variant or associated item `Critical` not found for this enum
+
+error[E0277]: the trait bound `std::time::Instant: serde::Serialize` is not satisfied
+    --> src/actors/erinyes/dead_letter.rs:14:24
+     |
+  14 | #[derive(Debug, Clone, Serialize, Deserialize)]
+     |                        ^^^^^^^^^ the trait `actors::_::_serde::Serialize` is not implemented for `std::time::Instant`
+...
+  19 |     pub failed_at: Instant,
+     |     --- required by a bound introduced by this call
+     |
+     = note: for local types consider adding `#[derive(serde::Serialize)]` to your `std::time::Instant` type
+     = note: for types from other crates check whether the crate offers a `serde` feature flag
+     = help: the following other types implement trait `actors::_::_serde::Serialize`:
+               &'a T
+               &'a mut T
+               ()
+               (T,)
+               (T0, T1)
+               (T0, T1, T2)
+               (T0, T1, T2, T3)
+               (T0, T1, T2, T3, T4)
+             and 1060 others
+note: required by a bound in `actors::_::_serde::ser::SerializeStruct::serialize_field`
+    --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.228/src/ser/mod.rs:1917:21
+     |
+1915 |     fn serialize_field<T>(&mut self, key: &'static str, value: &T) -> Result<(), Self::Error>
+     |        --------------- required by a bound in this associated function
+1916 |     where
+1917 |         T: ?Sized + Serialize;
+     |                     ^^^^^^^^^ required by this bound in `SerializeStruct::serialize_field`
+     = note: this error originates in the derive macro `Serialize` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `std::time::Instant: serde::Deserialize<'de>` is not satisfied
+    --> src/actors/erinyes/dead_letter.rs:19:20
+     |
+  19 |     pub failed_at: Instant,
+     |                    ^^^^^^^ the trait `actors::_::_serde::Deserialize<'_>` is not implemented for `std::time::Instant`
+     |
+     = note: for local types consider adding `#[derive(serde::Deserialize)]` to your `std::time::Instant` type
+     = note: for types from other crates check whether the crate offers a `serde` feature flag
+     = help: the following other types implement trait `actors::_::_serde::Deserialize<'de>`:
+               `&'a [u8]` implements `actors::_::_serde::Deserialize<'de>`
+               `&'a serde_json::value::RawValue` implements `actors::_::_serde::Deserialize<'de>`
+               `&'a str` implements `actors::_::_serde::Deserialize<'de>`
+               `()` implements `actors::_::_serde::Deserialize<'de>`
+               `(T,)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1, T2)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1, T2, T3)` implements `actors::_::_serde::Deserialize<'de>`
+             and 1034 others
+note: required by a bound in `actors::_::_serde::de::SeqAccess::next_element`
+    --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.228/src/de/mod.rs:1771:12
+     |
+1769 |     fn next_element<T>(&mut self) -> Result<Option<T>, Self::Error>
+     |        ------------ required by a bound in this associated function
+1770 |     where
+1771 |         T: Deserialize<'de>,
+     |            ^^^^^^^^^^^^^^^^ required by this bound in `SeqAccess::next_element`
+     = note: the full name for the type has been written to '/home/tdy/Escritorio/rocky/target/debug/deps/olympus-2f1f8ad3a8d914ab.long-type-10287067935353013397.txt'
+     = note: consider using `--verbose` to print the full type name to the console
+
+error[E0277]: the trait bound `std::time::Instant: serde::Deserialize<'de>` is not satisfied
+    --> src/actors/erinyes/dead_letter.rs:19:20
+     |
+  19 |     pub failed_at: Instant,
+     |                    ^^^^^^^ the trait `actors::_::_serde::Deserialize<'_>` is not implemented for `std::time::Instant`
+     |
+     = note: for local types consider adding `#[derive(serde::Deserialize)]` to your `std::time::Instant` type
+     = note: for types from other crates check whether the crate offers a `serde` feature flag
+     = help: the following other types implement trait `actors::_::_serde::Deserialize<'de>`:
+               `&'a [u8]` implements `actors::_::_serde::Deserialize<'de>`
+               `&'a serde_json::value::RawValue` implements `actors::_::_serde::Deserialize<'de>`
+               `&'a str` implements `actors::_::_serde::Deserialize<'de>`
+               `()` implements `actors::_::_serde::Deserialize<'de>`
+               `(T,)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1, T2)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1, T2, T3)` implements `actors::_::_serde::Deserialize<'de>`
+             and 1034 others
+note: required by a bound in `next_value`
+    --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.228/src/de/mod.rs:1916:12
+     |
+1914 |     fn next_value<V>(&mut self) -> Result<V, Self::Error>
+     |        ---------- required by a bound in this associated function
+1915 |     where
+1916 |         V: Deserialize<'de>,
+     |            ^^^^^^^^^^^^^^^^ required by this bound in `MapAccess::next_value`
+     = note: the full name for the type has been written to '/home/tdy/Escritorio/rocky/target/debug/deps/olympus-2f1f8ad3a8d914ab.long-type-10287067935353013397.txt'
+     = note: consider using `--verbose` to print the full type name to the console
+
+error[E0277]: the trait bound `std::time::Instant: serde::Deserialize<'de>` is not satisfied
+  --> src/actors/erinyes/dead_letter.rs:14:35
+   |
+14 | #[derive(Debug, Clone, Serialize, Deserialize)]
+   |                                   ^^^^^^^^^^^ the trait `actors::_::_serde::Deserialize<'_>` is not implemented for `std::time::Instant`
+   |
+   = note: for local types consider adding `#[derive(serde::Deserialize)]` to your `std::time::Instant` type
+   = note: for types from other crates check whether the crate offers a `serde` feature flag
+   = help: the following other types implement trait `actors::_::_serde::Deserialize<'de>`:
+             `&'a [u8]` implements `actors::_::_serde::Deserialize<'de>`
+             `&'a serde_json::value::RawValue` implements `actors::_::_serde::Deserialize<'de>`
+             `&'a str` implements `actors::_::_serde::Deserialize<'de>`
+             `()` implements `actors::_::_serde::Deserialize<'de>`
+             `(T,)` implements `actors::_::_serde::Deserialize<'de>`
+             `(T0, T1)` implements `actors::_::_serde::Deserialize<'de>`
+             `(T0, T1, T2)` implements `actors::_::_serde::Deserialize<'de>`
+             `(T0, T1, T2, T3)` implements `actors::_::_serde::Deserialize<'de>`
+           and 1034 others
+note: required by a bound in `actors::_::_serde::__private228::de::missing_field`
+  --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs:26:8
+   |
+24 | pub fn missing_field<'de, V, E>(field: &'static str) -> Result<V, E>
+   |        ------------- required by a bound in this function
+25 | where
+26 |     V: Deserialize<'de>,
+   |        ^^^^^^^^^^^^^^^^ required by this bound in `missing_field`
+   = note: the full name for the type has been written to '/home/tdy/Escritorio/rocky/target/debug/deps/olympus-2f1f8ad3a8d914ab.long-type-10287067935353013397.txt'
+   = note: consider using `--verbose` to print the full type name to the console
+   = note: this error originates in the derive macro `Deserialize` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: `dyn Fn(&WatchdogEvent) + Send + Sync` doesn't implement `std::fmt::Debug`
+  --> src/actors/erinyes/watchdog.rs:75:5
+   |
+70 | #[derive(Debug, Clone)]
+   |          ----- in this derive macro expansion
+...
+75 |     custom_handlers: Arc<RwLock<HashMap<WatchdogEventType, Vec<Box<dyn Fn(&WatchdogEvent) + Send + Sync>>>>>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `std::fmt::Debug` is not implemented for `dyn Fn(&WatchdogEvent) + Send + Sync`
+   |
+   = note: the full name for the type has been written to '/home/tdy/Escritorio/rocky/target/debug/deps/olympus-2f1f8ad3a8d914ab.long-type-13397595581806215739.txt'
+   = note: consider using `--verbose` to print the full type name to the console
+
+error[E0609]: no field `strategy` on type `HeartbeatConfig`
+   --> src/actors/erinyes/mod.rs:260:46
+    |
+260 | ...                   state.config.strategy.clone(),
+    |                                    ^^^^^^^^ unknown field
+    |
+    = note: available fields are: `interval_ms`, `timeout_ms`
+
+error[E0599]: no variant or associated item named `Critical` found for enum `ActorStatus` in the current scope
+   --> src/actors/erinyes/mod.rs:363:26
+    |
+363 |             ActorStatus::Critical
+    |                          ^^^^^^^^ variant or associated item not found in `ActorStatus`
+    |
+   ::: src/traits/actor_trait.rs:28:1
+    |
+ 28 | pub enum ActorStatus {
+    | -------------------- variant or associated item `Critical` not found for this enum
+
+error[E0609]: no field `last_error` on type `ActorState`
+   --> src/actors/erinyes/mod.rs:376:36
+    |
+376 |             last_error: self.state.last_error.as_ref().map(|e| e.to_string()),
+    |                                    ^^^^^^^^^^ unknown field
+    |
+    = note: available fields are: `god`, `status`, `message_count`, `error_count`, `start_time`, `last_message_time`
+
+error[E0282]: type annotations needed
+   --> src/actors/erinyes/mod.rs:376:61
+    |
+376 |             last_error: self.state.last_error.as_ref().map(|e| e.to_string()),
+    |                                                             ^  - type must be known at this point
+    |
+help: consider giving this closure parameter an explicit type
+    |
+376 |             last_error: self.state.last_error.as_ref().map(|e: /* Type */| e.to_string()),
+    |                                                              ++++++++++++
+
+error[E0609]: no field `last_error` on type `ActorState`
+   --> src/actors/poseidon/mod.rs:467:36
+    |
+467 |             last_error: self.state.last_error.as_ref().map(|e| e.to_string()),
+    |                                    ^^^^^^^^^^ unknown field
+    |
+    = note: available fields are: `god`, `status`, `message_count`, `error_count`, `start_time`, `last_message_time`
+
+error[E0282]: type annotations needed
+   --> src/actors/poseidon/mod.rs:467:61
+    |
+467 |             last_error: self.state.last_error.as_ref().map(|e| e.to_string()),
+    |                                                             ^  - type must be known at this point
+    |
+help: consider giving this closure parameter an explicit type
+    |
+467 |             last_error: self.state.last_error.as_ref().map(|e: /* Type */| e.to_string()),
+    |                                                              ++++++++++++
+
+error[E0782]: expected a type, found a trait
+  --> src/actors/artemis/indexing.rs:35:23
+   |
+35 |         let mut doc = Document::default();
+   |                       ^^^^^^^^
+   |
+help: you can add the `dyn` keyword if you want a trait object
+   |
+35 |         let mut doc = <dyn Document>::default();
+   |                       ++++         +
+
+error[E0599]: no variant or associated item named `OnCommit` found for enum `ReloadPolicy` in the current scope
+  --> src/actors/artemis/search.rs:19:51
+   |
+19 |             .reload_policy(tantivy::ReloadPolicy::OnCommit)
+   |                                                   ^^^^^^^^ variant or associated item not found in `ReloadPolicy`
+
+error[E0282]: type annotations needed
+  --> src/actors/artemis/search.rs:53:17
+   |
+53 |             let retrieved_doc = searcher.doc(doc_address).map_err(|e| ActorError::SearchError {
+   |                 ^^^^^^^^^^^^^
+...
+60 |             for (field, value) in retrieved_doc.field_values() {
+   |                                   ------------- type must be known at this point
+   |
+help: consider giving `retrieved_doc` an explicit type
+   |
+53 |             let retrieved_doc: /* Type */ = searcher.doc(doc_address).map_err(|e| ActorError::SearchError {
+   |                              ++++++++++++
+
+error[E0282]: type annotations needed
+  --> src/actors/artemis/search.rs:62:37
+   |
+62 |                 if let Some(text) = value.as_text() {
+   |                                     ^^^^^ cannot infer type
+
+error[E0599]: no variant or associated item named `Critical` found for enum `ActorStatus` in the current scope
+   --> src/actors/hermes/mod.rs:460:26
+    |
+460 |             ActorStatus::Critical
+    |                          ^^^^^^^^ variant or associated item not found in `ActorStatus`
+    |
+   ::: src/traits/actor_trait.rs:28:1
+    |
+ 28 | pub enum ActorStatus {
+    | -------------------- variant or associated item `Critical` not found for this enum
+
+error[E0609]: no field `last_error` on type `ActorState`
+   --> src/actors/hermes/mod.rs:469:36
+    |
+469 |             last_error: self.state.last_error.as_ref().map(|e| e.to_string()),
+    |                                    ^^^^^^^^^^ unknown field
+    |
+    = note: available fields are: `god`, `status`, `message_count`, `error_count`, `start_time`, `last_message_time`
+
+error[E0282]: type annotations needed
+   --> src/actors/hermes/mod.rs:469:61
+    |
+469 |             last_error: self.state.last_error.as_ref().map(|e| e.to_string()),
+    |                                                             ^  - type must be known at this point
+    |
+help: consider giving this closure parameter an explicit type
+    |
+469 |             last_error: self.state.last_error.as_ref().map(|e: /* Type */| e.to_string()),
+    |                                                              ++++++++++++
+
+error[E0599]: no method named `handle_event` found for mutable reference `&mut Hades` in the current scope
+   --> src/actors/hades/mod.rs:247:50
+    |
+247 |             MessagePayload::Event(event) => self.handle_event(event).await,
+    |                                                  ^^^^^^^^^^^^
+    |
+help: there is a method `handle_query` with a similar name
+    |
+247 -             MessagePayload::Event(event) => self.handle_event(event).await,
+247 +             MessagePayload::Event(event) => self.handle_query(event).await,
+    |
+
+error[E0599]: no variant or associated item named `Critical` found for enum `ActorStatus` in the current scope
+   --> src/actors/hades/mod.rs:281:26
+    |
+281 |             ActorStatus::Critical
+    |                          ^^^^^^^^ variant or associated item not found in `ActorStatus`
+    |
+   ::: src/traits/actor_trait.rs:28:1
+    |
+ 28 | pub enum ActorStatus {
+    | -------------------- variant or associated item `Critical` not found for this enum
+
+error[E0308]: mismatched types
+  --> src/infrastructure/surreal.rs:43:24
+   |
+43 |             namespace: "olympus",
+   |                        ^^^^^^^^^ expected `String`, found `&str`
+   |
+help: try using a conversion method
+   |
+43 |             namespace: "olympus".to_string(),
+   |                                 ++++++++++++
+
+error[E0308]: mismatched types
+  --> src/infrastructure/surreal.rs:44:23
+   |
+44 |             database: "v13",
+   |                       ^^^^^ expected `String`, found `&str`
+   |
+help: try using a conversion method
+   |
+44 |             database: "v13".to_string(),
+   |                            ++++++++++++
+
+warning: unused variable: `rev_deps`
+   --> src/actors/zeus/supervisor.rs:414:13
+    |
+414 |         let rev_deps = self.reverse_deps.read().await;
+    |             ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_rev_deps`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `max_restarts`
+   --> src/actors/zeus/supervisor.rs:594:13
+    |
+594 |         let max_restarts = self.max_restarts;
+    |             ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_max_restarts`
+
+warning: unused variable: `now`
+   --> src/actors/zeus/metrics.rs:397:13
+    |
+397 |         let now = Utc::now();
+    |             ^^^ help: if this is intentional, prefix it with an underscore: `_now`
+
+warning: unused variable: `healthy`
+   --> src/actors/zeus/mod.rs:368:21
+    |
+368 |                 let healthy = health.healthy_count;
+    |                     ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_healthy`
+
+warning: unused variable: `now`
+   --> src/actors/erinyes/watchdog.rs:136:13
+    |
+136 |         let now = Instant::now();
+    |             ^^^ help: if this is intentional, prefix it with an underscore: `_now`
+
+error: lifetime may not live long enough
+   --> src/actors/poseidon/flow_control.rs:387:30
+    |
+382 |     pub fn try_acquire(&self) -> Option<FlowPermitImmediate> {
+    |                        - let's call the lifetime of this reference `'1`
+...
+387 |                     _permit: permit,
+    |                              ^^^^^^ this usage requires that `'1` must outlive `'static`
+
+warning: unused variable: `msg`
+   --> src/actors/hermes/mod.rs:484:27
+    |
+484 |         let deliver_fn = |msg: ActorMessage, to: GodName| async move {
+    |                           ^^^ help: if this is intentional, prefix it with an underscore: `_msg`
+
+warning: unused variable: `to`
+   --> src/actors/hermes/mod.rs:484:46
+    |
+484 |         let deliver_fn = |msg: ActorMessage, to: GodName| async move {
+    |                                              ^^ help: if this is intentional, prefix it with an underscore: `_to`
+
+warning: unused variable: `pattern`
+   --> src/actors/hestia/memory_store.rs:265:13
+    |
+265 |         let pattern = format!("{}:*", self.prefix);
+    |             ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_pattern`
+
+error[E0382]: borrow of moved value: `error`
+  --> src/actors/hestia/async_buffer.rs:91:19
+   |
+84 |     pub fn mark_attempt(&mut self, error: Option<String>) {
+   |                                    ----- move occurs because `error` has type `std::option::Option<std::string::String>`, which does not implement the `Copy` trait
+...
+87 |         self.error_message = error;
+   |                              ----- value moved here
+...
+91 |         } else if error.is_some() {
+   |                   ^^^^^ value borrowed here after move
+   |
+help: consider cloning the value if the performance cost is acceptable
+   |
+87 |         self.error_message = error.clone();
+   |                                   ++++++++
+
+warning: unused variable: `table`
+   --> src/actors/hestia/sync.rs:524:38
+    |
+524 |     pub async fn list_backups(&self, table: &str) -> Vec<BackupMetadata> {
+    |                                      ^^^^^ help: if this is intentional, prefix it with an underscore: `_table`
+
+warning: unused variable: `l3_value`
+   --> src/actors/hestia/sync.rs:688:9
+    |
+688 |         l3_value: &serde_json::Value,
+    |         ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_l3_value`
+
+warning: unused variable: `direction`
+   --> src/actors/hestia/mod.rs:803:35
+    |
+803 |             HestiaCommand::Sync { direction, keys } => {
+    |                                   ^^^^^^^^^ help: try ignoring the field: `direction: _`
+
+warning: unused variable: `table`
+   --> src/infrastructure/surreal.rs:128:32
+    |
+128 |     pub async fn delete(&self, table: &str, id: &str) -> Result<(), SurrealError> {
+    |                                ^^^^^ help: if this is intentional, prefix it with an underscore: `_table`
+
+Some errors have detailed explanations: E0061, E0277, E0282, E0308, E0382, E0433, E0502, E0559, E0596...
+For more information about an error, try `rustc --explain E0061`.
+warning: `olympus` (lib) generated 109 warnings
+error: could not compile `olympus` (lib) due to 71 previous errors; 109 warnings emitted

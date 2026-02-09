@@ -48,8 +48,8 @@ impl GlasgowCalculator {
         GlasgowResult {
             score,
             severity,
-            diagnosis,
-            recommendation,
+            diagnosis: diagnosis.clone(),
+            recommendation: recommendation.clone(),
             assessment: GlasgowAssessment::new(
                 eye,
                 verbal,
@@ -230,8 +230,8 @@ impl ApacheCalculator {
         ApacheResult {
             score,
             predicted_mortality,
-            severity,
-            recommendation,
+            severity: severity.clone(),
+            recommendation: recommendation.clone(),
             assessment: ApacheAssessment::new(
                 params.temperature,
                 params.mean_arterial_pressure,

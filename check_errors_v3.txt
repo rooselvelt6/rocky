@@ -1,0 +1,14 @@
+    Checking olympus v13.0.0 (/home/tdy/Escritorio/rocky)
+error: unexpected closing delimiter: `}`
+   --> src/actors/hades/mod.rs:432:5
+    |
+361 |     async fn handle_query(&self, query: QueryPayload) -> Result<ResponsePayload, ActorError> {
+    |                                                                                              - the nearest open delimiter
+...
+430 |             })
+    |              - missing open `(` for this delimiter
+431 |         }
+432 |     }
+    |     ^ unexpected closing delimiter
+
+error: could not compile `olympus` (lib) due to 1 previous error

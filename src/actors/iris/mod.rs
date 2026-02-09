@@ -47,7 +47,7 @@ impl OlympianActor for Iris {
     fn name(&self) -> GodName { GodName::Iris }
     fn domain(&self) -> DivineDomain { DivineDomain::Communications }
     async fn handle_message(&mut self, msg: ActorMessage) -> Result<ResponsePayload, ActorError> { Ok(ResponsePayload::Ack { message_id: msg.id }) }
-    fn persistent_state(&self) -> serde_json::Value { serde_json::json!({}) }
+    async fn persistent_state(&self) -> serde_json::Value { serde_json::json!({}) }
     fn load_state(&mut self, _state: &serde_json::Value) -> Result<(), ActorError> { Ok(()) }
     fn heartbeat(&self) -> GodHeartbeat { unimplemented!() }
     async fn health_check(&self) -> HealthStatus { unimplemented!() }

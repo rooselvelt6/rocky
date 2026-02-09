@@ -57,7 +57,7 @@ impl ActorMessage {
 }
 
 /// Prioridad del mensaje
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub enum MessagePriority {
     Low,
     Normal,
@@ -140,6 +140,7 @@ pub enum QueryPayload {
     HealthStatus,
     ActorState,
     Metrics,
+    GetStats,
 
     // Data queries
     GetData { key: String },
@@ -185,6 +186,10 @@ pub enum EventPayload {
     HeartbeatMissed {
         actor: GodName,
     },
+    ActorPanicked {
+        actor: GodName,
+        error: String,
+    },
 
     // Domain events
     ClinicalAlert {
@@ -215,7 +220,7 @@ pub enum ResponsePayload {
 }
 
 /// Estrategia de recuperación
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub enum RecoveryStrategy {
     OneForOne,  // Solo el caído se reinicia
     OneForAll,  // Todos se reinician
@@ -231,7 +236,7 @@ pub struct SendResult {
     pub delivery_time_ms: u64,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub enum SendStatus {
     Delivered,
     Queued,

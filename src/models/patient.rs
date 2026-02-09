@@ -99,7 +99,7 @@ mod tests {
 
     #[test]
     fn test_days_in_hospital_calculation() {
-        let patient = Patient::new(
+        let mut patient = Patient::new(
             "Test".to_string(),
             "User".to_string(),
             "1990-01-01".to_string(),

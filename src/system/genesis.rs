@@ -9,9 +9,10 @@ use std::collections::HashMap;
 
 use crate::actors::{GodName, DivineDomain};
 use crate::traits::{OlympianActor, ActorConfig};
-use crate::traits::message::{ActorMessage, MessagePayload, CommandPayload, HermesCommand};
+use crate::traits::message::{ActorMessage, MessagePayload, CommandPayload};
 use crate::system::runner::ActorRunner;
-use crate::infrastructure::ValkeyStore; // Asumimos existencia, si no usaremos mock
+use crate::infrastructure::{ValkeyStore, SurrealStore}; 
+use crate::actors::zeus::ZeusConfig;
 
 // Importación de Dioses (Asumimos módulos estándar v15)
 use crate::actors::zeus::Zeus;
@@ -48,13 +49,8 @@ impl Genesis {
 
         // 1. Infraestructura Base
         info!("🧱 GENESIS: Levantando infraestructura (Valkey/Surreal)...");
-        let valkey = Arc::new(ValkeyStore::new("redis://127.0.0.1:6379").await.unwrap_or_else(|_| {
-            warn!("⚠️ Valkey no disponible, usando modo memoria (si aplica) o fallará más adelante");
-            // En prod esto sería panic, aquí intentamos seguir
-             unsafe { std::mem::transmute(Box::new(())) } // Hack sucio si no hay mock, mejor panic si falla
-        }));
-        // Nota: Si ValkeyStore falla, el sistema v15 real debería detenerse.
-        // Asumiremos que valkey connect funciona o manejamos error arriba.
+        let valkey = Arc::new(ValkeyStore::default());
+        let surreal = Arc::new(SurrealStore::default());
 
         // 2. Preparar Canales (Elixir PIDs)
         // Necesitamos crear los canales ANTES de mover los actores al runner
@@ -75,7 +71,7 @@ impl Genesis {
         // Rust borrow checker odia closures async mutables complejas, lo haremos imperativo.
 
         // --- ZEUS (Gobernador) ---
-        let zeus = Zeus::new().await;
+        let zeus = Zeus::new(ZeusConfig::default()).await;
         addToMount(&mut senders, &mut runners, Box::new(zeus)).await;
 
         // --- HADES (Seguridad) ---
@@ -84,7 +80,7 @@ impl Genesis {
 
         // --- POSEIDON (Datos) ---
         // Poseidon necesita Valkey o config especial a veces? Vimos new().await en v15
-        let poseidon = Poseidon::new().await;
+        let poseidon = Poseidon::new(valkey.clone()).await;
         addToMount(&mut senders, &mut runners, Box::new(poseidon)).await;
 
         // --- ERINYES (Monitor) ---
@@ -105,7 +101,7 @@ impl Genesis {
         // Si alguno falla compilación (nombres incorrectos, etc), ajustaremos.
         
         addToMount(&mut senders, &mut runners, Box::new(Hera::new().await)).await;
-        addToMount(&mut senders, &mut runners, Box::new(Artemis::new().await)).await;
+        addToMount(&mut senders, &mut runners, Box::new(Artemis::new().expect("Artemis failed to ignite"))).await;
         addToMount(&mut senders, &mut runners, Box::new(Apollo::new().await)).await;
         addToMount(&mut senders, &mut runners, Box::new(Athena::new().await)).await;
         addToMount(&mut senders, &mut runners, Box::new(Ares::new().await)).await;
@@ -121,7 +117,7 @@ impl Genesis {
         
         addToMount(&mut senders, &mut runners, Box::new(Dionysus::new().await)).await;
         addToMount(&mut senders, &mut runners, Box::new(Demeter::new().await)).await;
-        addToMount(&mut senders, &mut runners, Box::new(Hestia::new().await)).await;
+        addToMount(&mut senders, &mut runners, Box::new(Hestia::new(valkey.clone(), surreal.clone()).await)).await;
         addToMount(&mut senders, &mut runners, Box::new(Chronos::new().await)).await;
         addToMount(&mut senders, &mut runners, Box::new(Iris::new().await)).await;
         addToMount(&mut senders, &mut runners, Box::new(Moirai::new().await)).await;

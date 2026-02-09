@@ -864,7 +864,7 @@ impl GovernanceController {
             return Err(format!("Policy '{}' already exists", policy.name));
         }
         
-        policies.policies.insert(policy.name.clone(), policy);
+        policies.policies.insert(policy.name.clone(), policy.clone());
         info!("⚡ Zeus: Access policy '{}' created", policy.name);
         Ok(())
     }

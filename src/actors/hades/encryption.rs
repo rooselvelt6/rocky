@@ -5,7 +5,7 @@
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tokio::sync::RwLock;
-use ring::aead::{Nonce, UnboundKey, AES_256_GCM, NonceSequence, OpeningKey, SealingKey};
+use ring::aead::{Nonce, UnboundKey, AES_256_GCM, NonceSequence, OpeningKey, SealingKey, BoundKey, Aad};
 use ring::rand::{SecureRandom, SystemRandom};
 use chacha20poly1305::{ChaCha20Poly1305, Key, Nonce as ChaChaNonce};
 use chacha20poly1305::aead::{Aead, KeyInit, Payload};
@@ -23,7 +23,7 @@ pub struct EncryptedData {
     pub metadata: serde_json::Value,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, Zeroize)]
 pub enum EncryptionAlgorithm {
     Aes256Gcm,
     ChaCha20Poly1305,
@@ -57,9 +57,11 @@ impl SecretKey {
     }
 }
 
+#[derive(Debug)]
 pub struct EncryptionService {
     key_manager: Arc<RwLock<KeyManager>>,
     default_algorithm: EncryptionAlgorithm,
+    #[allow(dead_code)]
     rng: SystemRandom,
 }
 
@@ -151,7 +153,7 @@ impl EncryptionService {
         
         // Encrypt in-place
         let mut ciphertext = data.to_vec();
-        let tag = sealing_key.seal_in_place_separate_tag(nonce, &[], &mut ciphertext)
+        let tag = sealing_key.seal_in_place_separate_tag(Aad::empty(), &mut ciphertext)
             .map_err(|_| EncryptionError::EncryptionFailed)?;
         
         // Append tag to ciphertext
@@ -197,7 +199,7 @@ impl EncryptionService {
         
         // Decrypt
         let mut ciphertext = data.ciphertext.clone();
-        let plaintext = opening_key.open_in_place(nonce, &[], &mut ciphertext)
+        let plaintext = opening_key.open_in_place(Aad::empty(), &mut ciphertext)
             .map_err(|_| EncryptionError::DecryptionFailed)?;
         
         info!("🔓 Data decrypted with AES-256-GCM (key_id: {})", data.key_id);
@@ -335,8 +337,8 @@ impl AesGcmNonceSequence {
 }
 
 impl NonceSequence for AesGcmNonceSequence {
-    fn advance(&mut self) -> Option<Nonce> {
-        Some(Nonce::assume_unique_for_key(self.nonce))
+    fn advance(&mut self) -> Result<Nonce, ring::error::Unspecified> {
+        Ok(Nonce::assume_unique_for_key(self.nonce))
     }
 }
 

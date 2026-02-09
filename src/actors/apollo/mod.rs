@@ -86,7 +86,7 @@ impl OlympianActor for Apollo {
         }
     }
 
-    fn persistent_state(&self) -> serde_json::Value {
+    async fn persistent_state(&self) -> serde_json::Value {
         serde_json::json!({
             "name": "Apollo",
             "messages": self.state.message_count,
@@ -100,7 +100,7 @@ impl OlympianActor for Apollo {
 
     fn heartbeat(&self) -> GodHeartbeat {
         GodHeartbeat {
-            god: self.name,
+            god: self.name.clone(),
             status: self.state.status.clone(),
             last_seen: chrono::Utc::now(),
             load: 0.0,
@@ -111,7 +111,7 @@ impl OlympianActor for Apollo {
 
     async fn health_check(&self) -> HealthStatus {
         HealthStatus {
-            god: self.name,
+            god: self.name.clone(),
             status: self.state.status.clone(),
             uptime_seconds: (chrono::Utc::now() - self.state.start_time).num_seconds() as u64,
             message_count: self.state.message_count,

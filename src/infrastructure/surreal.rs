@@ -40,8 +40,8 @@ impl Default for SurrealConfig {
     fn default() -> Self {
         Self {
             url: "ws://localhost:8000".to_string(),
-            namespace: "olympus",
-            database: "v13",
+            namespace: "olympus".to_string(),
+            database: "v13".to_string(),
             username: None,
             password: None,
         }
@@ -89,23 +89,29 @@ impl SurrealStore {
         let data = serde_json::to_value(data)
             .map_err(|e| SurrealError::SerializationError(e.to_string()))?;
 
-        let result: Result<serde_json::Value, _> = client.as_ref()
+        let mut response = client.as_ref()
             .ok_or_else(|| SurrealError::ConnectionFailed("Not connected".to_string()))?
             .query(format!("CREATE {} CONTENT {}", table, data))
             .await
             .map_err(|e| SurrealError::QueryFailed(e.to_string()))?;
 
-        Ok(result)
+        let mut result: Vec<serde_json::Value> = response.take(0)
+            .map_err(|e| SurrealError::QueryFailed(e.to_string()))?;
+
+        Ok(result.pop().unwrap_or(serde_json::Value::Null))
     }
 
     pub async fn select<T: for<'de> serde::Deserialize<'de>>(&self, table: &str, id: &str) -> Result<Option<T>, SurrealError> {
         let client = self.client.read().await;
         
-        let result: Result<Option<T>, _> = client.as_ref()
+        let mut response = client.as_ref()
             .ok_or_else(|| SurrealError::ConnectionFailed("Not connected".to_string()))?
             .query(format!("SELECT * FROM {} WHERE id = $id", table))
-            .bind(("id", id))
+            .bind(("id", id.to_string()))
             .await
+            .map_err(|e| SurrealError::QueryFailed(e.to_string()))?;
+
+        let result: Option<T> = response.take(0)
             .map_err(|e| SurrealError::QueryFailed(e.to_string()))?;
 
         Ok(result)
@@ -116,13 +122,16 @@ impl SurrealStore {
         let data = serde_json::to_value(data)
             .map_err(|e| SurrealError::SerializationError(e.to_string()))?;
 
-        let result: Result<serde_json::Value, _> = client.as_ref()
+        let mut response = client.as_ref()
             .ok_or_else(|| SurrealError::ConnectionFailed("Not connected".to_string()))?
             .query(format!("UPDATE {} CONTENT {}", id, data))
             .await
             .map_err(|e| SurrealError::QueryFailed(e.to_string()))?;
 
-        Ok(result)
+        let mut result: Vec<serde_json::Value> = response.take(0)
+            .map_err(|e| SurrealError::QueryFailed(e.to_string()))?;
+
+        Ok(result.pop().unwrap_or(serde_json::Value::Null))
     }
 
     pub async fn delete(&self, table: &str, id: &str) -> Result<(), SurrealError> {
@@ -140,10 +149,13 @@ impl SurrealStore {
     pub async fn query<T: for<'de> serde::Deserialize<'de>>(&self, query: &str) -> Result<Vec<T>, SurrealError> {
         let client = self.client.read().await;
         
-        let result: Result<Vec<T>, _> = client.as_ref()
+        let mut response = client.as_ref()
             .ok_or_else(|| SurrealError::ConnectionFailed("Not connected".to_string()))?
             .query(query)
             .await
+            .map_err(|e| SurrealError::QueryFailed(e.to_string()))?;
+
+        let result: Vec<T> = response.take(0)
             .map_err(|e| SurrealError::QueryFailed(e.to_string()))?;
 
         Ok(result)

@@ -22,7 +22,7 @@ pub struct Mailbox {
     max_size: usize,
     delivered_count: Arc<RwLock<u64>>,
     failed_count: Arc<RwLock<u64>>,
-    last_delivery: Arc<RwLock<Option<Instant>>>,
+    last_delivery: Arc<RwLock<Option<chrono::DateTime<chrono::Utc>>>>,
 }
 
 impl Mailbox {
@@ -57,7 +57,7 @@ impl Mailbox {
                 *count += 1;
                 
                 let mut last = self.last_delivery.write().await;
-                *last = Some(Instant::now());
+                *last = Some(chrono::Utc::now());
                 
                 Ok(())
             }
@@ -164,10 +164,11 @@ pub struct MailboxStats {
     pub delivered_count: u64,
     pub failed_count: u64,
     pub queued_count: u64,
-    pub last_delivery: Option<Instant>,
+    pub last_delivery: Option<chrono::DateTime<chrono::Utc>>,
     pub max_size: usize,
 }
 
+#[derive(Debug)]
 pub struct MailboxManager {
     mailboxes: Arc<RwLock<std::collections::HashMap<GodName, Mailbox>>>,
     default_max_size: usize,

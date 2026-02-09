@@ -423,7 +423,7 @@ impl OlympianActor for Poseidon {
         }
     }
     
-    fn persistent_state(&self) -> serde_json::Value {
+    async fn persistent_state(&self) -> serde_json::Value {
         serde_json::json!({
             "name": "Poseidon",
             "active_connections": 0,
@@ -509,7 +509,7 @@ impl Poseidon {
         match cmd {
             CommandPayload::Connect { url } => {
                 let domain = DivineDomain::DataFlow;
-                match self.connect(&url, domain).await {
+                match self.connect(&url, domain.clone()).await {
                     Ok(id) => {
                         let _ = self.command_tx.send(PoseidonCommand::Connect { url, domain }).await;
                         Ok(ResponsePayload::Success { message: format!("Connected: {}", id) })

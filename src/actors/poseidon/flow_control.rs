@@ -7,7 +7,7 @@ use std::collections::VecDeque;
 use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
-use tokio::sync::{Mutex, Semaphore, SemaphorePermit};
+use tokio::sync::{Mutex, Semaphore, SemaphorePermit, OwnedSemaphorePermit};
 use tokio::time::interval;
 use tracing::{debug, info};
 
@@ -378,9 +378,8 @@ impl FlowController {
         })
     }
 
-    /// Intenta adquirir permiso sin bloquear
     pub fn try_acquire(&self) -> Option<FlowPermitImmediate> {
-        match self.semaphore.try_acquire() {
+        match self.semaphore.clone().try_acquire_owned() {
             Ok(permit) => {
                 self.metrics.messages_allowed.fetch_add(1, Ordering::Relaxed);
                 Some(FlowPermitImmediate {
@@ -630,7 +629,7 @@ impl<'a> FlowPermit<'a> {
 
 /// Permiso inmediato (no async)
 pub struct FlowPermitImmediate {
-    _permit: tokio::sync::SemaphorePermit<'static>,
+    _permit: OwnedSemaphorePermit,
 }
 
 /// Errores del Flow Controller

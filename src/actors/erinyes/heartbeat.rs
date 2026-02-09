@@ -18,6 +18,7 @@ use crate::actors::erinyes::alerts::{AlertSeverity, AlertSystem};
 pub struct HeartbeatConfig {
     pub interval_ms: u64,
     pub timeout_ms: u64,
+    pub strategy: RecoveryStrategy,
 }
 
 impl Default for HeartbeatConfig {
@@ -25,6 +26,7 @@ impl Default for HeartbeatConfig {
         Self {
             interval_ms: 1000,
             timeout_ms: 1500,
+            strategy: RecoveryStrategy::OneForOne,
         }
     }
 }
@@ -32,7 +34,7 @@ impl Default for HeartbeatConfig {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct HeartbeatState {
     pub actor: GodName,
-    pub last_seen: Instant,
+    pub last_seen: chrono::DateTime<chrono::Utc>,
     pub status: ActorStatus,
     pub consecutive_misses: u32,
     pub consecutive_successes: u32,
@@ -44,7 +46,7 @@ pub struct HeartbeatState {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct HeartbeatRecord {
-    pub timestamp: Instant,
+    pub timestamp: chrono::DateTime<chrono::Utc>,
     pub latency_ms: u64,
     pub status: ActorStatus,
 }
@@ -53,7 +55,7 @@ impl HeartbeatState {
     pub fn new(actor: GodName, config: HeartbeatConfig) -> Self {
         Self {
             actor,
-            last_seen: Instant::now(),
+            last_seen: chrono::Utc::now(),
             status: ActorStatus::Healthy,
             consecutive_misses: 0,
             consecutive_successes: 0,
@@ -65,11 +67,12 @@ impl HeartbeatState {
     }
     
     pub fn is_timed_out(&self) -> bool {
-        self.last_seen.elapsed().as_millis() as u64 > self.config.timeout_ms
+        let elapsed = (chrono::Utc::now() - self.last_seen).num_milliseconds() as u64;
+        elapsed > self.config.timeout_ms
     }
     
     pub fn get_timeout_remaining_ms(&self) -> u64 {
-        let elapsed = self.last_seen.elapsed().as_millis() as u64;
+        let elapsed = (chrono::Utc::now() - self.last_seen).num_milliseconds() as u64;
         if elapsed >= self.config.timeout_ms {
             0
         } else {
@@ -96,7 +99,7 @@ impl HeartbeatState {
     }
     
     pub fn mark_received(&mut self, latency_ms: u64) {
-        self.last_seen = Instant::now();
+        self.last_seen = chrono::Utc::now();
         self.consecutive_misses = 0;
         self.consecutive_successes += 1;
         self.total_heartbeats += 1;
@@ -114,7 +117,7 @@ impl HeartbeatState {
     
     fn add_history_record(&mut self, status: ActorStatus, latency_ms: u64) {
         let record = HeartbeatRecord {
-            timestamp: Instant::now(),
+            timestamp: chrono::Utc::now(),
             latency_ms,
             status,
         };
@@ -298,6 +301,7 @@ impl HeartbeatMonitor {
         for (_, state) in actors.iter() {
             match state.status {
                 ActorStatus::Healthy => healthy += 1,
+                ActorStatus::Degraded => healthy += 1, // Treat degraded as "healthy but warn" for stats
                 ActorStatus::Recovering => recovering += 1,
                 ActorStatus::Unhealthy => unhealthy += 1,
                 ActorStatus::Critical => critical += 1,

@@ -11,7 +11,7 @@ use tracing::{info, warn, error};
 
 use crate::actors::{GodName, DivineDomain};
 use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
-use crate::traits::message::{ActorMessage, MessagePayload, CommandPayload, ResponsePayload, QueryPayload};
+use crate::traits::message::{ActorMessage, MessagePayload, CommandPayload, ResponsePayload, QueryPayload, EventPayload};
 use crate::errors::ActorError;
 
 pub mod encryption;
@@ -201,6 +201,10 @@ impl Hades {
         let auth = self.auth.read().await;
         auth.has_permission(user_id, permission).await
     }
+
+    pub async fn handle_event(&mut self, _event: EventPayload) -> Result<ResponsePayload, ActorError> {
+        Ok(ResponsePayload::Success { message: "Event handled by Hades".to_string() })
+    }
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -247,6 +251,94 @@ impl OlympianActor for Hades {
             MessagePayload::Event(event) => self.handle_event(event).await,
             MessagePayload::Response(_) => Ok(ResponsePayload::Ack { message_id: msg.id }),
         }
+    }
+
+    async fn persistent_state(&self) -> serde_json::Value { 
+        serde_json::json!({
+            "name": "Hades",
+            "hipaa_mode": self.hipaa_mode,
+            "algorithm": format!("{:?}", self.default_algorithm),
+            "messages": self.state.message_count,
+        })
+    }
+    
+    fn load_state(&mut self, _state: &serde_json::Value) -> Result<(), ActorError> { 
+        Ok(()) 
+    }
+    
+    fn heartbeat(&self) -> GodHeartbeat { 
+        GodHeartbeat {
+            god: GodName::Hades,
+            status: ActorStatus::Healthy,
+            last_seen: chrono::Utc::now(),
+            load: 0.0,
+            memory_usage_mb: 0.0,
+            uptime_seconds: (chrono::Utc::now() - self.state.start_time).num_seconds() as u64,
+        }
+    }
+    
+    async fn health_check(&self) -> HealthStatus { 
+        let key_stats = self.keys.read().await.get_stats().await;
+        let audit_stats = self.audit.read().await.get_stats().await;
+        
+        let status = if key_stats.active_keys == 0 {
+            ActorStatus::Critical
+        } else {
+            ActorStatus::Healthy
+        };
+        
+        HealthStatus {
+            god: GodName::Hades,
+            status,
+            uptime_seconds: (chrono::Utc::now() - self.state.start_time).num_seconds() as u64,
+            message_count: self.state.message_count,
+            error_count: self.state.error_count,
+            last_error: None,
+            memory_usage_mb: 0.0,
+            timestamp: chrono::Utc::now(),
+        }
+    }
+    
+    fn config(&self) -> Option<&ActorConfig> { 
+        Some(&self.config)
+    }
+    
+    async fn initialize(&mut self) -> Result<(), ActorError> { 
+        info!("🔱 Hades: Initializing Security Guardian v15...");
+        
+        // Start key rotation worker
+        let keys = self.keys.read().await;
+        keys.start_rotation_worker();
+        drop(keys);
+        
+        info!("🔱 Hades: Encryption algorithms: AES-256-GCM + ChaCha20-Poly1305");
+        info!("🔱 Hades: Authentication: Argon2id + JWT");
+        info!("🔱 Hades: Key management: Zeroize + auto-rotation");
+        info!("🔱 Hades: Audit: HIPAA-compliant logging");
+        info!("🔱 Hades: Security Guardian ready");
+        
+        Ok(())
+    }
+    
+    async fn shutdown(&mut self) -> Result<(), ActorError> { 
+        info!("🔱 Hades: Shutting down Security Guardian...");
+        
+        // Cleanup expired keys
+        let keys = self.keys.read().await;
+        keys.cleanup_expired_keys().await;
+        drop(keys);
+        
+        // Cleanup sessions
+        let auth = self.auth.read().await;
+        auth.cleanup_sessions(Duration::from_secs(0)).await;
+        drop(auth);
+        
+        info!("🔱 Hades: Security Guardian shutdown complete");
+        Ok(())
+    }
+    
+    fn actor_state(&self) -> ActorState { 
+        self.state.clone() 
     }
 }
 
@@ -345,100 +437,6 @@ impl Hades {
         }
     }
     
-    async fn handle_event(&mut self, _event: crate::traits::message::EventPayload) -> Result<ResponsePayload, ActorError> {
-        Ok(ResponsePayload::Ack { message_id: uuid::Uuid::new_v4().to_string() })
-    }
-    
-    fn persistent_state(&self) -> serde_json::Value { 
-        serde_json::json!({
-            "name": "Hades",
-            "hipaa_mode": self.hipaa_mode,
-            "algorithm": format!("{:?}", self.default_algorithm),
-            "messages": self.state.message_count,
-        })
-    }
-    
-    fn load_state(&mut self, _state: &serde_json::Value) -> Result<(), ActorError> { 
-        Ok(()) 
-    }
-    
-    fn heartbeat(&self) -> GodHeartbeat { 
-        GodHeartbeat {
-            god: GodName::Hades,
-            status: ActorStatus::Healthy,
-            last_seen: chrono::Utc::now(),
-            load: 0.0,
-            memory_usage_mb: 0.0,
-            uptime_seconds: (chrono::Utc::now() - self.state.start_time).num_seconds() as u64,
-        }
-    }
-    
-    async fn health_check(&self) -> HealthStatus { 
-        let key_stats = self.keys.read().await.get_stats().await;
-        let audit_stats = self.audit.read().await.get_stats().await;
-        
-        let status = if key_stats.active_keys == 0 {
-            ActorStatus::Critical
-        } else {
-            ActorStatus::Healthy
-        };
-        
-        HealthStatus {
-            god: GodName::Hades,
-            status,
-            uptime_seconds: (chrono::Utc::now() - self.state.start_time).num_seconds() as u64,
-            message_count: self.state.message_count,
-            error_count: self.state.error_count,
-            last_error: None,
-            memory_usage_mb: 0.0,
-            timestamp: chrono::Utc::now(),
-        }
-    }
-    
-    fn config(&self) -> Option<&ActorConfig> { 
-        Some(&self.config)
-    }
-    
-    async fn initialize(&mut self) -> Result<(), ActorError> { 
-        info!("🔱 Hades: Initializing Security Guardian v15...");
-        
-        // Start key rotation worker
-        let keys = self.keys.read().await;
-        keys.start_rotation_worker();
-        drop(keys);
-        
-        info!("🔱 Hades: Encryption algorithms: AES-256-GCM + ChaCha20-Poly1305");
-        info!("🔱 Hades: Authentication: Argon2id + JWT");
-        info!("🔱 Hades: Key management: Zeroize + auto-rotation");
-        info!("🔱 Hades: Audit: HIPAA-compliant logging");
-        info!("🔱 Hades: Security Guardian ready");
-        
-        Ok(())
-    }
-    
-    async fn shutdown(&mut self) -> Result<(), ActorError> { 
-        info!("🔱 Hades: Shutting down Security Guardian...");
-        
-        // Cleanup expired keys
-        let keys = self.keys.read().await;
-        keys.cleanup_expired_keys().await;
-        drop(keys);
-        
-        // Cleanup sessions
-        let auth = self.auth.read().await;
-        auth.cleanup_sessions(Duration::from_secs(0)).await;
-        drop(auth);
-        
-        info!("🔱 Hades: Security Guardian shutdown complete");
-        Ok(())
-    }
-    
-    fn actor_state(&self) -> ActorState { 
-        self.state.clone() 
-    }
-}
-
-impl Hades {
     async fn execute_hades_command(&self, cmd: HadesCommand) -> Result<ResponsePayload, ActorError> {
         match cmd {
             HadesCommand::Encrypt { data, key_id, algorithm } => {

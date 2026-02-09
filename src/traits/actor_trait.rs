@@ -30,6 +30,7 @@ pub enum ActorStatus {
     Degraded,
     Unhealthy,
     Dead,
+    Critical,
     Recovering,
 }
 
@@ -100,7 +101,7 @@ pub trait OlympianActor: Send + Sync {
     async fn handle_message(&mut self, msg: ActorMessage) -> Result<ResponsePayload, ActorError>;
 
     /// Estado para persistencia
-    fn persistent_state(&self) -> serde_json::Value;
+    async fn persistent_state(&self) -> serde_json::Value;
 
     /// Cargar estado desde persistencia
     fn load_state(&mut self, state: &serde_json::Value) -> Result<(), ActorError>;
@@ -133,6 +134,7 @@ pub struct ActorState {
     pub error_count: u64,
     pub start_time: chrono::DateTime<chrono::Utc>,
     pub last_message_time: chrono::DateTime<chrono::Utc>,
+    pub last_error: Option<String>,
 }
 
 impl ActorState {
@@ -144,6 +146,7 @@ impl ActorState {
             error_count: 0,
             start_time: chrono::Utc::now(),
             last_message_time: chrono::Utc::now(),
+            last_error: None,
         }
     }
 }

@@ -56,8 +56,9 @@ use std::sync::Arc;
 use tokio::sync::RwLock;
 
 // Enum de todos los nombres de dioses
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
 pub enum GodName {
+    #[default]
     Zeus,
     Erinyes,
     Poseidon,

@@ -583,7 +583,7 @@ impl OlympianActor for Hestia {
         }
     }
     
-    fn persistent_state(&self) -> serde_json::Value {
+    async fn persistent_state(&self) -> serde_json::Value {
         // Estado que debe persistirse
         serde_json::json!({
             "name": "Hestia",
@@ -685,7 +685,7 @@ impl OlympianActor for Hestia {
 
 // Implementación de handlers
 impl Hestia {
-    async fn handle_command(&self, cmd: CommandPayload) -> Result<ResponsePayload, ActorError> {
+    async fn handle_command(&mut self, cmd: CommandPayload) -> Result<ResponsePayload, ActorError> {
         match cmd {
             CommandPayload::Configure { config } => {
                 if let Ok(hestia_cmd) = serde_json::from_value::<HestiaCommand>(config.clone()) {
@@ -716,7 +716,7 @@ impl Hestia {
         }
     }
     
-    async fn handle_query(&self, query: QueryPayload) -> Result<ResponsePayload, ActorError> {
+    async fn handle_query(&mut self, query: QueryPayload) -> Result<ResponsePayload, ActorError> {
         match query {
             QueryPayload::Metrics => {
                 let stats = self.get_full_stats().await;

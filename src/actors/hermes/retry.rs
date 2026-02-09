@@ -179,6 +179,7 @@ impl RetryQueue {
     }
 }
 
+#[derive(Debug)]
 pub struct RetryWorker {
     queue: Arc<RetryQueue>,
     shutdown: Arc<RwLock<bool>>,

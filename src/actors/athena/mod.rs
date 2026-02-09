@@ -69,10 +69,11 @@ impl OlympianActor for Athena {
         }
     }
     
-    fn persistent_state(&self) -> serde_json::Value {
+    async fn persistent_state(&self) -> serde_json::Value {
+        let analysis_count = self.analysis.try_read().map(|a| a.analysis_count()).unwrap_or(0);
         serde_json::json!({
             "name": "Athena",
-            "patient_analyses": self.analysis.read().await.analysis_count(),
+            "patient_analyses": analysis_count,
         })
     }
     

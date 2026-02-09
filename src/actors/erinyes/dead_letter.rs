@@ -4,7 +4,6 @@
 
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
-use std::time::Instant;
 use uuid::Uuid;
 
 use super::ValkeyStore;
@@ -16,7 +15,7 @@ pub struct DeadLetter {
     pub id: String,
     pub message: ActorMessage,
     pub original_to: GodName,
-    pub failed_at: Instant,
+    pub failed_at: chrono::DateTime<chrono::Utc>,
     pub attempt_count: u32,
     pub last_error: String,
     pub status: DeadLetterStatus,
@@ -36,7 +35,7 @@ impl DeadLetter {
             id: Uuid::new_v4().to_string(),
             message,
             original_to,
-            failed_at: Instant::now(),
+            failed_at: chrono::Utc::now(),
             attempt_count: 0,
             last_error: error,
             status: DeadLetterStatus::Pending,

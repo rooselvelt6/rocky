@@ -94,7 +94,8 @@ impl Hera {
         
         // Keep only last 1000 validations
         if history.len() > 1000 {
-            history.drain(0..history.len() - 1000);
+            let to_remove = history.len() - 1000;
+            history.drain(0..to_remove);
         }
         
         result
@@ -153,7 +154,7 @@ impl OlympianActor for Hera {
         }
     }
     
-    fn persistent_state(&self) -> serde_json::Value {
+    async fn persistent_state(&self) -> serde_json::Value {
         serde_json::json!({
             "name": "Hera",
             "validation_count": self.state.message_count,

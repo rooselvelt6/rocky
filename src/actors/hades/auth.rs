@@ -39,7 +39,7 @@ pub struct User {
     pub mfa_secret: Option<String>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub enum Role {
     SuperAdmin,    // Full access to everything
     Admin,         // Administrative access
@@ -99,7 +99,7 @@ impl Role {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub enum Permission {
     All,
     UserManage,
@@ -137,7 +137,7 @@ pub struct JwtClaims {
 pub struct AuthenticationService {
     users: Arc<RwLock<HashMap<String, User>>>,
     sessions: Arc<RwLock<HashMap<String, Session>>>,
-    audit_logger: Arc<AuditLogger>,
+    audit_logger: Arc<RwLock<AuditLogger>>,
     jwt_secret: Arc<RwLock<String>>,
     token_duration_hours: u64,
     max_login_attempts: u32,
@@ -155,7 +155,7 @@ pub struct Session {
 }
 
 impl AuthenticationService {
-    pub fn new(audit_logger: Arc<AuditLogger>) -> Self {
+    pub fn new(audit_logger: Arc<RwLock<AuditLogger>>) -> Self {
         let jwt_secret = std::env::var("JWT_SECRET")
             .unwrap_or_else(|_| {
                 let secret = uuid::Uuid::new_v4().to_string();
@@ -257,7 +257,7 @@ impl AuthenticationService {
         drop(users);
         
         // Audit log
-        self.audit_logger.log(
+        self.audit_logger.write().await.log(
             "USER_CREATED",
             &user.id,
             &user.username,
@@ -295,7 +295,7 @@ impl AuthenticationService {
             if chrono::Utc::now() < locked_until {
                 warn!("🔒 Account locked for user: {}", username);
                 
-                self.audit_logger.log(
+                self.audit_logger.write().await.log(
                     "LOGIN_ATTEMPT_LOCKED",
                     &user.id,
                     username,
@@ -328,7 +328,7 @@ impl AuthenticationService {
             drop(users);
             
             // Audit log
-            self.audit_logger.log(
+            self.audit_logger.write().await.log(
                 "LOGIN_FAILED",
                 &user.id,
                 username,
@@ -371,7 +371,7 @@ impl AuthenticationService {
         drop(sessions);
         
         // Audit log
-        self.audit_logger.log(
+        self.audit_logger.write().await.log(
             "LOGIN_SUCCESS",
             &user.id,
             &user.username,
@@ -456,7 +456,7 @@ impl AuthenticationService {
         if let Some(session) = sessions.remove(token) {
             drop(sessions);
             
-            self.audit_logger.log(
+            self.audit_logger.write().await.log(
                 "LOGOUT",
                 &session.user_id,
                 "",
@@ -515,7 +515,7 @@ impl AuthenticationService {
         
         // Verify old password
         if !self.verify_password(old_password, &user.password_hash).await? {
-            self.audit_logger.log(
+            self.audit_logger.write().await.log(
                 "PASSWORD_CHANGE_FAILED",
                 user_id,
                 &user.username,
@@ -537,7 +537,7 @@ impl AuthenticationService {
         drop(users);
         
         // Audit log
-        self.audit_logger.log(
+        self.audit_logger.write().await.log(
             "PASSWORD_CHANGED",
             user_id,
             &user.username,

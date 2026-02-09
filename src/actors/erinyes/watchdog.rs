@@ -22,7 +22,7 @@ pub struct WatchdogEvent {
     pub metadata: serde_json::Value,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum WatchdogEventType {
     ActorDeath,
     ActorPanic,
@@ -40,7 +40,7 @@ pub enum WatchdogEventType {
     Custom(String),
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum WatchdogSeverity {
     Info,
     Warning,
@@ -48,31 +48,53 @@ pub enum WatchdogSeverity {
     Critical,
 }
 
+impl std::fmt::Display for WatchdogSeverity {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
+
+impl std::fmt::Display for WatchdogEventType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DeathRecord {
     pub actor: GodName,
-    pub timestamp: Instant,
+    pub timestamp: chrono::DateTime<chrono::Utc>,
     pub detected_at: chrono::DateTime<chrono::Utc>,
     pub reason: String,
     pub recovery_attempts: u32,
     pub was_recovered: bool,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ActorActivity {
-    pub last_seen: Instant,
+    pub last_seen: chrono::DateTime<chrono::Utc>,
     pub message_count: u64,
     pub error_count: u64,
     pub memory_usage_mb: f64,
     pub cpu_usage_percent: f64,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct Watchdog {
     events: Arc<RwLock<Vec<WatchdogEvent>>>,
     death_records: Arc<RwLock<HashMap<GodName, DeathRecord>>>,
     activity_log: Arc<RwLock<HashMap<GodName, VecDeque<ActorActivity>>>>,
     custom_handlers: Arc<RwLock<HashMap<WatchdogEventType, Vec<Box<dyn Fn(&WatchdogEvent) + Send + Sync>>>>>,
+}
+
+impl std::fmt::Debug for Watchdog {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Watchdog")
+            .field("events", &"Arc<RwLock<Vec<WatchdogEvent>>>")
+            .field("death_records", &"Arc<RwLock<HashMap<GodName, DeathRecord>>>")
+            .field("activity_log", &"Arc<RwLock<HashMap<GodName, VecDeque<ActorActivity>>>>")
+            .finish()
+    }
 }
 
 impl Watchdog {
@@ -138,7 +160,7 @@ impl Watchdog {
         
         let record = DeathRecord {
             actor: actor.clone(),
-            timestamp: now,
+            timestamp: chrono::Utc::now(),
             detected_at: chrono::Utc::now(),
             reason: reason.clone(),
             recovery_attempts: 0,
@@ -200,7 +222,7 @@ impl Watchdog {
         cpu_usage_percent: f64,
     ) {
         let activity = ActorActivity {
-            last_seen: Instant::now(),
+            last_seen: chrono::Utc::now(),
             message_count,
             error_count,
             memory_usage_mb,
@@ -292,7 +314,7 @@ impl Watchdog {
         let log = self.activity_log.read().await;
         
         if let Some(actor_log) = log.get(actor) {
-            let cutoff = Instant::now() - duration;
+            let cutoff = chrono::Utc::now() - chrono::Duration::from_std(duration).unwrap_or(chrono::Duration::zero());
             let recent: Vec<_> = actor_log.iter().filter(|a| a.last_seen > cutoff).collect();
             
             if recent.len() < 2 {
@@ -303,7 +325,7 @@ impl Watchdog {
             let last = recent.last().unwrap();
             
             let message_rate = if recent.len() > 1 {
-                let time_span = last.last_seen.duration_since(first.last_seen).as_secs_f64();
+                let time_span = (last.last_seen - first.last_seen).num_seconds() as f64;
                 if time_span > 0.0 {
                     (last.message_count - first.message_count) as f64 / time_span
                 } else {
@@ -314,7 +336,7 @@ impl Watchdog {
             };
             
             let error_rate = if recent.len() > 1 {
-                let time_span = last.last_seen.duration_since(first.last_seen).as_secs_f64();
+                let time_span = (last.last_seen - first.last_seen).num_seconds() as f64;
                 if time_span > 0.0 {
                     (last.error_count - first.error_count) as f64 / time_span
                 } else {
@@ -340,12 +362,12 @@ impl Watchdog {
         }
     }
     
-    pub async fn clear_old_records(&self, max_age: Duration) {
+    pub async fn clear_old_records(&self, max_age: chrono::Duration) {
         let mut records = self.death_records.write().await;
-        let now = Instant::now();
+        let now = chrono::Utc::now();
         
         records.retain(|_, record| {
-            now.duration_since(record.timestamp) < max_age || !record.was_recovered
+            now - record.timestamp < max_age || !record.was_recovered
         });
     }
     
@@ -386,7 +408,7 @@ impl Watchdog {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SystemHealth {
     pub status: SystemStatus,
     pub active_deaths: usize,
@@ -402,7 +424,7 @@ pub enum SystemStatus {
     Critical,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ActivityTrend {
     pub actor: GodName,
     pub message_rate: f64,      // messages per second

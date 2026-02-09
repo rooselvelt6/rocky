@@ -211,7 +211,7 @@ impl Hermes {
     }
 
     async fn route_message(&self, msg: ActorMessage) -> Result<ResponsePayload, ActorError> {
-        let to = msg.recipient.clone();
+        let to = msg.to.clone();
         
         // Track delivery
         let tracking = self.delivery_tracker.start_tracking(&msg.id, to.clone()).await;
@@ -253,9 +253,10 @@ impl Hermes {
                 );
                 
                 tracking.record_failure("Mailbox full".to_string()).await;
+                let msg_id = msg.id.clone();
                 self.retry_queue.enqueue(msg, to, "Mailbox full".to_string()).await;
                 
-                Ok(ResponsePayload::RetryScheduled { message_id: msg.id })
+                Ok(ResponsePayload::RetryScheduled { message_id: msg_id })
             }
             Err(e) => {
                 tracking.record_failure(e.to_string()).await;
@@ -338,7 +339,7 @@ impl Hermes {
             }
             HermesCommand::CreateMailbox { god, max_size } => {
                 let size = max_size.unwrap_or(self.default_mailbox_size);
-                self.mailbox_manager.create_mailbox(god.clone(), size).await;
+                self.mailbox_manager.create_mailbox(god.clone()).await;
                 
                 info!("Created mailbox for {:?} with capacity {}", god, size);
                 
@@ -358,7 +359,7 @@ impl Hermes {
             }
             HermesCommand::PurgeOldTrackings { max_age_seconds } => {
                 let max_age = Duration::from_secs(max_age_seconds);
-                self.delivery_tracker.cleanup_old_trackings(max_age).await;
+                self.delivery_tracker.cleanup_old_trackings(chrono::Duration::from_std(max_age).unwrap_or(chrono::Duration::zero())).await;
                 
                 Ok(ResponsePayload::Success { 
                     message: "Old trackings purged".to_string() 
@@ -425,7 +426,7 @@ impl OlympianActor for Hermes {
         }
     }
     
-    fn persistent_state(&self) -> serde_json::Value {
+    async fn persistent_state(&self) -> serde_json::Value {
         serde_json::json!({
             "name": "Hermes",
             "total_messages": self.state.message_count,

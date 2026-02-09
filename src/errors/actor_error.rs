@@ -58,6 +58,9 @@ pub enum ActorError {
     #[error("Configuration error for actor {god}: {message}")]
     ConfigurationError { god: GodName, message: String },
 
+    #[error("Invalid configuration for actor {god}: {reason}")]
+    InvalidConfig { god: GodName, reason: String },
+
     #[error("Serialization error in actor {god}: {message}")]
     SerializationError { god: GodName, message: String },
 

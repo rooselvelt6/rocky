@@ -60,13 +60,13 @@ impl OlympianActor for Artemis {
         }
     }
 
-    fn persistent_state(&self) -> serde_json::Value { serde_json::json!({}) }
+    async fn persistent_state(&self) -> serde_json::Value { serde_json::json!({}) }
     fn load_state(&mut self, _state: &serde_json::Value) -> Result<(), ActorError> { Ok(()) }
     
     fn heartbeat(&self) -> GodHeartbeat {
         let uptime = (chrono::Utc::now() - self.state.start_time).num_seconds() as u64;
         GodHeartbeat {
-            god: self.name,
+            god: self.name.clone(),
             status: ActorStatus::Healthy,
             last_seen: chrono::Utc::now(),
             load: 0.0,
@@ -78,7 +78,7 @@ impl OlympianActor for Artemis {
     async fn health_check(&self) -> HealthStatus {
         let uptime = (chrono::Utc::now() - self.state.start_time).num_seconds() as u64;
         HealthStatus {
-            god: self.name,
+            god: self.name.clone(),
             status: ActorStatus::Healthy,
             uptime_seconds: uptime,
             message_count: self.state.message_count,

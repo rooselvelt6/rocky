@@ -226,39 +226,46 @@ impl Erinyes {
                     let alert_system = alert_system.clone();
                     let recovery = recovery.clone();
                     
+                    // Clone data for async block
+                    let actor_id = actor.clone();
+                    let consecutive_misses = state.consecutive_misses;
+                    let health_score = state.get_health_score();
+                    let status = state.status.clone();
+                    let strategy = state.config.strategy.clone();
+
                     tokio::spawn(async move {
                         watchdog.report_event(
                             WatchdogEventType::HealthCheckFailed,
-                            Some(actor.clone()),
-                            format!("Heartbeat missed: {} consecutive misses", state.consecutive_misses),
+                            Some(actor_id.clone()),
+                            format!("Heartbeat missed: {} consecutive misses", consecutive_misses),
                             if is_trinity { WatchdogSeverity::Critical } else { WatchdogSeverity::Error },
                             Some(serde_json::json!({
-                                "consecutive_misses": state.consecutive_misses,
+                                "consecutive_misses": consecutive_misses,
                                 "is_trinity": is_trinity,
-                                "health_score": state.get_health_score(),
+                                "health_score": health_score,
                             })),
                         ).await;
                         
                         // Auto-recovery if enabled and actor is dead
-                        if auto_recovery && state.status == ActorStatus::Dead {
+                        if auto_recovery && status == ActorStatus::Dead {
                             if is_trinity {
                                 // Trinity members get immediate recovery
-                                info!("🚨 Trinity member {:?} detected dead, triggering immediate recovery", actor);
+                                info!("🚨 Trinity member {:?} detected dead, triggering immediate recovery", actor_id);
                                 
                                 if escalation {
                                     alert_system.create_alert(
                                         AlertSeverity::Critical,
                                         GodName::Erinyes,
-                                        format!("TRINITY MEMBER DOWN: {:?}", actor),
-                                        format!("Critical system component {:?} has failed. Immediate recovery initiated.", actor),
+                                        format!("TRINITY MEMBER DOWN: {:?}", actor_id),
+                                        format!("Critical system component {:?} has failed. Immediate recovery initiated.", actor_id),
                                     ).await;
                                 }
                             }
                             
                             // Trigger recovery
                             recovery.request_recovery(
-                                actor,
-                                state.config.strategy.clone(),
+                                actor_id,
+                                strategy,
                                 if is_trinity { RecoveryUrgency::Critical } else { RecoveryUrgency::High }
                             ).await.ok();
                         }
@@ -331,6 +338,92 @@ impl OlympianActor for Erinyes {
             MessagePayload::Event(event) => self.handle_event(event).await,
             MessagePayload::Response(_) => Ok(ResponsePayload::Ack { message_id: msg.id }),
         }
+    }
+
+    async fn persistent_state(&self) -> serde_json::Value {
+        serde_json::json!({
+            "name": "Erinyes",
+            "total_messages": self.state.message_count,
+            "total_errors": self.state.error_count,
+        })
+    }
+    
+    fn load_state(&mut self, _state: &serde_json::Value) -> Result<(), ActorError> {
+        Ok(())
+    }
+    
+    fn heartbeat(&self) -> GodHeartbeat {
+        GodHeartbeat {
+            god: GodName::Erinyes,
+            status: ActorStatus::Healthy,
+            last_seen: chrono::Utc::now(),
+            load: self.calculate_load(),
+            memory_usage_mb: 0.0,
+            uptime_seconds: (chrono::Utc::now() - self.state.start_time).num_seconds() as u64,
+        }
+    }
+    
+    async fn health_check(&self) -> HealthStatus {
+        let system_health = self.watchdog.check_system_health().await;
+        let heartbeat_stats = self.heartbeat_monitor.get_stats().await;
+        
+        let status = if system_health.status == SystemStatus::Critical || heartbeat_stats.dead > 0 {
+            ActorStatus::Critical
+        } else if system_health.status == SystemStatus::Degraded {
+            ActorStatus::Degraded
+        } else {
+            ActorStatus::Healthy
+        };
+        
+        HealthStatus {
+            god: GodName::Erinyes,
+            status,
+            uptime_seconds: (chrono::Utc::now() - self.state.start_time).num_seconds() as u64,
+            message_count: self.state.message_count,
+            error_count: self.state.error_count,
+            last_error: self.state.last_error.as_ref().map(|e| e.to_string()),
+            memory_usage_mb: 0.0,
+            timestamp: chrono::Utc::now(),
+        }
+    }
+    
+    fn config(&self) -> Option<&ActorConfig> {
+        Some(&self.config)
+    }
+    
+    async fn initialize(&mut self) -> Result<(), ActorError> {
+        info!("🏹 Erinyes: Initializing Guardian of Integrity v15...");
+        
+        // Start monitoring
+        self.start_monitoring();
+        
+        // Start recovery worker
+        let recovery_fn = |actor: GodName| {
+            Box::pin(async move {
+                info!("🔄 Recovery performed for {:?}", actor);
+                Ok(())
+            }) as std::pin::Pin<Box<dyn std::future::Future<Output = Result<(), ActorError>> + Send>>
+        };
+        
+        self.recovery_engine.start_recovery_worker(recovery_fn).await;
+        
+        info!("🏹 Erinyes: Monitoring {} Trinity members with priority", 
+            self.trinity_members.read().await.len()
+        );
+        info!("🏹 Erinyes: Auto-recovery enabled: {}", self.auto_recovery_enabled);
+        info!("🏹 Erinyes: Escalation enabled: {}", self.escalation_enabled);
+        info!("🏹 Erinyes: Guardian of Integrity ready");
+        
+        Ok(())
+    }
+    
+    async fn shutdown(&mut self) -> Result<(), ActorError> {
+        info!("🏹 Erinyes: Shutting down Guardian of Integrity...");
+        Ok(())
+    }
+    
+    fn actor_state(&self) -> ActorState {
+        self.state.clone()
     }
 }
 
@@ -503,106 +596,6 @@ impl Erinyes {
         }
     }
     
-    fn persistent_state(&self) -> serde_json::Value {
-        serde_json::json!({
-            "name": "Erinyes",
-            "total_messages": self.state.message_count,
-            "total_errors": self.state.error_count,
-        })
-    }
-    
-    async fn persistent_state_async(&self) -> serde_json::Value {
-        let monitored = self.heartbeat_monitor.monitored_count().await;
-        let dead_letters = self.dead_letter_queue.len().await;
-        let alerts = self.alert_system.critical_count().await;
-        
-        serde_json::json!({
-            "name": "Erinyes",
-            "monitored_actors": monitored,
-            "dead_letters": dead_letters,
-            "critical_alerts": alerts,
-            "trinity_members": self.trinity_members.read().await.clone(),
-            "total_messages": self.state.message_count,
-        })
-    }
-    
-    fn load_state(&mut self, _state: &serde_json::Value) -> Result<(), ActorError> {
-        Ok(())
-    }
-    
-    fn heartbeat(&self) -> GodHeartbeat {
-        GodHeartbeat {
-            god: GodName::Erinyes,
-            status: ActorStatus::Healthy,
-            last_seen: chrono::Utc::now(),
-            load: self.calculate_load(),
-            memory_usage_mb: 0.0,
-            uptime_seconds: (chrono::Utc::now() - self.state.start_time).num_seconds() as u64,
-        }
-    }
-    
-    async fn health_check(&self) -> HealthStatus {
-        let system_health = self.watchdog.check_system_health().await;
-        let heartbeat_stats = self.heartbeat_monitor.get_stats().await;
-        
-        let status = if system_health.status == SystemStatus::Critical || heartbeat_stats.dead > 0 {
-            ActorStatus::Critical
-        } else if system_health.status == SystemStatus::Degraded {
-            ActorStatus::Degraded
-        } else {
-            ActorStatus::Healthy
-        };
-        
-        HealthStatus {
-            god: GodName::Erinyes,
-            status,
-            uptime_seconds: (chrono::Utc::now() - self.state.start_time).num_seconds() as u64,
-            message_count: self.state.message_count,
-            error_count: self.state.error_count,
-            last_error: self.state.last_error.as_ref().map(|e| e.to_string()),
-            memory_usage_mb: 0.0,
-            timestamp: chrono::Utc::now(),
-        }
-    }
-    
-    fn config(&self) -> Option<&ActorConfig> {
-        Some(&self.config)
-    }
-    
-    async fn initialize(&mut self) -> Result<(), ActorError> {
-        info!("🏹 Erinyes: Initializing Guardian of Integrity v15...");
-        
-        // Start monitoring
-        self.start_monitoring();
-        
-        // Start recovery worker
-        let recovery_fn = |actor: GodName| {
-            Box::pin(async move {
-                info!("🔄 Recovery performed for {:?}", actor);
-                Ok(())
-            }) as std::pin::Pin<Box<dyn std::future::Future<Output = Result<(), ActorError>> + Send>>
-        };
-        
-        self.recovery_engine.start_recovery_worker(recovery_fn).await;
-        
-        info!("🏹 Erinyes: Monitoring {} Trinity members with priority", 
-            self.trinity_members.read().await.len()
-        );
-        info!("🏹 Erinyes: Auto-recovery enabled: {}", self.auto_recovery_enabled);
-        info!("🏹 Erinyes: Escalation enabled: {}", self.escalation_enabled);
-        info!("🏹 Erinyes: Guardian of Integrity ready");
-        
-        Ok(())
-    }
-    
-    async fn shutdown(&mut self) -> Result<(), ActorError> {
-        info!("🏹 Erinyes: Shutting down Guardian of Integrity...");
-        Ok(())
-    }
-    
-    fn actor_state(&self) -> ActorState {
-        self.state.clone()
-    }
     
     async fn execute_erinyes_command(&self, cmd: ErinyesCommand) -> Result<ResponsePayload, ActorError> {
         match cmd {
@@ -668,7 +661,7 @@ impl Erinyes {
             }
             ErinyesCommand::PurgeOldData { max_age_seconds } => {
                 let max_age = Duration::from_secs(max_age_seconds);
-                self.watchdog.clear_old_records(max_age).await;
+                self.watchdog.clear_old_records(chrono::Duration::from_std(max_age).unwrap_or(chrono::Duration::zero())).await;
                 self.alert_system.cleanup_old_alerts(max_age).await;
                 
                 Ok(ResponsePayload::Success { 

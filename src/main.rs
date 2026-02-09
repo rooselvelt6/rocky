@@ -3,7 +3,7 @@
 /// Architecture: Actors (OTP-model)
 
 use axum::{
-    routing::{get, post},
+    routing::get,
     Router, Json,
 };
 use tracing::{info, error};
@@ -50,10 +50,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("🌍 API Gateway escuchando en http://{}", addr);
 
     // Mantenemos el main loop vivo con el servidor Web
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
-        .await
-        .unwrap();
+    let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
+    axum::serve(listener, app).await.unwrap();
 
     Ok(())
 }

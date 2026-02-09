@@ -1,7 +1,7 @@
 // src/actors/artemis/indexing.rs
 // OLYMPUS v13 - Artemis: Lógica de Indexación
 
-use tantivy::{Index, IndexWriter, Document};
+use tantivy::{Index, IndexWriter, TantivyDocument};
 use crate::actors::artemis::schema::ArtemisSchema;
 use crate::errors::ActorError;
 use crate::actors::GodName;
@@ -32,7 +32,7 @@ impl ArtemisIndexer {
         clinical_history: &str,
         status: &str,
     ) -> Result<(), ActorError> {
-        let mut doc = Document::default();
+        let mut doc = TantivyDocument::default();
         doc.add_text(self.schema_fields.patient_id, id);
         doc.add_text(self.schema_fields.first_name, first_name);
         doc.add_text(self.schema_fields.last_name, last_name);

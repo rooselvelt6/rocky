@@ -10,7 +10,7 @@ use crate::traits::message::{ActorMessage, MessagePayload, CommandPayload, Respo
 use crate::infrastructure::ValkeyStore;
 use std::time::Duration;
 use tracing::{info, warn, error, debug};
-use chrono::Utc;
+use chrono::{Utc, Timelike};
 
 use crate::actors::GodName;
 
@@ -363,7 +363,7 @@ impl AuditLogger {
                 let mut csv = String::from("id,timestamp,action,actor,resource,result,hipaa_relevant,sensitivity\n");
                 for entry in entries {
                     csv.push_str(&format!(
-                        "{},{},{},{},{},{:?},{},{}\n",
+                        "{},{},{},{},{},{:?},{},{:?}\n",
                         entry.id,
                         entry.timestamp,
                         entry.action,
@@ -436,7 +436,7 @@ impl AuditLogger {
                     severity: AnomalySeverity::High,
                     actor: actor.clone(),
                     description: format!("{} failed login attempts in last hour", count),
-                    recommended_action: "Consider locking account or requiring CAPTCHA",
+                    recommended_action: "Consider locking account or requiring CAPTCHA".to_string(),
                 });
             }
         }
@@ -452,7 +452,7 @@ impl AuditLogger {
                 severity: AnomalySeverity::Medium,
                 actor: entry.actor.clone(),
                 description: "PHI accessed outside business hours".to_string(),
-                recommended_action: "Review if access was authorized",
+                recommended_action: "Review if access was authorized".to_string(),
             });
         }
         
@@ -471,7 +471,7 @@ pub struct AuditStats {
     pub entries_last_24h: usize,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub enum ExportFormat {
     Json,
     Csv,

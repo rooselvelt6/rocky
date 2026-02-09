@@ -24,7 +24,6 @@ pub enum ThunderEvent {
     },
     ActorRecovered {
         actor: super::GodName,
-        attempt: u32,
     },
 
     // System events
@@ -79,14 +78,22 @@ impl Thunderbolt {
     }
 
     pub fn send_actor_started(&self, actor: super::GodName) {
-        let _ = self.broadcast(ThunderEvent::ActorStarted { actor });
+        let _ = self.broadcast(ThunderEvent::ActorStarted { 
+            actor, 
+        });
     }
 
     pub fn send_actor_stopped(&self, actor: super::GodName, reason: String) {
-        let _ = self.broadcast(ThunderEvent::ActorStopped { actor, reason });
+        let _ = self.broadcast(ThunderEvent::ActorStopped { 
+            actor, 
+            reason, 
+        });
     }
 
-    pub fn send_emergency(&self, reason: String, severity: ThunderSeverity) {
-        let _ = self.broadcast(ThunderEvent::Emergency { reason, severity });
+    pub fn send_emergency(&self, reason: String, _severity: ThunderSeverity) {
+        let _ = self.broadcast(ThunderEvent::Emergency { 
+            reason, 
+            severity: ThunderSeverity::Critical,
+        });
     }
 }

@@ -113,9 +113,9 @@ pub enum ZeusEvent {
     // Actores
     ActorStarted { actor: GodName, timestamp: chrono::DateTime<chrono::Utc> },
     ActorStopped { actor: GodName, reason: String, timestamp: chrono::DateTime<chrono::Utc> },
-    ActorRecovered { actor: GodName, attempt: u32, timestamp: chrono::DateTime<chrono::Utc> },
+    ActorRecovered { actor: GodName, timestamp: chrono::DateTime<chrono::Utc> },
     ActorFailed { actor: GodName, error: String, timestamp: chrono::DateTime<chrono::Utc> },
-    ActorRestarted { actor: GodName, attempt: u32, timestamp: chrono::DateTime<chrono::Utc> },
+    ActorRestarted { actor: GodName, timestamp: chrono::DateTime<chrono::Utc> },
     
     // Trinidad
     TrinityStatusChanged { status: TrinityStatus, timestamp: chrono::DateTime<chrono::Utc> },
@@ -139,7 +139,7 @@ pub enum ZeusEvent {
 }
 
 /// Estado de la Trinidad
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TrinityState {
     pub zeus_healthy: bool,
     pub hades_healthy: bool,
@@ -205,6 +205,7 @@ impl Zeus {
     pub async fn new(zeus_config: ZeusConfig) -> Self {
         let (command_tx, command_rx) = mpsc::channel(1000);
         let (event_tx, _) = broadcast::channel(1000);
+        let (thunder_tx, _) = broadcast::channel(1000);
         let (lifecycle_tx, lifecycle_rx) = mpsc::channel(1000);
         
         let config_manager = Arc::new(RwLock::new(ConfigManager::new(zeus_config.clone())));
@@ -215,7 +216,7 @@ impl Zeus {
             config: ActorConfig::default(),
             zeus_config: Arc::new(RwLock::new(zeus_config)),
             
-            thunderbolt: Arc::new(Thunderbolt::new(event_tx.clone())),
+            thunderbolt: Arc::new(Thunderbolt::new(thunder_tx)),
             supervision_manager: Arc::new(RwLock::new(SupervisionManager::new())),
             metrics: Arc::new(RwLock::new(ZeusMetrics::new())),
             governance: Arc::new(RwLock::new(GovernanceController::new())),
@@ -502,10 +503,9 @@ impl Zeus {
                             timestamp: chrono::Utc::now() 
                         });
                     }
-                    LifecycleEvent::ActorRecovered { actor, attempt } => {
+                    LifecycleEvent::ActorRecovered { actor } => {
                         let _ = event_tx.send(ZeusEvent::ActorRecovered { 
                             actor, 
-                            attempt, 
                             timestamp: chrono::Utc::now() 
                         });
                     }
@@ -542,12 +542,15 @@ impl Zeus {
     /// Envía un evento Thunderbolt
     pub fn thunderstrike(&self, event: ZeusEvent) {
         // Convertir ZeusEvent a ThunderEvent
-        let thunder_event = match event {
-            ZeusEvent::ActorStarted { actor, .. } => ThunderEvent::ActorStarted { actor },
-            ZeusEvent::ActorStopped { actor, reason, .. } => ThunderEvent::ActorStopped { actor, reason },
-            ZeusEvent::ActorRecovered { actor, attempt, .. } => ThunderEvent::ActorRecovered { actor, attempt },
-            ZeusEvent::EmergencyShutdown { reason, .. } => ThunderEvent::Emergency { reason, severity: ThunderSeverity::Critical },
-            _ => return,
+        let thunder_event = match &event {
+            ZeusEvent::ActorStarted { actor, .. } => ThunderEvent::ActorStarted { actor: actor.clone() },
+            ZeusEvent::ActorStopped { actor, reason, .. } => ThunderEvent::ActorStopped { actor: actor.clone(), reason: reason.clone() },
+            ZeusEvent::ActorRecovered { actor, .. } => ThunderEvent::ActorRecovered { actor: actor.clone() },
+            ZeusEvent::EmergencyShutdown { reason, .. } => ThunderEvent::Emergency { reason: reason.clone(), severity: ThunderSeverity::Critical },
+            _ => {
+                let _ = self.event_tx.send(event);
+                return;
+            }
         };
         
         let _ = self.thunderbolt.broadcast(thunder_event);
@@ -590,12 +593,15 @@ impl OlympianActor for Zeus {
         }
     }
     
-    fn persistent_state(&self) -> serde_json::Value {
+    async fn persistent_state(&self) -> serde_json::Value {
+        let trinity_state = self.trinity_state.read().await.clone();
+        let olympus_state = self.olympus_state.read().await.clone();
+        
         serde_json::json!({
             "name": "Zeus",
             "uptime_seconds": (chrono::Utc::now() - self.state.start_time).num_seconds(),
-            "trinity_state": self.trinity_state.clone(),
-            "olympus_state": self.olympus_state.clone(),
+            "trinity_state": trinity_state,
+            "olympus_state": olympus_state,
         })
     }
     
@@ -718,7 +724,6 @@ impl Zeus {
                             RestartResult::Success { affected_actors, attempt } => {
                                 self.thunderstrike(ZeusEvent::ActorRestarted { 
                                     actor, 
-                                    attempt,
                                     timestamp: chrono::Utc::now(),
                                 });
                                 Ok(ResponsePayload::Success { 
@@ -753,12 +758,14 @@ impl Zeus {
                 // Validar configuración
                 let zeus_config: ZeusConfig = serde_json::from_value(config)
                     .map_err(|e| ActorError::InvalidConfig { 
-                        message: format!("Invalid config: {}", e) 
+                        god: GodName::Zeus,
+                        reason: format!("Invalid config: {}", e) 
                     })?;
                 
                 zeus_config.validate()
                     .map_err(|e| ActorError::InvalidConfig { 
-                        message: format!("Config validation failed: {:?}", e) 
+                        god: GodName::Zeus,
+                        reason: format!("Config validation failed: {:?}", e) 
                     })?;
                 
                 let mut cfg = self.zeus_config.write().await;
@@ -854,7 +861,7 @@ impl Zeus {
                 self.governance.write().await.enable_feature_flag(&flag, modified_by.as_deref()).await
                     .map_err(|e| ActorError::Unknown { god: GodName::Zeus, message: e })?;
                 
-                self.thunderstrike(ZeusEvent::FeatureFlagChanged { flag, enabled: true });
+                self.thunderstrike(ZeusEvent::FeatureFlagChanged { flag: flag.clone(), enabled: true });
                 
                 Ok(ResponsePayload::Success { 
                     message: format!("Feature flag '{}' enabled", flag) 
@@ -865,7 +872,7 @@ impl Zeus {
                 self.governance.write().await.disable_feature_flag(&flag, modified_by.as_deref()).await
                     .map_err(|e| ActorError::Unknown { god: GodName::Zeus, message: e })?;
                 
-                self.thunderstrike(ZeusEvent::FeatureFlagChanged { flag, enabled: false });
+                self.thunderstrike(ZeusEvent::FeatureFlagChanged { flag: flag.clone(), enabled: false });
                 
                 Ok(ResponsePayload::Success { 
                     message: format!("Feature flag '{}' disabled", flag) 
@@ -1082,7 +1089,6 @@ impl Zeus {
                 } else {
                     Err(ActorError::NotFound { 
                         god: actor, 
-                        message: "Actor not found in supervision tree".to_string() 
                     })
                 }
             }
@@ -1118,7 +1124,6 @@ impl Zeus {
                 } else {
                     Err(ActorError::NotFound { 
                         god: actor, 
-                        message: "No metrics found for actor".to_string() 
                     })
                 }
             }
@@ -1188,7 +1193,6 @@ impl Zeus {
                 
                 self.thunderstrike(ZeusEvent::ActorRecovered { 
                     actor, 
-                    attempt, 
                     timestamp: chrono::Utc::now() 
                 });
                 

@@ -1,7 +1,7 @@
 // src/actors/artemis/search.rs
 // OLYMPUS v13 - Artemis: Lógica de Búsqueda
 
-use tantivy::{IndexReader, Index, collector::TopDocs, query::QueryParser};
+use tantivy::{IndexReader, Index, collector::TopDocs, query::QueryParser, Document};
 use crate::actors::artemis::schema::ArtemisSchema;
 use crate::errors::ActorError;
 use crate::actors::GodName;
@@ -16,7 +16,7 @@ impl ArtemisSearcher {
     pub fn new(index: &Index, schema_fields: ArtemisSchema) -> Result<Self, ActorError> {
         let reader = index
             .reader_builder()
-            .reload_policy(tantivy::ReloadPolicy::OnCommit)
+            .reload_policy(tantivy::ReloadPolicy::Manual)
             .try_into()
             .map_err(|e| ActorError::SearchError {
                 god: GodName::Artemis,
@@ -50,20 +50,16 @@ impl ArtemisSearcher {
 
         let mut results = Vec::new();
         for (_score, doc_address) in top_docs {
-            let retrieved_doc = searcher.doc(doc_address).map_err(|e| ActorError::SearchError {
+            let retrieved_doc: tantivy::TantivyDocument = searcher.doc(doc_address).map_err(|e| ActorError::SearchError {
                 god: GodName::Artemis,
                 message: format!("Failed to retrieve document: {}", e),
             })?;
             
             // Convertir documento Tantivy a JSON
-            let mut res_obj = json!({});
-            for (field, value) in retrieved_doc.field_values() {
-                let field_name = searcher.index().schema().get_field_name(*field);
-                if let Some(text) = value.as_text() {
-                    res_obj[field_name] = json!(text);
-                }
+            let json_str = retrieved_doc.to_json(&searcher.index().schema());
+            if let Ok(json_val) = serde_json::from_str::<Value>(&json_str) {
+                results.push(json_val);
             }
-            results.push(res_obj);
         }
 
         Ok(results)

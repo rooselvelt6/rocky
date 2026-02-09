@@ -1,0 +1,11 @@
+    Checking olympus v13.0.0 (/home/tdy/Escritorio/rocky)
+error: this file contains an unclosed delimiter
+   --> src/actors/hades/mod.rs:563:3
+    |
+341 | impl Hades {
+    |            - unclosed delimiter
+...
+563 | }
+    |  ^
+
+error: could not compile `olympus` (lib) due to 1 previous error

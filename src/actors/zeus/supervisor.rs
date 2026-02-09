@@ -40,11 +40,11 @@ pub struct SupervisionManager {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum LifecycleEvent {
     Registered { actor: GodName, parent: Option<GodName>, strategy: RecoveryStrategy },
-    Started { actor: GodName },
-    Stopped { actor: GodName, reason: String },
+    ActorStarted { actor: GodName },
+    ActorStopped { actor: GodName, reason: String },
     Restarted { actor: GodName, attempt: u32 },
     Failed { actor: GodName, error: String },
-    Recovered { actor: GodName },
+    ActorRecovered { actor: GodName },
     Unregistered { actor: GodName },
 }
 
@@ -127,7 +127,7 @@ impl SupervisionManager {
         }
         
         let supervised = SupervisedActor {
-            name: actor,
+            name: actor.clone(),
             status: ActorSupervisionStatus::Starting,
             restarts: 0,
             last_restart: None,
@@ -135,28 +135,28 @@ impl SupervisionManager {
             children: Vec::new(),
         };
         
-        actors.insert(actor, supervised);
+        actors.insert(actor.clone(), supervised);
         drop(actors);
         
         // Registrar estrategia
         let mut strategies = self.strategies.write().await;
-        strategies.insert(actor, strategy.clone());
+        strategies.insert(actor.clone(), strategy.clone());
         drop(strategies);
         
         // Registrar dependencias
-        if let Some(parent_name) = parent {
+        if let Some(ref parent_name) = parent {
             let mut deps = self.dependencies.write().await;
-            deps.entry(parent_name).or_insert_with(Vec::new).push(actor);
+            deps.entry(parent_name.clone()).or_insert_with(Vec::new).push(actor.clone());
             drop(deps);
             
             let mut rev_deps = self.reverse_deps.write().await;
-            rev_deps.insert(actor, parent_name);
+            rev_deps.insert(actor.clone(), parent_name.clone());
             drop(rev_deps);
         }
         
         // Inicializar historial de reinicios
         let mut history = self.restart_history.write().await;
-        history.insert(actor, VecDeque::new());
+        history.insert(actor.clone(), VecDeque::new());
         drop(history);
         
         // Notificar evento
@@ -182,7 +182,7 @@ impl SupervisionManager {
         }
         
         drop(actors);
-        let _ = self.lifecycle_tx.send(LifecycleEvent::Started { actor }).await;
+        let _ = self.lifecycle_tx.send(LifecycleEvent::ActorStarted { actor }).await;
         Ok(())
     }
     
@@ -198,7 +198,7 @@ impl SupervisionManager {
         }
         
         drop(actors);
-        let _ = self.lifecycle_tx.send(LifecycleEvent::Stopped { actor, reason }).await;
+        let _ = self.lifecycle_tx.send(LifecycleEvent::ActorStopped { actor, reason }).await;
         Ok(())
     }
     
@@ -331,7 +331,7 @@ impl SupervisionManager {
     /// Marca un actor como recuperado
     pub async fn mark_recovered(&self, actor: GodName) {
         self.update_status(actor, ActorSupervisionStatus::Running).await;
-        let _ = self.lifecycle_tx.send(LifecycleEvent::Recovered { actor }).await;
+        let _ = self.lifecycle_tx.send(LifecycleEvent::ActorRecovered { actor }).await;
         info!("⚡ Zeus: Actor {:?} recovered", actor);
     }
     

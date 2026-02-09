@@ -41,11 +41,24 @@ pub enum KeyStatus {
     Compromised,
 }
 
-#[derive(Debug, Clone, Zeroize, ZeroizeOnDrop)]
+#[derive(Debug, Clone)]
 pub struct SecureKeyStorage {
-    #[zeroize]
     pub keys: HashMap<String, SecretKey>,
     pub last_accessed: HashMap<String, Instant>,
+}
+
+impl Zeroize for SecureKeyStorage {
+    fn zeroize(&mut self) {
+        self.keys.values_mut().for_each(|v| v.zeroize());
+        self.keys.clear();
+        self.last_accessed.clear();
+    }
+}
+
+impl Drop for SecureKeyStorage {
+    fn drop(&mut self) {
+        self.zeroize();
+    }
 }
 
 impl SecureKeyStorage {
@@ -86,10 +99,11 @@ impl SecureKeyStorage {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct KeyManager {
     storage: Arc<RwLock<SecureKeyStorage>>,
     metadata: Arc<RwLock<HashMap<String, CryptoKey>>>,
+    #[allow(dead_code)]
     rng: SystemRandom,
     auto_rotation_enabled: bool,
     rotation_interval_days: u64,

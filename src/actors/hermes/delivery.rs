@@ -15,8 +15,8 @@ pub struct DeliveryTracking {
     pub message_id: String,
     pub to: GodName,
     pub status: DeliveryStatus,
-    pub started_at: Instant,
-    pub delivered_at: Option<Instant>,
+    pub started_at: chrono::DateTime<chrono::Utc>,
+    pub delivered_at: Option<chrono::DateTime<chrono::Utc>>,
     pub attempts: u32,
     pub last_error: Option<String>,
 }
@@ -47,7 +47,7 @@ impl DeliveryTracker {
             message_id: message_id.to_string(),
             to,
             status: DeliveryStatus::InTransit,
-            started_at: Instant::now(),
+            started_at: chrono::Utc::now(),
             delivered_at: None,
             attempts: 0,
             last_error: None,
@@ -66,7 +66,7 @@ impl DeliveryTracker {
         let mut trackings = self.trackings.write().await;
         if let Some(tracking) = trackings.get_mut(message_id) {
             tracking.status = DeliveryStatus::Delivered;
-            tracking.delivered_at = Some(Instant::now());
+            tracking.delivered_at = Some(chrono::Utc::now());
         }
     }
 
@@ -124,11 +124,11 @@ impl DeliveryTracker {
             .collect()
     }
 
-    pub async fn cleanup_old_trackings(&self, max_age: std::time::Duration) {
+    pub async fn cleanup_old_trackings(&self, max_age: chrono::Duration) {
         let mut trackings = self.trackings.write().await;
-        let now = Instant::now();
+        let now = chrono::Utc::now();
         trackings.retain(|_, tracking| {
-            now.duration_since(tracking.started_at) < max_age
+            now.signed_duration_since(tracking.started_at) < max_age
         });
     }
 }
@@ -144,7 +144,7 @@ impl DeliveryTrackingHandle {
         let mut trackings = self.trackings.write().await;
         if let Some(tracking) = trackings.get_mut(&self.message_id) {
             tracking.status = DeliveryStatus::Delivered;
-            tracking.delivered_at = Some(Instant::now());
+            tracking.delivered_at = Some(chrono::Utc::now());
         }
     }
 

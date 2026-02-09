@@ -1,0 +1,13 @@
+    Checking olympus v13.0.0 (/home/tdy/Escritorio/rocky)
+error: unexpected closing delimiter: `}`
+   --> src/traits/message.rs:153:1
+    |
+147 |     Search { query: String },
+    |            -               - ...matches this closing brace
+    |            |
+    |            this opening brace...
+...
+153 | }
+    | ^ unexpected closing delimiter
+
+error: could not compile `olympus` (lib) due to 1 previous error

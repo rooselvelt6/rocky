@@ -88,7 +88,7 @@ impl BufferedOperation {
         
         if self.attempts >= 5 {
             self.status = BufferStatus::DeadLetter;
-        } else if error.is_some() {
+        } else if self.error_message.is_some() {
             self.status = BufferStatus::Failed;
         }
     }

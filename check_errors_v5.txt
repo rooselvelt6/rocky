@@ -1,0 +1,3071 @@
+    Checking olympus v13.0.0 (/home/tdy/Escritorio/rocky)
+warning: unused import: `watch`
+ --> src/actors/zeus/mod.rs:8:44
+  |
+8 | use tokio::sync::{RwLock, broadcast, mpsc, watch};
+  |                                            ^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `Instant`
+ --> src/actors/zeus/mod.rs:9:39
+  |
+9 | use tokio::time::{interval, Duration, Instant};
+  |                                       ^^^^^^^
+
+warning: unused import: `debug`
+  --> src/actors/zeus/mod.rs:10:34
+   |
+10 | use tracing::{info, warn, error, debug};
+   |                                  ^^^^^
+
+warning: unused import: `SystemStatus`
+  --> src/actors/zeus/mod.rs:12:74
+   |
+12 | use crate::actors::{GodName, DivineDomain, OlympusState, OlympusMetrics, SystemStatus};
+   |                                                                          ^^^^^^^^^^^^
+
+warning: unused import: `std::sync::Arc`
+ --> src/actors/zeus/thunder.rs:6:5
+  |
+6 | use std::sync::Arc;
+  |     ^^^^^^^^^^^^^^
+
+warning: unused import: `HashSet`
+ --> src/actors/zeus/supervisor.rs:6:33
+  |
+6 | use std::collections::{HashMap, HashSet, VecDeque};
+  |                                 ^^^^^^^
+
+warning: unused import: `Instant`
+ --> src/actors/zeus/supervisor.rs:9:39
+  |
+9 | use tokio::time::{interval, Duration, Instant};
+  |                                       ^^^^^^^
+
+warning: unused import: `error`
+  --> src/actors/zeus/governance.rs:10:27
+   |
+10 | use tracing::{info, warn, error};
+   |                           ^^^^^
+
+warning: unused import: `std::path::Path`
+ --> src/actors/zeus/config.rs:8:5
+  |
+8 | use std::path::Path;
+  |     ^^^^^^^^^^^^^^^
+
+warning: unused import: `error`
+ --> src/actors/zeus/config.rs:9:27
+  |
+9 | use tracing::{info, warn, error};
+  |                           ^^^^^
+
+warning: unused import: `std::collections::HashMap`
+ --> src/actors/erinyes/mod.rs:8:5
+  |
+8 | use std::collections::HashMap;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `Instant`
+  --> src/actors/erinyes/mod.rs:10:39
+   |
+10 | use tokio::time::{interval, Duration, Instant};
+   |                                       ^^^^^^^
+
+warning: unused imports: `debug` and `error`
+  --> src/actors/erinyes/mod.rs:11:27
+   |
+11 | use tracing::{info, warn, error, debug};
+   |                           ^^^^^  ^^^^^
+
+warning: unused import: `serde_json::json`
+  --> src/actors/erinyes/mod.rs:18:5
+   |
+18 | use serde_json::json;
+   |     ^^^^^^^^^^^^^^^^
+
+warning: unused import: `Duration`
+ --> src/actors/erinyes/heartbeat.rs:9:17
+  |
+9 | use std::time::{Duration, Instant};
+  |                 ^^^^^^^^
+
+warning: unused import: `error`
+  --> src/actors/erinyes/heartbeat.rs:10:27
+   |
+10 | use tracing::{info, warn, error, debug};
+   |                           ^^^^^
+
+warning: unused import: `crate::traits::message::RecoveryStrategy`
+  --> src/actors/erinyes/heartbeat.rs:13:5
+   |
+13 | use crate::traits::message::RecoveryStrategy;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `Duration` and `sleep`
+ --> src/actors/erinyes/recovery.rs:9:19
+  |
+9 | use tokio::time::{sleep, Duration, Instant};
+  |                   ^^^^^  ^^^^^^^^
+
+warning: unused imports: `debug` and `error`
+  --> src/actors/erinyes/recovery.rs:10:27
+   |
+10 | use tracing::{info, warn, error, debug};
+   |                           ^^^^^  ^^^^^
+
+warning: unused import: `futures::future::BoxFuture`
+   --> src/actors/erinyes/recovery.rs:370:5
+    |
+370 | use futures::future::BoxFuture;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `info`
+  --> src/actors/erinyes/watchdog.rs:10:15
+   |
+10 | use tracing::{info, warn, error, debug};
+   |               ^^^^
+
+warning: unused import: `trace`
+  --> src/actors/poseidon/mod.rs:13:35
+   |
+13 | use tracing::{debug, error, info, trace, warn};
+   |                                   ^^^^^
+
+warning: unused import: `serde_json::json`
+  --> src/actors/athena/mod.rs:15:5
+   |
+15 | use serde_json::json;
+   |     ^^^^^^^^^^^^^^^^
+
+warning: unused import: `TrendDirection`
+ --> src/actors/athena/predictions.rs:5:46
+  |
+5 | use super::analysis::{PatientAnalysisResult, TrendDirection};
+  |                                              ^^^^^^^^^^^^^^
+
+warning: unused imports: `debug`, `error`, and `warn`
+ --> src/actors/apollo/mod.rs:4:21
+  |
+4 | use tracing::{info, warn, error, debug};
+  |                     ^^^^  ^^^^^  ^^^^^
+
+warning: unused imports: `Deserialize` and `Serialize`
+ --> src/actors/apollo/mod.rs:5:13
+  |
+5 | use serde::{Deserialize, Serialize};
+  |             ^^^^^^^^^^^  ^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/apollo/mod.rs:8:61
+  |
+8 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `std::collections::HashMap`
+ --> src/actors/hermes/mod.rs:8:5
+  |
+8 | use std::collections::HashMap;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `mpsc`
+ --> src/actors/hermes/mod.rs:9:27
+  |
+9 | use tokio::sync::{RwLock, mpsc};
+  |                           ^^^^
+
+warning: unused import: `sleep`
+  --> src/actors/hermes/mod.rs:10:19
+   |
+10 | use tokio::time::{sleep, Duration};
+   |                   ^^^^^
+
+warning: unused import: `error`
+  --> src/actors/hermes/mod.rs:11:27
+   |
+11 | use tracing::{info, warn, error, debug};
+   |                           ^^^^^
+
+warning: unused import: `chrono::Utc`
+  --> src/actors/hermes/mod.rs:12:5
+   |
+12 | use chrono::Utc;
+   |     ^^^^^^^^^^^
+
+warning: unused import: `std::time::Instant`
+ --> src/actors/hermes/mailbox.rs:6:5
+  |
+6 | use std::time::Instant;
+  |     ^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `info`
+  --> src/actors/hermes/mailbox.rs:10:15
+   |
+10 | use tracing::{info, warn, debug};
+   |               ^^^^
+
+warning: unused import: `std::time::Instant`
+ --> src/actors/hermes/delivery.rs:8:5
+  |
+8 | use std::time::Instant;
+  |     ^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `std::sync::Arc`
+ --> src/actors/hermes/broadcast.rs:6:5
+  |
+6 | use std::sync::Arc;
+  |     ^^^^^^^^^^^^^^
+
+warning: unused import: `std::collections::HashMap`
+ --> src/actors/hermes/retry.rs:6:5
+  |
+6 | use std::collections::HashMap;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `mpsc`
+ --> src/actors/hermes/retry.rs:9:19
+  |
+9 | use tokio::sync::{mpsc, RwLock};
+  |                   ^^^^
+
+warning: unused import: `error`
+  --> src/actors/hermes/retry.rs:11:27
+   |
+11 | use tracing::{info, warn, error};
+   |                           ^^^^^
+
+warning: unused import: `DeliveryStatus`
+  --> src/actors/hermes/retry.rs:13:39
+   |
+13 | use super::{GodName, DeliveryTracker, DeliveryStatus};
+   |                                       ^^^^^^^^^^^^^^
+
+warning: unused imports: `error` and `warn`
+  --> src/actors/hades/mod.rs:10:21
+   |
+10 | use tracing::{info, warn, error};
+   |                     ^^^^  ^^^^^
+
+warning: unused import: `Payload`
+  --> src/actors/hades/encryption.rs:11:45
+   |
+11 | use chacha20poly1305::aead::{Aead, KeyInit, Payload};
+   |                                             ^^^^^^^
+
+warning: unused imports: `error` and `warn`
+  --> src/actors/hades/encryption.rs:13:21
+   |
+13 | use tracing::{info, warn, error};
+   |                     ^^^^  ^^^^^
+
+warning: unused import: `KeyType`
+  --> src/actors/hades/encryption.rs:15:46
+   |
+15 | use crate::actors::hades::keys::{KeyManager, KeyType};
+   |                                              ^^^^^^^
+
+warning: unused import: `errors::Error as JwtError`
+  --> src/actors/hades/auth.rs:11:93
+   |
+11 | ... Validation, EncodingKey, DecodingKey, errors::Error as JwtError};
+   |                                           ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `error`
+  --> src/actors/hades/auth.rs:12:27
+   |
+12 | use tracing::{info, warn, error};
+   |                           ^^^^^
+
+warning: unused import: `crate::actors::GodName`
+  --> src/actors/hades/auth.rs:14:5
+   |
+14 | use crate::actors::GodName;
+   |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `AuditEntry`
+  --> src/actors/hades/auth.rs:15:48
+   |
+15 | use crate::actors::hades::audit::{AuditLogger, AuditEntry, AuditResult};
+   |                                                ^^^^^^^^^^
+
+warning: unused import: `ZeroizeOnDrop`
+  --> src/actors/hades/keys.rs:10:24
+   |
+10 | use zeroize::{Zeroize, ZeroizeOnDrop};
+   |                        ^^^^^^^^^^^^^
+
+warning: unused import: `error`
+  --> src/actors/hades/keys.rs:11:27
+   |
+11 | use tracing::{info, warn, error};
+   |                           ^^^^^
+
+warning: unused imports: `ActorMessage`, `CommandPayload`, `MessagePayload`, `QueryPayload`, `RecoveryStrategy`, and `ResponsePayload`
+ --> src/actors/hades/audit.rs:9:30
+  |
+9 | ...age::{ActorMessage, MessagePayload, CommandPayload, ResponsePayload, QueryPayload, RecoveryStrategy};
+  |          ^^^^^^^^^^^^  ^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^  ^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^
+
+warning: unused import: `crate::infrastructure::ValkeyStore`
+  --> src/actors/hades/audit.rs:10:5
+   |
+10 | use crate::infrastructure::ValkeyStore;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `error`
+  --> src/actors/hades/audit.rs:12:27
+   |
+12 | use tracing::{info, warn, error, debug};
+   |                           ^^^^^
+
+warning: unused import: `crate::actors::GodName`
+  --> src/actors/hades/audit.rs:15:5
+   |
+15 | use crate::actors::GodName;
+   |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `warn`
+ --> src/actors/hera/mod.rs:9:21
+  |
+9 | use tracing::{info, warn};
+  |                     ^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/ares/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/ares/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/hefesto/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/hefesto/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused imports: `Deserialize` and `Serialize`
+  --> src/actors/hefesto/mod.rs:50:13
+   |
+50 | use serde::{Deserialize, Serialize};
+   |             ^^^^^^^^^^^  ^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/chronos/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/chronos/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `std::collections::HashMap`
+  --> src/actors/chronos/mod.rs:68:5
+   |
+68 | use std::collections::HashMap;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/moirai/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/moirai/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/chaos/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/chaos/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/aurora/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/aurora/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/aphrodite/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/aphrodite/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/iris/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/iris/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/demeter/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/demeter/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/dionysus/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/dionysus/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `Mutex`
+  --> src/actors/hestia/mod.rs:17:27
+   |
+17 | use tokio::sync::{RwLock, Mutex, mpsc};
+   |                           ^^^^^
+
+warning: unused imports: `SystemTime` and `UNIX_EPOCH`
+ --> src/actors/hestia/memory_store.rs:7:17
+  |
+7 | use std::time::{SystemTime, UNIX_EPOCH};
+  |                 ^^^^^^^^^^  ^^^^^^^^^^
+
+warning: unused import: `Instant`
+ --> src/actors/hestia/cache.rs:9:39
+  |
+9 | use tokio::time::{interval, Duration, Instant};
+  |                                       ^^^^^^^
+
+warning: unused import: `error`
+  --> src/actors/hestia/cache.rs:10:34
+   |
+10 | use tracing::{debug, info, warn, error};
+   |                                  ^^^^^
+
+warning: unused imports: `SyncRecord` and `SyncStatus`
+  --> src/actors/hestia/cache.rs:14:48
+   |
+14 | use crate::actors::hestia::sync::{SyncManager, SyncRecord, SyncStatus};
+   |                                                ^^^^^^^^^^  ^^^^^^^^^^
+
+warning: unused import: `timeout`
+  --> src/actors/hestia/async_buffer.rs:10:36
+   |
+10 | use tokio::time::{interval, sleep, timeout};
+   |                                    ^^^^^^^
+
+warning: unused import: `Mutex`
+  --> src/actors/hestia/sync.rs:10:27
+   |
+10 | use tokio::sync::{RwLock, Mutex, mpsc};
+   |                           ^^^^^
+
+warning: unused import: `timeout`
+  --> src/actors/hestia/sync.rs:11:36
+   |
+11 | use tokio::time::{interval, sleep, timeout};
+   |                                    ^^^^^^^
+
+warning: unused import: `async_trait::async_trait`
+  --> src/actors/mod.rs:52:5
+   |
+52 | use async_trait::async_trait;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `std::collections::HashMap`
+  --> src/actors/mod.rs:54:5
+   |
+54 | use std::collections::HashMap;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `std::sync::Arc`
+  --> src/actors/mod.rs:55:5
+   |
+55 | use std::sync::Arc;
+   |     ^^^^^^^^^^^^^^
+
+warning: unused import: `tokio::sync::RwLock`
+  --> src/actors/mod.rs:56:5
+   |
+56 | use tokio::sync::RwLock;
+   |     ^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `crate::errors::OlympusError`
+  --> src/traits/supervisor_trait.rs:10:5
+   |
+10 | use crate::errors::OlympusError;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `std::time::Duration`
+ --> src/infrastructure/valkey.rs:6:5
+  |
+6 | use std::time::Duration;
+  |     ^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `tokio::sync::RwLock`
+ --> src/infrastructure/valkey.rs:8:5
+  |
+8 | use tokio::sync::RwLock;
+  |     ^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `base64::encode`: Use Engine::encode
+   --> src/actors/hades/encryption.rs:285:20
+    |
+285 |         Ok(base64::encode(json))
+    |                    ^^^^^^
+    |
+    = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated function `base64::decode`: Use Engine::decode
+   --> src/actors/hades/encryption.rs:290:28
+    |
+290 |         let json = base64::decode(ciphertext)
+    |                            ^^^^^^
+
+error[E0382]: borrow of moved value: `actor`
+   --> src/actors/zeus/supervisor.rs:169:67
+    |
+119 |         actor: GodName, 
+    |         ----- move occurs because `actor` has type `GodName`, which does not implement the `Copy` trait
+...
+164 |             actor, 
+    |             ----- value moved here
+...
+169 |         info!("⚡ Zeus: Actor {:?} registered with strategy {:?}", actor, strategy);
+    |                                                                    ^^^^^ value borrowed here after move
+    |
+    = note: this error originates in the macro `$crate::__macro_support::format_args` which comes from the expansion of the macro `info` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: consider cloning the value if the performance cost is acceptable
+    |
+164 |             actor: actor.clone(), 
+    |                  +++++++++++++++
+
+error[E0382]: borrow of moved value: `strategy`
+   --> src/actors/zeus/supervisor.rs:169:74
+    |
+121 |         strategy: RecoveryStrategy
+    |         -------- move occurs because `strategy` has type `RecoveryStrategy`, which does not implement the `Copy` trait
+...
+166 |             strategy 
+    |             -------- value moved here
+...
+169 |         info!("⚡ Zeus: Actor {:?} registered with strategy {:?}", actor, strategy);
+    |                                                                           ^^^^^^^^ value borrowed here after move
+    |
+    = note: this error originates in the macro `$crate::__macro_support::format_args` which comes from the expansion of the macro `info` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: consider cloning the value if the performance cost is acceptable
+    |
+166 |             strategy: strategy.clone() 
+    |                     ++++++++++++++++++
+
+error[E0382]: borrow of moved value: `actor`
+   --> src/actors/zeus/supervisor.rs:214:41
+    |
+206 |     pub async fn restart_actor(&self, actor: GodName) -> Result<RestartResult, ActorError> {
+    |                                       ----- move occurs because `actor` has type `GodName`, which does not implement the `Copy` trait
+207 |         // Verificar límites de reinicio
+208 |         if !self.can_restart(actor).await {
+    |                              ----- value moved here
+...
+214 |         if let Some(a) = actors.get_mut(&actor) {
+    |                                         ^^^^^^ value borrowed here after move
+    |
+note: consider changing this parameter type in method `can_restart` to borrow instead if owning the value isn't necessary
+   --> src/actors/zeus/supervisor.rs:339:40
+    |
+339 |     async fn can_restart(&self, actor: GodName) -> bool {
+    |              -----------               ^^^^^^^ this parameter takes ownership of the value
+    |              |
+    |              in this method
+help: consider cloning the value if the performance cost is acceptable
+    |
+208 |         if !self.can_restart(actor.clone()).await {
+    |                                   ++++++++
+
+error[E0382]: use of moved value: `actor`
+   --> src/actors/zeus/supervisor.rs:229:53
+    |
+206 |     pub async fn restart_actor(&self, actor: GodName) -> Result<RestartResult, ActorError> {
+    |                                       ----- move occurs because `actor` has type `GodName`, which does not implement the `Copy` trait
+...
+225 |             self.record_restart(actor).await;
+    |                                 ----- value moved here
+...
+229 |                 RecoveryStrategy::OneForOne => vec![actor],
+    |                                                     ^^^^^ value used here after move
+    |
+note: consider changing this parameter type in method `record_restart` to borrow instead if owning the value isn't necessary
+   --> src/actors/zeus/supervisor.rs:358:43
+    |
+358 |     async fn record_restart(&self, actor: GodName) {
+    |              --------------               ^^^^^^^ this parameter takes ownership of the value
+    |              |
+    |              in this method
+help: consider cloning the value if the performance cost is acceptable
+    |
+225 |             self.record_restart(actor.clone()).await;
+    |                                      ++++++++
+
+error[E0382]: use of moved value: `actor`
+   --> src/actors/zeus/supervisor.rs:235:72
+    |
+206 |     pub async fn restart_actor(&self, actor: GodName) -> Result<RestartResult, ActorError> {
+    |                                       ----- move occurs because `actor` has type `GodName`, which does not implement the `Copy` trait
+...
+229 |                 RecoveryStrategy::OneForOne => vec![actor],
+    |                                                     ----- value moved here
+230 |                 RecoveryStrategy::OneForAll => self.get_all_siblings(actor).await,
+    |                                                                      ----- value moved here
+231 |                 RecoveryStrategy::RestForOne => self.get_rest_of_chain(actor).await,
+    |                                                                        ----- value moved here
+232 |                 RecoveryStrategy::Escalate => vec![actor], // Se escala a Zeus
+    |                                                    ----- value moved here
+...
+235 |             let _ = self.lifecycle_tx.send(LifecycleEvent::Restarted { actor, attempt }).await;
+    |                                                                        ^^^^^ value used here after move
+    |
+note: consider changing this parameter type in method `get_rest_of_chain` to borrow instead if owning the value isn't necessary
+   --> src/actors/zeus/supervisor.rs:389:46
+    |
+389 |     async fn get_rest_of_chain(&self, actor: GodName) -> Vec<GodName> {
+    |              -----------------               ^^^^^^^ this parameter takes ownership of the value
+    |              |
+    |              in this method
+note: consider changing this parameter type in method `get_all_siblings` to borrow instead if owning the value isn't necessary
+   --> src/actors/zeus/supervisor.rs:372:45
+    |
+372 |     async fn get_all_siblings(&self, actor: GodName) -> Vec<GodName> {
+    |              ----------------               ^^^^^^^ this parameter takes ownership of the value
+    |              |
+    |              in this method
+help: consider cloning the value if the performance cost is acceptable
+    |
+232 |                 RecoveryStrategy::Escalate => vec![actor.clone()], // Se escala a Zeus
+    |                                                         ++++++++
+help: consider cloning the value if the performance cost is acceptable
+    |
+231 |                 RecoveryStrategy::RestForOne => self.get_rest_of_chain(actor.clone()).await,
+    |                                                                             ++++++++
+help: consider cloning the value if the performance cost is acceptable
+    |
+230 |                 RecoveryStrategy::OneForAll => self.get_all_siblings(actor.clone()).await,
+    |                                                                           ++++++++
+help: consider cloning the value if the performance cost is acceptable
+    |
+229 |                 RecoveryStrategy::OneForOne => vec![actor.clone()],
+    |                                                          ++++++++
+
+error[E0382]: borrow of moved value: `actor`
+   --> src/actors/zeus/supervisor.rs:238:17
+    |
+206 |     pub async fn restart_actor(&self, actor: GodName) -> Result<RestartResult, ActorError> {
+    |                                       ----- move occurs because `actor` has type `GodName`, which does not implement the `Copy` trait
+...
+235 |             let _ = self.lifecycle_tx.send(LifecycleEvent::Restarted { actor, attempt }).await;
+    |                                                                        ----- value moved here
+...
+238 |                 actor, attempt, strategy);
+    |                 ^^^^^ value borrowed here after move
+    |
+    = note: this error originates in the macro `$crate::__macro_support::format_args` which comes from the expansion of the macro `info` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: consider cloning the value if the performance cost is acceptable
+    |
+235 |             let _ = self.lifecycle_tx.send(LifecycleEvent::Restarted { actor: actor.clone(), attempt }).await;
+    |                                                                             +++++++++++++++
+
+error[E0507]: cannot move out of a shared reference
+   --> src/actors/zeus/supervisor.rs:258:30
+    |
+258 |             children.retain(|&c| c != actor);
+    |                              ^-
+    |                               |
+    |                               data moved here
+    |                               move occurs because `c` has type `GodName`, which does not implement the `Copy` trait
+    |
+help: consider removing the borrow
+    |
+258 -             children.retain(|&c| c != actor);
+258 +             children.retain(|c| c != actor);
+    |
+
+error[E0382]: borrow of moved value: `actor`
+   --> src/actors/zeus/supervisor.rs:279:50
+    |
+247 |     pub async fn unregister_actor(&self, actor: GodName) -> Result<(), ActorError> {
+    |                                          ----- move occurs because `actor` has type `GodName`, which does not implement the `Copy` trait
+...
+277 |         let _ = self.lifecycle_tx.send(LifecycleEvent::Unregistered { actor }).await;
+    |                                                                       ----- value moved here
+278 |         
+279 |         info!("⚡ Zeus: Actor {:?} unregistered", actor);
+    |                                                   ^^^^^ value borrowed here after move
+    |
+    = note: this error originates in the macro `$crate::__macro_support::format_args` which comes from the expansion of the macro `info` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: consider cloning the value if the performance cost is acceptable
+    |
+277 |         let _ = self.lifecycle_tx.send(LifecycleEvent::Unregistered { actor: actor.clone() }).await;
+    |                                                                            +++++++++++++++
+
+error[E0382]: use of moved value: `actor`
+   --> src/actors/zeus/supervisor.rs:303:13
+    |
+297 |     pub async fn mark_failed(&self, actor: GodName, error: String) -> Result<RecoveryAction, ActorError> {
+    |                                     ----- move occurs because `actor` has type `GodName`, which does not implement the `Copy` trait
+...
+300 |         self.update_status(actor, ActorSupervisionStatus::Failed).await;
+    |                            ----- value moved here
+...
+303 |             actor, 
+    |             ^^^^^ value used here after move
+    |
+note: consider changing this parameter type in method `update_status` to borrow instead if owning the value isn't necessary
+   --> src/actors/zeus/supervisor.rs:284:46
+    |
+284 |     pub async fn update_status(&self, actor: GodName, status: ActorSupervisionStatus) {
+    |                  -------------               ^^^^^^^ this parameter takes ownership of the value
+    |                  |
+    |                  in this method
+help: consider cloning the value if the performance cost is acceptable
+    |
+300 |         self.update_status(actor.clone(), ActorSupervisionStatus::Failed).await;
+    |                                 ++++++++
+
+error[E0382]: borrow of moved value: `actor`
+   --> src/actors/zeus/supervisor.rs:307:49
+    |
+297 |     pub async fn mark_failed(&self, actor: GodName, error: String) -> Result<RecoveryAction, ActorError> {
+    |                                     ----- move occurs because `actor` has type `GodName`, which does not implement the `Copy` trait
+...
+303 |             actor, 
+    |             ----- value moved here
+...
+307 |         error!("⚡ Zeus: Actor {:?} failed: {}", actor, error);
+    |                                                  ^^^^^ value borrowed here after move
+    |
+    = note: this error originates in the macro `$crate::__macro_support::format_args` which comes from the expansion of the macro `error` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: consider cloning the value if the performance cost is acceptable
+    |
+303 |             actor: actor.clone(), 
+    |                  +++++++++++++++
+
+error[E0382]: use of moved value: `actor`
+   --> src/actors/zeus/supervisor.rs:320:40
+    |
+297 |     pub async fn mark_failed(&self, actor: GodName, error: String) -> Result<RecoveryAction, ActorError> {
+    |                                     ----- move occurs because `actor` has type `GodName`, which does not implement the `Copy` trait
+...
+310 |             let result = self.restart_actor(actor).await?;
+    |                                             ----- value moved here
+...
+320 |                     self.update_status(actor, ActorSupervisionStatus::Dead).await;
+    |                                        ^^^^^ value used here after move
+    |
+note: consider changing this parameter type in method `restart_actor` to borrow instead if owning the value isn't necessary
+   --> src/actors/zeus/supervisor.rs:206:46
+    |
+206 |     pub async fn restart_actor(&self, actor: GodName) -> Result<RestartResult, ActorError> {
+    |                  -------------               ^^^^^^^ this parameter takes ownership of the value
+    |                  |
+    |                  in this method
+help: consider cloning the value if the performance cost is acceptable
+    |
+310 |             let result = self.restart_actor(actor.clone()).await?;
+    |                                                  ++++++++
+
+error[E0382]: use of moved value: `actor`
+   --> src/actors/zeus/supervisor.rs:334:68
+    |
+332 |     pub async fn mark_recovered(&self, actor: GodName) {
+    |                                        ----- move occurs because `actor` has type `GodName`, which does not implement the `Copy` trait
+333 |         self.update_status(actor, ActorSupervisionStatus::Running).await;
+    |                            ----- value moved here
+334 |         let _ = self.lifecycle_tx.send(LifecycleEvent::Recovered { actor }).await;
+    |                                                                    ^^^^^ value used here after move
+    |
+note: consider changing this parameter type in method `update_status` to borrow instead if owning the value isn't necessary
+   --> src/actors/zeus/supervisor.rs:284:46
+    |
+284 |     pub async fn update_status(&self, actor: GodName, status: ActorSupervisionStatus) {
+    |                  -------------               ^^^^^^^ this parameter takes ownership of the value
+    |                  |
+    |                  in this method
+help: consider cloning the value if the performance cost is acceptable
+    |
+333 |         self.update_status(actor.clone(), ActorSupervisionStatus::Running).await;
+    |                                 ++++++++
+
+error[E0382]: borrow of moved value: `actor`
+   --> src/actors/zeus/supervisor.rs:335:47
+    |
+332 |     pub async fn mark_recovered(&self, actor: GodName) {
+    |                                        ----- move occurs because `actor` has type `GodName`, which does not implement the `Copy` trait
+333 |         self.update_status(actor, ActorSupervisionStatus::Running).await;
+334 |         let _ = self.lifecycle_tx.send(LifecycleEvent::Recovered { actor }).await;
+    |                                                                    ----- value moved here
+335 |         info!("⚡ Zeus: Actor {:?} recovered", actor);
+    |                                                ^^^^^ value borrowed here after move
+    |
+    = note: this error originates in the macro `$crate::__macro_support::format_args` which comes from the expansion of the macro `info` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: consider cloning the value if the performance cost is acceptable
+    |
+334 |         let _ = self.lifecycle_tx.send(LifecycleEvent::Recovered { actor: actor.clone() }).await;
+    |                                                                         +++++++++++++++
+
+error[E0507]: cannot move out of `*parent` which is behind a shared reference
+   --> src/actors/zeus/supervisor.rs:376:31
+    |
+376 |             let parent_name = *parent;
+    |                               ^^^^^^^ move occurs because `*parent` has type `GodName`, which does not implement the `Copy` trait
+    |
+help: consider removing the dereference here
+    |
+376 -             let parent_name = *parent;
+376 +             let parent_name = parent;
+    |
+help: consider cloning the value if the performance cost is acceptable
+    |
+376 -             let parent_name = *parent;
+376 +             let parent_name = parent.clone();
+    |
+
+error[E0382]: use of moved value: `actor`
+   --> src/actors/zeus/supervisor.rs:394:41
+    |
+389 |     async fn get_rest_of_chain(&self, actor: GodName) -> Vec<GodName> {
+    |                                       ----- move occurs because `actor` has type `GodName`, which does not implement the `Copy` trait
+390 |         let mut result = vec![actor];
+    |                               ----- value moved here
+...
+394 |         self.collect_descendants(&deps, actor, &mut result);
+    |                                         ^^^^^ value used here after move
+    |
+help: consider cloning the value if the performance cost is acceptable
+    |
+390 |         let mut result = vec![actor.clone()];
+    |                                    ++++++++
+
+error[E0507]: cannot move out of `a.name` which is behind a shared reference
+   --> src/actors/zeus/supervisor.rs:474:22
+    |
+474 |             .map(|a| a.name)
+    |                      ^^^^^^ move occurs because `a.name` has type `GodName`, which does not implement the `Copy` trait
+    |
+help: consider cloning the value if the performance cost is acceptable
+    |
+474 |             .map(|a| a.name.clone())
+    |                            ++++++++
+
+error[E0507]: cannot move out of `*p` which is behind a shared reference
+   --> src/actors/zeus/supervisor.rs:510:23
+    |
+510 |             current = *p;
+    |                       ^^ move occurs because `*p` has type `GodName`, which does not implement the `Copy` trait
+    |
+help: consider cloning the value if the performance cost is acceptable
+    |
+510 -             current = *p;
+510 +             current = p.clone();
+    |
+
+error[E0382]: borrow of moved value: `actor`
+   --> src/actors/zeus/supervisor.rs:539:41
+    |
+527 |     pub async fn set_strategy(&self, actor: GodName, strategy: RecoveryStrategy) -> Result<(), ActorError> {
+    |                                      ----- move occurs because `actor` has type `GodName`, which does not implement the `Copy` trait
+...
+534 |         strategies.insert(actor, strategy.clone());
+    |                           ----- value moved here
+...
+539 |         if let Some(a) = actors.get_mut(&actor) {
+    |                                         ^^^^^^ value borrowed here after move
+    |
+help: consider cloning the value if the performance cost is acceptable
+    |
+534 |         strategies.insert(actor.clone(), strategy.clone());
+    |                                ++++++++
+
+error[E0382]: use of moved value: `actor`
+   --> src/actors/zeus/supervisor.rs:551:49
+    |
+547 |     pub async fn get_affected_actors(&self, actor: GodName) -> Vec<GodName> {
+    |                                             ----- move occurs because `actor` has type `GodName`, which does not implement the `Copy` trait
+548 |         let strategy = self.get_strategy(actor).await.unwrap_or(RecoveryStrategy::OneForOne);
+    |                                          ----- value moved here
+...
+551 |             RecoveryStrategy::OneForOne => vec![actor],
+    |                                                 ^^^^^ value used here after move
+    |
+note: consider changing this parameter type in method `get_strategy` to borrow instead if owning the value isn't necessary
+   --> src/actors/zeus/supervisor.rs:521:45
+    |
+521 |     pub async fn get_strategy(&self, actor: GodName) -> Option<RecoveryStrategy> {
+    |                  ------------               ^^^^^^^ this parameter takes ownership of the value
+    |                  |
+    |                  in this method
+help: consider cloning the value if the performance cost is acceptable
+    |
+548 |         let strategy = self.get_strategy(actor.clone()).await.unwrap_or(RecoveryStrategy::OneForOne);
+    |                                               ++++++++
+
+error[E0507]: cannot move out of `*name` which is behind a shared reference
+   --> src/actors/zeus/supervisor.rs:578:44
+    |
+578 |         actors.iter().map(|(name, actor)| (*name, actor.status.clone())).collect()
+    |                                            ^^^^^ move occurs because `*name` has type `GodName`, which does not implement the `Copy` trait
+    |
+help: consider cloning the value if the performance cost is acceptable
+    |
+578 -         actors.iter().map(|(name, actor)| (*name, actor.status.clone())).collect()
+578 +         actors.iter().map(|(name, actor)| (name.clone(), actor.status.clone())).collect()
+    |
+
+error[E0507]: cannot move out of `a.name` which is behind a shared reference
+   --> src/actors/zeus/supervisor.rs:586:22
+    |
+586 |             .map(|a| a.name)
+    |                      ^^^^^^ move occurs because `a.name` has type `GodName`, which does not implement the `Copy` trait
+    |
+help: consider cloning the value if the performance cost is acceptable
+    |
+586 |             .map(|a| a.name.clone())
+    |                            ++++++++
+
+error[E0382]: use of moved value: `actor`
+   --> src/actors/zeus/metrics.rs:261:65
+    |
+258 |     pub async fn update_actor_metrics(&self, actor: GodName, update: ActorMetricsUpdate) {
+    |                                              ----- move occurs because `actor` has type `GodName`, which does not implement the `Copy` trait
+...
+261 |         let actor_metrics = metrics.entry(actor).or_insert_with(|| ActorMetrics {
+    |                                           -----                 ^^ value used here after move
+    |                                           |
+    |                                           value moved here
+262 |             actor,
+    |             ----- use occurs due to use in closure
+    |
+help: consider cloning the value if the performance cost is acceptable
+    |
+261 |         let actor_metrics = metrics.entry(actor.clone()).or_insert_with(|| ActorMetrics {
+    |                                                ++++++++
+
+error[E0507]: cannot move out of `*actor` which is behind a shared reference
+   --> src/actors/zeus/governance.rs:428:32
+    |
+428 |                         actor: *actor,
+    |                                ^^^^^^ move occurs because `*actor` has type `GodName`, which does not implement the `Copy` trait
+    |
+help: consider cloning the value if the performance cost is acceptable
+    |
+428 -                         actor: *actor,
+428 +                         actor: actor.clone(),
+    |
+
+error[E0507]: cannot move out of `*actor` which is behind a shared reference
+   --> src/actors/zeus/governance.rs:467:32
+    |
+467 |                         actor: *actor,
+    |                                ^^^^^^ move occurs because `*actor` has type `GodName`, which does not implement the `Copy` trait
+    |
+help: consider cloning the value if the performance cost is acceptable
+    |
+467 -                         actor: *actor,
+467 +                         actor: actor.clone(),
+    |
+
+error[E0507]: cannot move out of `*actor` which is behind a shared reference
+   --> src/actors/zeus/governance.rs:477:32
+    |
+477 |                         actor: *actor,
+    |                                ^^^^^^ move occurs because `*actor` has type `GodName`, which does not implement the `Copy` trait
+    |
+help: consider cloning the value if the performance cost is acceptable
+    |
+477 -                         actor: *actor,
+477 +                         actor: actor.clone(),
+    |
+
+error[E0382]: use of moved value: `actor`
+   --> src/actors/zeus/governance.rs:793:33
+    |
+786 |         actor: GodName, 
+    |         ----- move occurs because `actor` has type `GodName`, which does not implement the `Copy` trait
+...
+792 |             actor,
+    |             ----- value moved here
+793 |             ActorRateLimit::new(actor, requests_per_second, burst_size)
+    |                                 ^^^^^ value used here after move
+    |
+help: consider cloning the value if the performance cost is acceptable
+    |
+792 |             actor.clone(),
+    |                  ++++++++
+
+error[E0382]: borrow of moved value: `actor`
+   --> src/actors/zeus/governance.rs:797:13
+    |
+786 |         actor: GodName, 
+    |         ----- move occurs because `actor` has type `GodName`, which does not implement the `Copy` trait
+...
+793 |             ActorRateLimit::new(actor, requests_per_second, burst_size)
+    |                                 ----- value moved here
+...
+797 |             actor, requests_per_second, burst_size);
+    |             ^^^^^ value borrowed here after move
+    |
+note: consider changing this parameter type in method `new` to borrow instead if owning the value isn't necessary
+   --> src/actors/zeus/governance.rs:279:23
+    |
+279 |     pub fn new(actor: GodName, requests_per_second: u64, burst_size: u64) -> Self {
+    |            ---        ^^^^^^^ this parameter takes ownership of the value
+    |            |
+    |            in this method
+    = note: this error originates in the macro `$crate::__macro_support::format_args` which comes from the expansion of the macro `info` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: consider cloning the value if the performance cost is acceptable
+    |
+793 |             ActorRateLimit::new(actor.clone(), requests_per_second, burst_size)
+    |                                      ++++++++
+
+error[E0382]: borrow of moved value: `policy`
+   --> src/actors/zeus/governance.rs:868:53
+    |
+860 |     pub async fn create_access_policy(&self, policy: AccessPolicy) -> Result<(), String> {
+    |                                              ------ move occurs because `policy` has type `AccessPolicy`, which does not implement the `Copy` trait
+...
+867 |         policies.policies.insert(policy.name.clone(), policy);
+    |                                                       ------ value moved here
+868 |         info!("⚡ Zeus: Access policy '{}' created", policy.name);
+    |                                                      ^^^^^^^^^^^ value borrowed here after move
+    |
+    = note: this error originates in the macro `$crate::__macro_support::format_args` which comes from the expansion of the macro `info` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: consider cloning the value if the performance cost is acceptable
+    |
+867 |         policies.policies.insert(policy.name.clone(), policy.clone());
+    |                                                             ++++++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `serde_yaml`
+   --> src/actors/zeus/config.rs:288:34
+    |
+288 |         let config: ZeusConfig = serde_yaml::from_str(&content)
+    |                                  ^^^^^^^^^^ use of unresolved module or unlinked crate `serde_yaml`
+    |
+    = help: if you wanted to use a crate named `serde_yaml`, use `cargo add serde_yaml` to add it to your `Cargo.toml`
+
+error[E0282]: type annotations needed
+   --> src/actors/zeus/config.rs:290:23
+    |
+290 |             .map_err(|e| ConfigError::ParseError { 
+    |                       ^
+291 |                 path: path.to_string(), 
+292 |                 error: e.to_string() 
+    |                        - type must be known at this point
+    |
+help: consider giving this closure parameter an explicit type
+    |
+290 |             .map_err(|e: /* Type */| ConfigError::ParseError { 
+    |                        ++++++++++++
+
+error[E0433]: failed to resolve: use of unresolved module or unlinked crate `serde_yaml`
+   --> src/actors/zeus/config.rs:303:23
+    |
+303 |         let content = serde_yaml::to_string(self)
+    |                       ^^^^^^^^^^ use of unresolved module or unlinked crate `serde_yaml`
+    |
+    = help: if you wanted to use a crate named `serde_yaml`, use `cargo add serde_yaml` to add it to your `Cargo.toml`
+
+error[E0282]: type annotations needed
+   --> src/actors/zeus/config.rs:304:23
+    |
+304 |             .map_err(|e| ConfigError::SerializeError(e.to_string()))?;
+    |                       ^                              - type must be known at this point
+    |
+help: consider giving this closure parameter an explicit type
+    |
+304 |             .map_err(|e: /* Type */| ConfigError::SerializeError(e.to_string()))?;
+    |                        ++++++++++++
+
+error[E0282]: type annotations needed
+   --> src/actors/zeus/config.rs:306:9
+    |
+306 |         tokio::fs::write(path, content).await
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ cannot infer type
+
+error[E0282]: type annotations needed
+   --> src/actors/zeus/config.rs:307:23
+    |
+307 |             .map_err(|e| ConfigError::FileError { 
+    |                       ^
+308 |                 path: path.to_string(), 
+309 |                 error: e.to_string() 
+    |                        - type must be known at this point
+    |
+help: consider giving this closure parameter an explicit type
+    |
+307 |             .map_err(|e: /* Type */| ConfigError::FileError { 
+    |                        ++++++++++++
+
+error[E0308]: mismatched types
+   --> src/actors/zeus/mod.rs:229:13
+    |
+229 |             event_tx,
+    |             ^^^^^^^^ expected `Sender<ZeusEvent>`, found `Sender<ThunderEvent>`
+    |
+    = note: expected struct `tokio::sync::broadcast::Sender<ZeusEvent>`
+               found struct `tokio::sync::broadcast::Sender<ThunderEvent>`
+
+error[E0599]: no variant named `ActorStarted` found for enum `LifecycleEvent`
+   --> src/actors/zeus/mod.rs:492:37
+    |
+492 |                     LifecycleEvent::ActorStarted { actor } => {
+    |                                     ^^^^^^^^^^^^ variant not found in `LifecycleEvent`
+    |
+   ::: src/actors/zeus/supervisor.rs:41:1
+    |
+ 41 | pub enum LifecycleEvent {
+    | ----------------------- variant `ActorStarted` not found here
+
+error[E0599]: no variant named `ActorStopped` found for enum `LifecycleEvent`
+   --> src/actors/zeus/mod.rs:498:37
+    |
+498 |                     LifecycleEvent::ActorStopped { actor, reason } => {
+    |                                     ^^^^^^^^^^^^ variant not found in `LifecycleEvent`
+    |
+   ::: src/actors/zeus/supervisor.rs:41:1
+    |
+ 41 | pub enum LifecycleEvent {
+    | ----------------------- variant `ActorStopped` not found here
+
+error[E0599]: no variant named `ActorRecovered` found for enum `LifecycleEvent`
+   --> src/actors/zeus/mod.rs:505:37
+    |
+505 |                     LifecycleEvent::ActorRecovered { actor, attempt } => {
+    |                                     ^^^^^^^^^^^^^^ variant not found in `LifecycleEvent`
+    |
+   ::: src/actors/zeus/supervisor.rs:41:1
+    |
+ 41 | pub enum LifecycleEvent {
+    | ----------------------- variant `ActorRecovered` not found here
+
+error[E0599]: no variant named `InvalidConfig` found for enum `ActorError`
+   --> src/actors/zeus/mod.rs:758:46
+    |
+758 |                     .map_err(|e| ActorError::InvalidConfig { 
+    |                                              ^^^^^^^^^^^^^ variant not found in `ActorError`
+    |
+   ::: src/errors/actor_error.rs:10:1
+    |
+ 10 | pub enum ActorError {
+    | ------------------- variant `InvalidConfig` not found here
+
+error[E0599]: no variant named `InvalidConfig` found for enum `ActorError`
+   --> src/actors/zeus/mod.rs:763:46
+    |
+763 |                     .map_err(|e| ActorError::InvalidConfig { 
+    |                                              ^^^^^^^^^^^^^ variant not found in `ActorError`
+    |
+   ::: src/errors/actor_error.rs:10:1
+    |
+ 10 | pub enum ActorError {
+    | ------------------- variant `InvalidConfig` not found here
+
+error[E0382]: borrow of moved value: `flag`
+   --> src/actors/zeus/mod.rs:863:67
+    |
+856 |             ZeusCommand::EnableFeatureFlag { flag, modified_by } => {
+    |                                              ---- move occurs because `flag` has type `std::string::String`, which does not implement the `Copy` trait
+...
+860 |                 self.thunderstrike(ZeusEvent::FeatureFlagChanged { flag, enabled: true });
+    |                                                                    ---- value moved here
+...
+863 |                     message: format!("Feature flag '{}' enabled", flag) 
+    |                                                                   ^^^^ value borrowed here after move
+    |
+    = note: this error originates in the macro `$crate::__export::format_args` which comes from the expansion of the macro `format` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: consider cloning the value if the performance cost is acceptable
+    |
+860 |                 self.thunderstrike(ZeusEvent::FeatureFlagChanged { flag: flag.clone(), enabled: true });
+    |                                                                        ++++++++++++++
+
+error[E0382]: borrow of moved value: `flag`
+   --> src/actors/zeus/mod.rs:874:68
+    |
+867 |             ZeusCommand::DisableFeatureFlag { flag, modified_by } => {
+    |                                               ---- move occurs because `flag` has type `std::string::String`, which does not implement the `Copy` trait
+...
+871 |                 self.thunderstrike(ZeusEvent::FeatureFlagChanged { flag, enabled: false });
+    |                                                                    ---- value moved here
+...
+874 |                     message: format!("Feature flag '{}' disabled", flag) 
+    |                                                                    ^^^^ value borrowed here after move
+    |
+    = note: this error originates in the macro `$crate::__export::format_args` which comes from the expansion of the macro `format` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: consider cloning the value if the performance cost is acceptable
+    |
+871 |                 self.thunderstrike(ZeusEvent::FeatureFlagChanged { flag: flag.clone(), enabled: false });
+    |                                                                        ++++++++++++++
+
+error[E0277]: the trait bound `TrinityState: serde::Serialize` is not satisfied
+   --> src/actors/zeus/mod.rs:983:60
+    |
+983 | ...                   data: serde_json::to_value(trinity).unwrap_or_default() 
+    |                             -------------------- ^^^^^^^ unsatisfied trait bound
+    |                             |
+    |                             required by a bound introduced by this call
+    |
+help: the trait `actors::_::_serde::Serialize` is not implemented for `TrinityState`
+   --> src/actors/zeus/mod.rs:143:1
+    |
+143 | pub struct TrinityState {
+    | ^^^^^^^^^^^^^^^^^^^^^^^
+    = note: for local types consider adding `#[derive(serde::Serialize)]` to your `TrinityState` type
+    = note: for types from other crates check whether the crate offers a `serde` feature flag
+    = help: the following other types implement trait `actors::_::_serde::Serialize`:
+              &'a T
+              &'a mut T
+              ()
+              (T,)
+              (T0, T1)
+              (T0, T1, T2)
+              (T0, T1, T2, T3)
+              (T0, T1, T2, T3, T4)
+            and 1057 others
+note: required by a bound in `serde_json::to_value`
+   --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.148/src/value/mod.rs:997:8
+    |
+995 | pub fn to_value<T>(value: T) -> Result<Value, Error>
+    |        -------- required by a bound in this function
+996 | where
+997 |     T: Serialize,
+    |        ^^^^^^^^^ required by this bound in `to_value`
+
+error[E0277]: the trait bound `TrinityState: serde::Serialize` is not satisfied
+    --> src/actors/zeus/mod.rs:1051:27
+     |
+1051 |                       data: serde_json::json!({
+     |  ___________________________^
+1052 | |                         "state": trinity,
+1053 | |                         "metrics": trinity_metrics,
+1054 | |                     })
+     | |                      ^
+     | |                      |
+     | |______________________unsatisfied trait bound
+     |                        required by a bound introduced by this call
+     |
+help: the trait `actors::_::_serde::Serialize` is not implemented for `TrinityState`
+    --> src/actors/zeus/mod.rs:143:1
+     |
+ 143 | pub struct TrinityState {
+     | ^^^^^^^^^^^^^^^^^^^^^^^
+     = note: for local types consider adding `#[derive(serde::Serialize)]` to your `TrinityState` type
+     = note: for types from other crates check whether the crate offers a `serde` feature flag
+     = help: the following other types implement trait `actors::_::_serde::Serialize`:
+               &'a T
+               &'a mut T
+               ()
+               (T,)
+               (T0, T1)
+               (T0, T1, T2)
+               (T0, T1, T2, T3)
+               (T0, T1, T2, T3, T4)
+             and 1057 others
+     = note: required for `&TrinityState` to implement `actors::_::_serde::Serialize`
+note: required by a bound in `serde_json::to_value`
+    --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.148/src/value/mod.rs:997:8
+     |
+ 995 | pub fn to_value<T>(value: T) -> Result<Value, Error>
+     |        -------- required by a bound in this function
+ 996 | where
+ 997 |     T: Serialize,
+     |        ^^^^^^^^^ required by this bound in `to_value`
+     = note: this error originates in the macro `$crate::json_internal` which comes from the expansion of the macro `serde_json::json` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0559]: variant `ActorError::NotFound` has no field named `message`
+    --> src/actors/zeus/mod.rs:1088:25
+     |
+1088 |                         message: "Actor not found in supervision tree".to_string() 
+     |                         ^^^^^^^ `ActorError::NotFound` does not have this field
+     |
+     = note: all struct fields are already assigned
+
+error[E0559]: variant `ActorError::NotFound` has no field named `message`
+    --> src/actors/zeus/mod.rs:1124:25
+     |
+1124 |                         message: "No metrics found for actor".to_string() 
+     |                         ^^^^^^^ `ActorError::NotFound` does not have this field
+     |
+     = note: all struct fields are already assigned
+
+error[E0382]: use of moved value: `actor`
+    --> src/actors/zeus/mod.rs:1193:21
+     |
+1188 |             EventPayload::ActorRecovered { actor, attempt } => {
+     |                                            ----- move occurs because `actor` has type `GodName`, which does not implement the `Copy` trait
+1189 |                 self.metrics.read().await.increment_recoveries();
+1190 |                 self.supervision_manager.read().await.mark_recovered(actor).await;
+     |                                                                      ----- value moved here
+...
+1193 |                     actor, 
+     |                     ^^^^^ value used here after move
+     |
+note: consider changing this parameter type in method `mark_recovered` to borrow instead if owning the value isn't necessary
+    --> src/actors/zeus/supervisor.rs:332:47
+     |
+ 332 |     pub async fn mark_recovered(&self, actor: GodName) {
+     |                  --------------               ^^^^^^^ this parameter takes ownership of the value
+     |                  |
+     |                  in this method
+help: consider cloning the value if the performance cost is acceptable
+     |
+1190 |                 self.supervision_manager.read().await.mark_recovered(actor.clone()).await;
+     |                                                                           ++++++++
+
+error[E0382]: use of moved value: `actor`
+    --> src/actors/zeus/mod.rs:1199:29
+     |
+1188 |             EventPayload::ActorRecovered { actor, attempt } => {
+     |                                            ----- move occurs because `actor` has type `GodName`, which does not implement the `Copy` trait
+...
+1193 |                     actor, 
+     |                     ----- value moved here
+...
+1199 |                 if matches!(actor, GodName::Zeus | GodName::Hades | GodName::Poseidon) {
+     |                             ^^^^^ value used here after move
+     |
+help: consider cloning the value if the performance cost is acceptable
+     |
+1193 |                     actor: actor.clone(), 
+     |                          +++++++++++++++
+
+error[E0599]: no variant or associated item named `Critical` found for enum `ActorStatus` in the current scope
+   --> src/actors/erinyes/heartbeat.rs:240:55
+    |
+240 |                 if state_clone.status == ActorStatus::Critical && previous_status != ActorStatus::Critical {
+    |                                                       ^^^^^^^^ variant or associated item not found in `ActorStatus`
+    |
+   ::: src/traits/actor_trait.rs:28:1
+    |
+ 28 | pub enum ActorStatus {
+    | -------------------- variant or associated item `Critical` not found for this enum
+
+error[E0599]: no variant or associated item named `Critical` found for enum `ActorStatus` in the current scope
+   --> src/actors/erinyes/heartbeat.rs:240:99
+    |
+240 |                 if state_clone.status == ActorStatus::Critical && previous_status != ActorStatus::Critical {
+    |                                                                                                   ^^^^^^^^ variant or associated item not found in `ActorStatus`
+    |
+   ::: src/traits/actor_trait.rs:28:1
+    |
+ 28 | pub enum ActorStatus {
+    | -------------------- variant or associated item `Critical` not found for this enum
+
+error[E0599]: no variant or associated item named `Critical` found for enum `ActorStatus` in the current scope
+   --> src/actors/erinyes/heartbeat.rs:303:30
+    |
+303 |                 ActorStatus::Critical => critical += 1,
+    |                              ^^^^^^^^ variant or associated item not found in `ActorStatus`
+    |
+   ::: src/traits/actor_trait.rs:28:1
+    |
+ 28 | pub enum ActorStatus {
+    | -------------------- variant or associated item `Critical` not found for this enum
+
+error[E0382]: borrow of moved value: `actor`
+   --> src/actors/erinyes/recovery.rs:243:50
+    |
+237 |     pub async fn request_recovery(&self, actor: GodName, strategy: RecoveryStrategy, urgency: RecoveryUrge...
+    |                                          ----- move occurs because `actor` has type `GodName`, which does not implement the `Copy` trait
+...
+241 |                 god: actor,
+    |                      ----- value moved here
+242 |                 message: "Max restarts exceeded, escalation required".to_string(),
+243 |                 attempts: self.get_restart_count(&actor).await,
+    |                                                  ^^^^^^ value borrowed here after move
+    |
+help: consider cloning the value if the performance cost is acceptable
+    |
+241 |                 god: actor.clone(),
+    |                           ++++++++
+
+error[E0599]: the method `get` exists for struct `RwLockReadGuard<'_, HashMap<WatchdogEventType, Vec<...>>>`, but its trait bounds were not satisfied
+   --> src/actors/erinyes/watchdog.rs:128:47
+    |
+ 26 | pub enum WatchdogEventType {
+    | -------------------------- doesn't satisfy `WatchdogEventType: std::cmp::Eq` or `WatchdogEventType: std::hash::Hash`
+...
+128 |         if let Some(handlers_list) = handlers.get(&event_type) {
+    |                                               ^^^ method cannot be called due to unsatisfied trait bounds
+    |
+    = note: the following trait bounds were not satisfied:
+            `WatchdogEventType: std::cmp::Eq`
+            `WatchdogEventType: std::hash::Hash`
+    = note: the full name for the type has been written to '/home/tdy/Escritorio/rocky/target/debug/deps/olympus-2f1f8ad3a8d914ab.long-type-5982840714402577433.txt'
+    = note: consider using `--verbose` to print the full type name to the console
+help: consider annotating `WatchdogEventType` with `#[derive(Eq, Hash, PartialEq)]`
+    |
+ 26 + #[derive(Eq, Hash, PartialEq)]
+ 27 | pub enum WatchdogEventType {
+    |
+
+error[E0599]: the method `entry` exists for struct `RwLockWriteGuard<'_, HashMap<WatchdogEventType, ...>>`, but its trait bounds were not satisfied
+   --> src/actors/erinyes/watchdog.rs:358:14
+    |
+ 26 |   pub enum WatchdogEventType {
+    |   -------------------------- doesn't satisfy `WatchdogEventType: std::cmp::Eq` or `WatchdogEventType: std::hash::Hash`
+...
+357 | /         handlers
+358 | |             .entry(event_type)
+    | |             -^^^^^ method cannot be called due to unsatisfied trait bounds
+    | |_____________|
+    |
+    |
+    = note: the following trait bounds were not satisfied:
+            `WatchdogEventType: std::cmp::Eq`
+            `WatchdogEventType: std::hash::Hash`
+    = note: the full name for the type has been written to '/home/tdy/Escritorio/rocky/target/debug/deps/olympus-2f1f8ad3a8d914ab.long-type-7580790466434315384.txt'
+    = note: consider using `--verbose` to print the full type name to the console
+help: consider annotating `WatchdogEventType` with `#[derive(Eq, Hash, PartialEq)]`
+    |
+ 26 + #[derive(Eq, Hash, PartialEq)]
+ 27 | pub enum WatchdogEventType {
+    |
+
+error[E0277]: `WatchdogSeverity` doesn't implement `std::fmt::Display`
+   --> src/actors/erinyes/watchdog.rs:380:25
+    |
+374 |                         "{},{},{:?},{:?},{},{}\n",
+    |                                             -- required by this formatting parameter
+...
+380 |                         event.severity
+    |                         ^^^^^^^^^^^^^^ `WatchdogSeverity` cannot be formatted with the default formatter
+    |
+help: the trait `std::fmt::Display` is not implemented for `WatchdogSeverity`
+   --> src/actors/erinyes/watchdog.rs:44:1
+    |
+ 44 | pub enum WatchdogSeverity {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^
+    = note: in format strings you may be able to use `{:?}` (or {:#?} for pretty-print) instead
+    = note: this error originates in the macro `$crate::__export::format_args` which comes from the expansion of the macro `format` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: variable does not need to be mutable
+   --> src/actors/erinyes/mod.rs:115:13
+    |
+115 |         let mut erinyes = Self {
+    |             ----^^^^^^^
+    |             |
+    |             help: remove this `mut`
+    |
+    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: variable does not need to be mutable
+   --> src/actors/erinyes/mod.rs:158:13
+    |
+158 |         let mut erinyes = Self {
+    |             ----^^^^^^^
+    |             |
+    |             help: remove this `mut`
+
+error[E0560]: struct `HeartbeatConfig` has no field named `strategy`
+   --> src/actors/erinyes/mod.rs:193:17
+    |
+193 |                 strategy: RecoveryStrategy::OneForOne,
+    |                 ^^^^^^^^ `HeartbeatConfig` does not have this field
+    |
+    = note: all struct fields are already assigned
+
+error[E0382]: borrow of moved value: `actor`
+   --> src/actors/erinyes/mod.rs:429:80
+    |
+426 |             CommandPayload::ConfigureHeartbeat { actor, interval_ms } => {
+    |                                                  ----- move occurs because `actor` has type `GodName`, which does not implement the `Copy` trait
+427 |                 self.heartbeat_monitor.set_interval(actor, interval_ms).await;
+    |                                                     ----- value moved here
+428 |                 Ok(ResponsePayload::Success { 
+429 |                     message: format!("Heartbeat interval configured for {:?}", actor) 
+    |                                                                                ^^^^^ value borrowed here after move
+    |
+note: consider changing this parameter type in method `set_interval` to borrow instead if owning the value isn't necessary
+   --> src/actors/erinyes/heartbeat.rs:255:45
+    |
+255 |     pub async fn set_interval(&self, actor: GodName, interval_ms: u64) {
+    |                  ------------               ^^^^^^^ this parameter takes ownership of the value
+    |                  |
+    |                  in this method
+    = note: this error originates in the macro `$crate::__export::format_args` which comes from the expansion of the macro `format` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: consider cloning the value if the performance cost is acceptable
+    |
+427 |                 self.heartbeat_monitor.set_interval(actor.clone(), interval_ms).await;
+    |                                                          ++++++++
+
+error[E0382]: borrow of moved value: `actor`
+   --> src/actors/erinyes/mod.rs:440:69
+    |
+432 |             CommandPayload::RecoverActor { actor, strategy } => {
+    |                                            ----- move occurs because `actor` has type `GodName`, which does not implement the `Copy` trait
+433 |                 self.recovery_engine.request_recovery(
+434 |                     actor, 
+    |                     ----- value moved here
+...
+440 |                     message: format!("Recovery initiated for {:?}", actor) 
+    |                                                                     ^^^^^ value borrowed here after move
+    |
+note: consider changing this parameter type in method `request_recovery` to borrow instead if owning the value isn't necessary
+   --> src/actors/erinyes/recovery.rs:237:49
+    |
+237 |     pub async fn request_recovery(&self, actor: GodName, strategy: RecoveryStrategy, urgency: RecoveryUrge...
+    |                  ----------------               ^^^^^^^ this parameter takes ownership of the value
+    |                  |
+    |                  in this method
+    = note: this error originates in the macro `$crate::__export::format_args` which comes from the expansion of the macro `format` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: consider cloning the value if the performance cost is acceptable
+    |
+434 |                     actor.clone(), 
+    |                          ++++++++
+
+error[E0599]: no variant or associated item named `GetStats` found for enum `QueryPayload` in the current scope
+   --> src/actors/erinyes/mod.rs:462:27
+    |
+462 |             QueryPayload::GetStats => {
+    |                           ^^^^^^^^ variant or associated item not found in `QueryPayload`
+    |
+   ::: src/traits/message.rs:138:1
+    |
+138 | pub enum QueryPayload {
+    | --------------------- variant or associated item `GetStats` not found for this enum
+
+error[E0277]: the trait bound `SystemHealth: serde::Serialize` is not satisfied
+   --> src/actors/erinyes/mod.rs:470:27
+    |
+470 |                       data: serde_json::json!({
+    |  ___________________________^
+471 | |                         "heartbeat": heartbeat_stats,
+472 | |                         "recovery": recovery_stats,
+473 | |                         "alerts": alert_stats,
+...   |
+476 | |                         "trinity_status": self.get_trinity_status().await,
+477 | |                     }),
+    | |                      ^
+    | |                      |
+    | |______________________unsatisfied trait bound
+    |                        required by a bound introduced by this call
+    |
+help: the trait `actors::_::_serde::Serialize` is not implemented for `SystemHealth`
+   --> src/actors/erinyes/watchdog.rs:390:1
+    |
+390 | pub struct SystemHealth {
+    | ^^^^^^^^^^^^^^^^^^^^^^^
+    = note: for local types consider adding `#[derive(serde::Serialize)]` to your `SystemHealth` type
+    = note: for types from other crates check whether the crate offers a `serde` feature flag
+    = help: the following other types implement trait `actors::_::_serde::Serialize`:
+              &'a T
+              &'a mut T
+              ()
+              (T,)
+              (T0, T1)
+              (T0, T1, T2)
+              (T0, T1, T2, T3)
+              (T0, T1, T2, T3, T4)
+            and 1057 others
+    = note: required for `&SystemHealth` to implement `actors::_::_serde::Serialize`
+note: required by a bound in `serde_json::to_value`
+   --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.148/src/value/mod.rs:997:8
+    |
+995 | pub fn to_value<T>(value: T) -> Result<Value, Error>
+    |        -------- required by a bound in this function
+996 | where
+997 |     T: Serialize,
+    |        ^^^^^^^^^ required by this bound in `to_value`
+    = note: this error originates in the macro `$crate::json_internal` which comes from the expansion of the macro `serde_json::json` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `SystemHealth: serde::Serialize` is not satisfied
+   --> src/actors/erinyes/mod.rs:508:60
+    |
+508 | ...                   data: serde_json::to_value(health).unwrap_or_default() 
+    |                             -------------------- ^^^^^^ unsatisfied trait bound
+    |                             |
+    |                             required by a bound introduced by this call
+    |
+help: the trait `actors::_::_serde::Serialize` is not implemented for `SystemHealth`
+   --> src/actors/erinyes/watchdog.rs:390:1
+    |
+390 | pub struct SystemHealth {
+    | ^^^^^^^^^^^^^^^^^^^^^^^
+    = note: for local types consider adding `#[derive(serde::Serialize)]` to your `SystemHealth` type
+    = note: for types from other crates check whether the crate offers a `serde` feature flag
+    = help: the following other types implement trait `actors::_::_serde::Serialize`:
+              &'a T
+              &'a mut T
+              ()
+              (T,)
+              (T0, T1)
+              (T0, T1, T2)
+              (T0, T1, T2, T3)
+              (T0, T1, T2, T3, T4)
+            and 1057 others
+note: required by a bound in `serde_json::to_value`
+   --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.148/src/value/mod.rs:997:8
+    |
+995 | pub fn to_value<T>(value: T) -> Result<Value, Error>
+    |        -------- required by a bound in this function
+996 | where
+997 |     T: Serialize,
+    |        ^^^^^^^^^ required by this bound in `to_value`
+
+error[E0599]: no variant named `ActorPanicked` found for enum `EventPayload`
+   --> src/actors/erinyes/mod.rs:552:51
+    |
+552 |             crate::traits::message::EventPayload::ActorPanicked { actor, error } => {
+    |                                                   ^^^^^^^^^^^^^ variant not found in `EventPayload`
+    |
+   ::: src/traits/message.rs:157:1
+    |
+157 | pub enum EventPayload {
+    | --------------------- variant `ActorPanicked` not found here
+
+error[E0277]: the trait bound `SystemHealth: serde::Serialize` is not satisfied
+   --> src/actors/erinyes/mod.rs:646:48
+    |
+646 |                     data: serde_json::to_value(health).unwrap_or_default() 
+    |                           -------------------- ^^^^^^ unsatisfied trait bound
+    |                           |
+    |                           required by a bound introduced by this call
+    |
+help: the trait `actors::_::_serde::Serialize` is not implemented for `SystemHealth`
+   --> src/actors/erinyes/watchdog.rs:390:1
+    |
+390 | pub struct SystemHealth {
+    | ^^^^^^^^^^^^^^^^^^^^^^^
+    = note: for local types consider adding `#[derive(serde::Serialize)]` to your `SystemHealth` type
+    = note: for types from other crates check whether the crate offers a `serde` feature flag
+    = help: the following other types implement trait `actors::_::_serde::Serialize`:
+              &'a T
+              &'a mut T
+              ()
+              (T,)
+              (T0, T1)
+              (T0, T1, T2)
+              (T0, T1, T2, T3)
+              (T0, T1, T2, T3, T4)
+            and 1057 others
+note: required by a bound in `serde_json::to_value`
+   --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.148/src/value/mod.rs:997:8
+    |
+995 | pub fn to_value<T>(value: T) -> Result<Value, Error>
+    |        -------- required by a bound in this function
+996 | where
+997 |     T: Serialize,
+    |        ^^^^^^^^^ required by this bound in `to_value`
+
+error[E0382]: borrow of moved value: `actor`
+   --> src/actors/erinyes/mod.rs:721:61
+    |
+712 |     pub async fn set_trinity_priority(&self, actor: GodName, is_trinity: bool) {
+    |                                              ----- move occurs because `actor` has type `GodName`, which does not implement the `Copy` trait
+...
+716 |             trinity.push(actor);
+    |                          ----- value moved here
+...
+721 |         info!("🏛️ Trinity membership updated for {:?}: {}", actor, is_trinity);
+    |                                                            ^^^^^ value borrowed here after move
+    |
+    = note: this error originates in the macro `$crate::__macro_support::format_args` which comes from the expansion of the macro `info` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: consider cloning the value if the performance cost is acceptable
+    |
+716 |             trinity.push(actor.clone());
+    |                               ++++++++
+
+error[E0308]: `?` operator has incompatible types
+  --> src/infrastructure/surreal.rs:92:52
+   |
+92 |           let result: Result<serde_json::Value, _> = client.as_ref()
+   |  ____________________________________________________^
+93 | |             .ok_or_else(|| SurrealError::ConnectionFailed("Not connected".to_string()))?
+94 | |             .query(format!("CREATE {} CONTENT {}", table, data))
+95 | |             .await
+96 | |             .map_err(|e| SurrealError::QueryFailed(e.to_string()))?;
+   | |___________________________________________________________________^ expected `Result<Value, _>`, found `Response`
+   |
+   = note: `?` operator cannot convert from `surrealdb::Response` to `Result<serde_json::Value, _>`
+   = note: expected enum `Result<serde_json::Value, _>`
+            found struct `surrealdb::Response`
+help: try wrapping the expression in `Err`
+   |
+92 ~         let result: Result<serde_json::Value, _> = Err(client.as_ref()
+93 |             .ok_or_else(|| SurrealError::ConnectionFailed("Not connected".to_string()))?
+94 |             .query(format!("CREATE {} CONTENT {}", table, data))
+95 |             .await
+96 ~             .map_err(|e| SurrealError::QueryFailed(e.to_string()))?);
+   |
+
+error[E0382]: use of moved value: `domain`
+   --> src/actors/poseidon/mod.rs:514:86
+    |
+511 |                 let domain = DivineDomain::DataFlow;
+    |                     ------ move occurs because `domain` has type `DivineDomain`, which does not implement the `Copy` trait
+512 |                 match self.connect(&url, domain).await {
+    |                                          ------ value moved here
+513 |                     Ok(id) => {
+514 |                         let _ = self.command_tx.send(PoseidonCommand::Connect { url, domain }).await;
+    |                                                                                      ^^^^^^ value used here after move
+    |
+note: consider changing this parameter type in method `connect` to borrow instead if owning the value isn't necessary
+   --> src/actors/poseidon/mod.rs:196:52
+    |
+196 |     pub async fn connect(&self, url: &str, domain: DivineDomain) -> Result<String, WebSocketError> {
+    |                  ------- in this method            ^^^^^^^^^^^^ this parameter takes ownership of the value
+help: consider cloning the value if the performance cost is acceptable
+    |
+512 |                 match self.connect(&url, domain.clone()).await {
+    |                                                ++++++++
+
+error[E0507]: cannot move out of `route.handler` which is behind a shared reference
+  --> src/actors/hermes/router.rs:62:25
+   |
+62 |             return Some(route.handler);
+   |                         ^^^^^^^^^^^^^ move occurs because `route.handler` has type `GodName`, which does not implement the `Copy` trait
+   |
+help: consider cloning the value if the performance cost is acceptable
+   |
+62 |             return Some(route.handler.clone());
+   |                                      ++++++++
+
+error[E0507]: cannot move out of `wildcard.handler` which is behind a shared reference
+  --> src/actors/hermes/router.rs:68:29
+   |
+68 |                 return Some(wildcard.handler);
+   |                             ^^^^^^^^^^^^^^^^ move occurs because `wildcard.handler` has type `GodName`, which does not implement the `Copy` trait
+   |
+help: consider cloning the value if the performance cost is acceptable
+   |
+68 |                 return Some(wildcard.handler.clone());
+   |                                             ++++++++
+
+error[E0382]: borrow of moved value: `to`
+  --> src/actors/hermes/retry.rs:79:9
+   |
+67 |       pub async fn enqueue(&self, message: ActorMessage, to: GodName, error: String) {
+   |                                                          -- move occurs because `to` has type `GodName`, which does not implement the `Copy` trait
+...
+70 |               to,
+   |               -- value moved here
+...
+79 | /         info!(
+80 | |             message_id = %message.id,
+81 | |             to = %to,
+82 | |             "Message queued for retry"
+83 | |         );
+   | |_________^ value borrowed here after move
+   |
+   = note: this error originates in the macro `$crate::valueset_all` which comes from the expansion of the macro `info` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: consider cloning the value if the performance cost is acceptable
+   |
+70 |             to: to.clone(),
+   |               ++++++++++++
+
+error[E0507]: cannot move out of `retryable.to` which is behind a mutable reference
+   --> src/actors/hermes/retry.rs:114:61
+    |
+114 |                 match deliver_fn(retryable.message.clone(), retryable.to).await {
+    |                                                             ^^^^^^^^^^^^ move occurs because `retryable.to` has type `GodName`, which does not implement the `Copy` trait
+    |
+help: consider cloning the value if the performance cost is acceptable
+    |
+114 |                 match deliver_fn(retryable.message.clone(), retryable.to.clone()).await {
+    |                                                                         ++++++++
+
+error[E0599]: no variant or associated item named `GetStats` found for enum `QueryPayload` in the current scope
+   --> src/actors/hermes/mod.rs:135:27
+    |
+135 |             QueryPayload::GetStats => {
+    |                           ^^^^^^^^ variant or associated item not found in `QueryPayload`
+    |
+   ::: src/traits/message.rs:138:1
+    |
+138 | pub enum QueryPayload {
+    | --------------------- variant or associated item `GetStats` not found for this enum
+
+error[E0609]: no field `recipient` on type `ActorMessage`
+   --> src/actors/hermes/mod.rs:214:22
+    |
+214 |         let to = msg.recipient.clone();
+    |                      ^^^^^^^^^ unknown field
+    |
+    = note: available fields are: `id`, `from`, `to`, `payload`, `timestamp` ... and 2 others
+
+error[E0061]: this method takes 1 argument but 2 arguments were supplied
+   --> src/actors/hermes/mod.rs:341:38
+    |
+341 |                 self.mailbox_manager.create_mailbox(god.clone(), size).await;
+    |                                      ^^^^^^^^^^^^^^              ---- unexpected argument #2 of type `usize`
+    |
+note: method defined here
+   --> src/actors/hermes/mailbox.rs:185:18
+    |
+185 |     pub async fn create_mailbox(&self, god: GodName) -> mpsc::Sender<ActorMessage> {
+    |                  ^^^^^^^^^^^^^^
+help: remove the extra argument
+    |
+341 -                 self.mailbox_manager.create_mailbox(god.clone(), size).await;
+341 +                 self.mailbox_manager.create_mailbox(god.clone()).await;
+    |
+
+error[E0308]: mismatched types
+   --> src/actors/hermes/mod.rs:361:61
+    |
+361 |                 self.delivery_tracker.cleanup_old_trackings(max_age).await;
+    |                                       --------------------- ^^^^^^^ expected `TimeDelta`, found `Duration`
+    |                                       |
+    |                                       arguments to this method are incorrect
+    |
+note: method defined here
+   --> src/actors/hermes/delivery.rs:127:18
+    |
+127 |     pub async fn cleanup_old_trackings(&self, max_age: chrono::Duration) {
+    |                  ^^^^^^^^^^^^^^^^^^^^^        -------------------------
+
+error[E0599]: the function or associated item `new` exists for struct `ring::aead::SealingKey<_>`, but its trait bounds were not satisfied
+   --> src/actors/hades/encryption.rs:152:43
+    |
+152 |         let mut sealing_key = SealingKey::new(unbound_key, AesGcmNonceSequence::new(nonce_bytes));
+    |                                           ^^^ function or associated item cannot be called on `ring::aead::SealingKey<_>` due to unsatisfied trait bounds
+    |
+   ::: /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ring-0.17.14/src/aead/sealing_key.rs:32:1
+    |
+ 32 | pub struct SealingKey<N: NonceSequence> {
+    | --------------------------------------- doesn't satisfy `_: InnerInit`, `_: InnerUser` or `ring::aead::SealingKey<_>: KeyInit`
+    |
+    = note: the following trait bounds were not satisfied:
+            `ring::aead::SealingKey<_>: crypto_common::InnerInit`
+            which is required by `ring::aead::SealingKey<_>: KeyInit`
+            `ring::aead::SealingKey<_>: crypto_common::InnerUser`
+            which is required by `ring::aead::SealingKey<_>: KeyInit`
+            `&ring::aead::SealingKey<_>: crypto_common::InnerInit`
+            which is required by `&ring::aead::SealingKey<_>: KeyInit`
+            `&ring::aead::SealingKey<_>: crypto_common::InnerUser`
+            which is required by `&ring::aead::SealingKey<_>: KeyInit`
+            `&mut ring::aead::SealingKey<_>: crypto_common::InnerInit`
+            which is required by `&mut ring::aead::SealingKey<_>: KeyInit`
+            `&mut ring::aead::SealingKey<_>: crypto_common::InnerUser`
+            which is required by `&mut ring::aead::SealingKey<_>: KeyInit`
+    = help: items from traits can only be used if the trait is in scope
+help: the following traits which provide `new` are implemented but not in scope; perhaps you want to import one of them
+    |
+  5 + use ring::aead::BoundKey;
+    |
+  5 + use yansi::Paint;
+    |
+
+error[E0599]: the function or associated item `new` exists for struct `ring::aead::OpeningKey<_>`, but its trait bounds were not satisfied
+   --> src/actors/hades/encryption.rs:198:43
+    |
+198 |         let mut opening_key = OpeningKey::new(unbound_key, AesGcmNonceSequence::new(nonce_bytes));
+    |                                           ^^^ function or associated item cannot be called on `ring::aead::OpeningKey<_>` due to unsatisfied trait bounds
+    |
+   ::: /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ring-0.17.14/src/aead/opening_key.rs:33:1
+    |
+ 33 | pub struct OpeningKey<N: NonceSequence> {
+    | --------------------------------------- doesn't satisfy `_: InnerInit`, `_: InnerUser` or `ring::aead::OpeningKey<_>: KeyInit`
+    |
+    = note: the following trait bounds were not satisfied:
+            `ring::aead::OpeningKey<_>: crypto_common::InnerInit`
+            which is required by `ring::aead::OpeningKey<_>: KeyInit`
+            `ring::aead::OpeningKey<_>: crypto_common::InnerUser`
+            which is required by `ring::aead::OpeningKey<_>: KeyInit`
+            `&ring::aead::OpeningKey<_>: crypto_common::InnerInit`
+            which is required by `&ring::aead::OpeningKey<_>: KeyInit`
+            `&ring::aead::OpeningKey<_>: crypto_common::InnerUser`
+            which is required by `&ring::aead::OpeningKey<_>: KeyInit`
+            `&mut ring::aead::OpeningKey<_>: crypto_common::InnerInit`
+            which is required by `&mut ring::aead::OpeningKey<_>: KeyInit`
+            `&mut ring::aead::OpeningKey<_>: crypto_common::InnerUser`
+            which is required by `&mut ring::aead::OpeningKey<_>: KeyInit`
+    = help: items from traits can only be used if the trait is in scope
+help: the following traits which provide `new` are implemented but not in scope; perhaps you want to import one of them
+    |
+  5 + use ring::aead::BoundKey;
+    |
+  5 + use yansi::Paint;
+    |
+
+warning: variable does not need to be mutable
+   --> src/actors/hades/encryption.rs:308:13
+    |
+308 |         let mut key_manager = self.key_manager.write().await;
+    |             ----^^^^^^^^^^^
+    |             |
+    |             help: remove this `mut`
+
+error[E0277]: the trait bound `hades::auth::Permission: std::cmp::Ord` is not satisfied
+   --> src/actors/hades/auth.rs:237:25
+    |
+237 |         all_permissions.sort();
+    |                         ^^^^ the trait `std::cmp::Ord` is not implemented for `hades::auth::Permission`
+    |
+note: required by a bound in `std::slice::<impl [T]>::sort`
+   --> /rustc/254b59607d4417e9dffbc307138ae5c86280fe4c/library/alloc/src/slice.rs:131:5
+help: consider annotating `hades::auth::Permission` with `#[derive(Ord)]`
+    |
+103 + #[derive(Ord)]
+104 | pub enum Permission {
+    |
+
+error[E0277]: `DataSensitivity` doesn't implement `std::fmt::Display`
+   --> src/actors/hades/audit.rs:374:25
+    |
+366 |                         "{},{},{},{},{},{:?},{},{}\n",
+    |                                                 -- required by this formatting parameter
+...
+374 |                         entry.sensitivity
+    |                         ^^^^^^^^^^^^^^^^^ `DataSensitivity` cannot be formatted with the default formatter
+    |
+help: the trait `std::fmt::Display` is not implemented for `DataSensitivity`
+   --> src/actors/hades/audit.rs:43:1
+    |
+ 43 | pub enum DataSensitivity {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^
+    = note: in format strings you may be able to use `{:?}` (or {:#?} for pretty-print) instead
+    = note: this error originates in the macro `$crate::__export::format_args` which comes from the expansion of the macro `format` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0308]: mismatched types
+   --> src/actors/hades/audit.rs:439:41
+    |
+439 |                     recommended_action: "Consider locking account or requiring CAPTCHA",
+    |                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `String`, found `&str`
+    |
+help: try using a conversion method
+    |
+439 |                     recommended_action: "Consider locking account or requiring CAPTCHA".to_string(),
+    |                                                                                        ++++++++++++
+
+error[E0599]: no method named `hour` found for struct `chrono::DateTime<Tz>` in the current scope
+   --> src/actors/hades/audit.rs:446:36
+    |
+446 |             let hour = e.timestamp.hour();
+    |                                    ^^^^
+    |
+   ::: /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/chrono-0.4.42/src/traits.rs:285:8
+    |
+285 |     fn hour(&self) -> u32;
+    |        ---- the method is available for `chrono::DateTime<Utc>` here
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: trait `Timelike` which provides `hour` is implemented but not in scope; perhaps you want to import it
+    |
+  5 + use chrono::Timelike;
+    |
+help: there is a method `hour12` with a similar name
+    |
+446 |             let hour = e.timestamp.hour12();
+    |                                        ++
+
+error[E0308]: mismatched types
+   --> src/actors/hades/audit.rs:455:37
+    |
+455 |                 recommended_action: "Review if access was authorized",
+    |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `String`, found `&str`
+    |
+help: try using a conversion method
+    |
+455 |                 recommended_action: "Review if access was authorized".to_string(),
+    |                                                                      ++++++++++++
+
+error[E0308]: mismatched types
+   --> src/actors/hades/mod.rs:86:67
+    |
+ 86 |             auth: Arc::new(RwLock::new(AuthenticationService::new(audit.clone()))),
+    |                                        -------------------------- ^^^^^^^^^^^^^ expected `Arc<AuditLogger>`, found `Arc<RwLock<AuditLogger>>`
+    |                                        |
+    |                                        arguments to this function are incorrect
+    |
+    = note: expected struct `Arc<AuditLogger>`
+               found struct `Arc<tokio::sync::RwLock<AuditLogger>>`
+note: associated function defined here
+   --> src/actors/hades/auth.rs:158:12
+    |
+158 |     pub fn new(audit_logger: Arc<AuditLogger>) -> Self {
+    |            ^^^ ------------------------------
+
+error[E0308]: mismatched types
+   --> src/actors/hades/mod.rs:104:67
+    |
+104 |             auth: Arc::new(RwLock::new(AuthenticationService::new(audit.clone()))),
+    |                                        -------------------------- ^^^^^^^^^^^^^ expected `Arc<AuditLogger>`, found `Arc<RwLock<AuditLogger>>`
+    |                                        |
+    |                                        arguments to this function are incorrect
+    |
+    = note: expected struct `Arc<AuditLogger>`
+               found struct `Arc<tokio::sync::RwLock<AuditLogger>>`
+note: associated function defined here
+   --> src/actors/hades/auth.rs:158:12
+    |
+158 |     pub fn new(audit_logger: Arc<AuditLogger>) -> Self {
+    |            ^^^ ------------------------------
+
+error[E0599]: no variant or associated item named `GetStats` found for enum `QueryPayload` in the current scope
+   --> src/actors/hades/mod.rs:363:27
+    |
+363 |             QueryPayload::GetStats => {
+    |                           ^^^^^^^^ variant or associated item not found in `QueryPayload`
+    |
+   ::: src/traits/message.rs:138:1
+    |
+138 | pub enum QueryPayload {
+    | --------------------- variant or associated item `GetStats` not found for this enum
+
+error[E0502]: cannot borrow `history` as immutable because it is also borrowed as mutable
+  --> src/actors/hera/mod.rs:97:30
+   |
+97 |             history.drain(0..history.len() - 1000);
+   |             ------- -----    ^^^^^^^ immutable borrow occurs here
+   |             |       |
+   |             |       mutable borrow later used by call
+   |             mutable borrow occurs here
+
+error[E0308]: `?` operator has incompatible types
+   --> src/infrastructure/surreal.rs:104:44
+    |
+104 |           let result: Result<Option<T>, _> = client.as_ref()
+    |  ____________________________________________^
+105 | |             .ok_or_else(|| SurrealError::ConnectionFailed("Not connected".to_string()))?
+106 | |             .query(format!("SELECT * FROM {} WHERE id = $id", table))
+107 | |             .bind(("id", id))
+108 | |             .await
+109 | |             .map_err(|e| SurrealError::QueryFailed(e.to_string()))?;
+    | |___________________________________________________________________^ expected `Result<Option<T>, _>`, found `Response`
+    |
+    = note: `?` operator cannot convert from `surrealdb::Response` to `Result<std::option::Option<T>, _>`
+    = note: expected enum `Result<std::option::Option<T>, _>`
+             found struct `surrealdb::Response`
+help: try wrapping the expression in `Err`
+    |
+104 ~         let result: Result<Option<T>, _> = Err(client.as_ref()
+105 |             .ok_or_else(|| SurrealError::ConnectionFailed("Not connected".to_string()))?
+...
+108 |             .await
+109 ~             .map_err(|e| SurrealError::QueryFailed(e.to_string()))?);
+    |
+
+error[E0308]: `?` operator has incompatible types
+   --> src/infrastructure/surreal.rs:119:52
+    |
+119 |           let result: Result<serde_json::Value, _> = client.as_ref()
+    |  ____________________________________________________^
+120 | |             .ok_or_else(|| SurrealError::ConnectionFailed("Not connected".to_string()))?
+121 | |             .query(format!("UPDATE {} CONTENT {}", id, data))
+122 | |             .await
+123 | |             .map_err(|e| SurrealError::QueryFailed(e.to_string()))?;
+    | |___________________________________________________________________^ expected `Result<Value, _>`, found `Response`
+    |
+    = note: `?` operator cannot convert from `surrealdb::Response` to `Result<serde_json::Value, _>`
+    = note: expected enum `Result<serde_json::Value, _>`
+             found struct `surrealdb::Response`
+help: try wrapping the expression in `Err`
+    |
+119 ~         let result: Result<serde_json::Value, _> = Err(client.as_ref()
+120 |             .ok_or_else(|| SurrealError::ConnectionFailed("Not connected".to_string()))?
+121 |             .query(format!("UPDATE {} CONTENT {}", id, data))
+122 |             .await
+123 ~             .map_err(|e| SurrealError::QueryFailed(e.to_string()))?);
+    |
+
+error[E0596]: cannot borrow `*self` as mutable, as it is behind a `&` reference
+   --> src/actors/hestia/mod.rs:701:17
+    |
+701 |                 self.shutdown().await?;
+    |                 ^^^^ `self` is a `&` reference, so it cannot be borrowed as mutable
+    |
+help: consider changing this to be a mutable reference
+    |
+688 |     async fn handle_command(&mut self, cmd: CommandPayload) -> Result<ResponsePayload, ActorError> {
+    |                              +++
+
+error[E0308]: `?` operator has incompatible types
+   --> src/infrastructure/surreal.rs:143:41
+    |
+143 |           let result: Result<Vec<T>, _> = client.as_ref()
+    |  _________________________________________^
+144 | |             .ok_or_else(|| SurrealError::ConnectionFailed("Not connected".to_string()))?
+145 | |             .query(query)
+146 | |             .await
+147 | |             .map_err(|e| SurrealError::QueryFailed(e.to_string()))?;
+    | |___________________________________________________________________^ expected `Result<Vec<T>, _>`, found `Response`
+    |
+    = note: `?` operator cannot convert from `surrealdb::Response` to `Result<std::vec::Vec<T>, _>`
+    = note: expected enum `Result<std::vec::Vec<T>, _>`
+             found struct `surrealdb::Response`
+help: try wrapping the expression in `Err`
+    |
+143 ~         let result: Result<Vec<T>, _> = Err(client.as_ref()
+144 |             .ok_or_else(|| SurrealError::ConnectionFailed("Not connected".to_string()))?
+145 |             .query(query)
+146 |             .await
+147 ~             .map_err(|e| SurrealError::QueryFailed(e.to_string()))?);
+    |
+
+error[E0277]: the trait bound `GodName: std::default::Default` is not satisfied
+  --> src/actors/zeus/metrics.rs:55:5
+   |
+53 | #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+   |                        ------- in this derive macro expansion
+54 | pub struct ActorMetrics {
+55 |     pub actor: GodName,
+   |     ^^^^^^^^^^^^^^^^^^ unsatisfied trait bound
+   |
+help: the trait `std::default::Default` is not implemented for `GodName`
+  --> src/actors/mod.rs:60:1
+   |
+60 | pub enum GodName {
+   | ^^^^^^^^^^^^^^^^
+
+error[E0277]: the trait bound `tokio::sync::RwLock<TrinityState>: serde::Serialize` is not satisfied
+   --> src/actors/zeus/mod.rs:597:9
+    |
+597 | /         serde_json::json!({
+598 | |             "name": "Zeus",
+599 | |             "uptime_seconds": (chrono::Utc::now() - self.state.start_time).num_seconds(),
+600 | |             "trinity_state": self.trinity_state.clone(),
+601 | |             "olympus_state": self.olympus_state.clone(),
+602 | |         })
+    | |          ^
+    | |          |
+    | |__________the trait `actors::_::_serde::Serialize` is not implemented for `tokio::sync::RwLock<TrinityState>`
+    |            required by a bound introduced by this call
+    |
+    = note: for local types consider adding `#[derive(serde::Serialize)]` to your `tokio::sync::RwLock<TrinityState>` type
+    = note: for types from other crates check whether the crate offers a `serde` feature flag
+    = help: the following other types implement trait `actors::_::_serde::Serialize`:
+              &'a T
+              &'a mut T
+              ()
+              (T,)
+              (T0, T1)
+              (T0, T1, T2)
+              (T0, T1, T2, T3)
+              (T0, T1, T2, T3, T4)
+            and 1057 others
+    = note: required for `Arc<tokio::sync::RwLock<TrinityState>>` to implement `actors::_::_serde::Serialize`
+    = note: 1 redundant requirement hidden
+    = note: required for `&Arc<tokio::sync::RwLock<TrinityState>>` to implement `actors::_::_serde::Serialize`
+note: required by a bound in `serde_json::to_value`
+   --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.148/src/value/mod.rs:997:8
+    |
+995 | pub fn to_value<T>(value: T) -> Result<Value, Error>
+    |        -------- required by a bound in this function
+996 | where
+997 |     T: Serialize,
+    |        ^^^^^^^^^ required by this bound in `to_value`
+    = note: this error originates in the macro `$crate::json_internal` which comes from the expansion of the macro `serde_json::json` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `tokio::sync::RwLock<OlympusState>: serde::Serialize` is not satisfied
+   --> src/actors/zeus/mod.rs:597:9
+    |
+597 | /         serde_json::json!({
+598 | |             "name": "Zeus",
+599 | |             "uptime_seconds": (chrono::Utc::now() - self.state.start_time).num_seconds(),
+600 | |             "trinity_state": self.trinity_state.clone(),
+601 | |             "olympus_state": self.olympus_state.clone(),
+602 | |         })
+    | |          ^
+    | |          |
+    | |__________the trait `actors::_::_serde::Serialize` is not implemented for `tokio::sync::RwLock<OlympusState>`
+    |            required by a bound introduced by this call
+    |
+    = note: for local types consider adding `#[derive(serde::Serialize)]` to your `tokio::sync::RwLock<OlympusState>` type
+    = note: for types from other crates check whether the crate offers a `serde` feature flag
+    = help: the following other types implement trait `actors::_::_serde::Serialize`:
+              &'a T
+              &'a mut T
+              ()
+              (T,)
+              (T0, T1)
+              (T0, T1, T2)
+              (T0, T1, T2, T3)
+              (T0, T1, T2, T3, T4)
+            and 1057 others
+    = note: required for `Arc<tokio::sync::RwLock<OlympusState>>` to implement `actors::_::_serde::Serialize`
+    = note: 1 redundant requirement hidden
+    = note: required for `&Arc<tokio::sync::RwLock<OlympusState>>` to implement `actors::_::_serde::Serialize`
+note: required by a bound in `serde_json::to_value`
+   --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.148/src/value/mod.rs:997:8
+    |
+995 | pub fn to_value<T>(value: T) -> Result<Value, Error>
+    |        -------- required by a bound in this function
+996 | where
+997 |     T: Serialize,
+    |        ^^^^^^^^^ required by this bound in `to_value`
+    = note: this error originates in the macro `$crate::json_internal` which comes from the expansion of the macro `serde_json::json` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0599]: no variant or associated item named `Critical` found for enum `ActorStatus` in the current scope
+   --> src/actors/zeus/mod.rs:627:26
+    |
+627 |             ActorStatus::Critical
+    |                          ^^^^^^^^ variant or associated item not found in `ActorStatus`
+    |
+   ::: src/traits/actor_trait.rs:28:1
+    |
+ 28 | pub enum ActorStatus {
+    | -------------------- variant or associated item `Critical` not found for this enum
+
+error[E0609]: no field `last_error` on type `ActorState`
+   --> src/actors/zeus/mod.rs:640:36
+    |
+640 |             last_error: self.state.last_error.as_ref().map(|e| e.to_string()),
+    |                                    ^^^^^^^^^^ unknown field
+    |
+    = note: available fields are: `god`, `status`, `message_count`, `error_count`, `start_time`, `last_message_time`
+
+error[E0282]: type annotations needed
+   --> src/actors/zeus/mod.rs:640:61
+    |
+640 |             last_error: self.state.last_error.as_ref().map(|e| e.to_string()),
+    |                                                             ^  - type must be known at this point
+    |
+help: consider giving this closure parameter an explicit type
+    |
+640 |             last_error: self.state.last_error.as_ref().map(|e: /* Type */| e.to_string()),
+    |                                                              ++++++++++++
+
+error[E0277]: the trait bound `std::time::Instant: serde::Serialize` is not satisfied
+    --> src/actors/erinyes/heartbeat.rs:32:24
+     |
+  32 | #[derive(Debug, Clone, Serialize, Deserialize)]
+     |                        ^^^^^^^^^ the trait `actors::_::_serde::Serialize` is not implemented for `std::time::Instant`
+...
+  35 |     pub last_seen: Instant,
+     |     --- required by a bound introduced by this call
+     |
+     = note: for local types consider adding `#[derive(serde::Serialize)]` to your `std::time::Instant` type
+     = note: for types from other crates check whether the crate offers a `serde` feature flag
+     = help: the following other types implement trait `actors::_::_serde::Serialize`:
+               &'a T
+               &'a mut T
+               ()
+               (T,)
+               (T0, T1)
+               (T0, T1, T2)
+               (T0, T1, T2, T3)
+               (T0, T1, T2, T3, T4)
+             and 1057 others
+note: required by a bound in `actors::_::_serde::ser::SerializeStruct::serialize_field`
+    --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.228/src/ser/mod.rs:1917:21
+     |
+1915 |     fn serialize_field<T>(&mut self, key: &'static str, value: &T) -> Result<(), Self::Error>
+     |        --------------- required by a bound in this associated function
+1916 |     where
+1917 |         T: ?Sized + Serialize;
+     |                     ^^^^^^^^^ required by this bound in `SerializeStruct::serialize_field`
+     = note: this error originates in the derive macro `Serialize` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `std::time::Instant: serde::Deserialize<'de>` is not satisfied
+    --> src/actors/erinyes/heartbeat.rs:35:20
+     |
+  35 |     pub last_seen: Instant,
+     |                    ^^^^^^^ the trait `actors::_::_serde::Deserialize<'_>` is not implemented for `std::time::Instant`
+     |
+     = note: for local types consider adding `#[derive(serde::Deserialize)]` to your `std::time::Instant` type
+     = note: for types from other crates check whether the crate offers a `serde` feature flag
+     = help: the following other types implement trait `actors::_::_serde::Deserialize<'de>`:
+               `&'a [u8]` implements `actors::_::_serde::Deserialize<'de>`
+               `&'a serde_json::value::RawValue` implements `actors::_::_serde::Deserialize<'de>`
+               `&'a str` implements `actors::_::_serde::Deserialize<'de>`
+               `()` implements `actors::_::_serde::Deserialize<'de>`
+               `(T,)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1, T2)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1, T2, T3)` implements `actors::_::_serde::Deserialize<'de>`
+             and 1033 others
+note: required by a bound in `actors::_::_serde::de::SeqAccess::next_element`
+    --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.228/src/de/mod.rs:1771:12
+     |
+1769 |     fn next_element<T>(&mut self) -> Result<Option<T>, Self::Error>
+     |        ------------ required by a bound in this associated function
+1770 |     where
+1771 |         T: Deserialize<'de>,
+     |            ^^^^^^^^^^^^^^^^ required by this bound in `SeqAccess::next_element`
+     = note: the full name for the type has been written to '/home/tdy/Escritorio/rocky/target/debug/deps/olympus-2f1f8ad3a8d914ab.long-type-3675732521531570376.txt'
+     = note: consider using `--verbose` to print the full type name to the console
+
+error[E0277]: the trait bound `std::time::Instant: serde::Deserialize<'de>` is not satisfied
+    --> src/actors/erinyes/heartbeat.rs:35:20
+     |
+  35 |     pub last_seen: Instant,
+     |                    ^^^^^^^ the trait `actors::_::_serde::Deserialize<'_>` is not implemented for `std::time::Instant`
+     |
+     = note: for local types consider adding `#[derive(serde::Deserialize)]` to your `std::time::Instant` type
+     = note: for types from other crates check whether the crate offers a `serde` feature flag
+     = help: the following other types implement trait `actors::_::_serde::Deserialize<'de>`:
+               `&'a [u8]` implements `actors::_::_serde::Deserialize<'de>`
+               `&'a serde_json::value::RawValue` implements `actors::_::_serde::Deserialize<'de>`
+               `&'a str` implements `actors::_::_serde::Deserialize<'de>`
+               `()` implements `actors::_::_serde::Deserialize<'de>`
+               `(T,)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1, T2)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1, T2, T3)` implements `actors::_::_serde::Deserialize<'de>`
+             and 1033 others
+note: required by a bound in `next_value`
+    --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.228/src/de/mod.rs:1916:12
+     |
+1914 |     fn next_value<V>(&mut self) -> Result<V, Self::Error>
+     |        ---------- required by a bound in this associated function
+1915 |     where
+1916 |         V: Deserialize<'de>,
+     |            ^^^^^^^^^^^^^^^^ required by this bound in `MapAccess::next_value`
+     = note: the full name for the type has been written to '/home/tdy/Escritorio/rocky/target/debug/deps/olympus-2f1f8ad3a8d914ab.long-type-3675732521531570376.txt'
+     = note: consider using `--verbose` to print the full type name to the console
+
+error[E0277]: the trait bound `std::time::Instant: serde::Deserialize<'de>` is not satisfied
+  --> src/actors/erinyes/heartbeat.rs:32:35
+   |
+32 | #[derive(Debug, Clone, Serialize, Deserialize)]
+   |                                   ^^^^^^^^^^^ the trait `actors::_::_serde::Deserialize<'_>` is not implemented for `std::time::Instant`
+   |
+   = note: for local types consider adding `#[derive(serde::Deserialize)]` to your `std::time::Instant` type
+   = note: for types from other crates check whether the crate offers a `serde` feature flag
+   = help: the following other types implement trait `actors::_::_serde::Deserialize<'de>`:
+             `&'a [u8]` implements `actors::_::_serde::Deserialize<'de>`
+             `&'a serde_json::value::RawValue` implements `actors::_::_serde::Deserialize<'de>`
+             `&'a str` implements `actors::_::_serde::Deserialize<'de>`
+             `()` implements `actors::_::_serde::Deserialize<'de>`
+             `(T,)` implements `actors::_::_serde::Deserialize<'de>`
+             `(T0, T1)` implements `actors::_::_serde::Deserialize<'de>`
+             `(T0, T1, T2)` implements `actors::_::_serde::Deserialize<'de>`
+             `(T0, T1, T2, T3)` implements `actors::_::_serde::Deserialize<'de>`
+           and 1033 others
+note: required by a bound in `actors::_::_serde::__private228::de::missing_field`
+  --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs:26:8
+   |
+24 | pub fn missing_field<'de, V, E>(field: &'static str) -> Result<V, E>
+   |        ------------- required by a bound in this function
+25 | where
+26 |     V: Deserialize<'de>,
+   |        ^^^^^^^^^^^^^^^^ required by this bound in `missing_field`
+   = note: the full name for the type has been written to '/home/tdy/Escritorio/rocky/target/debug/deps/olympus-2f1f8ad3a8d914ab.long-type-3675732521531570376.txt'
+   = note: consider using `--verbose` to print the full type name to the console
+   = note: this error originates in the derive macro `Deserialize` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `std::time::Instant: serde::Serialize` is not satisfied
+    --> src/actors/erinyes/heartbeat.rs:45:24
+     |
+  45 | #[derive(Debug, Clone, Serialize, Deserialize)]
+     |                        ^^^^^^^^^ the trait `actors::_::_serde::Serialize` is not implemented for `std::time::Instant`
+  46 | pub struct HeartbeatRecord {
+  47 |     pub timestamp: Instant,
+     |     --- required by a bound introduced by this call
+     |
+     = note: for local types consider adding `#[derive(serde::Serialize)]` to your `std::time::Instant` type
+     = note: for types from other crates check whether the crate offers a `serde` feature flag
+     = help: the following other types implement trait `actors::_::_serde::Serialize`:
+               &'a T
+               &'a mut T
+               ()
+               (T,)
+               (T0, T1)
+               (T0, T1, T2)
+               (T0, T1, T2, T3)
+               (T0, T1, T2, T3, T4)
+             and 1057 others
+note: required by a bound in `actors::_::_serde::ser::SerializeStruct::serialize_field`
+    --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.228/src/ser/mod.rs:1917:21
+     |
+1915 |     fn serialize_field<T>(&mut self, key: &'static str, value: &T) -> Result<(), Self::Error>
+     |        --------------- required by a bound in this associated function
+1916 |     where
+1917 |         T: ?Sized + Serialize;
+     |                     ^^^^^^^^^ required by this bound in `SerializeStruct::serialize_field`
+     = note: this error originates in the derive macro `Serialize` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `std::time::Instant: serde::Deserialize<'de>` is not satisfied
+    --> src/actors/erinyes/heartbeat.rs:47:20
+     |
+  47 |     pub timestamp: Instant,
+     |                    ^^^^^^^ the trait `actors::_::_serde::Deserialize<'_>` is not implemented for `std::time::Instant`
+     |
+     = note: for local types consider adding `#[derive(serde::Deserialize)]` to your `std::time::Instant` type
+     = note: for types from other crates check whether the crate offers a `serde` feature flag
+     = help: the following other types implement trait `actors::_::_serde::Deserialize<'de>`:
+               `&'a [u8]` implements `actors::_::_serde::Deserialize<'de>`
+               `&'a serde_json::value::RawValue` implements `actors::_::_serde::Deserialize<'de>`
+               `&'a str` implements `actors::_::_serde::Deserialize<'de>`
+               `()` implements `actors::_::_serde::Deserialize<'de>`
+               `(T,)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1, T2)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1, T2, T3)` implements `actors::_::_serde::Deserialize<'de>`
+             and 1033 others
+note: required by a bound in `actors::_::_serde::de::SeqAccess::next_element`
+    --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.228/src/de/mod.rs:1771:12
+     |
+1769 |     fn next_element<T>(&mut self) -> Result<Option<T>, Self::Error>
+     |        ------------ required by a bound in this associated function
+1770 |     where
+1771 |         T: Deserialize<'de>,
+     |            ^^^^^^^^^^^^^^^^ required by this bound in `SeqAccess::next_element`
+     = note: the full name for the type has been written to '/home/tdy/Escritorio/rocky/target/debug/deps/olympus-2f1f8ad3a8d914ab.long-type-3675732521531570376.txt'
+     = note: consider using `--verbose` to print the full type name to the console
+
+error[E0277]: the trait bound `std::time::Instant: serde::Deserialize<'de>` is not satisfied
+    --> src/actors/erinyes/heartbeat.rs:47:20
+     |
+  47 |     pub timestamp: Instant,
+     |                    ^^^^^^^ the trait `actors::_::_serde::Deserialize<'_>` is not implemented for `std::time::Instant`
+     |
+     = note: for local types consider adding `#[derive(serde::Deserialize)]` to your `std::time::Instant` type
+     = note: for types from other crates check whether the crate offers a `serde` feature flag
+     = help: the following other types implement trait `actors::_::_serde::Deserialize<'de>`:
+               `&'a [u8]` implements `actors::_::_serde::Deserialize<'de>`
+               `&'a serde_json::value::RawValue` implements `actors::_::_serde::Deserialize<'de>`
+               `&'a str` implements `actors::_::_serde::Deserialize<'de>`
+               `()` implements `actors::_::_serde::Deserialize<'de>`
+               `(T,)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1, T2)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1, T2, T3)` implements `actors::_::_serde::Deserialize<'de>`
+             and 1033 others
+note: required by a bound in `next_value`
+    --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.228/src/de/mod.rs:1916:12
+     |
+1914 |     fn next_value<V>(&mut self) -> Result<V, Self::Error>
+     |        ---------- required by a bound in this associated function
+1915 |     where
+1916 |         V: Deserialize<'de>,
+     |            ^^^^^^^^^^^^^^^^ required by this bound in `MapAccess::next_value`
+     = note: the full name for the type has been written to '/home/tdy/Escritorio/rocky/target/debug/deps/olympus-2f1f8ad3a8d914ab.long-type-3675732521531570376.txt'
+     = note: consider using `--verbose` to print the full type name to the console
+
+error[E0277]: the trait bound `std::time::Instant: serde::Deserialize<'de>` is not satisfied
+  --> src/actors/erinyes/heartbeat.rs:45:35
+   |
+45 | #[derive(Debug, Clone, Serialize, Deserialize)]
+   |                                   ^^^^^^^^^^^ the trait `actors::_::_serde::Deserialize<'_>` is not implemented for `std::time::Instant`
+   |
+   = note: for local types consider adding `#[derive(serde::Deserialize)]` to your `std::time::Instant` type
+   = note: for types from other crates check whether the crate offers a `serde` feature flag
+   = help: the following other types implement trait `actors::_::_serde::Deserialize<'de>`:
+             `&'a [u8]` implements `actors::_::_serde::Deserialize<'de>`
+             `&'a serde_json::value::RawValue` implements `actors::_::_serde::Deserialize<'de>`
+             `&'a str` implements `actors::_::_serde::Deserialize<'de>`
+             `()` implements `actors::_::_serde::Deserialize<'de>`
+             `(T,)` implements `actors::_::_serde::Deserialize<'de>`
+             `(T0, T1)` implements `actors::_::_serde::Deserialize<'de>`
+             `(T0, T1, T2)` implements `actors::_::_serde::Deserialize<'de>`
+             `(T0, T1, T2, T3)` implements `actors::_::_serde::Deserialize<'de>`
+           and 1033 others
+note: required by a bound in `actors::_::_serde::__private228::de::missing_field`
+  --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs:26:8
+   |
+24 | pub fn missing_field<'de, V, E>(field: &'static str) -> Result<V, E>
+   |        ------------- required by a bound in this function
+25 | where
+26 |     V: Deserialize<'de>,
+   |        ^^^^^^^^^^^^^^^^ required by this bound in `missing_field`
+   = note: the full name for the type has been written to '/home/tdy/Escritorio/rocky/target/debug/deps/olympus-2f1f8ad3a8d914ab.long-type-3675732521531570376.txt'
+   = note: consider using `--verbose` to print the full type name to the console
+   = note: this error originates in the derive macro `Deserialize` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0599]: no variant or associated item named `Critical` found for enum `ActorStatus` in the current scope
+  --> src/actors/erinyes/heartbeat.rs:89:40
+   |
+89 |             self.status = ActorStatus::Critical;
+   |                                        ^^^^^^^^ variant or associated item not found in `ActorStatus`
+   |
+  ::: src/traits/actor_trait.rs:28:1
+   |
+28 | pub enum ActorStatus {
+   | -------------------- variant or associated item `Critical` not found for this enum
+
+error[E0277]: the trait bound `std::time::Instant: serde::Serialize` is not satisfied
+    --> src/actors/erinyes/dead_letter.rs:14:24
+     |
+  14 | #[derive(Debug, Clone, Serialize, Deserialize)]
+     |                        ^^^^^^^^^ the trait `actors::_::_serde::Serialize` is not implemented for `std::time::Instant`
+...
+  19 |     pub failed_at: Instant,
+     |     --- required by a bound introduced by this call
+     |
+     = note: for local types consider adding `#[derive(serde::Serialize)]` to your `std::time::Instant` type
+     = note: for types from other crates check whether the crate offers a `serde` feature flag
+     = help: the following other types implement trait `actors::_::_serde::Serialize`:
+               &'a T
+               &'a mut T
+               ()
+               (T,)
+               (T0, T1)
+               (T0, T1, T2)
+               (T0, T1, T2, T3)
+               (T0, T1, T2, T3, T4)
+             and 1057 others
+note: required by a bound in `actors::_::_serde::ser::SerializeStruct::serialize_field`
+    --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.228/src/ser/mod.rs:1917:21
+     |
+1915 |     fn serialize_field<T>(&mut self, key: &'static str, value: &T) -> Result<(), Self::Error>
+     |        --------------- required by a bound in this associated function
+1916 |     where
+1917 |         T: ?Sized + Serialize;
+     |                     ^^^^^^^^^ required by this bound in `SerializeStruct::serialize_field`
+     = note: this error originates in the derive macro `Serialize` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `std::time::Instant: serde::Deserialize<'de>` is not satisfied
+    --> src/actors/erinyes/dead_letter.rs:19:20
+     |
+  19 |     pub failed_at: Instant,
+     |                    ^^^^^^^ the trait `actors::_::_serde::Deserialize<'_>` is not implemented for `std::time::Instant`
+     |
+     = note: for local types consider adding `#[derive(serde::Deserialize)]` to your `std::time::Instant` type
+     = note: for types from other crates check whether the crate offers a `serde` feature flag
+     = help: the following other types implement trait `actors::_::_serde::Deserialize<'de>`:
+               `&'a [u8]` implements `actors::_::_serde::Deserialize<'de>`
+               `&'a serde_json::value::RawValue` implements `actors::_::_serde::Deserialize<'de>`
+               `&'a str` implements `actors::_::_serde::Deserialize<'de>`
+               `()` implements `actors::_::_serde::Deserialize<'de>`
+               `(T,)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1, T2)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1, T2, T3)` implements `actors::_::_serde::Deserialize<'de>`
+             and 1031 others
+note: required by a bound in `actors::_::_serde::de::SeqAccess::next_element`
+    --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.228/src/de/mod.rs:1771:12
+     |
+1769 |     fn next_element<T>(&mut self) -> Result<Option<T>, Self::Error>
+     |        ------------ required by a bound in this associated function
+1770 |     where
+1771 |         T: Deserialize<'de>,
+     |            ^^^^^^^^^^^^^^^^ required by this bound in `SeqAccess::next_element`
+     = note: the full name for the type has been written to '/home/tdy/Escritorio/rocky/target/debug/deps/olympus-2f1f8ad3a8d914ab.long-type-3675732521531570376.txt'
+     = note: consider using `--verbose` to print the full type name to the console
+
+error[E0277]: the trait bound `std::time::Instant: serde::Deserialize<'de>` is not satisfied
+    --> src/actors/erinyes/dead_letter.rs:19:20
+     |
+  19 |     pub failed_at: Instant,
+     |                    ^^^^^^^ the trait `actors::_::_serde::Deserialize<'_>` is not implemented for `std::time::Instant`
+     |
+     = note: for local types consider adding `#[derive(serde::Deserialize)]` to your `std::time::Instant` type
+     = note: for types from other crates check whether the crate offers a `serde` feature flag
+     = help: the following other types implement trait `actors::_::_serde::Deserialize<'de>`:
+               `&'a [u8]` implements `actors::_::_serde::Deserialize<'de>`
+               `&'a serde_json::value::RawValue` implements `actors::_::_serde::Deserialize<'de>`
+               `&'a str` implements `actors::_::_serde::Deserialize<'de>`
+               `()` implements `actors::_::_serde::Deserialize<'de>`
+               `(T,)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1, T2)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1, T2, T3)` implements `actors::_::_serde::Deserialize<'de>`
+             and 1031 others
+note: required by a bound in `next_value`
+    --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.228/src/de/mod.rs:1916:12
+     |
+1914 |     fn next_value<V>(&mut self) -> Result<V, Self::Error>
+     |        ---------- required by a bound in this associated function
+1915 |     where
+1916 |         V: Deserialize<'de>,
+     |            ^^^^^^^^^^^^^^^^ required by this bound in `MapAccess::next_value`
+     = note: the full name for the type has been written to '/home/tdy/Escritorio/rocky/target/debug/deps/olympus-2f1f8ad3a8d914ab.long-type-3675732521531570376.txt'
+     = note: consider using `--verbose` to print the full type name to the console
+
+error[E0277]: the trait bound `std::time::Instant: serde::Deserialize<'de>` is not satisfied
+  --> src/actors/erinyes/dead_letter.rs:14:35
+   |
+14 | #[derive(Debug, Clone, Serialize, Deserialize)]
+   |                                   ^^^^^^^^^^^ the trait `actors::_::_serde::Deserialize<'_>` is not implemented for `std::time::Instant`
+   |
+   = note: for local types consider adding `#[derive(serde::Deserialize)]` to your `std::time::Instant` type
+   = note: for types from other crates check whether the crate offers a `serde` feature flag
+   = help: the following other types implement trait `actors::_::_serde::Deserialize<'de>`:
+             `&'a [u8]` implements `actors::_::_serde::Deserialize<'de>`
+             `&'a serde_json::value::RawValue` implements `actors::_::_serde::Deserialize<'de>`
+             `&'a str` implements `actors::_::_serde::Deserialize<'de>`
+             `()` implements `actors::_::_serde::Deserialize<'de>`
+             `(T,)` implements `actors::_::_serde::Deserialize<'de>`
+             `(T0, T1)` implements `actors::_::_serde::Deserialize<'de>`
+             `(T0, T1, T2)` implements `actors::_::_serde::Deserialize<'de>`
+             `(T0, T1, T2, T3)` implements `actors::_::_serde::Deserialize<'de>`
+           and 1031 others
+note: required by a bound in `actors::_::_serde::__private228::de::missing_field`
+  --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs:26:8
+   |
+24 | pub fn missing_field<'de, V, E>(field: &'static str) -> Result<V, E>
+   |        ------------- required by a bound in this function
+25 | where
+26 |     V: Deserialize<'de>,
+   |        ^^^^^^^^^^^^^^^^ required by this bound in `missing_field`
+   = note: the full name for the type has been written to '/home/tdy/Escritorio/rocky/target/debug/deps/olympus-2f1f8ad3a8d914ab.long-type-3675732521531570376.txt'
+   = note: consider using `--verbose` to print the full type name to the console
+   = note: this error originates in the derive macro `Deserialize` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `std::time::Instant: serde::Serialize` is not satisfied
+    --> src/actors/erinyes/watchdog.rs:51:24
+     |
+  51 | #[derive(Debug, Clone, Serialize, Deserialize)]
+     |                        ^^^^^^^^^ the trait `actors::_::_serde::Serialize` is not implemented for `std::time::Instant`
+...
+  54 |     pub timestamp: Instant,
+     |     --- required by a bound introduced by this call
+     |
+     = note: for local types consider adding `#[derive(serde::Serialize)]` to your `std::time::Instant` type
+     = note: for types from other crates check whether the crate offers a `serde` feature flag
+     = help: the following other types implement trait `actors::_::_serde::Serialize`:
+               &'a T
+               &'a mut T
+               ()
+               (T,)
+               (T0, T1)
+               (T0, T1, T2)
+               (T0, T1, T2, T3)
+               (T0, T1, T2, T3, T4)
+             and 1057 others
+note: required by a bound in `actors::_::_serde::ser::SerializeStruct::serialize_field`
+    --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.228/src/ser/mod.rs:1917:21
+     |
+1915 |     fn serialize_field<T>(&mut self, key: &'static str, value: &T) -> Result<(), Self::Error>
+     |        --------------- required by a bound in this associated function
+1916 |     where
+1917 |         T: ?Sized + Serialize;
+     |                     ^^^^^^^^^ required by this bound in `SerializeStruct::serialize_field`
+     = note: this error originates in the derive macro `Serialize` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `std::time::Instant: serde::Deserialize<'de>` is not satisfied
+    --> src/actors/erinyes/watchdog.rs:54:20
+     |
+  54 |     pub timestamp: Instant,
+     |                    ^^^^^^^ the trait `actors::_::_serde::Deserialize<'_>` is not implemented for `std::time::Instant`
+     |
+     = note: for local types consider adding `#[derive(serde::Deserialize)]` to your `std::time::Instant` type
+     = note: for types from other crates check whether the crate offers a `serde` feature flag
+     = help: the following other types implement trait `actors::_::_serde::Deserialize<'de>`:
+               `&'a [u8]` implements `actors::_::_serde::Deserialize<'de>`
+               `&'a serde_json::value::RawValue` implements `actors::_::_serde::Deserialize<'de>`
+               `&'a str` implements `actors::_::_serde::Deserialize<'de>`
+               `()` implements `actors::_::_serde::Deserialize<'de>`
+               `(T,)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1, T2)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1, T2, T3)` implements `actors::_::_serde::Deserialize<'de>`
+             and 1034 others
+note: required by a bound in `actors::_::_serde::de::SeqAccess::next_element`
+    --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.228/src/de/mod.rs:1771:12
+     |
+1769 |     fn next_element<T>(&mut self) -> Result<Option<T>, Self::Error>
+     |        ------------ required by a bound in this associated function
+1770 |     where
+1771 |         T: Deserialize<'de>,
+     |            ^^^^^^^^^^^^^^^^ required by this bound in `SeqAccess::next_element`
+     = note: the full name for the type has been written to '/home/tdy/Escritorio/rocky/target/debug/deps/olympus-2f1f8ad3a8d914ab.long-type-3675732521531570376.txt'
+     = note: consider using `--verbose` to print the full type name to the console
+
+error[E0277]: the trait bound `std::time::Instant: serde::Deserialize<'de>` is not satisfied
+    --> src/actors/erinyes/watchdog.rs:54:20
+     |
+  54 |     pub timestamp: Instant,
+     |                    ^^^^^^^ the trait `actors::_::_serde::Deserialize<'_>` is not implemented for `std::time::Instant`
+     |
+     = note: for local types consider adding `#[derive(serde::Deserialize)]` to your `std::time::Instant` type
+     = note: for types from other crates check whether the crate offers a `serde` feature flag
+     = help: the following other types implement trait `actors::_::_serde::Deserialize<'de>`:
+               `&'a [u8]` implements `actors::_::_serde::Deserialize<'de>`
+               `&'a serde_json::value::RawValue` implements `actors::_::_serde::Deserialize<'de>`
+               `&'a str` implements `actors::_::_serde::Deserialize<'de>`
+               `()` implements `actors::_::_serde::Deserialize<'de>`
+               `(T,)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1, T2)` implements `actors::_::_serde::Deserialize<'de>`
+               `(T0, T1, T2, T3)` implements `actors::_::_serde::Deserialize<'de>`
+             and 1034 others
+note: required by a bound in `next_value`
+    --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.228/src/de/mod.rs:1916:12
+     |
+1914 |     fn next_value<V>(&mut self) -> Result<V, Self::Error>
+     |        ---------- required by a bound in this associated function
+1915 |     where
+1916 |         V: Deserialize<'de>,
+     |            ^^^^^^^^^^^^^^^^ required by this bound in `MapAccess::next_value`
+     = note: the full name for the type has been written to '/home/tdy/Escritorio/rocky/target/debug/deps/olympus-2f1f8ad3a8d914ab.long-type-3675732521531570376.txt'
+     = note: consider using `--verbose` to print the full type name to the console
+
+error[E0277]: the trait bound `std::time::Instant: serde::Deserialize<'de>` is not satisfied
+  --> src/actors/erinyes/watchdog.rs:51:35
+   |
+51 | #[derive(Debug, Clone, Serialize, Deserialize)]
+   |                                   ^^^^^^^^^^^ the trait `actors::_::_serde::Deserialize<'_>` is not implemented for `std::time::Instant`
+   |
+   = note: for local types consider adding `#[derive(serde::Deserialize)]` to your `std::time::Instant` type
+   = note: for types from other crates check whether the crate offers a `serde` feature flag
+   = help: the following other types implement trait `actors::_::_serde::Deserialize<'de>`:
+             `&'a [u8]` implements `actors::_::_serde::Deserialize<'de>`
+             `&'a serde_json::value::RawValue` implements `actors::_::_serde::Deserialize<'de>`
+             `&'a str` implements `actors::_::_serde::Deserialize<'de>`
+             `()` implements `actors::_::_serde::Deserialize<'de>`
+             `(T,)` implements `actors::_::_serde::Deserialize<'de>`
+             `(T0, T1)` implements `actors::_::_serde::Deserialize<'de>`
+             `(T0, T1, T2)` implements `actors::_::_serde::Deserialize<'de>`
+             `(T0, T1, T2, T3)` implements `actors::_::_serde::Deserialize<'de>`
+           and 1034 others
+note: required by a bound in `actors::_::_serde::__private228::de::missing_field`
+  --> /home/tdy/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs:26:8
+   |
+24 | pub fn missing_field<'de, V, E>(field: &'static str) -> Result<V, E>
+   |        ------------- required by a bound in this function
+25 | where
+26 |     V: Deserialize<'de>,
+   |        ^^^^^^^^^^^^^^^^ required by this bound in `missing_field`
+   = note: the full name for the type has been written to '/home/tdy/Escritorio/rocky/target/debug/deps/olympus-2f1f8ad3a8d914ab.long-type-3675732521531570376.txt'
+   = note: consider using `--verbose` to print the full type name to the console
+   = note: this error originates in the derive macro `Deserialize` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: `dyn Fn(&WatchdogEvent) + Send + Sync` doesn't implement `std::fmt::Debug`
+  --> src/actors/erinyes/watchdog.rs:75:5
+   |
+70 | #[derive(Debug, Clone)]
+   |          ----- in this derive macro expansion
+...
+75 |     custom_handlers: Arc<RwLock<HashMap<WatchdogEventType, Vec<Box<dyn Fn(&WatchdogEvent) + Send + Sync>>>>>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `std::fmt::Debug` is not implemented for `dyn Fn(&WatchdogEvent) + Send + Sync`
+   |
+   = note: the full name for the type has been written to '/home/tdy/Escritorio/rocky/target/debug/deps/olympus-2f1f8ad3a8d914ab.long-type-8756834927844339180.txt'
+   = note: consider using `--verbose` to print the full type name to the console
+
+error[E0609]: no field `strategy` on type `HeartbeatConfig`
+   --> src/actors/erinyes/mod.rs:261:46
+    |
+261 | ...                   state.config.strategy.clone(),
+    |                                    ^^^^^^^^ unknown field
+    |
+    = note: available fields are: `interval_ms`, `timeout_ms`
+
+error[E0599]: no variant or associated item named `Critical` found for enum `ActorStatus` in the current scope
+   --> src/actors/erinyes/mod.rs:364:26
+    |
+364 |             ActorStatus::Critical
+    |                          ^^^^^^^^ variant or associated item not found in `ActorStatus`
+    |
+   ::: src/traits/actor_trait.rs:28:1
+    |
+ 28 | pub enum ActorStatus {
+    | -------------------- variant or associated item `Critical` not found for this enum
+
+error[E0609]: no field `last_error` on type `ActorState`
+   --> src/actors/erinyes/mod.rs:377:36
+    |
+377 |             last_error: self.state.last_error.as_ref().map(|e| e.to_string()),
+    |                                    ^^^^^^^^^^ unknown field
+    |
+    = note: available fields are: `god`, `status`, `message_count`, `error_count`, `start_time`, `last_message_time`
+
+error[E0282]: type annotations needed
+   --> src/actors/erinyes/mod.rs:377:61
+    |
+377 |             last_error: self.state.last_error.as_ref().map(|e| e.to_string()),
+    |                                                             ^  - type must be known at this point
+    |
+help: consider giving this closure parameter an explicit type
+    |
+377 |             last_error: self.state.last_error.as_ref().map(|e: /* Type */| e.to_string()),
+    |                                                              ++++++++++++
+
+error[E0609]: no field `last_error` on type `ActorState`
+   --> src/actors/poseidon/mod.rs:467:36
+    |
+467 |             last_error: self.state.last_error.as_ref().map(|e| e.to_string()),
+    |                                    ^^^^^^^^^^ unknown field
+    |
+    = note: available fields are: `god`, `status`, `message_count`, `error_count`, `start_time`, `last_message_time`
+
+error[E0282]: type annotations needed
+   --> src/actors/poseidon/mod.rs:467:61
+    |
+467 |             last_error: self.state.last_error.as_ref().map(|e| e.to_string()),
+    |                                                             ^  - type must be known at this point
+    |
+help: consider giving this closure parameter an explicit type
+    |
+467 |             last_error: self.state.last_error.as_ref().map(|e: /* Type */| e.to_string()),
+    |                                                              ++++++++++++
+
+error[E0782]: expected a type, found a trait
+  --> src/actors/artemis/indexing.rs:35:23
+   |
+35 |         let mut doc = Document::default();
+   |                       ^^^^^^^^
+   |
+help: you can add the `dyn` keyword if you want a trait object
+   |
+35 |         let mut doc = <dyn Document>::default();
+   |                       ++++         +
+
+error[E0599]: no variant or associated item named `OnCommit` found for enum `ReloadPolicy` in the current scope
+  --> src/actors/artemis/search.rs:19:51
+   |
+19 |             .reload_policy(tantivy::ReloadPolicy::OnCommit)
+   |                                                   ^^^^^^^^ variant or associated item not found in `ReloadPolicy`
+
+error[E0282]: type annotations needed
+  --> src/actors/artemis/search.rs:53:17
+   |
+53 |             let retrieved_doc = searcher.doc(doc_address).map_err(|e| ActorError::SearchError {
+   |                 ^^^^^^^^^^^^^
+...
+60 |             for (field, value) in retrieved_doc.field_values() {
+   |                                   ------------- type must be known at this point
+   |
+help: consider giving `retrieved_doc` an explicit type
+   |
+53 |             let retrieved_doc: /* Type */ = searcher.doc(doc_address).map_err(|e| ActorError::SearchError {
+   |                              ++++++++++++
+
+error[E0282]: type annotations needed
+  --> src/actors/artemis/search.rs:62:37
+   |
+62 |                 if let Some(text) = value.as_text() {
+   |                                     ^^^^^ cannot infer type
+
+error[E0599]: no variant or associated item named `Critical` found for enum `ActorStatus` in the current scope
+   --> src/actors/hermes/mod.rs:460:26
+    |
+460 |             ActorStatus::Critical
+    |                          ^^^^^^^^ variant or associated item not found in `ActorStatus`
+    |
+   ::: src/traits/actor_trait.rs:28:1
+    |
+ 28 | pub enum ActorStatus {
+    | -------------------- variant or associated item `Critical` not found for this enum
+
+error[E0609]: no field `last_error` on type `ActorState`
+   --> src/actors/hermes/mod.rs:469:36
+    |
+469 |             last_error: self.state.last_error.as_ref().map(|e| e.to_string()),
+    |                                    ^^^^^^^^^^ unknown field
+    |
+    = note: available fields are: `god`, `status`, `message_count`, `error_count`, `start_time`, `last_message_time`
+
+error[E0282]: type annotations needed
+   --> src/actors/hermes/mod.rs:469:61
+    |
+469 |             last_error: self.state.last_error.as_ref().map(|e| e.to_string()),
+    |                                                             ^  - type must be known at this point
+    |
+help: consider giving this closure parameter an explicit type
+    |
+469 |             last_error: self.state.last_error.as_ref().map(|e: /* Type */| e.to_string()),
+    |                                                              ++++++++++++
+
+error[E0599]: no method named `handle_event` found for mutable reference `&mut Hades` in the current scope
+   --> src/actors/hades/mod.rs:247:50
+    |
+247 |             MessagePayload::Event(event) => self.handle_event(event).await,
+    |                                                  ^^^^^^^^^^^^
+    |
+help: there is a method `handle_query` with a similar name
+    |
+247 -             MessagePayload::Event(event) => self.handle_event(event).await,
+247 +             MessagePayload::Event(event) => self.handle_query(event).await,
+    |
+
+error[E0599]: no variant or associated item named `Critical` found for enum `ActorStatus` in the current scope
+   --> src/actors/hades/mod.rs:281:26
+    |
+281 |             ActorStatus::Critical
+    |                          ^^^^^^^^ variant or associated item not found in `ActorStatus`
+    |
+   ::: src/traits/actor_trait.rs:28:1
+    |
+ 28 | pub enum ActorStatus {
+    | -------------------- variant or associated item `Critical` not found for this enum
+
+error[E0308]: mismatched types
+  --> src/infrastructure/surreal.rs:43:24
+   |
+43 |             namespace: "olympus",
+   |                        ^^^^^^^^^ expected `String`, found `&str`
+   |
+help: try using a conversion method
+   |
+43 |             namespace: "olympus".to_string(),
+   |                                 ++++++++++++
+
+error[E0308]: mismatched types
+  --> src/infrastructure/surreal.rs:44:23
+   |
+44 |             database: "v13",
+   |                       ^^^^^ expected `String`, found `&str`
+   |
+help: try using a conversion method
+   |
+44 |             database: "v13".to_string(),
+   |                            ++++++++++++
+
+error[E0507]: cannot move out of `*child` which is behind a shared reference
+   --> src/actors/zeus/supervisor.rs:403:33
+    |
+403 |                     result.push(*child);
+    |                                 ^^^^^^ move occurs because `*child` has type `GodName`, which does not implement the `Copy` trait
+    |
+help: consider cloning the value if the performance cost is acceptable
+    |
+403 -                     result.push(*child);
+403 +                     result.push(child.clone());
+    |
+
+error[E0507]: cannot move out of `*child` which is behind a shared reference
+   --> src/actors/zeus/supervisor.rs:404:52
+    |
+404 |                     self.collect_descendants(deps, *child, result);
+    |                                                    ^^^^^^ move occurs because `*child` has type `GodName`, which does not implement the `Copy` trait
+    |
+help: consider cloning the value if the performance cost is acceptable
+    |
+404 -                     self.collect_descendants(deps, *child, result);
+404 +                     self.collect_descendants(deps, child.clone(), result);
+    |
+
+warning: unused variable: `rev_deps`
+   --> src/actors/zeus/supervisor.rs:414:13
+    |
+414 |         let rev_deps = self.reverse_deps.read().await;
+    |             ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_rev_deps`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `max_restarts`
+   --> src/actors/zeus/supervisor.rs:594:13
+    |
+594 |         let max_restarts = self.max_restarts;
+    |             ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_max_restarts`
+
+warning: unused variable: `now`
+   --> src/actors/zeus/metrics.rs:397:13
+    |
+397 |         let now = Utc::now();
+    |             ^^^ help: if this is intentional, prefix it with an underscore: `_now`
+
+error[E0507]: cannot move out of `self.actor` which is behind a shared reference
+   --> src/actors/zeus/governance.rs:325:20
+    |
+325 |             actor: self.actor,
+    |                    ^^^^^^^^^^ move occurs because `self.actor` has type `GodName`, which does not implement the `Copy` trait
+    |
+help: consider cloning the value if the performance cost is acceptable
+    |
+325 |             actor: self.actor.clone(),
+    |                              ++++++++
+
+warning: unused variable: `healthy`
+   --> src/actors/zeus/mod.rs:368:21
+    |
+368 |                 let healthy = health.healthy_count;
+    |                     ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_healthy`
+
+error: lifetime may not live long enough
+   --> src/actors/poseidon/flow_control.rs:387:30
+    |
+382 |     pub fn try_acquire(&self) -> Option<FlowPermitImmediate> {
+    |                        - let's call the lifetime of this reference `'1`
+...
+387 |                     _permit: permit,
+    |                              ^^^^^^ this usage requires that `'1` must outlive `'static`
+
+warning: unused variable: `msg`
+   --> src/actors/hermes/mod.rs:484:27
+    |
+484 |         let deliver_fn = |msg: ActorMessage, to: GodName| async move {
+    |                           ^^^ help: if this is intentional, prefix it with an underscore: `_msg`
+
+warning: unused variable: `to`
+   --> src/actors/hermes/mod.rs:484:46
+    |
+484 |         let deliver_fn = |msg: ActorMessage, to: GodName| async move {
+    |                                              ^^ help: if this is intentional, prefix it with an underscore: `_to`
+
+warning: unused variable: `pattern`
+   --> src/actors/hestia/memory_store.rs:265:13
+    |
+265 |         let pattern = format!("{}:*", self.prefix);
+    |             ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_pattern`
+
+error[E0382]: borrow of moved value: `error`
+  --> src/actors/hestia/async_buffer.rs:91:19
+   |
+84 |     pub fn mark_attempt(&mut self, error: Option<String>) {
+   |                                    ----- move occurs because `error` has type `std::option::Option<std::string::String>`, which does not implement the `Copy` trait
+...
+87 |         self.error_message = error;
+   |                              ----- value moved here
+...
+91 |         } else if error.is_some() {
+   |                   ^^^^^ value borrowed here after move
+   |
+help: consider cloning the value if the performance cost is acceptable
+   |
+87 |         self.error_message = error.clone();
+   |                                   ++++++++
+
+warning: unused variable: `table`
+   --> src/actors/hestia/sync.rs:524:38
+    |
+524 |     pub async fn list_backups(&self, table: &str) -> Vec<BackupMetadata> {
+    |                                      ^^^^^ help: if this is intentional, prefix it with an underscore: `_table`
+
+warning: unused variable: `l3_value`
+   --> src/actors/hestia/sync.rs:688:9
+    |
+688 |         l3_value: &serde_json::Value,
+    |         ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_l3_value`
+
+warning: unused variable: `direction`
+   --> src/actors/hestia/mod.rs:803:35
+    |
+803 |             HestiaCommand::Sync { direction, keys } => {
+    |                                   ^^^^^^^^^ help: try ignoring the field: `direction: _`
+
+warning: unused variable: `table`
+   --> src/infrastructure/surreal.rs:128:32
+    |
+128 |     pub async fn delete(&self, table: &str, id: &str) -> Result<(), SurrealError> {
+    |                                ^^^^^ help: if this is intentional, prefix it with an underscore: `_table`
+
+Some errors have detailed explanations: E0061, E0277, E0282, E0308, E0382, E0433, E0502, E0507, E0559...
+For more information about an error, try `rustc --explain E0061`.
+warning: `olympus` (lib) generated 108 warnings
+error: could not compile `olympus` (lib) due to 135 previous errors; 108 warnings emitted

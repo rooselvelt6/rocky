@@ -1,0 +1,1686 @@
+warning: unused import: `watch`
+ --> src/actors/zeus/mod.rs:8:44
+  |
+8 | use tokio::sync::{RwLock, broadcast, mpsc, watch};
+  |                                            ^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `Instant`
+ --> src/actors/zeus/mod.rs:9:39
+  |
+9 | use tokio::time::{interval, Duration, Instant};
+  |                                       ^^^^^^^
+
+warning: unused import: `debug`
+  --> src/actors/zeus/mod.rs:10:34
+   |
+10 | use tracing::{info, warn, error, debug};
+   |                                  ^^^^^
+
+warning: unused import: `SystemStatus`
+  --> src/actors/zeus/mod.rs:12:74
+   |
+12 | use crate::actors::{GodName, DivineDomain, OlympusState, OlympusMetrics, SystemStatus};
+   |                                                                          ^^^^^^^^^^^^
+
+warning: unused import: `std::sync::Arc`
+ --> src/actors/zeus/thunder.rs:6:5
+  |
+6 | use std::sync::Arc;
+  |     ^^^^^^^^^^^^^^
+
+warning: unused import: `HashSet`
+ --> src/actors/zeus/supervisor.rs:6:33
+  |
+6 | use std::collections::{HashMap, HashSet, VecDeque};
+  |                                 ^^^^^^^
+
+warning: unused import: `Instant`
+ --> src/actors/zeus/supervisor.rs:9:39
+  |
+9 | use tokio::time::{interval, Duration, Instant};
+  |                                       ^^^^^^^
+
+warning: unused import: `error`
+  --> src/actors/zeus/governance.rs:10:27
+   |
+10 | use tracing::{info, warn, error};
+   |                           ^^^^^
+
+warning: unused import: `std::path::Path`
+ --> src/actors/zeus/config.rs:8:5
+  |
+8 | use std::path::Path;
+  |     ^^^^^^^^^^^^^^^
+
+warning: unused import: `error`
+ --> src/actors/zeus/config.rs:9:27
+  |
+9 | use tracing::{info, warn, error};
+  |                           ^^^^^
+
+warning: unused import: `std::collections::HashMap`
+ --> src/actors/erinyes/mod.rs:8:5
+  |
+8 | use std::collections::HashMap;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `Instant`
+  --> src/actors/erinyes/mod.rs:10:39
+   |
+10 | use tokio::time::{interval, Duration, Instant};
+   |                                       ^^^^^^^
+
+warning: unused imports: `debug` and `error`
+  --> src/actors/erinyes/mod.rs:11:27
+   |
+11 | use tracing::{info, warn, error, debug};
+   |                           ^^^^^  ^^^^^
+
+warning: unused import: `serde_json::json`
+  --> src/actors/erinyes/mod.rs:18:5
+   |
+18 | use serde_json::json;
+   |     ^^^^^^^^^^^^^^^^
+
+warning: unused imports: `Duration` and `Instant`
+ --> src/actors/erinyes/heartbeat.rs:9:17
+  |
+9 | use std::time::{Duration, Instant};
+  |                 ^^^^^^^^  ^^^^^^^
+
+warning: unused import: `error`
+  --> src/actors/erinyes/heartbeat.rs:10:27
+   |
+10 | use tracing::{info, warn, error, debug};
+   |                           ^^^^^
+
+warning: unused imports: `Duration` and `sleep`
+ --> src/actors/erinyes/recovery.rs:9:19
+  |
+9 | use tokio::time::{sleep, Duration, Instant};
+  |                   ^^^^^  ^^^^^^^^
+
+warning: unused imports: `debug` and `error`
+  --> src/actors/erinyes/recovery.rs:10:27
+   |
+10 | use tracing::{info, warn, error, debug};
+   |                           ^^^^^  ^^^^^
+
+warning: unused import: `futures::future::BoxFuture`
+   --> src/actors/erinyes/recovery.rs:370:5
+    |
+370 | use futures::future::BoxFuture;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `info`
+  --> src/actors/erinyes/watchdog.rs:10:15
+   |
+10 | use tracing::{info, warn, error, debug};
+   |               ^^^^
+
+warning: unused import: `trace`
+  --> src/actors/poseidon/mod.rs:13:35
+   |
+13 | use tracing::{debug, error, info, trace, warn};
+   |                                   ^^^^^
+
+warning: unused import: `serde_json::json`
+  --> src/actors/athena/mod.rs:15:5
+   |
+15 | use serde_json::json;
+   |     ^^^^^^^^^^^^^^^^
+
+warning: unused import: `TrendDirection`
+ --> src/actors/athena/predictions.rs:5:46
+  |
+5 | use super::analysis::{PatientAnalysisResult, TrendDirection};
+  |                                              ^^^^^^^^^^^^^^
+
+warning: unused imports: `debug`, `error`, and `warn`
+ --> src/actors/apollo/mod.rs:4:21
+  |
+4 | use tracing::{info, warn, error, debug};
+  |                     ^^^^  ^^^^^  ^^^^^
+
+warning: unused imports: `Deserialize` and `Serialize`
+ --> src/actors/apollo/mod.rs:5:13
+  |
+5 | use serde::{Deserialize, Serialize};
+  |             ^^^^^^^^^^^  ^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/apollo/mod.rs:8:61
+  |
+8 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, Health...
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `json`
+ --> src/actors/artemis/search.rs:8:18
+  |
+8 | use serde_json::{json, Value};
+  |                  ^^^^
+
+warning: unused import: `std::collections::HashMap`
+ --> src/actors/hermes/mod.rs:8:5
+  |
+8 | use std::collections::HashMap;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `mpsc`
+ --> src/actors/hermes/mod.rs:9:27
+  |
+9 | use tokio::sync::{RwLock, mpsc};
+  |                           ^^^^
+
+warning: unused import: `sleep`
+  --> src/actors/hermes/mod.rs:10:19
+   |
+10 | use tokio::time::{sleep, Duration};
+   |                   ^^^^^
+
+warning: unused import: `error`
+  --> src/actors/hermes/mod.rs:11:27
+   |
+11 | use tracing::{info, warn, error, debug};
+   |                           ^^^^^
+
+warning: unused import: `chrono::Utc`
+  --> src/actors/hermes/mod.rs:12:5
+   |
+12 | use chrono::Utc;
+   |     ^^^^^^^^^^^
+
+warning: unused import: `std::time::Instant`
+ --> src/actors/hermes/mailbox.rs:6:5
+  |
+6 | use std::time::Instant;
+  |     ^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `info`
+  --> src/actors/hermes/mailbox.rs:10:15
+   |
+10 | use tracing::{info, warn, debug};
+   |               ^^^^
+
+warning: unused import: `std::time::Instant`
+ --> src/actors/hermes/delivery.rs:8:5
+  |
+8 | use std::time::Instant;
+  |     ^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `std::sync::Arc`
+ --> src/actors/hermes/broadcast.rs:6:5
+  |
+6 | use std::sync::Arc;
+  |     ^^^^^^^^^^^^^^
+
+warning: unused import: `std::collections::HashMap`
+ --> src/actors/hermes/retry.rs:6:5
+  |
+6 | use std::collections::HashMap;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `mpsc`
+ --> src/actors/hermes/retry.rs:9:19
+  |
+9 | use tokio::sync::{mpsc, RwLock};
+  |                   ^^^^
+
+warning: unused import: `error`
+  --> src/actors/hermes/retry.rs:11:27
+   |
+11 | use tracing::{info, warn, error};
+   |                           ^^^^^
+
+warning: unused import: `DeliveryStatus`
+  --> src/actors/hermes/retry.rs:13:39
+   |
+13 | use super::{GodName, DeliveryTracker, DeliveryStatus};
+   |                                       ^^^^^^^^^^^^^^
+
+warning: unused imports: `error` and `warn`
+  --> src/actors/hades/mod.rs:10:21
+   |
+10 | use tracing::{info, warn, error};
+   |                     ^^^^  ^^^^^
+
+warning: unused import: `Payload`
+  --> src/actors/hades/encryption.rs:11:45
+   |
+11 | use chacha20poly1305::aead::{Aead, KeyInit, Payload};
+   |                                             ^^^^^^^
+
+warning: unused imports: `error` and `warn`
+  --> src/actors/hades/encryption.rs:13:21
+   |
+13 | use tracing::{info, warn, error};
+   |                     ^^^^  ^^^^^
+
+warning: unused import: `KeyType`
+  --> src/actors/hades/encryption.rs:15:46
+   |
+15 | use crate::actors::hades::keys::{KeyManager, KeyType};
+   |                                              ^^^^^^^
+
+warning: unused import: `errors::Error as JwtError`
+  --> src/actors/hades/auth.rs:11:93
+   |
+11 | ...tion, EncodingKey, DecodingKey, errors::Error as JwtError};
+   |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `error`
+  --> src/actors/hades/auth.rs:12:27
+   |
+12 | use tracing::{info, warn, error};
+   |                           ^^^^^
+
+warning: unused import: `crate::actors::GodName`
+  --> src/actors/hades/auth.rs:14:5
+   |
+14 | use crate::actors::GodName;
+   |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `AuditEntry`
+  --> src/actors/hades/auth.rs:15:48
+   |
+15 | use crate::actors::hades::audit::{AuditLogger, AuditEntry, AuditResult};
+   |                                                ^^^^^^^^^^
+
+warning: unused import: `ZeroizeOnDrop`
+  --> src/actors/hades/keys.rs:10:24
+   |
+10 | use zeroize::{Zeroize, ZeroizeOnDrop};
+   |                        ^^^^^^^^^^^^^
+
+warning: unused import: `error`
+  --> src/actors/hades/keys.rs:11:27
+   |
+11 | use tracing::{info, warn, error};
+   |                           ^^^^^
+
+warning: unused imports: `ActorMessage`, `CommandPayload`, `MessagePayload`, `QueryPayload`, `RecoveryStrategy`, and `ResponsePayload`
+ --> src/actors/hades/audit.rs:9:30
+  |
+9 | ...::{ActorMessage, MessagePayload, CommandPayload, ResponsePayload, QueryPayload, RecoveryStrategy};
+  |       ^^^^^^^^^^^^  ^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^  ^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^
+
+warning: unused import: `crate::infrastructure::ValkeyStore`
+  --> src/actors/hades/audit.rs:10:5
+   |
+10 | use crate::infrastructure::ValkeyStore;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `error`
+  --> src/actors/hades/audit.rs:12:27
+   |
+12 | use tracing::{info, warn, error, debug};
+   |                           ^^^^^
+
+warning: unused import: `crate::actors::GodName`
+  --> src/actors/hades/audit.rs:15:5
+   |
+15 | use crate::actors::GodName;
+   |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `warn`
+ --> src/actors/hera/mod.rs:9:21
+  |
+9 | use tracing::{info, warn};
+  |                     ^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/ares/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, Health...
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/ares/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/hefesto/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, Health...
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/hefesto/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused imports: `Deserialize` and `Serialize`
+  --> src/actors/hefesto/mod.rs:50:13
+   |
+50 | use serde::{Deserialize, Serialize};
+   |             ^^^^^^^^^^^  ^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/chronos/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, Health...
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/chronos/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `std::collections::HashMap`
+  --> src/actors/chronos/mod.rs:68:5
+   |
+68 | use std::collections::HashMap;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/moirai/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, Health...
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/moirai/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/chaos/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, Health...
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/chaos/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/aurora/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, Health...
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/aurora/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/aphrodite/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, Health...
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/aphrodite/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/iris/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, Health...
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/iris/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/demeter/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, Health...
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/demeter/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `ActorStatus`
+ --> src/actors/dionysus/mod.rs:9:61
+  |
+9 | use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, Health...
+  |                                                             ^^^^^^^^^^^
+
+warning: unused import: `MessagePayload`
+  --> src/actors/dionysus/mod.rs:10:44
+   |
+10 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^
+
+warning: unused import: `Mutex`
+  --> src/actors/hestia/mod.rs:17:27
+   |
+17 | use tokio::sync::{RwLock, Mutex, mpsc};
+   |                           ^^^^^
+
+warning: unused imports: `SystemTime` and `UNIX_EPOCH`
+ --> src/actors/hestia/memory_store.rs:7:17
+  |
+7 | use std::time::{SystemTime, UNIX_EPOCH};
+  |                 ^^^^^^^^^^  ^^^^^^^^^^
+
+warning: unused import: `Instant`
+ --> src/actors/hestia/cache.rs:9:39
+  |
+9 | use tokio::time::{interval, Duration, Instant};
+  |                                       ^^^^^^^
+
+warning: unused import: `error`
+  --> src/actors/hestia/cache.rs:10:34
+   |
+10 | use tracing::{debug, info, warn, error};
+   |                                  ^^^^^
+
+warning: unused imports: `SyncRecord` and `SyncStatus`
+  --> src/actors/hestia/cache.rs:14:48
+   |
+14 | use crate::actors::hestia::sync::{SyncManager, SyncRecord, SyncStatus};
+   |                                                ^^^^^^^^^^  ^^^^^^^^^^
+
+warning: unused import: `timeout`
+  --> src/actors/hestia/async_buffer.rs:10:36
+   |
+10 | use tokio::time::{interval, sleep, timeout};
+   |                                    ^^^^^^^
+
+warning: unused import: `Mutex`
+  --> src/actors/hestia/sync.rs:10:27
+   |
+10 | use tokio::sync::{RwLock, Mutex, mpsc};
+   |                           ^^^^^
+
+warning: unused import: `timeout`
+  --> src/actors/hestia/sync.rs:11:36
+   |
+11 | use tokio::time::{interval, sleep, timeout};
+   |                                    ^^^^^^^
+
+warning: unused import: `async_trait::async_trait`
+  --> src/actors/mod.rs:52:5
+   |
+52 | use async_trait::async_trait;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `std::collections::HashMap`
+  --> src/actors/mod.rs:54:5
+   |
+54 | use std::collections::HashMap;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `std::sync::Arc`
+  --> src/actors/mod.rs:55:5
+   |
+55 | use std::sync::Arc;
+   |     ^^^^^^^^^^^^^^
+
+warning: unused import: `tokio::sync::RwLock`
+  --> src/actors/mod.rs:56:5
+   |
+56 | use tokio::sync::RwLock;
+   |     ^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `crate::errors::OlympusError`
+  --> src/traits/supervisor_trait.rs:10:5
+   |
+10 | use crate::errors::OlympusError;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `std::time::Duration`
+ --> src/infrastructure/valkey.rs:6:5
+  |
+6 | use std::time::Duration;
+  |     ^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `tokio::sync::RwLock`
+ --> src/infrastructure/valkey.rs:8:5
+  |
+8 | use tokio::sync::RwLock;
+  |     ^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `base64::encode`: Use Engine::encode
+   --> src/actors/hades/encryption.rs:285:20
+    |
+285 |         Ok(base64::encode(json))
+    |                    ^^^^^^
+    |
+    = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated function `base64::decode`: Use Engine::decode
+   --> src/actors/hades/encryption.rs:290:28
+    |
+290 |         let json = base64::decode(ciphertext)
+    |                            ^^^^^^
+
+warning: variable does not need to be mutable
+   --> src/actors/erinyes/mod.rs:115:13
+    |
+115 |         let mut erinyes = Self {
+    |             ----^^^^^^^
+    |             |
+    |             help: remove this `mut`
+    |
+    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: variable does not need to be mutable
+   --> src/actors/erinyes/mod.rs:158:13
+    |
+158 |         let mut erinyes = Self {
+    |             ----^^^^^^^
+    |             |
+    |             help: remove this `mut`
+
+warning: variable does not need to be mutable
+   --> src/actors/hades/encryption.rs:308:13
+    |
+308 |         let mut key_manager = self.key_manager.write().await;
+    |             ----^^^^^^^^^^^
+    |             |
+    |             help: remove this `mut`
+
+warning: unused variable: `rev_deps`
+   --> src/actors/zeus/supervisor.rs:414:13
+    |
+414 |         let rev_deps = self.reverse_deps.read().await;
+    |             ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_rev_deps`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `max_restarts`
+   --> src/actors/zeus/supervisor.rs:594:13
+    |
+594 |         let max_restarts = self.max_restarts;
+    |             ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_max_restarts`
+
+warning: unused variable: `now`
+   --> src/actors/zeus/metrics.rs:397:13
+    |
+397 |         let now = Utc::now();
+    |             ^^^ help: if this is intentional, prefix it with an underscore: `_now`
+
+warning: unused variable: `healthy`
+   --> src/actors/zeus/mod.rs:369:21
+    |
+369 |                 let healthy = health.healthy_count;
+    |                     ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_healthy`
+
+warning: unused variable: `attempt`
+    --> src/actors/zeus/mod.rs:1190:51
+     |
+1190 |             EventPayload::ActorRecovered { actor, attempt } => {
+     |                                                   ^^^^^^^ help: try ignoring the field: `attempt: _`
+
+warning: unused variable: `now`
+   --> src/actors/erinyes/watchdog.rs:158:13
+    |
+158 |         let now = Instant::now();
+    |             ^^^ help: if this is intentional, prefix it with an underscore: `_now`
+
+warning: unused variable: `ws_stats`
+   --> src/actors/poseidon/mod.rs:450:13
+    |
+450 |         let ws_stats = self.get_websocket_stats().await;
+    |             ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_ws_stats`
+
+warning: unused variable: `config`
+   --> src/actors/hermes/mod.rs:368:45
+    |
+368 |             HermesCommand::ConfigureRetry { config } => {
+    |                                             ^^^^^^ help: try ignoring the field: `config: _`
+
+warning: unused variable: `msg`
+   --> src/actors/hermes/mod.rs:485:27
+    |
+485 |         let deliver_fn = |msg: ActorMessage, to: GodName| async move {
+    |                           ^^^ help: if this is intentional, prefix it with an underscore: `_msg`
+
+warning: unused variable: `to`
+   --> src/actors/hermes/mod.rs:485:46
+    |
+485 |         let deliver_fn = |msg: ActorMessage, to: GodName| async move {
+    |                                              ^^ help: if this is intentional, prefix it with an underscore: `_to`
+
+warning: unused variable: `nonce`
+   --> src/actors/hades/encryption.rs:151:13
+    |
+151 |         let nonce = Nonce::assume_unique_for_key(nonce_bytes);
+    |             ^^^^^ help: if this is intentional, prefix it with an underscore: `_nonce`
+
+warning: unused variable: `nonce`
+   --> src/actors/hades/encryption.rs:197:13
+    |
+197 |         let nonce = Nonce::assume_unique_for_key(nonce_bytes);
+    |             ^^^^^ help: if this is intentional, prefix it with an underscore: `_nonce`
+
+warning: unused variable: `audit_stats`
+   --> src/actors/hades/mod.rs:282:13
+    |
+282 |         let audit_stats = self.audit.read().await.get_stats().await;
+    |             ^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_audit_stats`
+
+warning: unused variable: `pattern`
+   --> src/actors/hestia/memory_store.rs:265:13
+    |
+265 |         let pattern = format!("{}:*", self.prefix);
+    |             ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_pattern`
+
+warning: unused variable: `table`
+   --> src/infrastructure/surreal.rs:120:46
+    |
+120 | ...&self, table: &str, id: &str, data: &T) -> Result<serde_json::Value, SurrealError> {
+    |           ^^^^^ help: if this is intentional, prefix it with an underscore: `_table`
+
+warning: unused variable: `table`
+   --> src/infrastructure/surreal.rs:137:32
+    |
+137 |     pub async fn delete(&self, table: &str, id: &str) -> Result<(), SurrealError> {
+    |                                ^^^^^ help: if this is intentional, prefix it with an underscore: `_table`
+
+warning: unused variable: `l3_value`
+   --> src/actors/hestia/sync.rs:688:9
+    |
+688 |         l3_value: &serde_json::Value,
+    |         ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_l3_value`
+
+warning: unused variable: `table`
+   --> src/actors/hestia/sync.rs:524:38
+    |
+524 |     pub async fn list_backups(&self, table: &str) -> Vec<BackupMetadata> {
+    |                                      ^^^^^ help: if this is intentional, prefix it with an underscore: `_table`
+
+warning: unused variable: `direction`
+   --> src/actors/hestia/mod.rs:803:35
+    |
+803 |             HestiaCommand::Sync { direction, keys } => {
+    |                                   ^^^^^^^^^ help: try ignoring the field: `direction: _`
+
+warning: fields `name`, `config_manager`, `command_rx`, `lifecycle_tx`, and `shutdown_signal` are never read
+   --> src/actors/zeus/mod.rs:169:5
+    |
+167 | pub struct Zeus {
+    |            ---- fields in this struct
+168 |     // Identidad
+169 |     name: GodName,
+    |     ^^^^
+...
+179 |     config_manager: Arc<RwLock<ConfigManager>>,
+    |     ^^^^^^^^^^^^^^
+...
+187 |     command_rx: Arc<RwLock<mpsc::Receiver<ZeusCommand>>>,
+    |     ^^^^^^^^^^
+188 |     event_tx: broadcast::Sender<ZeusEvent>,
+189 |     lifecycle_tx: mpsc::Sender<LifecycleEvent>,
+    |     ^^^^^^^^^^^^
+...
+200 |     shutdown_signal: Arc<RwLock<Option<tokio::sync::oneshot::Sender<()>>>>,
+    |     ^^^^^^^^^^^^^^^
+    |
+    = note: `Zeus` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: field `role_permissions` is never read
+   --> src/actors/zeus/governance.rs:357:5
+    |
+355 | pub struct AccessPolicyManager {
+    |            ------------------- field in this struct
+356 |     policies: HashMap<String, AccessPolicy>,
+357 |     role_permissions: HashMap<String, Vec<Permission>>,
+    |     ^^^^^^^^^^^^^^^^
+    |
+    = note: `AccessPolicyManager` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: fields `name`, `valkey`, `command_tx`, and `command_rx` are never read
+  --> src/actors/erinyes/mod.rs:37:5
+   |
+36 | pub struct Erinyes {
+   |            ------- fields in this struct
+37 |     name: GodName,
+   |     ^^^^
+...
+55 |     valkey: Arc<ValkeyStore>,
+   |     ^^^^^^
+...
+58 |     command_tx: mpsc::Sender<ErinyesCommand>,
+   |     ^^^^^^^^^^
+59 |     command_rx: Arc<RwLock<mpsc::Receiver<ErinyesCommand>>>,
+   |     ^^^^^^^^^^
+   |
+   = note: `Erinyes` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: field `cooldown` is never read
+   --> src/actors/erinyes/alerts.rs:111:5
+    |
+108 | pub struct AlertSystem {
+    |            ----------- field in this struct
+...
+111 |     cooldown: Arc<RwLock<HashMap<String, Instant>>>,
+    |     ^^^^^^^^
+    |
+    = note: `AlertSystem` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: fields `name`, `buffer`, `async_writer`, and `valkey` are never read
+   --> src/actors/poseidon/mod.rs:109:5
+    |
+108 | pub struct Poseidon {
+    |            -------- fields in this struct
+109 |     name: GodName,
+    |     ^^^^
+...
+115 |     buffer: Arc<EmergencyBuffer>,
+    |     ^^^^^^
+116 |     async_writer: Arc<AsyncWriter>,
+    |     ^^^^^^^^^^^^
+...
+121 |     valkey: Arc<ValkeyStore>,
+    |     ^^^^^^
+
+warning: field `max_size` is never read
+  --> src/actors/poseidon/buffer.rs:37:5
+   |
+34 | pub struct EmergencyBuffer {
+   |            --------------- field in this struct
+...
+37 |     max_size: usize,
+   |     ^^^^^^^^
+   |
+   = note: `EmergencyBuffer` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: field `timestamp` is never read
+  --> src/actors/poseidon/flow_control.rs:88:5
+   |
+86 | struct LatencySample {
+   |        ------------- field in this struct
+87 |     latency_ms: u64,
+88 |     timestamp: Instant,
+   |     ^^^^^^^^^
+   |
+   = note: `LatencySample` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: method `available_tokens` is never used
+   --> src/actors/poseidon/flow_control.rs:147:8
+    |
+105 | impl TokenBucket {
+    | ---------------- method in this implementation
+...
+147 |     fn available_tokens(&self) -> usize {
+    |        ^^^^^^^^^^^^^^^^
+
+warning: method `queue_size` is never used
+   --> src/actors/poseidon/flow_control.rs:200:14
+    |
+164 | impl LeakyBucket {
+    | ---------------- method in this implementation
+...
+200 |     async fn queue_size(&self) -> usize {
+    |              ^^^^^^^^^^
+
+warning: field `enqueued_at` is never read
+   --> src/actors/poseidon/flow_control.rs:230:5
+    |
+227 | struct BufferedMessage {
+    |        --------------- field in this struct
+...
+230 |     enqueued_at: Instant,
+    |     ^^^^^^^^^^^
+    |
+    = note: `BufferedMessage` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: fields `name`, `scales`, `predictions`, and `insights` are never read
+  --> src/actors/athena/mod.rs:24:5
+   |
+23 | pub struct Athena {
+   |            ------ fields in this struct
+24 |     name: GodName,
+   |     ^^^^
+...
+30 |     scales: Arc<RwLock<ClinicalScaleManager>>,
+   |     ^^^^^^
+31 |     predictions: Arc<RwLock<PredictionEngine>>,
+   |     ^^^^^^^^^^^
+32 |     insights: Arc<RwLock<InsightGenerator>>,
+   |     ^^^^^^^^
+   |
+   = note: `Athena` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: field `name` is never read
+  --> src/actors/hermes/mod.rs:34:5
+   |
+33 | pub struct Hermes {
+   |            ------ field in this struct
+34 |     name: GodName,
+   |     ^^^^
+   |
+   = note: `Hermes` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: field `name` is never read
+  --> src/actors/hades/mod.rs:32:5
+   |
+31 | pub struct Hades {
+   |            ----- field in this struct
+32 |     name: GodName,
+   |     ^^^^
+   |
+   = note: `Hades` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: field `max_key_age_days` is never read
+   --> src/actors/hades/keys.rs:110:5
+    |
+103 | pub struct KeyManager {
+    |            ---------- field in this struct
+...
+110 |     max_key_age_days: u64,
+    |     ^^^^^^^^^^^^^^^^
+    |
+    = note: `KeyManager` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: field `export_enabled` is never read
+  --> src/actors/hades/audit.rs:71:5
+   |
+64 | pub struct AuditLogger {
+   |            ----------- field in this struct
+...
+71 |     export_enabled: bool,
+   |     ^^^^^^^^^^^^^^
+   |
+   = note: `AuditLogger` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: field `name` is never read
+  --> src/actors/hera/mod.rs:26:5
+   |
+25 | pub struct Hera {
+   |            ---- field in this struct
+26 |     name: GodName,
+   |     ^^^^
+   |
+   = note: `Hera` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: fields `name` and `conflicts` are never read
+  --> src/actors/ares/mod.rs:20:5
+   |
+19 | pub struct Ares {
+   |            ---- fields in this struct
+20 |     name: GodName,
+   |     ^^^^
+21 |     state: ActorState,
+22 |     conflicts: Arc<RwLock<Vec<Conflict>>>,
+   |     ^^^^^^^^^
+   |
+   = note: `Ares` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: fields `name` and `configs` are never read
+  --> src/actors/hefesto/mod.rs:20:5
+   |
+19 | pub struct Hefesto {
+   |            ------- fields in this struct
+20 |     name: GodName,
+   |     ^^^^
+21 |     state: ActorState,
+22 |     configs: Arc<RwLock<std::collections::HashMap<String, serde_json::Value>>>,
+   |     ^^^^^^^
+   |
+   = note: `Hefesto` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: fields `name` and `scheduler` are never read
+  --> src/actors/chronos/mod.rs:20:5
+   |
+19 | pub struct Chronos {
+   |            ------- fields in this struct
+20 |     name: GodName,
+   |     ^^^^
+21 |     state: ActorState,
+22 |     scheduler: Arc<RwLock<Scheduler>>,
+   |     ^^^^^^^^^
+   |
+   = note: `Chronos` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: fields `name` and `threads` are never read
+  --> src/actors/moirai/mod.rs:20:5
+   |
+19 | pub struct Moirai {
+   |            ------ fields in this struct
+20 |     name: GodName,
+   |     ^^^^
+21 |     state: ActorState,
+22 |     threads: Arc<RwLock<Vec<Thread>>>,
+   |     ^^^^^^^
+   |
+   = note: `Moirai` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: fields `name` and `experiments` are never read
+  --> src/actors/chaos/mod.rs:20:5
+   |
+19 | pub struct Chaos {
+   |            ----- fields in this struct
+20 |     name: GodName,
+   |     ^^^^
+21 |     state: ActorState,
+22 |     experiments: Arc<RwLock<Vec<Experiment>>>,
+   |     ^^^^^^^^^^^
+   |
+   = note: `Chaos` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: fields `name` and `hope_level` are never read
+  --> src/actors/aurora/mod.rs:20:5
+   |
+19 | pub struct Aurora {
+   |            ------ fields in this struct
+20 |     name: GodName,
+   |     ^^^^
+21 |     state: ActorState,
+22 |     hope_level: Arc<RwLock<f64>>,
+   |     ^^^^^^^^^^
+   |
+   = note: `Aurora` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: fields `name` and `current_theme` are never read
+  --> src/actors/aphrodite/mod.rs:20:5
+   |
+19 | pub struct Aphrodite {
+   |            --------- fields in this struct
+20 |     name: GodName,
+   |     ^^^^
+21 |     state: ActorState,
+22 |     current_theme: Arc<RwLock<Theme>>,
+   |     ^^^^^^^^^^^^^
+   |
+   = note: `Aphrodite` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: fields `name` and `connections` are never read
+  --> src/actors/iris/mod.rs:15:5
+   |
+14 | pub struct Iris {
+   |            ---- fields in this struct
+15 |     name: GodName,
+   |     ^^^^
+16 |     state: ActorState,
+17 |     connections: Arc<RwLock<std::collections::HashMap<String, Connection>>>,
+   |     ^^^^^^^^^^^
+   |
+   = note: `Iris` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: fields `name` and `resources` are never read
+  --> src/actors/demeter/mod.rs:15:5
+   |
+14 | pub struct Demeter {
+   |            ------- fields in this struct
+15 |     name: GodName,
+   |     ^^^^
+16 |     state: ActorState,
+17 |     resources: Arc<RwLock<ResourceManager>>,
+   |     ^^^^^^^^^
+   |
+   = note: `Demeter` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: fields `name` and `analytics` are never read
+  --> src/actors/dionysus/mod.rs:15:5
+   |
+14 | pub struct Dionysus {
+   |            -------- fields in this struct
+15 |     name: GodName,
+   |     ^^^^
+16 |     state: ActorState,
+17 |     analytics: Arc<RwLock<AnalyticsEngine>>,
+   |     ^^^^^^^^^
+   |
+   = note: `Dionysus` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: fields `name`, `command_tx`, and `command_rx` are never read
+   --> src/actors/hestia/mod.rs:164:5
+    |
+163 | pub struct Hestia {
+    |            ------ fields in this struct
+164 |     name: GodName,
+    |     ^^^^
+...
+191 |     command_tx: mpsc::Sender<HestiaCommand>,
+    |     ^^^^^^^^^^
+192 |     command_rx: RwLock<mpsc::Receiver<HestiaCommand>>,
+    |     ^^^^^^^^^^
+    |
+    = note: `Hestia` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: method `execute_hestia_query` is never used
+   --> src/actors/hestia/mod.rs:861:14
+    |
+687 | impl Hestia {
+    | ----------- method in this implementation
+...
+861 |     async fn execute_hestia_query(&self, query: HestiaQuery) -> Result<ResponsePayload, Act...
+    |              ^^^^^^^^^^^^^^^^^^^^
+
+warning: fields `tx` and `rx` are never read
+   --> src/actors/hestia/async_buffer.rs:167:5
+    |
+159 | pub struct AsyncBuffer {
+    |            ----------- fields in this struct
+...
+167 |     tx: mpsc::Sender<BufferedOperation>,
+    |     ^^
+168 |     rx: RwLock<mpsc::Receiver<BufferedOperation>>,
+    |     ^^
+    |
+    = note: `AsyncBuffer` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: fields `active_syncs`, `sync_tx`, and `sync_rx` are never read
+   --> src/actors/hestia/sync.rs:197:5
+    |
+188 | pub struct SyncManager {
+    |            ----------- fields in this struct
+...
+197 |     active_syncs: RwLock<HashMap<String, SyncRecord>>,
+    |     ^^^^^^^^^^^^
+...
+209 |     sync_tx: mpsc::Sender<SyncRecord>,
+    |     ^^^^^^^
+210 |     sync_rx: RwLock<mpsc::Receiver<SyncRecord>>,
+    |     ^^^^^^^
+    |
+    = note: `SyncManager` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: field `config` is never read
+  --> src/infrastructure/valkey.rs:47:5
+   |
+46 | pub struct ValkeyStore {
+   |            ----------- field in this struct
+47 |     config: ValkeyConfig,
+   |     ^^^^^^
+   |
+   = note: `ValkeyStore` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: hiding a lifetime that's elided elsewhere is confusing
+   --> src/actors/poseidon/flow_control.rs:334:33
+    |
+334 |     pub async fn acquire_permit(&self) -> Result<FlowPermit, FlowError> {
+    |                                 ^^^^^            ^^^^^^^^^^ the same lifetime is hidden here
+    |                                 |
+    |                                 the lifetime is elided here
+    |
+    = help: the same lifetime is referred to in inconsistent ways, making the signature confusing
+    = note: `#[warn(mismatched_lifetime_syntaxes)]` on by default
+help: use `'_` for type paths
+    |
+334 |     pub async fn acquire_permit(&self) -> Result<FlowPermit<'_>, FlowError> {
+    |                                                            ++++
+
+warning: `olympus` (lib) generated 148 warnings (run `cargo fix --lib -p olympus` to apply 115 suggestions)
+    Checking olympus v13.0.0 (/home/tdy/Escritorio/rocky)
+warning: unused imports: `DependencyInfo`, `OlympicHealth`, and `RecoveryAction`
+  --> src/actors/zeus/mod.rs:25:58
+   |
+25 | ...fecycleEvent, OlympicHealth, RecoveryAction, RestartResult, DependencyInfo};
+   |                  ^^^^^^^^^^^^^  ^^^^^^^^^^^^^^                 ^^^^^^^^^^^^^^
+
+warning: unused imports: `ActorMetricsUpdate`, `HistoricalSnapshot`, and `MetricsSummary`
+  --> src/actors/zeus/mod.rs:26:32
+   |
+26 | pub use metrics::{ZeusMetrics, ActorMetricsUpdate, MetricsSummary, HistoricalSnapshot, Alert...
+   |                                ^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `CircuitBreaker`, `FeatureFlag`, `GovernanceRecord`, and `SecuritySeverity`
+  --> src/actors/zeus/mod.rs:27:85
+   |
+27 | ...ceSituation, GovernanceRecord, SecuritySeverity, FeatureFlag, CircuitBreaker, CircuitState};
+   |                 ^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^  ^^^^^^^^^^^  ^^^^^^^^^^^^^^
+
+warning: unused import: `ConfigError`
+  --> src/actors/zeus/mod.rs:28:45
+   |
+28 | pub use config::{ZeusConfig, ConfigManager, ConfigError, Environment};
+   |                                             ^^^^^^^^^^^
+
+warning: unused import: `HeartbeatStats`
+  --> src/actors/erinyes/mod.rs:26:55
+   |
+26 | pub use heartbeat::{HeartbeatMonitor, HeartbeatState, HeartbeatStats, HeartbeatConfig};
+   |                                                       ^^^^^^^^^^^^^^
+
+warning: unused imports: `RecoveryConfig`, `RecoveryRecord`, and `RecoveryStats`
+  --> src/actors/erinyes/mod.rs:27:36
+   |
+27 | ...overyEngine, RecoveryRecord, RecoveryConfig, RecoveryUrgency, RecoveryStats};
+   |                 ^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^                   ^^^^^^^^^^^^^
+
+warning: unused imports: `DeadLetterStatus` and `DeadLetter`
+  --> src/actors/erinyes/mod.rs:28:40
+   |
+28 | pub use dead_letter::{DeadLetterQueue, DeadLetter, DeadLetterStatus};
+   |                                        ^^^^^^^^^^  ^^^^^^^^^^^^^^^^
+
+warning: unused imports: `DeathRecord`, `SystemHealth`, and `WatchdogEvent`
+  --> src/actors/erinyes/mod.rs:29:30
+   |
+29 | ...hdog, WatchdogEvent, WatchdogEventType, WatchdogSeverity, DeathRecord, SystemHealth, Syst...
+   |          ^^^^^^^^^^^^^                                       ^^^^^^^^^^^  ^^^^^^^^^^^^
+
+warning: unused imports: `AlertCategory`, `AlertCondition`, `AlertRule`, `AlertStats`, and `Alert`
+  --> src/actors/erinyes/mod.rs:30:31
+   |
+30 | ...m, Alert, AlertSeverity, AlertCategory, AlertRule, AlertCondition, AlertChannel, AlertStats};
+   |       ^^^^^                 ^^^^^^^^^^^^^  ^^^^^^^^^  ^^^^^^^^^^^^^^                ^^^^^^^^^^
+
+warning: unused imports: `ConnectionEvent`, `ConnectionStatus`, and `WebSocketConfig`
+  --> src/actors/poseidon/mod.rs:28:39
+   |
+28 |     WebSocketManager, ConnectionInfo, ConnectionStatus, WebSocketConfig, WebSocketStats,
+   |                                       ^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^
+29 |     ConnectionEvent, WebSocketError, MessageCallback
+   |     ^^^^^^^^^^^^^^^
+
+warning: unused imports: `FlowError`, `FlowPermit`, and `RateLimitAlgorithm`
+  --> src/actors/poseidon/mod.rs:34:46
+   |
+34 |     FlowController, FlowMetrics, FlowConfig, FlowError, FlowPermit, RateLimitAlgorithm
+   |                                              ^^^^^^^^^  ^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `CircuitBreakerStats`, `CircuitState`, `ReconnectionError`, `ReconnectionEvent`, `ReconnectionPlan`, and `ReconnectionPolicy`
+  --> src/actors/poseidon/mod.rs:37:26
+   |
+37 |     ReconnectionManager, ReconnectionPolicy, ReconnectionState, ReconnectionEvent,
+   |                          ^^^^^^^^^^^^^^^^^^                     ^^^^^^^^^^^^^^^^^
+38 |     CircuitState, CircuitBreakerStats, ReconnectionError, ReconnectionPlan
+   |     ^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^
+
+warning: unused import: `queries::EventQuery`
+  --> src/actors/apollo/mod.rs:20:9
+   |
+20 | pub use queries::EventQuery;
+   |         ^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `Route`
+  --> src/actors/hermes/mod.rs:26:33
+   |
+26 | pub use router::{MessageRouter, Route};
+   |                                 ^^^^^
+
+warning: unused imports: `MailboxStats` and `Mailbox`
+  --> src/actors/hermes/mod.rs:27:19
+   |
+27 | pub use mailbox::{Mailbox, MailboxStats, MailboxManager};
+   |                   ^^^^^^^  ^^^^^^^^^^^^
+
+warning: unused imports: `DeliveryTrackingHandle` and `DeliveryTracking`
+  --> src/actors/hermes/mod.rs:28:37
+   |
+28 | pub use delivery::{DeliveryTracker, DeliveryTracking, DeliveryStatus, DeliveryTrackingHandle};
+   |                                     ^^^^^^^^^^^^^^^^                  ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `RetryableMessage`
+  --> src/actors/hermes/mod.rs:30:55
+   |
+30 | pub use retry::{RetryQueue, RetryConfig, RetryWorker, RetryableMessage};
+   |                                                       ^^^^^^^^^^^^^^^^
+
+warning: unused imports: `EncryptedData`, `EncryptionError`, and `SecretKey`
+  --> src/actors/hades/mod.rs:22:41
+   |
+22 | ...tionService, EncryptedData, EncryptionAlgorithm, SecretKey, EncryptionError};
+   |                 ^^^^^^^^^^^^^                       ^^^^^^^^^  ^^^^^^^^^^^^^^^
+
+warning: unused imports: `AuthenticationError` and `PasswordHash`
+  --> src/actors/hades/mod.rs:23:39
+   |
+23 | ...nService, PasswordHash, User, Role, Permission, JwtClaims, AuthenticationError};
+   |              ^^^^^^^^^^^^                                     ^^^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `CryptoKey`, `KeyManagerError`, `KeyManagerStats`, `KeyType`, and `SecureKeyStorage`
+  --> src/actors/hades/mod.rs:24:28
+   |
+24 | ...er, CryptoKey, KeyType, KeyStatus, KeyManagerStats, SecureKeyStorage, KeyManagerError};
+   |        ^^^^^^^^^  ^^^^^^^             ^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^
+
+warning: unused imports: `AuditEntry` and `AuditStats`
+  --> src/actors/hades/mod.rs:25:30
+   |
+25 | ...ger, AuditEntry, AuditResult, AuditQuery, DataSensitivity, ExportFormat, AuditStats};
+   |         ^^^^^^^^^^                                                          ^^^^^^^^^^
+
+warning: unused imports: `EvictionPolicy` and `MemoryStoreStats`
+  --> src/actors/hestia/mod.rs:35:56
+   |
+35 | pub use memory_store::{MemoryStore, MemoryStoreConfig, MemoryStoreStats, EvictionPolicy};
+   |                                                        ^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^
+
+warning: unused imports: `CacheStats`, `ReadPolicy`, and `WritePolicy`
+  --> src/actors/hestia/mod.rs:36:44
+   |
+36 | pub use cache::{CacheManager, CacheConfig, CacheStats, WritePolicy, ReadPolicy, CacheLevel};
+   |                                            ^^^^^^^^^^  ^^^^^^^^^^^  ^^^^^^^^^^
+
+warning: unused imports: `AsyncBufferConfig` and `BufferStats`
+  --> src/actors/hestia/mod.rs:37:37
+   |
+37 | pub use async_buffer::{AsyncBuffer, AsyncBufferConfig, BufferStats, OperationType, FlushResu...
+   |                                     ^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^
+
+warning: unused imports: `BackupMetadata`, `SyncConfig`, `SyncRecord`, `SyncStats`, and `SyncStatus`
+  --> src/actors/hestia/mod.rs:38:29
+   |
+38 | ...er, SyncConfig, SyncStats, SyncRecord, SyncStatus, ConflictResolution, BackupMetadata, Sy...
+   |        ^^^^^^^^^^  ^^^^^^^^^  ^^^^^^^^^^  ^^^^^^^^^^                      ^^^^^^^^^^^^^^
+
+warning: unused imports: `ActorConfig`, `ActorMessage`, `ActorState`, `ActorStatus`, `CommandPayload`, `EventPayload`, `GodHeartbeat`, `HealthStatus`, `MessagePayload`, `MessagePriority`, `OlympianActor`, `Persistable`, `PersistenceError`, `QueryPayload`, `RecoveryStrategy`, `ResponsePayload`, `SupervisionTree`, and `Supervisor`
+   --> src/actors/mod.rs:198:5
+    |
+198 |     OlympianActor,
+    |     ^^^^^^^^^^^^^
+199 |     ActorState,
+    |     ^^^^^^^^^^
+200 |     ActorConfig,
+    |     ^^^^^^^^^^^
+201 |     ActorStatus,
+    |     ^^^^^^^^^^^
+202 |     GodHeartbeat,
+    |     ^^^^^^^^^^^^
+203 |     HealthStatus,
+    |     ^^^^^^^^^^^^
+204 |     ActorMessage,
+    |     ^^^^^^^^^^^^
+205 |     MessagePayload,
+    |     ^^^^^^^^^^^^^^
+206 |     MessagePriority,
+    |     ^^^^^^^^^^^^^^^
+207 |     CommandPayload,
+    |     ^^^^^^^^^^^^^^
+208 |     QueryPayload,
+    |     ^^^^^^^^^^^^
+209 |     EventPayload,
+    |     ^^^^^^^^^^^^
+210 |     ResponsePayload,
+    |     ^^^^^^^^^^^^^^^
+211 |     RecoveryStrategy,
+    |     ^^^^^^^^^^^^^^^^
+212 |     Supervisor,
+    |     ^^^^^^^^^^
+213 |     SupervisionTree,
+    |     ^^^^^^^^^^^^^^^
+214 |     Persistable,
+    |     ^^^^^^^^^^^
+215 |     PersistenceError,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: unused import: `zeus::Zeus`
+   --> src/actors/mod.rs:219:9
+    |
+219 | pub use zeus::Zeus;
+    |         ^^^^^^^^^^
+
+warning: unused import: `erinyes::Erinyes`
+   --> src/actors/mod.rs:220:9
+    |
+220 | pub use erinyes::Erinyes;
+    |         ^^^^^^^^^^^^^^^^
+
+warning: unused import: `poseidon::Poseidon`
+   --> src/actors/mod.rs:221:9
+    |
+221 | pub use poseidon::Poseidon;
+    |         ^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `athena::Athena`
+   --> src/actors/mod.rs:222:9
+    |
+222 | pub use athena::Athena;
+    |         ^^^^^^^^^^^^^^
+
+warning: unused import: `apollo::Apollo`
+   --> src/actors/mod.rs:223:9
+    |
+223 | pub use apollo::Apollo;
+    |         ^^^^^^^^^^^^^^
+
+warning: unused import: `artemis::Artemis`
+   --> src/actors/mod.rs:224:9
+    |
+224 | pub use artemis::Artemis;
+    |         ^^^^^^^^^^^^^^^^
+
+warning: unused import: `hermes::Hermes`
+   --> src/actors/mod.rs:225:9
+    |
+225 | pub use hermes::Hermes;
+    |         ^^^^^^^^^^^^^^
+
+warning: unused import: `hades::Hades`
+   --> src/actors/mod.rs:226:9
+    |
+226 | pub use hades::Hades;
+    |         ^^^^^^^^^^^^
+
+warning: unused import: `hera::Hera`
+   --> src/actors/mod.rs:227:9
+    |
+227 | pub use hera::Hera;
+    |         ^^^^^^^^^^
+
+warning: unused import: `ares::Ares`
+   --> src/actors/mod.rs:228:9
+    |
+228 | pub use ares::Ares;
+    |         ^^^^^^^^^^
+
+warning: unused import: `hefesto::Hefesto`
+   --> src/actors/mod.rs:229:9
+    |
+229 | pub use hefesto::Hefesto;
+    |         ^^^^^^^^^^^^^^^^
+
+warning: unused import: `chronos::Chronos`
+   --> src/actors/mod.rs:230:9
+    |
+230 | pub use chronos::Chronos;
+    |         ^^^^^^^^^^^^^^^^
+
+warning: unused import: `moirai::Moirai`
+   --> src/actors/mod.rs:231:9
+    |
+231 | pub use moirai::Moirai;
+    |         ^^^^^^^^^^^^^^
+
+warning: unused import: `chaos::Chaos`
+   --> src/actors/mod.rs:232:9
+    |
+232 | pub use chaos::Chaos;
+    |         ^^^^^^^^^^^^
+
+warning: unused import: `aurora::Aurora`
+   --> src/actors/mod.rs:233:9
+    |
+233 | pub use aurora::Aurora;
+    |         ^^^^^^^^^^^^^^
+
+warning: unused import: `aphrodite::Aphrodite`
+   --> src/actors/mod.rs:234:9
+    |
+234 | pub use aphrodite::Aphrodite;
+    |         ^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `iris::Iris`
+   --> src/actors/mod.rs:235:9
+    |
+235 | pub use iris::Iris;
+    |         ^^^^^^^^^^
+
+warning: unused import: `demeter::Demeter`
+   --> src/actors/mod.rs:236:9
+    |
+236 | pub use demeter::Demeter;
+    |         ^^^^^^^^^^^^^^^^
+
+warning: unused import: `dionysus::Dionysus`
+   --> src/actors/mod.rs:237:9
+    |
+237 | pub use dionysus::Dionysus;
+    |         ^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `hestia::Hestia`
+   --> src/actors/mod.rs:238:9
+    |
+238 | pub use hestia::Hestia;
+    |         ^^^^^^^^^^^^^^
+
+warning: unused import: `SharedActorState`
+  --> src/traits/mod.rs:16:5
+   |
+16 |     SharedActorState,
+   |     ^^^^^^^^^^^^^^^^
+
+warning: unused imports: `DeliveryConfirmation`, `SendResult`, and `SendStatus`
+  --> src/traits/mod.rs:28:5
+   |
+28 |     SendResult,
+   |     ^^^^^^^^^^
+29 |     SendStatus,
+   |     ^^^^^^^^^^
+30 |     DeliveryConfirmation,
+   |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `ActorSupervisionStatus`, `Supervisable`, `SupervisedActor`, `SupervisionMetrics`, and `SupervisorError`
+  --> src/traits/mod.rs:35:5
+   |
+35 |     Supervisable,
+   |     ^^^^^^^^^^^^
+36 |     SupervisionTree,
+37 |     SupervisionMetrics,
+   |     ^^^^^^^^^^^^^^^^^^
+38 |     SupervisedActor,
+   |     ^^^^^^^^^^^^^^^
+39 |     ActorSupervisionStatus,
+   |     ^^^^^^^^^^^^^^^^^^^^^^
+40 |     SupervisorError,
+   |     ^^^^^^^^^^^^^^^
+
+warning: unused imports: `PendingTransactions`, `PersistenceResult`, `PersistenceTransaction`, and `TransactionStatus`
+  --> src/traits/mod.rs:45:5
+   |
+45 |     PersistenceTransaction,
+   |     ^^^^^^^^^^^^^^^^^^^^^^
+46 |     PendingTransactions,
+   |     ^^^^^^^^^^^^^^^^^^^
+47 |     PersistenceError,
+48 |     PersistenceResult,
+   |     ^^^^^^^^^^^^^^^^^
+49 |     TransactionStatus,
+   |     ^^^^^^^^^^^^^^^^^
+
+warning: unused import: `error`
+ --> src/system/genesis.rs:7:21
+  |
+7 | use tracing::{info, error, warn};
+  |                     ^^^^^
+
+warning: unused import: `DivineDomain`
+  --> src/system/genesis.rs:10:30
+   |
+10 | use crate::actors::{GodName, DivineDomain};
+   |                              ^^^^^^^^^^^^
+
+warning: unused import: `ActorConfig`
+  --> src/system/genesis.rs:11:36
+   |
+11 | use crate::traits::{OlympianActor, ActorConfig};
+   |                                    ^^^^^^^^^^^
+
+warning: unused imports: `CommandPayload` and `MessagePayload`
+  --> src/system/genesis.rs:12:44
+   |
+12 | use crate::traits::message::{ActorMessage, MessagePayload, CommandPayload};
+   |                                            ^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^
+
+warning: unused import: `std::sync::Arc`
+ --> src/system/runner.rs:5:5
+  |
+5 | use std::sync::Arc;
+  |     ^^^^^^^^^^^^^^
+
+warning: unused imports: `debug` and `warn`
+ --> src/system/runner.rs:7:28
+  |
+7 | use tracing::{info, error, debug, warn};
+  |                            ^^^^^  ^^^^
+
+warning: unused import: `std::time::Duration`
+ --> src/system/runner.rs:8:5
+  |
+8 | use std::time::Duration;
+  |     ^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `chrono::Utc`
+ --> src/system/runner.rs:9:5
+  |
+9 | use chrono::Utc;
+  |     ^^^^^^^^^^^
+
+warning: unused imports: `ActorStatus` and `GodHeartbeat`
+  --> src/system/runner.rs:11:36
+   |
+11 | use crate::traits::{OlympianActor, ActorStatus, GodHeartbeat};
+   |                                    ^^^^^^^^^^^  ^^^^^^^^^^^^
+
+warning: unused imports: `MessagePayload` and `ResponsePayload`
+  --> src/system/runner.rs:12:44
+   |
+12 | use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+   |                                            ^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^
+
+warning: unused import: `crate::errors::ActorError`
+  --> src/system/runner.rs:14:5
+   |
+14 | use crate::errors::ActorError;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `runner::ActorRunner`
+ --> src/system/mod.rs:9:9
+  |
+9 | pub use runner::ActorRunner;
+  |         ^^^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `SharedValkeyStore`, `ValkeyConfig`, and `ValkeyError`
+  --> src/infrastructure/mod.rs:9:5
+   |
+ 9 |     ValkeyConfig,
+   |     ^^^^^^^^^^^^
+10 |     ValkeyError,
+   |     ^^^^^^^^^^^
+11 |     SharedValkeyStore,
+   |     ^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `SharedSurrealStore`, `SurrealConfig`, and `SurrealError`
+  --> src/infrastructure/mod.rs:16:5
+   |
+16 |     SurrealConfig,
+   |     ^^^^^^^^^^^^^
+17 |     SurrealError,
+   |     ^^^^^^^^^^^^
+18 |     SharedSurrealStore,
+   |     ^^^^^^^^^^^^^^^^^^
+
+error[E0308]: mismatched types
+  --> src/system/genesis.rs:51:48
+   |
+51 | ...:new(ValkeyStore::new("redis://127.0.0.1:6379").await.unwrap_or_else(|_| {
+   |         ---------------- ^^^^^^^^^^^^^^^^^^^^^^^^ expected `ValkeyConfig`, found `&str`
+   |         |
+   |         arguments to this function are incorrect
+   |
+note: associated function defined here
+  --> src/infrastructure/valkey.rs:56:12
+   |
+56 |     pub fn new(config: ValkeyConfig) -> Self {
+   |            ^^^ --------------------
+
+error[E0277]: `ValkeyStore` is not a future
+  --> src/system/genesis.rs:51:74
+   |
+51 | ...:new(ValkeyStore::new("redis://127.0.0.1:6379").await.unwrap_or_else(|_| {
+   |         ------------------------------------------ ^^^^^ `ValkeyStore` is not a future
+   |         |
+   |         this call returns `ValkeyStore`
+   |
+help: the trait `futures_util::Future` is not implemented for `ValkeyStore`
+  --> src/infrastructure/valkey.rs:46:1
+   |
+46 | pub struct ValkeyStore {
+   | ^^^^^^^^^^^^^^^^^^^^^^
+   = note: ValkeyStore must be a future or must implement `IntoFuture` to be awaited
+   = note: required for `ValkeyStore` to implement `std::future::IntoFuture`
+help: remove the `.await`
+   |
+51 -         let valkey = Arc::new(ValkeyStore::new("redis://127.0.0.1:6379").await.unwrap_or_else(|_| {
+51 +         let valkey = Arc::new(ValkeyStore::new("redis://127.0.0.1:6379").unwrap_or_else(|_| {
+   |
+
+error[E0282]: type annotations needed
+  --> src/system/genesis.rs:51:31
+   |
+51 | ...= Arc::new(ValkeyStore::new("redis://127.0.0.1:6379").await.unwrap_or_else(|_| {
+   |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ cannot infer type
+
+error[E0061]: this function takes 1 argument but 0 arguments were supplied
+   --> src/system/genesis.rs:78:20
+    |
+ 78 |         let zeus = Zeus::new().await;
+    |                    ^^^^^^^^^-- argument #1 of type `ZeusConfig` is missing
+    |
+note: associated function defined here
+   --> src/actors/zeus/mod.rs:205:18
+    |
+205 |     pub async fn new(zeus_config: ZeusConfig) -> Self {
+    |                  ^^^ -----------------------
+help: provide the argument
+    |
+ 78 |         let zeus = Zeus::new(/* ZeusConfig */).await;
+    |                              ++++++++++++++++
+
+error[E0061]: this function takes 1 argument but 0 arguments were supplied
+   --> src/system/genesis.rs:87:24
+    |
+ 87 |         let poseidon = Poseidon::new().await;
+    |                        ^^^^^^^^^^^^^-- argument #1 of type `Arc<ValkeyStore>` is missing
+    |
+note: associated function defined here
+   --> src/actors/poseidon/mod.rs:135:18
+    |
+135 |     pub async fn new(valkey: Arc<ValkeyStore>) -> Self {
+    |                  ^^^ ------------------------
+help: provide the argument
+    |
+ 87 |         let poseidon = Poseidon::new(/* Arc<ValkeyStore> */).await;
+    |                                      ++++++++++++++++++++++
+
+error[E0277]: `Result<Artemis, ActorError>` is not a future
+   --> src/system/genesis.rs:108:72
+    |
+108 |         addToMount(&mut senders, &mut runners, Box::new(Artemis::new().await)).await;
+    |                                                         -------------- ^^^^^ `Result<Artemis, ActorError>` is not a future
+    |                                                         |
+    |                                                         this call returns `Result<Artemis, ActorError>`
+    |
+    = help: the trait `futures_util::Future` is not implemented for `Result<Artemis, ActorError>`
+    = note: Result<Artemis, ActorError> must be a future or must implement `IntoFuture` to be awaited
+    = note: required for `Result<Artemis, ActorError>` to implement `std::future::IntoFuture`
+help: remove the `.await`
+    |
+108 -         addToMount(&mut senders, &mut runners, Box::new(Artemis::new().await)).await;
+108 +         addToMount(&mut senders, &mut runners, Box::new(Artemis::new())).await;
+    |
+
+error[E0061]: this function takes 2 arguments but 0 arguments were supplied
+   --> src/system/genesis.rs:124:57
+    |
+124 |         addToMount(&mut senders, &mut runners, Box::new(Hestia::new().await)).await;
+    |                                                         ^^^^^^^^^^^-- two arguments of type `Arc<ValkeyStore>` and `Arc<SurrealStore>` are missing
+    |
+note: associated function defined here
+   --> src/actors/hestia/mod.rs:197:18
+    |
+197 |     pub async fn new(valkey: Arc<ValkeyStore>, surreal: Arc<SurrealStore>) -> Self {
+    |                  ^^^ ------------------------  --------------------------
+help: provide the arguments
+    |
+124 |         addToMount(&mut senders, &mut runners, Box::new(Hestia::new(/* Arc<ValkeyStore> */, /* Arc<SurrealStore> */).await)).await;
+    |                                                                     +++++++++++++++++++++++++++++++++++++++++++++++
+
+warning: unused variable: `response`
+  --> src/system/runner.rs:71:28
+   |
+71 |                         Ok(response) => {
+   |                            ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_response`
+
+Some errors have detailed explanations: E0061, E0277, E0282, E0308.
+For more information about an error, try `rustc --explain E0061`.
+warning: `olympus` (bin "olympus-server") generated 181 warnings (116 duplicates)
+error: could not compile `olympus` (bin "olympus-server") due to 7 previous errors; 181 warnings emitted
