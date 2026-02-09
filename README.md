@@ -28,7 +28,7 @@ El sistema implementa **20 actores especializados** organizados en una **Trinida
 
 ---
 
-## ⚡ Trinidad Suprema (6 Actores Implementados)
+## ⚡ Trinidad Suprema (10 Actores Funcionales)
 
 Los tres pilares fundamentales más tres actores de infraestructura core:
 
@@ -45,7 +45,7 @@ Los tres pilares fundamentales más tres actores de infraestructura core:
 
 ## 🏛️ Panteón Completo (20 Actores)
 
-### ✅ Implementados (8/20)
+### ✅ Implementados (10/20)
 
 | Deidad | Dominio | Descripción |
 |--------|---------|-------------|
@@ -57,6 +57,8 @@ Los tres pilares fundamentales más tres actores de infraestructura core:
 | Poseidón | WebSocket | Conexiones bidireccionales reales |
 | Athena | Inteligencia | Análisis clínico, escalas, predicciones |
 | Hera | Validación | Validación de esquemas y reglas de negocio |
+| Apollo | Eventos | Motor de eventos, métricas y auditoría |
+| Artemis | Búsqueda | Motor de búsqueda Tantivy para registros clínicos |
 
 
 ### 🚀 Novedad: Genesis Bootloader
@@ -73,9 +75,7 @@ El sistema ahora cuenta con un orquestador de arranque (`src/system/genesis.rs`)
 
 | Deidad | Dominio | Estado |
 |--------|---------|--------|
-| ☀️ Apollo | Procesamiento de Eventos | ⏳ Pendiente |
-| 🏹 Artemis | Búsqueda (Tantivy) | ⏳ Pendiente |
-| 🍷 Dionysus | Análisis de Datos | ⏳ Pendiente |
+| 🍷 Dionysus | Análisis de Datos | ⏳ Pendiente (Semana 6) |
 | ⏰ Chronos | Scheduling y Tareas | ⏳ Pendiente |
 | ⚔️ Ares | Resolución de Conflictos | ⏳ Pendiente |
 | 🔥 Hefesto | Construcción de Sistemas | ⏳ Pendiente |
@@ -302,10 +302,12 @@ WS_BIND_ADDRESS=0.0.0.0:8080
 │ ✅ Poseidón:   ACTIVE    │ WebSocket Ready │
 │ ✅ Hermes:     ACTIVE    │ 1M msg/sec      │
 │ ✅ Erinyes:    ACTIVE    │ 500ms Heartbeat │
-│ ✅ Hestia:     ACTIVE    │ Cache 95% hit   │
-│ ✅ Athena:     ACTIVE    │ ML Analytics    │
-│ ✅ Hera:       ACTIVE    │ Data Validation │
-│ ⏳ 12 others:  PENDING   │ Weeks 5-12      │
+│ ✅ Hestia:     ACTIVE    │ Persistence Layer  │
+│ ✅ Athena:     ACTIVE    │ ML Analytics      │
+│ ✅ Hera:       ACTIVE    │ Data Validation   │
+│ ✅ Apollo:     ACTIVE    │ Event Engine      │
+│ ✅ Artemis:    ACTIVE    │ Search Engine     │
+│ ⏳ 10 others:  PENDING   │ Weeks 6-12        │
 └────────────────────────────────────────────┘
 ```
 
