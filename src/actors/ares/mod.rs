@@ -104,7 +104,7 @@ impl Ares {
         
         // Guardar en historial
         let mut history = self.history.write().await;
-        history.add_resolved(conflict.clone(), result.clone());
+        history.mark_resolved(conflict.clone(), result.clone());
         
         // Actualizar estadísticas
         let mut stats = self.stats.write().await;
@@ -163,7 +163,7 @@ impl Ares {
     /// Obtiene el historial de conflictos
     pub async fn get_conflict_history(&self, limit: usize) -> Vec<Conflict> {
         let history = self.history.read().await;
-        history.get_recent(limit)
+        history.get_recent(limit).iter().map(|entry| entry.conflict.clone()).collect()
     }
 
     /// Obtiene estadísticas
