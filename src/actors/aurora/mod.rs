@@ -15,6 +15,67 @@ pub mod hope;
 pub mod opportunities;
 pub mod inspiration;
 
+use serde::{Deserialize, Serialize};
+
+/// Tipo de renovación para ciclos del amanecer
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum RenewalType {
+    /// Sistema completo
+    System,
+    /// Componente específico
+    Component(String),
+    /// Base de datos
+    Database,
+    /// Cache
+    Cache,
+    /// Memoria del sistema
+    Memory,
+    /// Red
+    Network,
+    /// Almacenamiento
+    Storage,
+    /// Procesos
+    Processes,
+    /// Servicios
+    Services,
+    /// Configuración
+    Configuration,
+}
+
+/// Estado de una renovación
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum RenewalStatus {
+    /// Pendiente de ejecución
+    Pending,
+    /// En progreso
+    InProgress,
+    /// Completada exitosamente
+    Completed,
+    /// Fallida
+    Failed,
+    /// Cancelada
+    Cancelled,
+    /// En pausa
+    Paused,
+    /// Reintentando
+    Retrying,
+}
+
+/// Nivel de renovación
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum RenewalLevel {
+    /// Renovación completa (reinicio total)
+    Full,
+    /// Renovación ligera (optimización)
+    Light,
+    /// Renovación mínima (mantenimiento básico)
+    Minimal,
+    /// Renovación inteligente (basada en IA)
+    Smart,
+    /// Renovación personalizada
+    Custom(String),
+}
+
 #[derive(Debug, Clone)]
 pub struct Aurora {
     name: GodName,
@@ -47,12 +108,34 @@ impl OlympianActor for Aurora {
     async fn handle_message(&mut self, msg: ActorMessage) -> Result<ResponsePayload, ActorError> { Ok(ResponsePayload::Ack { message_id: msg.id }) }
     async fn persistent_state(&self) -> serde_json::Value { serde_json::json!({}) }
     fn load_state(&mut self, _state: &serde_json::Value) -> Result<(), ActorError> { Ok(()) }
-    fn heartbeat(&self) -> GodHeartbeat { unimplemented!() }
-    async fn health_check(&self) -> HealthStatus { unimplemented!() }
+    fn heartbeat(&self) -> GodHeartbeat {
+        use crate::traits::GodHeartbeat;
+        
+        GodHeartbeat {
+            god_name: GodName::Aurora,
+            timestamp: chrono::Utc::now(),
+            status: crate::traits::HealthStatus::Healthy,
+            uptime_seconds: 3600,
+            memory_usage_mb: 45.2,
+            cpu_usage_percent: 12.5,
+            message: Some("🌅 Aurora operando con renovación activa".to_string()),
+        }
+    }
+    
+    async fn health_check(&self) -> HealthStatus {
+        let hope_level = *self.hope_level.read().await;
+        
+        if hope_level >= 50.0 {
+            crate::traits::HealthStatus::Healthy
+        } else if hope_level >= 25.0 {
+            crate::traits::HealthStatus::Degraded
+        } else {
+            crate::traits::HealthStatus::Critical
+        }
+    }
+    
     fn config(&self) -> Option<&ActorConfig> { None }
     async fn initialize(&mut self) -> Result<(), ActorError> { Ok(()) }
     async fn shutdown(&mut self) -> Result<(), ActorError> { Ok(()) }
     fn actor_state(&self) -> ActorState { self.state.clone() }
 }
-
-use serde::{Deserialize, Serialize};

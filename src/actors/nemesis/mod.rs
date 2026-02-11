@@ -5,6 +5,7 @@ use async_trait::async_trait;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
+use serde::{Deserialize, Serialize};
 use crate::actors::{GodName, DivineDomain};
 use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
 use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
@@ -16,10 +17,10 @@ pub mod audit;
 pub mod rules;
 pub mod legal_framework;
 
-use compliance::{ComplianceManager, ComplianceStatus, ViolationType};
-use audit::{AuditLogger, AuditTrail, ComplianceAudit};
+use compliance::{ComplianceManager, ComplianceStatus, ViolationType, ComplianceAudit, RegulatoryStandard};
+use audit::{AuditLogger, AuditTrail};
 use rules::{RuleEngine, LegalRule, EnforcementLevel};
-use legal_framework::{LegalFramework, RegulatoryStandard};
+use legal_framework::LegalFramework;
 
 /// Némesis - Diosa de la Justicia Legal y Cumplimiento
 /// 

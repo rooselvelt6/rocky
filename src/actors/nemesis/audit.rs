@@ -13,6 +13,7 @@ use crate::actors::nemesis::{
     compliance::{ComplianceAudit, ComplianceViolation, EvidenceType, RegulatoryStandard, ComplianceLevel, ViolationSeverity},
     rules::LegalRule,
 };
+use tracing::info;
 
 /// Estado de una sesión de auditoría
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -87,6 +88,52 @@ impl std::fmt::Display for EventError {
 }
 
 impl std::error::Error for EventError {}
+
+/// Log de auditoría individual
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AuditLog {
+    /// ID único del log
+    pub log_id: String,
+    /// Timestamp del log
+    pub timestamp: DateTime<Utc>,
+    /// Nivel del log
+    pub level: AuditLogLevel,
+    /// Formato del log
+    pub format: AuditLogFormat,
+    /// Contenido del log
+    pub content: String,
+    /// Componente que generó el log
+    pub component: String,
+    /// Metadatos adicionales
+    pub metadata: HashMap<String, serde_json::Value>,
+}
+
+/// Métricas de auditoría
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AuditMetrics {
+    /// Total de logs procesados
+    pub total_logs: u64,
+    /// Logs por nivel
+    pub logs_by_level: HashMap<String, u64>,
+    /// Logs por componente
+    pub logs_by_component: HashMap<String, u64>,
+    /// Espacio total utilizado (bytes)
+    pub storage_used_bytes: u64,
+    /// Timestamp de última actualización
+    pub last_updated: DateTime<Utc>,
+}
+
+impl Default for AuditMetrics {
+    fn default() -> Self {
+        Self {
+            total_logs: 0,
+            logs_by_level: HashMap::new(),
+            logs_by_component: HashMap::new(),
+            storage_used_bytes: 0,
+            last_updated: Utc::now(),
+        }
+    }
+}
 
 /// Logger de auditoría y trazabilidad
 #[derive(Debug, Clone)]
@@ -867,7 +914,7 @@ impl AuditLogger {
                 format!("{:?}", event.event_type),
                 event.actor.unwrap_or_default("Nemesis".to_string()),
                 event.severity,
-                csv_content_str.replace("\"", "\"\"").replace("\n", "\\n"),
+                csv_content.replace("\"", "\"\"").replace("\n", "\\n"),
             ));
         }
         
@@ -964,7 +1011,7 @@ impl Default for AuditTrail {
     }
 }
 
-impl Default for ComplianceSessionResult {
+impl Default for AuditSessionResult {
     fn default() -> Self {
         Self {
             session_id: Uuid::new_v4().to_string(),

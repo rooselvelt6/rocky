@@ -10,6 +10,7 @@ use uuid::Uuid;
 
 use crate::errors::ActorError;
 use crate::actors::nemesis::compliance::{RegulatoryStandard, ComplianceLevel};
+use tracing::info;
 
 /// Framework legal regulatorio para Némesis
 /// 
@@ -610,7 +611,13 @@ impl Default for GapAnalyzerConfig {
 }
 
 impl Default for GapAnalyzer {
-    fn new(config: GapAnalyzerConfig) -> Self {
+    fn default() -> Self {
+        Self::new(GapAnalyzerConfig::default())
+    }
+}
+
+impl GapAnalyzer {
+    pub fn new(config: GapAnalyzerConfig) -> Self {
         Self {
             config: Arc::new(RwLock::new(config)),
             detected_gaps: Arc::new(RwLock::new(Vec::new())),
@@ -700,7 +707,7 @@ impl Default for GapAnalyzer {
             *gaps = gaps_detected;
         }
         
-        info!("🔍 Análisis de gaps completado: {} gaps detectados", gaps.len());
+        info!("🔍 Análisis de gaps completado: {} gaps detectados", gaps_detected.len());
         Ok(())
     }
     
@@ -730,7 +737,7 @@ impl Default for GapAnalyzer {
             *gaps = doc_gaps;
         }
         
-        info!("🔍 Análisis de documentación completado: {} gaps detectados", gaps.len());
+        info!("🔍 Análisis de documentación completado: {} gaps detectados", doc_gaps.len());
         Ok(())
     }
     

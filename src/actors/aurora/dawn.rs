@@ -8,9 +8,10 @@ use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
-use crate::actors::{GodName};
-use crate::actors::aurora::{RenewalType, RenewalStatus};
+use crate::actors::GodName;
+use crate::actors::aurora::{RenewalType, RenewalStatus, RenewalLevel};
 use crate::errors::ActorError;
+use tracing::info;
 
 /// Sistema de Amanecer - Gestión de Inicios y Renovaciones
 /// 
@@ -302,7 +303,7 @@ impl DawnSystem {
         }
         
         // Simular proceso de amanecer
-        self.simulate_dawn_process(dawn_id).await?;
+        self.simulate_dawn_process(&dawn_id).await?;
         
         info!("🌅 Amanecer completado: {}", dawn_id);
         Ok(dawn_id)
