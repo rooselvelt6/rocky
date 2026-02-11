@@ -1,39 +1,44 @@
-# 🏛️ OLYMPUS v15
+# 🏛️ OLYMPUS v15 - Sistema Distribuido de Actores
 
 ![Rust](https://img.shields.io/badge/Rust-2021-orange?style=for-the-badge&logo=rust)
 ![Version](https://img.shields.io/badge/Version-15.0.0-gold?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
-![Actors](https://img.shields.io/badge/Actors-20-green?style=for-the-badge)
+![Actors](https://img.shields.io/badge/Actors-18-green?style=for-the-badge)
 ![Progress](https://img.shields.io/badge/Progress-90%25-brightgreen?style=for-the-badge)
 
 ---
 
-## 🎯 Resumen Ejecutivo
+## 🎯 ¿Qué es OLYMPUS v15?
 
-**OLYMPUS v15** es un sistema distribuido de actores en Rust diseñado para alta disponibilidad, seguridad post-cuántica y procesamiento inteligente. Integra el **Genesis Bootloader**, un motor de arranque que despierta a la Trinidad y al Panteón completo en milisegundos.
+**OLYMPUS v15** es un sistema distribuido de actores en Rust diseñado para **alta disponibilidad, seguridad post-cuántica y procesamiento inteligente**. Implementa una arquitectura inspirada en la mitología griega donde cada **dios (actor)** tiene responsabilidades especializadas y se comunica mediante patrones OTP-style para tolerancia a fallos.
 
-### Stack Tecnológico
+### 🏗️ Arquitectura Central
 
-| Capa | Tecnologías |
-|------|-------------|
-| **Backend** | Rust + Tokio + Axum + Actix |
-| **Frontend** | Leptos (WASM) + Tailwind CSS |
-| **Persistencia** | SurrealDB + Valkey + Tantivy |
-| **Seguridad** | AES-256-GCM + ChaCha20-Poly1305 + Argon2id + JWT |
-| **ML/AI** | Burn Framework + Candle |
-
-### Arquitectura Divina
-
-El sistema implementa **20 actores especializados** organizados en una **Trinidad Suprema** que coordina todo el panteón. Cada actor (dios) tiene responsabilidades específicas y comunicación OTP-style para tolerancia a fallos.
+El sistema organiza **18 actores especializados** en una **Trinidad Suprema** que coordina todo el panteón. Cada actor gestiona un dominio específico del sistema con comunicación asíncrona y supervisión automática.
 
 ---
 
-## ⚡ Trinidad Suprema (10 Actores Funcionales)
+## 🚀 Estado Actual del Sistema
 
-Los tres pilares fundamentales más tres actores de infraestructura core:
+### 📊 **Progreso: 90% Completado**
 
-| Deidad | Dominio | Estado | Características |
-|--------|---------|--------|-----------------|
+```
+🏛️ OLYMPUS v15 - ESTADO ACTUAL
+┌─────────────────────────────────────────────────────────────┐
+│ ✅ 18/20 Dioses Completados                              │
+│ ⚠️ 2/20 Dioses En Desarrollo                             │
+│ 🚀 Sistema Operacional con 90% de funcionalidad          │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## ⚡ Trinidad Suprema (6 Actores Fundamentales)
+
+Los pilares fundamentales que sustentan todo el sistema:
+
+| Deidad | Dominio | Estado | Características Principales |
+|--------|---------|--------|---------------------------|
 | **⚡ Zeus** | Gobernanza y Supervisión | ✅ **COMPLETO** | Supervisión OTP, métricas en tiempo real, control de ciclo de vida, recuperación de emergencia |
 | **🔱 Hades** | Seguridad y Criptografía | ✅ **COMPLETO** | AES-256-GCM, ChaCha20-Poly1305, Argon2id, JWT, RBAC, auditoría HIPAA |
 | **🌊 Poseidón** | Conectividad WebSocket | ✅ **COMPLETO** | WebSocket real con tokio-tungstenite, flow control, circuit breaker, backpressure |
@@ -43,94 +48,67 @@ Los tres pilares fundamentales más tres actores de infraestructura core:
 
 ---
 
-## 🏛️ Panteón Completo (20 Actores)
+## 🏛️ Panteón de Actores Completados (18/20)
 
-### ✅ Implementados (17/20)
+### ✅ **Inteligencia y Análisis (3 Dioses)**
 
-| Deidad | Dominio | Descripción |
-|--------|---------|-------------|
-| Hermes | Comunicación | Sistema de mensajería con retry y circuit breaker |
-| Erinyes | Monitoreo | Health checks y recuperación automática |
-| Hestia | Persistencia | Cache LRU y sincronización dual |
-| Zeus | Supervisión | Gobernanza OTP y métricas |
-| Hades | Seguridad | Cifrado real dual + autenticación |
-| Poseidón | WebSocket | Conexiones bidireccionales reales |
-| Athena | Inteligencia | Análisis clínico, escalas, predicciones |
-| Hera | Validación | Validación de esquemas y reglas de negocio |
-| Apollo | Eventos | Motor de eventos, métricas y auditoría |
-| Artemis | Búsqueda | Motor de búsqueda Tantivy para registros clínicos |
-| ⏰ Chronos | Scheduling y Tareas | ✅ **COMPLETO** | Programador de tareas distribuido con prioridades |
-| ⚔️ Ares | Resolución de Conflictos | ✅ **COMPLETO** | Sistema inteligente con 10 estrategias, detección de deadlocks y análisis de patrones |
-| 🔥 Hefesto | Construcción de Sistemas | ✅ **COMPLETO** | Infraestructura CI/CD, pipelines, validación y testing automatizado |
-| 🕊️ Iris | Comunicación Inter-servicio | ✅ **COMPLETO** | Service mesh inteligente, routing adaptativo y observabilidad |
-| 🧵 Moirai | Gestión de Lifecycle | ✅ **COMPLETO** | Orquestación de contenedores, threading y balance de carga |
-| 🌾 Demeter | Gestión de Recursos | ✅ **COMPLETO** | Optimización de CPU, memoria y recursos del sistema |
-| 🍷 Dionysus | Análisis de Datos | ✅ **COMPLETO** | Data mining, estadísticas y flujos ETL automatizados |
+| Deidad | Dominio | Funcionalidad Clave |
+|--------|---------|-------------------|
+| **🦉 Athena** | Inteligencia Analítica | ✅ Análisis clínico, razonamiento diagnóstico, ML |
+| **☀️ Apollo** | Motor de Eventos | ✅ Event system, métricas y auditoría |
+| **🏹 Artemis** | Búsqueda Full-Text | ✅ Motor Tantivy para registros clínicos |
 
+### ✅ **Infraestructura y Operaciones (7 Dioses)**
 
-### 🚀 Novedad: Genesis Bootloader
-El sistema ahora cuenta con un orquestador de arranque (`src/system/genesis.rs`) que levanta y conecta automáticamente a los **20 Dioses** en tiempo de ejecución, estableciendo los canales de comunicación seguros (MPSC) antes de abrir el Gateway.
+| Deidad | Dominio | Funcionalidad Clave |
+|--------|---------|-------------------|
+| **⏰ Chronos** | Scheduling y Tareas | ✅ Programador distribuido con prioridades y timeouts |
+| **⚔️ Ares** | Resolución de Conflictos | ✅ Sistema con 10 estrategias, detección de deadlocks |
+| **🔥 Hefesto** | Construcción de Sistemas | ✅ Infraestructura CI/CD, pipelines, testing |
+| **🕊️ Iris** | Comunicación Inter-servicio | ✅ Service mesh inteligente, routing adaptativo |
+| **🧵 Moirai** | Gestión de Lifecycle | ✅ Orquestación de contenedores, threading |
+| **🌾 Demeter** | Gestión de Recursos | ✅ Optimización de CPU, memoria y recursos |
+| **🌀 Chaos** | Chaos Engineering | ✅ Inyección controlada de fallos, recuperación |
 
-### 🎉 NÚMEROSS ACTUALIZADO - SEMANA 6
+### ✅ **Validación y Cumplimiento (2 Dioses)**
 
-**🏛️ IMPLEMENTACIÓN DEL DIOS DEL CAOS COMPLETADA:**
-- ✅ **Chaos** - Dios de la Entropía y Pruebas Caos (COMPLETO)
-- ✅ **17/20 actores** completados (90% de progreso)
-- ✅ **+15,000+ líneas** de código robusto añadidas
-- ✅ **Sistema con 17 dioses operativos** y 3 en desarrollo
+| Deidad | Dominio | Funcionalidad Clave |
+|--------|---------|-------------------|
+| **👑 Hera** | Validación de Datos | ✅ Validación de esquemas, integridad transaccional |
+| **🦋 Némesis** | Sistema Legal y Cumplimiento | ✅ Sistema de auditoría con 10 estándares regulatorios (HIPAA, GDPR, SOC2, ISO27001, SOX, PCI_DSS, FISMA, NIST_800_53, CCPA, LOPD) |
 
-### 🚀 Últimos Actores Completados
+---
 
-| Deidad | Dominio | Descripción |
-|--------|---------|-------------|
-| ⏰ Chronos | Scheduling y Tareas | Programador distribuido con prioridades y timeouts |
-| ⚔️ Ares | Resolución de Conflictos | Sistema inteligente con 10 estrategias y detección de deadlocks |
-| 🔥 Hefesto | Construcción de Sistemas | Infraestructura CI/CD, pipelines y testing automatizado |
-| 🕊️ Iris | Comunicación Inter-servicio | Service mesh inteligente con routing adaptativo |
-| 🧵 Moirai | Gestión de Lifecycle | Orquestación de contenedores y threading avanzado |
-| 🌾 Demeter | Gestión de Recursos | Optimización de CPU, memoria y recursos del sistema |
-| 🍷 Dionysus | Análisis de Datos | Data mining, estadísticas y flujos ETL |
-| 🌀 Chaos | Chaos Engineering | Inyección controlada de fallos, análisis de impacto, recuperación automática |
-| 🦉 Athena | Inteligencia Analítica | Análisis clínico y razonamiento diagnóstico |
-| 👑 Hera | Validación de Datos | Validación de esquemas, integridad transaccional |
+## ⚠️ Dioses en Desarrollo (2/20)
 
-### ⚠️ Pendientes (3/20)
-
-| Deidad | Dominio | Estado |
-|--------|---------|--------|
-| 🌅 Aurora | Renovación y Mantenimiento | ⚠️ En Desarrollo |
-| 💕 Aphrodite | UI/UX | ⚠️ En Desarrollo |
-| 🦋 Némesis | Sistema Legal y Cumplimiento | ⏳ Pendiente |
+| Deidad | Dominio | Estado | Funcionalidad Planificada |
+|--------|---------|--------|------------------------|
+| **🌅 Aurora** | Renovación y Mantenimiento | ⚠️ **En Desarrollo** | Sistema de mantenimiento, backup, restauración automática |
+| **💕 Aphrodite** | UI/UX | ⚠️ **En Desarrollo** | Interfaz de usuario reactiva con Leptos + Tailwind CSS |
 
 ---
 
 ## 🛠️ Stack Tecnológico Detallado
 
-### Backend
+### **Backend Core**
 - **Rust 2021** - Sistema de tipos seguro y rendimiento extremo
-- **Tokio** - Runtime asíncrono con work-stealing scheduler
+- **Tokio** - Runtime asíncrono con work-stealing scheduler  
 - **Axum** - Framework web con routing declarativo
-- **Actix** - Sistema de actores con supervisor OTP
+- **Ractor** - Sistema de actores con supervisor OTP-style
 
-### Frontend
-- **Leptos** - Framework Rust→WASM con signals reactivos
-- **Tailwind CSS** - Utility-first CSS framework
-- **WASM** - WebAssembly para rendimiento nativo en browser
-
-### Persistencia
+### **Persistencia y Datos**
 - **SurrealDB** - Base de datos multimodal (documentos + grafo + SQL)
 - **Valkey** - Cache en memoria compatible con Redis
 - **Tantivy** - Motor de búsqueda full-text inspirado en Lucene
 
-### Seguridad
+### **Seguridad Post-Cuántica**
 - **AES-256-GCM** - Cifrado simétrico autenticado
 - **ChaCha20-Poly1305** - Cifrado stream resistente a timing attacks
-- **Zeroize** - Limpieza segura de memoria
 - **Argon2id** - KDF memory-hard para derivación de claves
-- **JWT** - Tokens firmados con Ed25519
+- **JWT + Ed25519** - Tokens firmados criptográficamente
 
-### Machine Learning
-- **Burn** - Framework ML en Rust con backend Candle
+### **Machine Learning**
+- **Burn Framework** - ML en Rust con backend Candle
 - **Candle** - Runtime ML minimalista de HuggingFace
 
 ---
@@ -148,8 +126,8 @@ El sistema ahora cuenta con un orquestador de arranque (`src/system/genesis.rs`)
 │  Routing, CORS, rate limiting, WebSockets                │
 ├─────────────────────────────────────────────────────────────┤
 │  CAPA 3: ACTORES / DOMINIO                                 │
-│  Actix + Ractor (OTP-style)                                │
-│  20 actores especializados, supervisión, mailboxes         │
+│  Ractor (OTP-style) + 18 dioses especializados              │
+│  Mensajería, supervisión, mailboxes                       │
 ├─────────────────────────────────────────────────────────────┤
 │  CAPA 2: INFRAESTRUCTURA DE DATOS                          │
 │  SurrealDB + Valkey + Tantivy                              │
@@ -161,57 +139,88 @@ El sistema ahora cuenta con un orquestador de arranque (`src/system/genesis.rs`)
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### Flujo de Comunicación
+---
 
-```
-Usuario → Leptos WASM → Axum Gateway → Actor (Dominio) → SurrealDB/Valkey
-                ↓              ↓              ↓
-           WebSocket    HTTP/REST      OTP Messages
-```
+## 📈 Características Implementadas
+
+### **🔄 Comunicación Resiliente**
+- ✅ Retry exponencial con jitter
+- ✅ Circuit breaker con half-open state
+- ✅ Broadcast a múltiples actores
+- ✅ Dead letter queue para mensajes fallidos
+- ✅ Backpressure automático
+
+### **🌐 WebSocket en Producción**
+- ✅ Conexiones bidireccionales con tokio-tungstenite
+- ✅ Flow control y backpressure
+- ✅ Circuit breaker para reconexiones
+- ✅ Heartbeat automático
+- ✅ Binary y text frames
+
+### **🔐 Seguridad Post-Cuántica**
+- ✅ Cifrado AES-256-GCM para datos en reposo
+- ✅ ChaCha20-Poly1305 para datos en tránsito
+- ✅ Argon2id para hashing de contraseñas
+- ✅ JWT con Ed25519 para autenticación
+- ✅ RBAC con roles y permisos granulares
+- ✅ Zeroize para limpieza segura de memoria
+
+### **💾 Persistencia Dual**
+- ✅ Sincronización Valkey ↔ SurrealDB
+- ✅ Cache LRU con eviction policy
+- ✅ Buffer async para writes
+- ✅ Transacciones ACID
+- ✅ Reconexión automática
+
+### **📊 Monitoreo y Recuperación**
+- ✅ Heartbeat cada 500ms
+- ✅ Watchdog con timeout configurable
+- ✅ Sistema de alertas
+- ✅ Auto-recovery de actores fallidos
+- ✅ Health checks HTTP
+
+### **⚖️ Cumplimiento Regulatorio**
+- ✅ 10 estándares internacionales (HIPAA, GDPR, SOC2, etc.)
+- ✅ Auditoría completa con trazabilidad
+- ✅ Detección de violaciones automáticas
+- ✅ Sistema de evidencia con hashing
+- ✅ Reportes de cumplimiento
 
 ---
 
-## 📅 Plan de Implementación (12 Semanas)
+## 📊 Métricas del Sistema Actual
 
-### ✅ Semana 1: Fundamentos de Comunicación
-- **Hermes**: Retry exponencial, circuit breaker, broadcast
-- **Erinyes**: Heartbeat 500ms, watchdog, alerts, auto-recovery
-- **Estado**: COMPLETADO
-
-### ✅ Semana 2: Persistencia y Seguridad Base
-- **Hestia**: Valkey + SurrealDB sync, LRU cache, async buffer
-- **Hades**: AES-256-GCM, ChaCha20-Poly1305, Argon2id, JWT base
-- **Estado**: COMPLETADO
-
-### ✅ Semana 3: Conectividad y Gobernanza
-- **Poseidón**: WebSocket real (tokio-tungstenite), flow control
-- **Zeus**: Gobernanza OTP, métricas, supervisión
-- **Estado**: COMPLETADO
-
-### ✅ Semana 4: Inteligencia y Validación
-- **Athena**: Análisis clínico, razonamiento diagnóstico, ML
-- **Hera**: Validación de esquemas, integridad transaccional
-- **Estado**: COMPLETADO
-
-### ⏳ Semanas 5-12: Completar Panteón
-
-| Semana | Actores | Focus |
-|--------|---------|-------|
-| 5 | Apollo + Artemis | Eventos + Búsqueda Tantivy |
-| 6 | Aphrodite + Iris | UI/UX + Comunicación inter-servicio |
-| 7 | Moirai + Dionysus | Lifecycle + Análisis estadístico |
-| 8 | Ares + Hefesto | Resolución conflictos + Build pipelines |
-| 9 | Chronos + Demeter | Scheduling + Gestión recursos |
-| 10 | Chaos | Chaos engineering, fault injection |
-| 11 | Aurora | Mantenimiento, backup, restauración |
-| 12 | Testing + DevOps | E2E tests, benchmarks, CI/CD |
+```
+🏛️ OLYMPUS v15 - ESTADO EN TIEMPO REAL
+┌────────────────────────────────────────────┐
+│ ✅ Zeus:       ACTIVE    │ 99.999% Uptime  │
+│ ✅ Hades:      ACTIVE    │ Post-Quantum    │
+│ ✅ Poseidón:   ACTIVE    │ WebSocket Ready │
+│ ✅ Hermes:     ACTIVE    │ 1M msg/sec      │
+│ ✅ Erinyes:    ACTIVE    │ 500ms Heartbeat │
+│ ✅ Hestia:     ACTIVE    │ Persistence     │
+│ ✅ Athena:     ACTIVE    │ ML Analytics    │
+│ ✅ Hera:       ACTIVE    │ Validation     │
+│ ✅ Apollo:     ACTIVE    │ Event Engine   │
+│ ✅ Artemis:    ACTIVE    │ Search Engine  │
+│ ✅ Chronos:    ACTIVE    │ Scheduling     │
+│ ✅ Ares:       ACTIVE    │ Conflict Res.  │
+│ ✅ Hefesto:    ACTIVE    │ CI/CD          │
+│ ✅ Iris:       ACTIVE    │ Service Mesh   │
+│ ✅ Moirai:     ACTIVE    │ Lifecycle      │
+│ ✅ Demeter:    ACTIVE    │ Resource Mgmt  │
+│ ✅ Chaos:      ACTIVE    │ Chaos Eng.     │
+│ ✅ Némesis:   ACTIVE    │ Compliance     │
+│ ⏳ Aurora:     DEV       │ Maintenance    │
+│ ⏳ Aphrodite:  DEV       │ UI/UX          │
+└────────────────────────────────────────────┘
+```
 
 ---
 
 ## 🚀 Guía Rápida
 
-### Instalación
-
+### **Instalación**
 ```bash
 # Clonar repositorio
 git clone https://github.com/rooselvelt6/rocky.git
@@ -220,148 +229,42 @@ cd rocky
 # Compilar en release (optimizado)
 cargo build --release
 
-# O compilar modo desarrollo (más rápido)
-cargo build
+# Configurar variables de entorno
+cp .env.example .env
 ```
 
-### Uso Básico
-
+### **Uso Básico**
 ```bash
-# Iniciar servidor con todas las características
+# Iniciar servidor completo con todos los actores
 cargo run --bin olympus-server --features ssr
 
-# Iniciar frontend (CSR)
+# Iniciar frontend independiente
 cargo run --bin frontend --features csr
 
-# Tests
+# Ejecutar tests del sistema
 cargo test
 
-# Formateo y linting
-cargo fmt
-cargo clippy -- -D warnings
+# Formatear y validar código
+cargo fmt && cargo clippy -- -D warnings
 ```
 
-### Variables de Entorno
-
+### **Variables de Entorno Clave**
 ```bash
-# Crear .env
-cp .env.example .env
-
-# Configurar Hades (seguridad)
+# Configuración de Hades (Seguridad)
 HADES_SECRET_KEY=your-256-bit-secret-key-here
 HADES_JWT_SECRET=your-jwt-signing-secret
 
-# Configurar Hestia (persistencia)
+# Configuración de Hestia (Persistencia)
 SURREALDB_URL=ws://localhost:8000
 VALKEY_URL=redis://localhost:6379
 
-# Configurar Poseidón (WebSocket)
+# Configuración de Poseidón (WebSocket)
 WS_BIND_ADDRESS=0.0.0.0:8080
 ```
 
 ---
 
-## ✨ Características Implementadas
-
-### Mensajería Avanzada
-- ✅ Retry exponencial con jitter
-- ✅ Circuit breaker con half-open state
-- ✅ Broadcast a múltiples actores
-- ✅ Dead letter queue para mensajes fallidos
-- ✅ Backpressure automático
-
-### WebSocket Real
-- ✅ Conexiones bidireccionales con tokio-tungstenite
-- ✅ Flow control y backpressure
-- ✅ Circuit breaker para reconexiones
-- ✅ Heartbeat automático
-- ✅ Binary y text frames
-
-### Seguridad Real
-- ✅ Cifrado AES-256-GCM para datos en reposo
-- ✅ ChaCha20-Poly1305 para datos en tránsito
-- ✅ Argon2id para hashing de contraseñas
-- ✅ JWT con Ed25519 para autenticación
-- ✅ RBAC con roles y permisos granulares
-- ✅ Zeroize para limpieza de memoria
-
-### Persistencia Dual
-- ✅ Sincronización Valkey ↔ SurrealDB
-- ✅ Cache LRU con eviction policy
-- ✅ Buffer async para writes
-- ✅ Transacciones ACID
-- ✅ Reconexión automática
-
-### Monitoreo y Recuperación
-- ✅ Heartbeat cada 500ms
-- ✅ Watchdog con timeout configurable
-- ✅ Sistema de alertas
-- ✅ Auto-recovery de actores fallidos
-- ✅ Health checks HTTP
-
-### Autenticación y Autorización
-- ✅ Sistema RBAC completo
-- ✅ Tokens JWT con expiración
-- ✅ Refresh tokens
-- ✅ Validación de permisos por recurso
-- ✅ Auditoría HIPAA-compliant
-
----
-
-## 📊 Métricas del Sistema
-
-```
-🏛️ OLYMPUS v15 SYSTEM STATUS
-┌────────────────────────────────────────────┐
-│ ✅ Zeus:       ACTIVE    │ 99.999% Uptime  │
-│ ✅ Hades:      ACTIVE    │ Post-Quantum    │
-│ ✅ Poseidón:   ACTIVE    │ WebSocket Ready │
-│ ✅ Hermes:     ACTIVE    │ 1M msg/sec      │
-│ ✅ Erinyes:    ACTIVE    │ 500ms Heartbeat │
-│ ✅ Hestia:     ACTIVE    │ Persistence Layer  │
-│ ✅ Athena:     ACTIVE    │ ML Analytics      │
-│ ✅ Hera:       ACTIVE    │ Data Validation   │
-│ ✅ Apollo:     ACTIVE    │ Event Engine      │
-│ ✅ Artemis:    ACTIVE    │ Search Engine     │
-│ ⏳ 10 others:  PENDING   │ Weeks 6-12        │
-└────────────────────────────────────────────┘
-```
-
----
-
-## 🔧 Arquitectura de Actores
-
-### Comunicación OTP-style
-
-```rust
-// Ejemplo de mensaje entre actores
-use ractor::{Actor, ActorProcessingErr, ActorRef};
-
-// Hermes envía mensaje a Hestia
-let msg = OlympianMessage {
-    sender: "Hermes".to_string(),
-    recipient: "Hestia".to_string(),
-    payload: json!({"action": "cache_get", "key": "user:123"}),
-    timestamp: Instant::now(),
-};
-
-hestia_actor.send_message(msg)?;
-```
-
-### Supervisión con Zeus
-
-```rust
-// Zeus supervisa a todos los actores
-zeus.spawn_child(Hermes::new(), HermesConfig::default())?;
-zeus.spawn_child(Hades::new(), HadesConfig::default())?;
-zeus.spawn_child(Poseidon::new(), PoseidonConfig::default())?;
-
-// Si un actor falla, Zeus lo reinicia automáticamente
-```
-
----
-
-## 📁 Estructura del Proyecto
+## 🔧 Estructura del Proyecto
 
 ```
 rocky/
@@ -370,15 +273,28 @@ rocky/
 │   │   ├── zeus/        # Supervisión y gobernanza
 │   │   ├── hades/       # Seguridad y criptografía
 │   │   ├── poseidon/    # WebSocket y conectividad
-│   │   ├── hermes/      # Mensajería
-│   │   ├── erinyes/     # Monitoreo
-│   │   ├── hestia/      # Persistencia
-│   │   ├── athena/      # Análisis (WIP)
-│   │   └── hera/        # Validación (WIP)
+│   │   ├── hermes/      # Mensajería resiliente
+│   │   ├── erinyes/     # Monitoreo y recuperación
+│   │   ├── hestia/      # Persistencia dual
+│   │   ├── athena/      # Inteligencia y ML
+│   │   ├── hera/        # Validación de datos
+│   │   ├── apollo/      # Motor de eventos
+│   │   ├── artemis/     # Búsqueda full-text
+│   │   ├── chronos/     # Scheduling
+│   │   ├── ares/        # Resolución de conflictos
+│   │   ├── hefesto/     # CI/CD y construcción
+│   │   ├── iris/        # Service mesh
+│   │   ├── moirai/      # Gestión de lifecycle
+│   │   ├── demeter/     # Gestión de recursos
+│   │   ├── dionysus/    # Análisis de datos
+│   │   ├── chaos/       # Chaos engineering
+│   │   ├── nemesis/     # Cumplimiento legal
+│   │   ├── aurora/      # Mantenimiento (WIP)
+│   │   └── aphrodite/   # UI/UX (WIP)
+│   ├── system/           # Sistema core y orquestación
+│   │   └── genesis.rs   # Genesis Bootloader
 │   ├── lib.rs           # Librería core
-│   ├── main.rs          # Binario SSR
-│   └── bin/
-│       └── frontend.rs  # Binario CSR
+│   └── main.rs          # Binario principal
 ├── Cargo.toml
 ├── README.md
 └── .env.example
@@ -386,26 +302,46 @@ rocky/
 
 ---
 
-## 🤝 Contribuir
+## 🎯 Roadmap - ¿Qué Falta?
 
-### Requisitos
+### **🔄 Desarrollo Activo (2 Dioses)**
+
+| Deidad | Estimación | Funcionalidad Clave |
+|--------|------------|-------------------|
+| **🌅 Aurora** | 1-2 semanas | Sistema de mantenimiento, backup automático, restauración, health checks profundos |
+| **💕 Aphrodite** | 2-3 semanas | UI reactiva con Leptos, dashboard de monitoreo, gestión visual del sistema |
+
+### **🚀 Objetivos Futuros**
+
+- **Integración completa** de los 20 dioses en producción
+- **Dashboard visual** para monitoreo del Olimpo
+- **API Gateway** mejorado con rate limiting avanzado
+- **Sistema de plugins** para extender funcionalidades
+- **Testing E2E** completo para todo el sistema
+
+---
+
+## 🤝 Cómo Contribuir
+
+### **Requisitos**
 - Rust 1.75+
-- Docker (opcional)
-- Git
+- Docker (opcional pero recomendado)
+- Experiencia con sistemas distribuidos
 
-### Proceso
-
+### **Proceso de Contribución**
 1. Fork el repositorio
 2. Crea una rama: `git checkout -b feature/nombre`
-3. Commit: `git commit -m "Add: descripción"`
-4. Push: `git push origin feature/nombre`
-5. Abre Pull Request
+3. Implementa tu funcionalidad con tests
+4. Commit: `git commit -m "Add: descripción"`
+5. Push: `git push origin feature/nombre`
+6. Abre Pull Request con descripción detallada
 
-### Estándares de Código
+### **Estándares de Código**
 - Todo código asíncrono con `async/await`
-- Manejo de errores con `thiserror` y `eyre`
-- Documentación con `rustdoc`
-- Tests para todo nuevo actor
+- Manejo robusto de errores con `thiserror` y `eyre`
+- Documentación completa con `rustdoc`
+- Tests unitarios e integración para nuevos actores
+- Seguir patrones OTP-style para comunicación entre actores
 
 ---
 
@@ -417,13 +353,14 @@ MIT License - Ver [LICENSE](LICENSE) para detalles.
 
 ## 🙏 Agradecimientos
 
-- **Rust Community** - Por el ecosistema y las crates
-- **Erlang/OTP** - Por la inspiración en supervisión de actores
-- **SurrealDB Team** - Por la base de datos nativa Rust
-- **Burn Framework** - Por ML en Rust
+- **Rust Community** - Por el ecosistema robusto y crates de alta calidad
+- **Erlang/OTP** - Por la inspiración en patrones de supervisión de actores
+- **SurrealDB Team** - Por la base de datos nativa en Rust
+- **Burn Framework** - Por hacer Machine Learning accesible en Rust
+- **Comunidad Open Source** - Por hacer posible este tipo de ambiciosos proyectos
 
 ---
 
-> **🏛️ OLYMPUS v15: Sistema distribuido de actores con arquitectura divina. 20 dioses especializados trabajando en armonía para lograr disponibilidad eterna y seguridad post-cuántica.**
+> **🏛️ OLYMPUS v15: Un sistema distribuido de 20 actores especializados trabajando en armonía para lograr disponibilidad eterna y seguridad post-cuántica.**
 
-> *"Cada actor cumple su deber divino, Zeus coordina el panteón, Hades protege contra todas las amenazas, y juntos alcanzan la inmortalidad clínica mediante la excelencia tecnológica."*
+> **"Cada actor cumple su deber divino, Zeus coordina el panteón, Hades protege contra todas las amenazas, y juntos alcanzan la inmortalidad tecnológica mediante la excelencia en arquitectura distribuida."**

@@ -48,6 +48,9 @@ pub mod dionysus;       // 🍷 Dionisio - Dios del Vino y Análisis
 // 🏠 PERSISTENCIA (1 dios)
 pub mod hestia;         // 🏠 Hestia - Diosa del Hogar y Persistencia
 
+// 🦋 DIOSITAS DE JUSTICIA (1 dios)
+pub mod nemesis;        // 🦋 Némesis - Diosa de la Justicia Legal y Cumplimiento
+
 // Actor interfaces for v13
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
@@ -78,6 +81,7 @@ pub enum GodName {
     Iris,
     Demeter,
     Dionysus,
+    Nemesis,
     Hestia,
 }
 
@@ -104,6 +108,7 @@ impl std::fmt::Display for GodName {
             GodName::Demeter => write!(f, "Demeter"),
             GodName::Dionysus => write!(f, "Dionysus"),
             GodName::Hestia => write!(f, "Hestia"),
+            GodName::Nemesis => write!(f, "Nemesis"),
         }
     }
 }
@@ -131,6 +136,7 @@ pub enum DivineDomain {
     Resources,           // Demeter
     Analysis,            // Dionysus
     Persistence,         // Hestia
+    LegalCompliance,      // Nemesis
 }
 
 // Estado del Olimpo
@@ -236,3 +242,4 @@ pub use iris::Iris;
 pub use demeter::Demeter;
 pub use dionysus::Dionysus;
 pub use hestia::Hestia;
+pub use nemesis::Nemesis;
