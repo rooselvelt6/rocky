@@ -117,6 +117,20 @@ pub enum ExperimentStatus {
     PendingApproval,
 }
 
+impl std::fmt::Display for ExperimentStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ExperimentStatus::Planned => write!(f, "Planned"),
+            ExperimentStatus::Running => write!(f, "Running"),
+            ExperimentStatus::Paused => write!(f, "Paused"),
+            ExperimentStatus::Completed => write!(f, "Completed"),
+            ExperimentStatus::Failed => write!(f, "Failed"),
+            ExperimentStatus::Cancelled => write!(f, "Cancelled"),
+            ExperimentStatus::PendingApproval => write!(f, "PendingApproval"),
+        }
+    }
+}
+
 /// Experimento Chaos
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Experiment {
@@ -581,7 +595,7 @@ impl ExperimentManager {
         for experiment in history {
             let targets_str = format!("{:?}", experiment.targets);
             let row = format!(
-                "{},{:?},{},{},{},{},{:?},{}\n",
+                "{},{:?},{},{},{},{},{},{}\n",
                 experiment.id,
                 experiment.strategy,
                 targets_str,

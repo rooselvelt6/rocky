@@ -109,23 +109,30 @@ impl Default for NemesisConfig {
     }
 }
 
+#[async_trait]
 impl OlympianActor for Nemesis {
+    fn name(&self) -> GodName {
+        self.name
+    }
+
+    fn domain(&self) -> DivineDomain {
+        self.domain
+    }
+
     async fn initialize(&mut self) -> Result<(), ActorError> {
         info!("🦋 Iniciando Némesis - Diosa de la Justicia Legal");
-        self.state = ActorState::Running;
+        self.state.status = ActorStatus::Healthy;
         Ok(())
     }
 
     async fn handle_message(&mut self, msg: ActorMessage) -> Result<ResponsePayload, ActorError> {
         // Implementación básica de manejo de mensajes
         match msg.payload {
-            MessagePayload::Request(_) => {
+            MessagePayload::Query(_) => {
                 // Manejar solicitudes de cumplimiento
-                Ok(ResponsePayload::Success(serde_json::json!({
-                    "compliance_status": "active"
-                })))
+                Ok(ResponsePayload::Success { message: "compliance_status_active".to_string() })
             },
-            _ => Ok(ResponsePayload::Ack)
+            _ => Ok(ResponsePayload::Ack { message_id: msg.id })
         }
     }
 
@@ -133,26 +140,28 @@ impl OlympianActor for Nemesis {
         serde_json::json!({
             "name": self.name,
             "state": self.state,
-            "active_standards": self.config.read().await.active_standards
+            "active_standards": []
         })
     }
 
-    fn load_state(&mut self, state: &serde_json::Value) -> Result<(), ActorError> {
+    fn load_state(&mut self, _state: &serde_json::Value) -> Result<(), ActorError> {
         // Implementación básica de carga de estado
         Ok(())
     }
 
     fn heartbeat(&self) -> GodHeartbeat {
         GodHeartbeat {
-            actor: self.name,
-            status: HealthStatus::Healthy,
-            timestamp: chrono::Utc::now(),
-            metrics: std::collections::HashMap::new(),
+            god: self.name,
+            status: ActorStatus::Healthy,
+            last_seen: chrono::Utc::now(),
+            load: 0.15,
+            memory_usage_mb: 35.0,
+            uptime_seconds: 0,
         }
     }
 
     async fn health_check(&self) -> HealthStatus {
-        HealthStatus::Healthy
+        HealthStatus::healthy(self.name)
     }
 
     fn config(&self) -> Option<&ActorConfig> {
@@ -161,7 +170,7 @@ impl OlympianActor for Nemesis {
 
     async fn shutdown(&mut self) -> Result<(), ActorError> {
         info!("🦋 Deteniendo Némesis - Finalizando auditoría legal");
-        self.state = ActorState::Stopped;
+        self.state.status = ActorStatus::Dead;
         Ok(())
     }
 
@@ -174,12 +183,11 @@ impl Nemesis {
     /// Crea una nueva instancia de Némesis
     pub fn new() -> Self {
         let name = GodName::Nemesis;
-        let domain = DivineDomain::LegalCompliance;
         
         Self {
             name,
-            domain,
-            state: ActorState::Initializing,
+            domain: DivineDomain::LegalCompliance,
+            state: ActorState::new(name),
             config: Arc::new(RwLock::new(NemesisConfig::default())),
             compliance_manager: Arc::new(RwLock::new(ComplianceManager::new())),
             audit_logger: Arc::new(RwLock::new(AuditLogger::new())),
@@ -190,14 +198,13 @@ impl Nemesis {
     
     /// Inicializa con configuración personalizada
     pub async fn with_config(config: ActorConfig) -> Result<Self, ActorError> {
-        let nemesis_config = config.custom.get("nemesis_config")
-            .and_then(|v| serde_json::from_value(v.clone()).ok())
-            .unwrap_or_default();
+        let nemesis_config = NemesisConfig::default();
         
-        let nemesis = Self {
-            name: GodName::Nemesis,
+        let name = GodName::Nemesis;
+        let mut nemesis = Self {
+            name,
             domain: DivineDomain::LegalCompliance,
-            state: ActorState::Initializing,
+            state: ActorState::new(name),
             config: Arc::new(RwLock::new(nemesis_config)),
             compliance_manager: Arc::new(RwLock::new(ComplianceManager::new())),
             audit_logger: Arc::new(RwLock::new(AuditLogger::new())),

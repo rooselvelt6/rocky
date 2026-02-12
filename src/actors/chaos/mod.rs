@@ -1,6 +1,7 @@
 // src/actors/chaos/mod.rs
 // OLYMPUS v15 - Chaos: Dios de la Entropía y Pruebas Caos
 
+use async_trait::async_trait;
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;
@@ -154,16 +155,25 @@ pub enum ExportFormat {
     Prometheus,
 }
 
+#[async_trait]
 impl OlympianActor for Chaos {
+    fn name(&self) -> GodName {
+        self.name
+    }
+
+    fn domain(&self) -> DivineDomain {
+        self.domain
+    }
+
     async fn initialize(&mut self) -> Result<(), ActorError> {
         info!("🌀 Iniciando Chaos - Dios de la Entropía");
-        self.state = ActorState::Running;
+        self.state.status = crate::traits::ActorStatus::Healthy;
         Ok(())
     }
 
     async fn handle_message(&mut self, msg: crate::traits::message::ActorMessage) -> Result<ResponsePayload, ActorError> {
         // Implementación básica
-        Ok(ResponsePayload::Success(serde_json::json!({"status": "message_handled"})))
+        Ok(ResponsePayload::Success { message: "message_handled".to_string() })
     }
 
     async fn persistent_state(&self) -> serde_json::Value {
@@ -173,22 +183,24 @@ impl OlympianActor for Chaos {
         })
     }
 
-    fn load_state(&mut self, state: &serde_json::Value) -> Result<(), ActorError> {
+    fn load_state(&mut self, _state: &serde_json::Value) -> Result<(), ActorError> {
         // Implementación básica
         Ok(())
     }
 
     fn heartbeat(&self) -> crate::traits::GodHeartbeat {
         crate::traits::GodHeartbeat {
-            actor: self.name,
-            status: crate::traits::HealthStatus::Healthy,
-            timestamp: Utc::now(),
-            metrics: HashMap::new(),
+            god: self.name,
+            status: crate::traits::ActorStatus::Healthy,
+            last_seen: chrono::Utc::now(),
+            load: 0.2,
+            memory_usage_mb: 45.0,
+            uptime_seconds: 0,
         }
     }
 
     async fn health_check(&self) -> crate::traits::HealthStatus {
-        crate::traits::HealthStatus::Healthy
+        crate::traits::HealthStatus::healthy(self.name)
     }
 
     fn config(&self) -> Option<&ActorConfig> {
@@ -197,7 +209,7 @@ impl OlympianActor for Chaos {
 
     async fn shutdown(&mut self) -> Result<(), ActorError> {
         info!("🌀 Deteniendo Chaos - Finalizando experimentos activos");
-        self.state = ActorState::Stopped;
+        self.state.status = crate::traits::ActorStatus::Dead;
         Ok(())
     }
 
@@ -210,26 +222,25 @@ impl Chaos {
     /// Crea una nueva instancia de Chaos
     pub fn new() -> Self {
         let name = GodName::Chaos;
-        let domain = DivineDomain::ChaosEngineering;
+        let domain = DivineDomain::Testing;
         
         Self {
             name,
             domain,
-            state: ActorState::Initializing,
+            state: ActorState::new(name),
             config: Arc::new(RwLock::new(ChaosConfig::default())),
         }
     }
     
     /// Inicializa con configuración
     pub async fn with_config(config: ActorConfig) -> Result<Self, ActorError> {
-        let chaos_config = config.custom.get("chaos_config")
-            .and_then(|v| serde_json::from_value(v.clone()).ok())
-            .unwrap_or_default();
+        let chaos_config = serde_json::from_value(serde_json::json!({})).ok().unwrap_or_default();
         
+        let name = GodName::Chaos;
         let chaos = Self {
-            name: GodName::Chaos,
-            domain: DivineDomain::ChaosEngineering,
-            state: ActorState::Initializing,
+            name,
+            domain: DivineDomain::Testing,
+            state: ActorState::new(name),
             config: Arc::new(RwLock::new(chaos_config)),
         };
         

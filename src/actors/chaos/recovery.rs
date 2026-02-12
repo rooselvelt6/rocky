@@ -554,14 +554,14 @@ impl RecoverySystem {
                 let mut active_recoveries = active_recoveries.write().await;
                 if let Some(recovery) = active_recoveries.get_mut(&recovery_id_clone) {
                     recovery.status = if success { RecoveryStatus::Completed } else { RecoveryStatus::Failed };
-                    recovery.metrics.elapsed_seconds = (Utc::now() - recovery.start_time).num_seconds() as u64;
+                    recovery.metrics.elapsed_seconds = ((Utc::now() - recovery.start_time).num_seconds()) as u64;
                 }
             }
             
             // Emitir evento de completado
             let duration = if let Ok(active_recoveries) = active_recoveries.read().await {
                 if let Some(recovery) = active_recoveries.get(&recovery_id_clone) {
-                    (Utc::now() - recovery.start_time).num_seconds() as u64
+                    (Utc::now().timestamp() - recovery.start_time.timestamp()) as u64
                 } else {
                     0
                 }

@@ -537,7 +537,7 @@ impl DawnSystem {
             post_renewal_metrics: self.collect_post_metrics(&cycle).await,
             observed_improvements: vec!["Mejora en rendimiento general".to_string()],
             detected_issues: vec![],
-            duration_minutes: (Utc::now() - cycle.start_time).num_minutes() as u32,
+            duration_minutes: ((Utc::now().timestamp() - cycle.start_time.timestamp()) / 60) as u32,
             renewal_rating: RenewalRating::Buena,
             recommendations: vec!["Continuar monitoreo".to_string()],
         };
@@ -632,12 +632,14 @@ impl DawnSystem {
         let next_dawn = if now.hour() >= config.dawn_hour as u32 {
             // Si ya pasó la hora del amanecer, programar para mañana
             now.date_naive()
-                .and_hms(config.dawn_hour as u32, 0, 0, 0)
+                .and_hms_opt(config.dawn_hour as u32, 0, 0)
+                .unwrap()
                 .and_utc()
         } else {
             // Programar para hoy a la hora del amanecer
             now.date_naive()
-                .and_hms(config.dawn_hour as u32, 0, 0, 0)
+                .and_hms_opt(config.dawn_hour as u32, 0, 0)
+                .unwrap()
                 .and_utc()
         };
         
@@ -776,11 +778,13 @@ impl CycleScheduler {
         // Calcular próximo amanecer
         let next_dawn = if now.hour() >= *dawn_hour as u32 {
             now.date_naive()
-                .and_hms(*dawn_hour as u32, 0, 0, 0)
+                .and_hms_opt(*dawn_hour as u32, 0, 0)
+                .unwrap()
                 .and_utc()
         } else {
             now.date_naive()
-                .and_hms(*dawn_hour as u32, 0, 0, 0)
+                .and_hms_opt(*dawn_hour as u32, 0, 0)
+                .unwrap()
                 .and_utc()
         };
         

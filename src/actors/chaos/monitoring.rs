@@ -343,7 +343,7 @@ impl ImpactAnalyzer {
         
         {
             let mut active_impacts = self.active_impacts.write().await;
-            active_impacts.insert(experiment_id, impact_state);
+            active_impacts.insert(experiment_id.clone(), impact_state);
         }
         
         info!("📊 Iniciando monitoreo de impacto para experimento: {}", experiment_id);
@@ -392,12 +392,12 @@ impl ImpactAnalyzer {
         if let Some(impact_state) = active_impacts.get_mut(experiment_id) {
             // Actualizar métricas
             impact_state.metrics = HashMap::new();
-            impact_state.metrics.insert("latency".to_string(), new_metrics.average_latency_ms.to_string());
-            impact_state.metrics.insert("error_rate".to_string(), new_metrics.error_rate.to_string());
-            impact_state.metrics.insert("packet_loss".to_string(), new_metrics.packet_loss_rate.to_string());
-            impact_state.metrics.insert("cpu".to_string(), new_metrics.cpu_usage.to_string());
-            impact_state.metrics.insert("memory".to_string(), new_metrics.memory_usage.to_string());
-            impact_state.metrics.insert("success_rate".to_string(), new_metrics.request_success_rate.to_string());
+            impact_state.metrics.insert("latency".to_string(), new_metrics.average_latency_ms);
+            impact_state.metrics.insert("error_rate".to_string(), new_metrics.error_rate);
+            impact_state.metrics.insert("packet_loss".to_string(), new_metrics.packet_loss_rate);
+            impact_state.metrics.insert("cpu".to_string(), new_metrics.cpu_usage);
+            impact_state.metrics.insert("memory".to_string(), new_metrics.memory_usage);
+            impact_state.metrics.insert("success_rate".to_string(), new_metrics.request_success_rate);
             
             // Calcular nuevo nivel de impacto
             let new_impact_level = new_metrics.get_impact_level();

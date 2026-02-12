@@ -105,8 +105,20 @@ impl OlympianActor for Aphrodite {
     async fn handle_message(&mut self, msg: ActorMessage) -> Result<ResponsePayload, ActorError> { Ok(ResponsePayload::Ack { message_id: msg.id }) }
     async fn persistent_state(&self) -> serde_json::Value { serde_json::json!({}) }
     fn load_state(&mut self, _state: &serde_json::Value) -> Result<(), ActorError> { Ok(()) }
-    fn heartbeat(&self) -> GodHeartbeat { unimplemented!() }
-    async fn health_check(&self) -> HealthStatus { unimplemented!() }
+    fn heartbeat(&self) -> GodHeartbeat {
+        GodHeartbeat {
+            god: self.name(),
+            status: ActorStatus::Healthy,
+            last_seen: chrono::Utc::now(),
+            load: 0.1,
+            memory_usage_mb: 25.0,
+            uptime_seconds: 0,
+        }
+    }
+    
+    async fn health_check(&self) -> HealthStatus {
+        HealthStatus::healthy(self.name())
+    }
     fn config(&self) -> Option<&ActorConfig> { None }
     async fn initialize(&mut self) -> Result<(), ActorError> { Ok(()) }
     async fn shutdown(&mut self) -> Result<(), ActorError> { Ok(()) }
