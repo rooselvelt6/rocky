@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 use serde::{Deserialize, Serialize};
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Utc, Timelike};
 use uuid::Uuid;
 
 use crate::actors::GodName;
@@ -317,7 +317,7 @@ impl DawnSystem {
             {
                 let mut active_cycles = self.active_cycles.write().await;
                 if let Some(cycle) = active_cycles.iter_mut().find(|c| c.cycle_id == dawn_id) {
-                    cycle.progress_percentage = progress;
+                    cycle.progress_percentage = progress as f64;
                     cycle.phase = self.determine_phase(progress);
                     cycle.observed_effects.push(format!("Progreso: {}%", progress));
                     
@@ -486,7 +486,7 @@ impl DawnSystem {
                 activation_conditions: Vec::new(),
             };
             
-            scheduler.scheduled_cycles.push(scheduled_cycle);
+            scheduler.scheduled_cycles.write().await.push(scheduled_cycle);
         }
         
         info!("🌅 Ciclo programado: {} en {} minutos", cycle_id, delay_minutes);
@@ -500,7 +500,7 @@ impl DawnSystem {
         let mut active_cycles = self.active_cycles.write().await;
         let cycle_index = active_cycles.iter()
             .position(|c| c.cycle_id == cycle_id)
-            .ok_or(0);
+            .ok_or(0usize)?;
         
         let cycle = &mut active_cycles[cycle_index];
         cycle.status = RenewalStatus::InProgress;

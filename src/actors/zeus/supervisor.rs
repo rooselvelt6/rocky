@@ -3,12 +3,12 @@
 // Árbol de supervisión jerárquica con estrategias de recovery avanzadas
 
 use serde::{Deserialize, Serialize};
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::{HashMap, VecDeque};
 use std::sync::Arc;
 use tokio::sync::{RwLock, mpsc};
-use tokio::time::{interval, Duration, Instant};
+use tokio::time::{interval, Duration};
 use chrono::Utc;
-use tracing::{info, warn, error, debug};
+use tracing::{info, warn, debug, error};
 
 use super::GodName;
 use crate::traits::message::RecoveryStrategy;

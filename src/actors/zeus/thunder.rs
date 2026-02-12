@@ -3,7 +3,6 @@
 // Sistema de broadcast instantáneo a velocidad de la luz
 
 use serde::{Deserialize, Serialize};
-use std::sync::Arc;
 use tokio::sync::broadcast;
 
 /// Thunderbolt - Canal de broadcast de Zeus
@@ -78,21 +77,16 @@ impl Thunderbolt {
     }
 
     pub fn send_actor_started(&self, actor: super::GodName) {
-        let _ = self.broadcast(ThunderEvent::ActorStarted { 
-            actor, 
-        });
+        let _ = self.broadcast(ThunderEvent::ActorStarted { actor });
     }
 
     pub fn send_actor_stopped(&self, actor: super::GodName, reason: String) {
-        let _ = self.broadcast(ThunderEvent::ActorStopped { 
-            actor, 
-            reason, 
-        });
+        let _ = self.broadcast(ThunderEvent::ActorStopped { actor, reason });
     }
 
     pub fn send_emergency(&self, reason: String, _severity: ThunderSeverity) {
-        let _ = self.broadcast(ThunderEvent::Emergency { 
-            reason, 
+        let _ = self.broadcast(ThunderEvent::Emergency {
+            reason,
             severity: ThunderSeverity::Critical,
         });
     }

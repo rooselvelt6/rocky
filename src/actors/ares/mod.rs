@@ -104,7 +104,7 @@ impl Ares {
         
         // Guardar en historial
         let mut history = self.history.write().await;
-        history.mark_resolved(conflict.clone(), result.clone());
+        history.mark_resolved(&conflict.id, result.clone());
         
         // Actualizar estadísticas
         let mut stats = self.stats.write().await;

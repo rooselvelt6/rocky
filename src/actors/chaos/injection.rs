@@ -742,7 +742,7 @@ impl AdvancedFailureInjection {
                         injection_id: id.clone(),
                         failure_type: injection.failure_type,
                         target: injection.target,
-                        final_status: injection.status,
+                        final_status: injection.status.clone(),
                         actual_duration: injection.metrics.elapsed_seconds,
                         final_intensity: injection.intensity,
                         successful: matches!(injection.status, InjectionStatus::Completed),

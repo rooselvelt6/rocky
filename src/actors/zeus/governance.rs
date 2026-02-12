@@ -7,7 +7,7 @@ use tokio::sync::RwLock;
 use std::sync::Arc;
 use std::collections::HashMap;
 use chrono::Utc;
-use tracing::{info, warn, error};
+use tracing::{info, warn};
 
 use super::GodName;
 

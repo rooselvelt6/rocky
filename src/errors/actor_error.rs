@@ -61,6 +61,9 @@ pub enum ActorError {
     #[error("Invalid configuration for actor {god}: {reason}")]
     InvalidConfig { god: GodName, reason: String },
 
+    #[error("Validation error in actor {god}: {reason}")]
+    ValidationError { god: GodName, reason: String },
+
     #[error("Serialization error in actor {god}: {message}")]
     SerializationError { god: GodName, message: String },
 
@@ -88,6 +91,22 @@ impl ActorError {
         Self::InvalidMessage {
             god,
             message: message.to_string(),
+        }
+    }
+
+    pub fn validation_error(god: GodName, reason: &str) -> Self {
+        Self::ValidationError {
+            god,
+            reason: reason.to_string(),
+        }
+    }
+}
+
+impl From<usize> for ActorError {
+    fn from(value: usize) -> Self {
+        Self::Unknown {
+            god: crate::actors::GodName::Unknown,
+            message: format!("Error from usize: {}", value),
         }
     }
 }

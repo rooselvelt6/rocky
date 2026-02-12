@@ -34,11 +34,28 @@ pub enum RegulatoryStandard {
     SOC2,
     ISO27001,
     SOX,
-    PCI_DSS,
-    FISMA,
-    NIST_800_53,
+    PciDss,
+    Fisma,
+    Nist800_53,
     CCPA,
     LOPD,
+}
+
+impl std::fmt::Display for RegulatoryStandard {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            RegulatoryStandard::HIPAA => write!(f, "HIPAA"),
+            RegulatoryStandard::GDPR => write!(f, "GDPR"),
+            RegulatoryStandard::SOC2 => write!(f, "SOC2"),
+            RegulatoryStandard::ISO27001 => write!(f, "ISO27001"),
+            RegulatoryStandard::SOX => write!(f, "SOX"),
+            RegulatoryStandard::PciDss => write!(f, "PCI_DSS"),
+            RegulatoryStandard::Fisma => write!(f, "FISMA"),
+            RegulatoryStandard::Nist800_53 => write!(f, "NIST_800_53"),
+            RegulatoryStandard::CCPA => write!(f, "CCPA"),
+            RegulatoryStandard::LOPD => write!(f, "LOPD"),
+        }
+    }
 }
 
 /// Estado de cumplimiento
@@ -178,6 +195,22 @@ pub enum ViolationType {
     AvailabilityViolation,
 }
 
+impl std::fmt::Display for ViolationType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ViolationType::PrivacyViolation => write!(f, "PrivacyViolation"),
+            ViolationType::SecurityViolation => write!(f, "SecurityViolation"),
+            ViolationType::AccessViolation => write!(f, "AccessViolation"),
+            ViolationType::EncryptionViolation => write!(f, "EncryptionViolation"),
+            ViolationType::AuditViolation => write!(f, "AuditViolation"),
+            ViolationType::DocumentationViolation => write!(f, "DocumentationViolation"),
+            ViolationType::RetentionViolation => write!(f, "RetentionViolation"),
+            ViolationType::IntegrityViolation => write!(f, "IntegrityViolation"),
+            ViolationType::AvailabilityViolation => write!(f, "AvailabilityViolation"),
+        }
+    }
+}
+
 /// Severidad de violación
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub enum ViolationSeverity {
@@ -261,6 +294,7 @@ pub enum EvidenceType {
     NetworkPacket,
     UserAction,
     SystemMetric,
+    LogRecord,
 }
 
 /// Snapshot de cumplimiento
@@ -354,7 +388,7 @@ impl ComplianceManager {
             start_time,
             end_time: Some(Utc::now()),
             duration_seconds: (Utc::now() - start_time).num_seconds() as u64,
-            compliance_status,
+            compliance_status: compliance_status.clone(),
             violations,
             recommendations,
             evidence,
@@ -368,7 +402,8 @@ impl ComplianceManager {
             
             // Mantener solo los últimos 1000 resultados
             if audit_results.len() > 1000 {
-                audit_results.drain(0..(audit_results.len() - 1000));
+                let current_len = audit_results.len();
+                audit_results.drain(0..(current_len - 1000));
             }
         }
         

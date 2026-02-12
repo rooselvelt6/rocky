@@ -375,10 +375,10 @@ impl RuleEngine {
                 logical_operator: LogicalOperator::And,
                 sub_conditions: Vec::new(),
             },
-            enforcement_action: EnforcementAction::BlockAccess,
+            enforcement_action: EnforcementAction::BlockOperation,
             evidence_required: vec![
                 crate::actors::nemesis::compliance::EvidenceType::SystemMetric,
-                crate::actors::nemesis::compliance::EvidenceType::LogRecord,
+                crate::actors::nemesis::compliance::EvidenceType::LogFile,
             ],
             exceptions: Vec::new(),
             status: RuleStatus::Active,
@@ -453,7 +453,7 @@ impl RuleEngine {
             enforcement_action: EnforcementAction::BlockOperation,
             evidence_required: vec![
                 crate::actors::nemesis::compliance::EvidenceType::UserAction,
-                crate::actors::nemesis::compliance::EvidenceType::SystemLog,
+                crate::actors::nemesis::compliance::EvidenceType::SystemMetric,
             ],
             exceptions: Vec::new(),
             status: RuleStatus::Active,
@@ -472,13 +472,14 @@ impl RuleEngine {
     ) -> Result<(bool, f64, Vec<String>), ActorError> {
         // Evaluar sub-condiciones primero si existen
         if !condition.sub_conditions.is_empty() {
-            let sub_results: Vec<_> = condition.sub_conditions.iter()
-                .map(|sub| self.evaluate_condition(sub, context))
-                .collect::<Result<_, _>>()?;
+            let mut sub_results = Vec::new();
+            for sub in &condition.sub_conditions {
+                sub_results.push(self.evaluate_condition(sub, context).await?);
+            }
             
-            let (compliant, confidence, details): Vec<_> = sub_results.iter()
-                .map(|(c, conf, det)| (c, conf, det.clone()))
-                .collect();
+            let compliant: Vec<_> = sub_results.iter().map(|(c, _, _)| *c).collect();
+            let confidence: Vec<_> = sub_results.iter().map(|(_, c, _)| *c).collect();
+            let details: Vec<_> = sub_results.iter().map(|(_, _, d)| d.clone()).collect();
             
             let final_result = match condition.logical_operator {
                 LogicalOperator::And => compliant.iter().all(|c| *c),
@@ -620,8 +621,10 @@ impl RuleEngine {
     /// Agrega una nueva regla
     pub async fn add_rule(&self, rule: LegalRule) -> Result<(), ActorError> {
         let mut rules = self.active_rules.write().await;
+        let rule_id = rule.rule_id.clone();
+        let rule_name = rule.name.clone();
         rules.push(rule);
-        info!("⚖️ Regla agregada: {} ({})", rule.name, rule.rule_id);
+        info!("⚖️ Regla agregada: {} ({})", rule_name, rule_id);
         Ok(())
     }
     

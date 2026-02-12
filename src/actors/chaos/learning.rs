@@ -213,7 +213,7 @@ impl ChaosLearner {
         // Actualizar promedios
         let old_count = strategy_knowledge.total_experiments - 1;
         strategy_knowledge.average_impact = 
-            (strategy_knowledge.average_impact * old_count as f64 + experiment.impact_metrics.overall_score) 
+            (strategy_knowledge.average_impact * old_count as f64 + experiment.impact_metrics.impact_score as f64) 
             / strategy_knowledge.total_experiments as f64;
 
         // Calcular score de efectividad
@@ -291,7 +291,7 @@ impl ChaosLearner {
         }
 
         // Ejemplo: Detectar vulnerabilidades específicas
-        if experiment.impact_metrics.overall_score > 8.0 {
+        if experiment.impact_metrics.impact_score > 8 {
             let pattern = BehaviorPattern {
                 pattern_id: Uuid::new_v4().to_string(),
                 description: "Vulnerabilidad a fallos críticos".to_string(),
@@ -525,10 +525,10 @@ impl ChaosLearner {
         let insights = self.insights.read().await;
 
         Ok(serde_json::json!({
-            "experiment_history": history,
-            "strategy_knowledge": knowledge,
-            "behavior_patterns": patterns,
-            "insights": insights,
+            "experiment_history": *history,
+            "strategy_knowledge": *knowledge,
+            "behavior_patterns": *patterns,
+            "insights": *insights,
             "exported_at": Utc::now()
         }))
     }

@@ -309,7 +309,9 @@ impl HopeManager {
         // Limitar cantidad de eventos
         let config = self.config.read().await;
         if events.len() > config.max_events_retained {
-            events.drain(0..events.len() - config.max_events_retained);
+            let len_to_keep = config.max_events_retained;
+            let current_len = events.len();
+            events.drain(0..current_len - len_to_keep);
         }
     }
     

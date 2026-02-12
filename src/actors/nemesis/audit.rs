@@ -7,6 +7,7 @@ use tokio::sync::RwLock;
 use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};
 use uuid::Uuid;
+use crate::actors::GodName;
 
 use crate::errors::ActorError;
 use crate::actors::nemesis::{
@@ -237,6 +238,16 @@ pub enum ComplianceEvaluationResult {
     Violated,
     /// Regla no aplicable
     NotApplicable,
+}
+
+impl std::fmt::Display for ComplianceEvaluationResult {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ComplianceEvaluationResult::Compliant => write!(f, "Compliant"),
+            ComplianceEvaluationResult::Violated => write!(f, "Violated"),
+            ComplianceEvaluationResult::NotApplicable => write!(f, "NotApplicable"),
+        }
+    }
 }
 
 /// Estadísticas de auditoría
@@ -542,8 +553,7 @@ impl AuditLogger {
         
         {
             let mut trail = self.audit_trail.write().await;
-            let mut active_audits = trail.active_audits;
-            active_audits.insert(session_id.clone(), session);
+            trail.active_audits.insert(session_id.clone(), session);
             
             // Registrar evento de inicio de sesión
             trail.events.push(AuditEvent {
@@ -582,39 +592,46 @@ impl AuditLogger {
             if let Some(session) = trail.active_audits.get_mut(session_id) {
                 session.status = AuditSessionStatus::Completed;
                 session.end_time = Some(Utc::now());
-                session.session_result = Some(result);
-                session.notes = notes;
-                
-                // Registrar evento de fin de sesión
+                session.session_result = Some(result.clone());
+                session.notes = notes.clone();
+            }
+            
+            // Clone session data for event logging
+            let session_clone = trail.active_audits.get(session_id).cloned();
+            
+            // Registrar evento de fin de sesión
+            if let Some(session_data) = session_clone {
                 trail.events.push(AuditEvent {
                     event_id: Uuid::new_v4().to_string(),
                     timestamp: Utc::now(),
                     event_type: AuditEventType::SessionEnded,
                     actor: Some("Nemesis".to_string()),
-                    affected_requirements: vec![format!("{:?}", session.standard)],
+                    affected_requirements: vec![format!("{:?}", session_data.standard)],
                     severity: match result.overall_result {
                         AuditSessionResultType::Successful => AuditSeverity::Info,
                         AuditSessionResultType::Failed => AuditSeverity::Error,
-                        _ => AuditSeverity::Warning,
+                        AuditSessionResultType::Incomplete => AuditSeverity::Warning,
+                        AuditSessionResultType::Cancelled => AuditSeverity::Warning,
                     },
-                    message: format!("Sesión de auditoría finalizada: {}", result.session_id),
+                    message: format!("Sesión de auditoría finalizada para {}", session_data.target),
                     context: std::collections::HashMap::from([
-                        ("result_type".to_string(), serde_json::to_value(&result.overall_result)),
-                        ("session_score".to_string(), serde_json::Value::Number(result.session_score.into())),
-                        ("compliance_level".to_string(), serde_json::to_value(&result.compliance_level)),
+                        ("result_type".to_string(), serde_json::to_value(&result.overall_result).unwrap_or(serde_json::Value::Null)),
+                        ("session_score".to_string(), serde_json::Value::Number(serde_json::Number::from_f64(result.session_score as f64).unwrap_or(serde_json::Number::from(0)))),
+                        ("compliance_level".to_string(), serde_json::to_value(&result.compliance_level).unwrap_or(serde_json::Value::Null)),
                     ]),
                     technical_metadata: AuditTechnicalMetadata::default(),
                 });
                 
-                // Mover a historial de sesiones completadas
-                trail.completed_sessions.push(session.clone());
-                trail.active_audits.remove(session_id);
+                // Incrementar contador de sesiones completadas
+                trail.global_stats.completed_sessions += 1;
             }
+            
+            trail.active_audits.remove(session_id);
             
             // Actualizar estadísticas globales
             trail.global_stats.completed_sessions += 1;
-            trail.global_stats.total_violations += result.violations_summary.total_count;
-            trail.global_stats.critical_violations += result.violations_summary.critical_count;
+            trail.global_stats.total_violations += result.violations_summary.total_count as u64;
+            trail.global_stats.critical_violations += result.violations_summary.critical_count as u64;
             
             info!("📋 Sesión de auditoría finalizada: {}", session_id);
         }
@@ -647,7 +664,7 @@ impl AuditLogger {
         evaluation: &ComplianceEvaluation,
     ) -> Result<(), ActorError> {
         {
-            let trail = self.audit_trail.write().await;
+            let mut trail = self.audit_trail.write().await;
             
             // Agregar evaluación a la sesión
             if let Some(session) = trail.active_audits.get_mut(session_id) {
@@ -664,13 +681,13 @@ impl AuditLogger {
                 severity: match evaluation.result {
                     ComplianceEvaluationResult::Violated => AuditSeverity::Warning,
                     ComplianceEvaluationResult::Compliant => AuditSeverity::Info,
-                    _ => AuditSeverity::Debug,
+                    _ => AuditSeverity::Info,
                 },
                 message: format!("Evaluación de regla {}: {}", evaluation.rule.name, evaluation.result),
                 context: std::collections::HashMap::from([
                     ("rule_id".to_string(), serde_json::Value::String(evaluation.rule.rule_id.clone())),
-                    ("result".to_string(), serde_json::to_value(&evaluation.result)),
-                    ("confidence".to_string(), serde_json::Value::Number(evaluation.confidence)),
+                    ("result".to_string(), serde_json::to_value(&evaluation.result).unwrap_or(serde_json::Value::Null)),
+                    ("confidence".to_string(), serde_json::Value::Number(serde_json::Number::from_f64(evaluation.confidence).unwrap_or(serde_json::Number::from(0)))),
                     ("rule_name".to_string(), serde_json::Value::String(evaluation.rule.name.clone())),
                 ]),
                 technical_metadata: AuditTechnicalMetadata::default(),
@@ -689,7 +706,7 @@ impl AuditLogger {
         {
             // Agregar violación a la sesión
             {
-                let trail = self.audit_trail.write().await;
+            let mut trail = self.audit_trail.write().await;
                 if let Some(session) = trail.active_audits.get_mut(session_id) {
                     session.evaluations.push(ComplianceEvaluation {
                         evaluation_id: Uuid::new_v4().to_string(),
@@ -700,14 +717,20 @@ impl AuditLogger {
                             description: violation.description.clone(),
                             standard: RegulatoryStandard::HIPAA, // Por defecto
                             rule_type: crate::actors::nemesis::rules::RuleType::AccessControl,
-                            severity: violation.severity,
+                severity: match violation.severity {
+                    crate::actors::nemesis::compliance::ViolationSeverity::Info => AuditSeverity::Info,
+                    crate::actors::nemesis::compliance::ViolationSeverity::Low => AuditSeverity::Info,
+                    crate::actors::nemesis::compliance::ViolationSeverity::Medium => AuditSeverity::Warning,
+                    crate::actors::nemesis::compliance::ViolationSeverity::High => AuditSeverity::Error,
+                    crate::actors::nemesis::compliance::ViolationSeverity::Critical => AuditSeverity::Critical,
+                },
                             condition: crate::actors::nemesis::rules::RuleCondition {
                                 expression: "true".to_string(),
                                 available_variables: vec![],
                                 logical_operator: crate::actors::nemesis::rules::LogicalOperator::And,
                                 sub_conditions: vec![],
                             },
-                            enforcement_action: crate::actors::nemesis::rules::EnforcementAction::BlockAccess,
+                            enforcement_action: crate::actors::nemesis::rules::EnforcementAction::BlockOperation,
                             evidence_required: vec![],
                             exceptions: vec![],
                             status: crate::actors::nemesis::rules::RuleStatus::Active,
@@ -728,14 +751,20 @@ impl AuditLogger {
                 timestamp: Utc::now(),
                 event_type: AuditEventType::ViolationDetected,
                 actor: Some("Nemesis".to_string()),
-                affected_requirements: vec!["Security Requirement"],
-                severity: violation.severity,
+                affected_requirements: vec!["Security Requirement".to_string()],
+                severity: match violation.severity {
+                    crate::actors::nemesis::compliance::ViolationSeverity::Info => AuditSeverity::Info,
+                    crate::actors::nemesis::compliance::ViolationSeverity::Low => AuditSeverity::Info,
+                    crate::actors::nemesis::compliance::ViolationSeverity::Medium => AuditSeverity::Warning,
+                    crate::actors::nemesis::compliance::ViolationSeverity::High => AuditSeverity::Error,
+                    crate::actors::nemesis::compliance::ViolationSeverity::Critical => AuditSeverity::Critical,
+                },
                 message: format!("Violación detectada: {}", violation.description),
                 context: std::collections::HashMap::from([
                     ("violation_id".to_string(), serde_json::Value::String(violation.violation_id.clone())),
-                    ("violation_type".to_string(), serde_json::to_value(&violation.violation_type)),
-                    ("severity".to_string(), serde_json::to_value(&violation.severity)),
-                    ("corrective_actions".to_string(), serde_json::Value::Array(violation.corrective_actions.iter().map(|s| s.to_string()).collect())),
+                    ("violation_type".to_string(), serde_json::to_value(&violation.violation_type).unwrap_or(serde_json::Value::Null)),
+                    ("severity".to_string(), serde_json::to_value(&violation.severity).unwrap_or(serde_json::Value::Null)),
+                    ("corrective_actions".to_string(), serde_json::Value::Array(violation.corrective_actions.iter().map(|s| serde_json::Value::String(s.clone())).collect())),
                 ]),
                 technical_metadata: AuditTechnicalMetadata::default(),
             }).await?;
@@ -764,7 +793,7 @@ impl AuditLogger {
                     "status": session.status,
                     "start_time": session.start_time,
                     "end_time": session.end_time,
-                    "duration_minutes": session.end_time.map_or(Utc::now())
+                    "duration_minutes": session.end_time.map_or_else(|| Utc::now(), |x| x)
                         .signed_duration_since(session.start_time).num_minutes() as u32,
                     "evaluations_count": session.evaluations.len(),
                     "result": session.session_result,
@@ -772,19 +801,20 @@ impl AuditLogger {
                 },
                 "events": trail.events.iter()
                     .filter(|e| {
-                        e.actor.as_ref().map_or("Nemesis".to_string(), false) == "Nemesis" ||
+                        e.actor.as_ref().map_or_else(|| "Nemesis".to_string(), |x| x.clone()) == "Nemesis" ||
                         (e.event_type == AuditEventType::SessionStarted || e.event_type == AuditEventType::SessionEnded)
                     })
-                    .take_last(100) // Últimos 100 eventos
-                    .collect(),
+                    .rev().take(100).collect::<Vec<_>>().iter().rev().map(|e| serde_json::to_value(e).unwrap_or(serde_json::Value::Null)).collect::<Vec<_>>(),
                 "statistics": trail.global_stats,
                 "generated_at": Utc::now(),
-                "configuration": config,
+                "configuration": &*config,
             });
             
             // Guardar reporte en archivo
             let report_path = format!("{}/audit_report_{}.json", config.log_directory, session_id);
-            tokio::fs::write(&report_path, serde_json::to_string_pretty(&report))
+            let report_json = serde_json::to_string_pretty(&report)
+                .map_err(|e| ActorError::Serialization { god: GodName::Nemesis, reason: e.to_string() })?;
+            tokio::fs::write(&report_path, report_json)
                 .await
                 .map_err(|e| ActorError::Unknown {
                     god: crate::actors::GodName::Nemesis,
@@ -817,32 +847,29 @@ impl AuditLogger {
             }
             
             // Filtrar por severidad
-            if let Some(min_severity) = &query.min_severity {
-                if !self.severity_meets_requirement(&event.severity, min_severity) {
+            if let Some(severities) = &query.severities {
+                if !severities.contains(&event.severity) {
                     matches = false;
                 }
             }
             
             // Filtrar por rango de tiempo
-            if let (start_time, end_time) = query.time_range {
+            if let Some((start_time, end_time)) = query.date_range {
                 if event.timestamp < *start_time || event.timestamp > *end_time {
                     matches = false;
                 }
             }
             
             // Filtrar por actor
-            if let Some(target_actor) = &query.target_actor {
-                if event.actor.as_ref().map_or("", "") != *target_actor {
+            if let Some(actors) = &query.actors {
+                if !actors.contains(&event.actor.as_ref().map_or("Nemesis".to_string(), |x| x.clone())) {
                     matches = false;
                 }
             }
             
-            // Filtrar por palabras clave
-            if let Some(keywords) = &query.keywords {
-                if !keywords.iter().any(|keyword| 
-                    event.message.to_lowercase().contains(&keyword.to_lowercase()) ||
-                    event.description.to_lowercase().contains(&keyword.to_lowercase())
-                ) {
+            // Filtrar por término de búsqueda
+            if let Some(search_term) = &query.search_term {
+                if !event.message.to_lowercase().contains(&search_term.to_lowercase()) {
                     matches = false;
                 }
             }
@@ -878,13 +905,15 @@ impl AuditLogger {
     /// Exporta el trail de auditoría
     pub async fn export_audit_trail(&self, format: AuditExportFormat) -> Result<String, ActorError> {
         let trail = self.audit_trail.read().await;
+        let trail_clone = trail.clone();
         
         match format {
             AuditExportFormat::JSON => {
                 serde_json::to_string_pretty(&serde_json::json!({
-                    "audit_trail": trail,
+                    "audit_trail": trail_clone,
                     "exported_at": Utc::now(),
                 }))
+                    .map_err(|e| ActorError::Serialization { god: GodName::Nemesis, reason: e.to_string() })
             },
             AuditExportFormat::CSV => {
                 self.export_to_csv(&trail).await
@@ -912,9 +941,9 @@ impl AuditLogger {
                 event.event_id,
                 timestamp_str,
                 format!("{:?}", event.event_type),
-                event.actor.unwrap_or_default("Nemesis".to_string()),
-                event.severity,
-                csv_content.replace("\"", "\"\"").replace("\n", "\\n"),
+                event.actor.as_ref().map_or("Nemesis".to_string(), |x| x.clone()),
+                format!("{:?}", event.severity),
+                requirements_str.replace("\"", "\"\"").replace("\n", "\\n"),
             ));
         }
         
@@ -923,7 +952,8 @@ impl AuditLogger {
     
     /// Exporta a formato estructurado
     async fn export_to_structured(&self, trail: &AuditTrail) -> Result<String, ActorError> {
-        serde_json::to_string_pretty(&trail)
+        serde_json::to_string_pretty(trail)
+            .map_err(|e| ActorError::Serialization { god: GodName::Nemesis, reason: e.to_string() })
     }
 }
 

@@ -7,7 +7,7 @@ use tokio::sync::RwLock;
 use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc, Duration};
 
-use crate::actors::aurora::{RenewalType, RenewalLevel};
+use crate::actors::{GodName, aurora::{RenewalType, RenewalLevel}};
 use crate::errors::ActorError;
 use tracing::info;
 
@@ -293,8 +293,9 @@ impl OpportunityDetector {
         // Verificar límite
         let config = self.config.read().await;
         if active.len() >= config.max_active_opportunities {
-            return Err(ActorError::ValidationError(
-                format!("Límite de {} oportunidades activas alcanzado", config.max_active_opportunities)
+            return Err(ActorError::validation_error(
+                GodName::Aurora,
+                &format!("Límite de {} oportunidades activas alcanzado", config.max_active_opportunities)
             ));
         }
         
@@ -319,21 +320,25 @@ impl OpportunityDetector {
                 OpportunityStatus::Cancelled
             };
             
+            let opportunity_id_clone = opportunity.opportunity_id.clone();
+            let opportunity_title_clone = opportunity.title.clone();
+            
             // Re-agregar si fue aprobada
             if approved {
                 active.push(opportunity.clone());
             } else {
                 // Mover al historial
                 let mut history = self.opportunity_history.write().await;
-                history.push(opportunity);
+                history.push(opportunity.clone());
             }
             
             self.update_statistics(&opportunity, false).await;
             
-            info!("🔍 Oportunidad evaluada {}: {}", opportunity.title, if approved { "APROBADA" } else { "RECHAZADA" });
+            info!("🔍 Oportunidad evaluada {}: {}", opportunity_title_clone, if approved { "APROBADA" } else { "RECHAZADA" });
         } else {
-            return Err(ActorError::ValidationError(
-                format!("Oportunidad {} no encontrada", opportunity_id)
+            return Err(ActorError::validation_error(
+                GodName::Aurora,
+                &format!("Oportunidad {} no encontrada", opportunity_id)
             ));
         }
         
@@ -358,8 +363,9 @@ impl OpportunityDetector {
             
             info!("✅ Oportunidad completada: {} (impacto: {:.1})", opportunity.title, actual_impact);
         } else {
-            return Err(ActorError::ValidationError(
-                format!("Oportunidad {} no encontrada", opportunity_id)
+            return Err(ActorError::validation_error(
+                GodName::Aurora,
+                &format!("Oportunidad {} no encontrada", opportunity_id)
             ));
         }
         

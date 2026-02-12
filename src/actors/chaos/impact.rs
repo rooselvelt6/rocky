@@ -759,7 +759,7 @@ impl ImpactAnalysisSystem {
     
     /// Finaliza un análisis y guarda en historial
     pub async fn complete_analysis(&self, analysis_id: &str) -> Result<ImpactRecord, ActorError> {
-        let (analysis, _) = {
+        let analysis = {
             let mut active = self.active_analyses.write().await;
             active.remove(analysis_id).ok_or_else(|| ActorError::Unknown {
                 god: GodName::Chaos,
@@ -785,7 +785,7 @@ impl ImpactAnalysisSystem {
             });
         
         let impact_summary = ImpactSummary {
-            max_impact_level: max_impact.impact_level,
+            max_impact_level: max_impact.impact_level.clone(),
             affected_systems_count: analysis.system_impacts.len() as u32,
             total_impact_duration: (analysis.last_update - analysis.start_time).num_seconds() as u64,
             overall_impact_score: max_impact.impact_score,

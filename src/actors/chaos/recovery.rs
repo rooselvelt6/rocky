@@ -528,7 +528,7 @@ impl RecoverySystem {
                                 let total_steps = recovery.completed_steps.len() + recovery.pending_steps.len();
                                 recovery.metrics.progress_percentage = 
                                     (recovery.completed_steps.len() as f64 / total_steps as f64) * 100.0;
-                                recovery.metrics.elapsed_seconds = elapsed.num_seconds() as u64;
+                                recovery.metrics.elapsed_seconds = (Utc::now() - recovery.start_time).num_seconds() as u64;
                             }
                         }
                         
@@ -559,14 +559,13 @@ impl RecoverySystem {
             }
             
             // Emitir evento de completado
-            let duration = if let Ok(active_recoveries) = active_recoveries.read().await {
-                if let Some(recovery) = active_recoveries.get(&recovery_id_clone) {
+            let duration = {
+                let active_recoveries_guard = active_recoveries.read().await;
+                if let Some(recovery) = active_recoveries_guard.get(&recovery_id_clone) {
                     (Utc::now().timestamp() - recovery.start_time.timestamp()) as u64
                 } else {
                     0
                 }
-            } else {
-                0
             };
             
             if let Err(_) = recovery_tx.send(

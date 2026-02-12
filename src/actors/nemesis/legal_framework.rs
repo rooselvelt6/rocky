@@ -312,12 +312,12 @@ impl LegalFramework {
             },
         ];
         
-        let mut templates_guard = self.templates.write().await;
+        let mut policy_templates_guard = self.policy_templates.write().await;
         for template in templates {
-            templates_guard.insert(template.name.clone(), template);
+            policy_templates_guard.insert(template.name.clone(), template);
         }
         
-        info!("⚖️ {} plantillas de políticas cargadas", templates_guard.len());
+        info!("⚖️ {} plantillas de políticas cargadas", policy_templates_guard.len());
         Ok(())
     }
     
@@ -350,7 +350,7 @@ impl LegalFramework {
 - **Audit logging**: All access attempts logged.
 - **Data minimization**: Only collect data necessary for care.
 - **Breach notification**: Immediate notification of breaches.
-                "#,
+                "#.to_string(),
             },
             // Documento GDPR
             RegulatoryDocument {
@@ -418,7 +418,7 @@ impl LegalFramework {
 - **Vulnerability Scanning**: Regular security assessments.
 - **Penetration Testing**: Authorized testing methodology.
 - **Security Monitoring**: Real-time threat intelligence.
-                "#,
+                "#.to_string(),
             },
             // Documento ISO 27001
             RegulatoryDocument {
@@ -445,7 +445,7 @@ impl LegalFramework {
 - Physical and environmental security.
 - Secure configuration management.
 - Vulnerability management.
-            "#,
+                "#.to_string(),
             },
             // Documento PCI DSS
             RegulatoryDocument {
@@ -469,7 +469,7 @@ impl LegalFramework {
 - Encrypted card data transmission.
 - Strong cryptography and key management.
 - Access control to cardholder data.
-                "#,
+                "#.to_string(),
             },
         ];
         
@@ -498,6 +498,7 @@ impl LegalFramework {
             .values()
             .filter(|doc| doc.standard == *standard)
             .cloned()
+            .collect::<Vec<_>>()
     }
     
     /// Crea una plantilla de política
@@ -541,7 +542,11 @@ deben personalizar este contenido según los requerimientos específicos.
     pub async fn get_statistics(&self) -> LegalFrameworkStats {
         let documents = self.regulatory_documents.read().await;
         let templates = self.policy_templates.read().await;
-        let analyzer = self.gap_analyzer.read().await;
+        let analyzer_stats = {
+            let analyzer = self.gap_analyzer.read().await;
+            analyzer.metrics.read().await.total_gaps
+        };
+        let templates = self.policy_templates.read().await;
         
         LegalFrameworkStats {
             total_documents: documents.len(),
@@ -551,9 +556,9 @@ deben personalizar este contenido según los requerimientos específicos.
                 RegulatoryStandard::GDPR,
                 RegulatoryStandard::SOC2,
                 RegulatoryStandard::ISO27001,
-                RegulatoryStandard::PCI_DSS,
+                RegulatoryStandard::PciDss,
             ],
-            total_gaps: analyzer.metrics.read().await.total_gaps,
+            total_gaps: analyzer_stats,
             compliance_percentage: 95.0,
             last_analysis: Utc::now(),
         }
@@ -650,7 +655,7 @@ impl GapAnalyzer {
             ComplianceGap {
                 gap_id: "code_001".to_string(),
                 standard: crate::actors::nemesis::compliance::RegulatoryStandard::SOC2,
-                severity: GapSeverity::Medium,
+                severity: GapSeverity::Medio,
                 description: "Logging sensible no encriptado detectado".to_string(),
                 violated_requirement: "SOC2 Requirement 8.1.2".to_string(),
                 evidence: vec![
@@ -668,7 +673,7 @@ impl GapAnalyzer {
             ComplianceGap {
                 gap_id: "code_002".to_string(),
                 standard: crate::actors::nemesis::compliance::RegulatoryStandard::HIPAA,
-                severity: GapSeverity::Critical,
+                severity: GapSeverity::Crítico,
                 description: "Verificación de autenticación no implementada".to_string(),
                 violated_requirement: "HIPAA Requirement 1.3.1".to_string(),
                 evidence: vec![
@@ -686,7 +691,7 @@ impl GapAnalyzer {
             ComplianceGap {
                 gap_id: "code_003".to_string(),
                 standard: crate::actors::nemesis::compliance::RegulatoryStandard::GDPR,
-                severity: GapSeverity::High,
+                severity: GapSeverity::Alto,
                 description: "Derecho al olvido".to_string(),
                 violated_requirement: "GDPR Article 17".to_string(),
                 evidence: vec![
@@ -718,7 +723,7 @@ impl GapAnalyzer {
             ComplianceGap {
                 gap_id: "doc_001".to_string(),
                 standard: crate::actors::nemesis::compliance::RegulatoryStandard::SOC2,
-                severity: GapSeverity::Low,
+                severity: GapSeverity::Bajo,
                 description: "Política de retención de logs no documentada".to_string(),
                 violated_requirement: "SOC2 Requirement 8.5.1".to_string(),
                 evidence: vec!["Sin documentación de retención".to_string()],
@@ -749,7 +754,8 @@ impl GapAnalyzer {
     
     /// Obtiene las métricas del analizador
     async fn get_metrics(&self) -> GapAnalysisMetrics {
-        self.gap_analyzer.read().await.get_metrics().await
+        let analyzer = self.gap_analyzer.read().await;
+        analyzer.metrics.read().await.clone()
     }
 }
 

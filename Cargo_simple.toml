@@ -1,0 +1,15 @@
+# Simple server for demo
+[[bin]]
+name = "simple-server"
+path = "src/simple_server.rs"
+
+[dependencies]
+axum = "0.8"
+tokio = { version = "1.0", features = ["full"] }
+tower = "0.5"
+tower-http = "0.6"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+chrono = { version = "0.4", features = ["serde"] }

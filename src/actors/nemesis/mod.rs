@@ -255,7 +255,7 @@ impl Nemesis {
         
         // Registrar en el log de auditoría
         {
-            let mut audit_logger = self.audit_logger.write().await;
+            let audit_logger = self.audit_logger.read().await;
             audit_logger.log_audit(audit_result.clone()).await?;
         }
         
@@ -278,6 +278,7 @@ impl Nemesis {
     /// Genera reporte de cumplimiento regulatorio
     pub async fn generate_regulatory_report(&self, standard: RegulatoryStandard) -> Result<serde_json::Value, ActorError> {
         let legal_framework = self.legal_framework.read().await;
-        legal_framework.generate_report(standard).await
+        let report = legal_framework.generate_report(standard).await?;
+        Ok(serde_json::to_value(report).map_err(|e| ActorError::Serialization { god: GodName::Nemesis, reason: e.to_string() })?)
     }
 }

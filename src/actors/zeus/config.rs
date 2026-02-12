@@ -5,8 +5,7 @@
 use serde::{Deserialize, Serialize};
 use tokio::sync::{RwLock, watch};
 use std::sync::Arc;
-use std::path::Path;
-use tracing::{info, warn, error};
+use tracing::{info, warn};
 
 /// Ambiente de ejecución
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]

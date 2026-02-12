@@ -418,7 +418,7 @@ impl ImpactAnalyzer {
                 impact_state.alerts.push(alert.clone());
                 
                 // Loguear la alerta
-                warn!("📊 {}: {}", alert.emoji(), alert.message);
+                warn!("📊 {}: {}", alert.severity.emoji(), alert.message);
             }
             
             impact_state.impact_level = new_impact_level;
@@ -441,7 +441,7 @@ impl ImpactAnalyzer {
                     };
                     
                     impact_state.alerts.push(timeout_alert.clone());
-                    error!("📊 {}: {}", timeout_alert.emoji(), timeout_alert.message);
+                    error!("📊 {}: {}", timeout_alert.severity.emoji(), timeout_alert.message);
                 }
             }
         } else {
@@ -502,16 +502,15 @@ impl ImpactAnalyzer {
                 // Calcular métricas finales
                 let mut final_metrics = ImpactMetrics::default();
                 for (key, value) in &impact_state.metrics {
-                    if let Ok(val) = value.parse::<f64>() {
-                        match key.as_str() {
-                            "latency" => final_metrics.average_latency_ms = val,
-                            "error_rate" => final_metrics.error_rate = val,
-                            "packet_loss" => final_metrics.packet_loss_rate = val,
-                            "cpu" => final_metrics.cpu_usage = val,
-                            "memory" => final_metrics.memory_usage = val,
-                            "success_rate" => final_metrics.request_success_rate = val,
-                            _ => {}
-                        }
+                    let val = *value;
+                    match key.as_str() {
+                        "latency" => final_metrics.average_latency_ms = val,
+                        "error_rate" => final_metrics.error_rate = val,
+                        "packet_loss" => final_metrics.packet_loss_rate = val,
+                        "cpu" => final_metrics.cpu_usage = val,
+                        "memory" => final_metrics.memory_usage = val,
+                        "success_rate" => final_metrics.request_success_rate = val,
+                        _ => {}
                     }
                 }
                 
@@ -803,16 +802,15 @@ impl ChaosMonitor {
             let mut metrics = ImpactMetrics::default();
             
             for (key, value) in &impact_state.metrics {
-                if let Ok(val) = value.parse::<f64>() {
-                    match key.as_str() {
-                        "latency" => metrics.average_latency_ms = val,
-                        "error_rate" => metrics.error_rate = val,
-                        "packet_loss" => metrics.packet_loss_rate = val,
-                        "cpu" => metrics.cpu_usage = val,
-                        "memory" => metrics.memory_usage = val,
-                        "success_rate" => metrics.request_success_rate = val,
-                        _ => {}
-                    }
+                let val = *value;
+                match key.as_str() {
+                    "latency" => metrics.average_latency_ms = val,
+                    "error_rate" => metrics.error_rate = val,
+                    "packet_loss" => metrics.packet_loss_rate = val,
+                    "cpu" => metrics.cpu_usage = val,
+                    "memory" => metrics.memory_usage = val,
+                    "success_rate" => metrics.request_success_rate = val,
+                    _ => {}
                 }
             }
             
@@ -852,16 +850,15 @@ impl ChaosMonitor {
             let mut metrics = ImpactMetrics::default();
             
             for (key, value) in &impact_state.metrics {
-                if let Ok(val) = value.parse::<f64>() {
-                    match key.as_str() {
-                        "latency" => metrics.average_latency_ms = val,
-                        "error_rate" => metrics.error_rate = val,
-                        "packet_loss" => metrics.packet_loss_rate = val,
-                        "cpu" => metrics.cpu_usage = val,
-                        "memory" => metrics.memory_usage = val,
-                        "success_rate" => metrics.request_success_rate = val,
-                        _ => {}
-                    }
+                let val = *value;
+                match key.as_str() {
+                    "latency" => metrics.average_latency_ms = val,
+                    "error_rate" => metrics.error_rate = val,
+                    "packet_loss" => metrics.packet_loss_rate = val,
+                    "cpu" => metrics.cpu_usage = val,
+                    "memory" => metrics.memory_usage = val,
+                    "success_rate" => metrics.request_success_rate = val,
+                    _ => {}
                 }
             }
             

@@ -7,7 +7,7 @@ use tokio::sync::RwLock;
 use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};
 
-use crate::actors::aurora::RenewalType;
+use crate::actors::{GodName, aurora::RenewalType};
 use crate::errors::ActorError;
 use tracing::info;
 
@@ -47,6 +47,22 @@ pub enum InspirationLevel {
     Revelation { depth: u8 },
     /// Éxtasis creativo (91-100)
     Ecstasy { transcendence: u8 },
+}
+
+impl std::fmt::Display for InspirationType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            InspirationType::Technical => write!(f, "Técnica"),
+            InspirationType::Creative => write!(f, "Creativa"),
+            InspirationType::Emotional => write!(f, "Emocional"),
+            InspirationType::Spiritual => write!(f, "Espiritual"),
+            InspirationType::Practical => write!(f, "Práctica"),
+            InspirationType::Revolutionary => write!(f, "Revolucionaria"),
+            InspirationType::Healing => write!(f, "Sanadora"),
+            InspirationType::Educational => write!(f, "Educativa"),
+            InspirationType::Artistic => write!(f, "Artística"),
+        }
+    }
 }
 
 impl InspirationLevel {
@@ -260,8 +276,9 @@ impl InspirationEngine {
         // Validar nivel mínimo
         let config = self.config.read().await;
         if inspiration.level.to_numeric() < config.minimum_level_threshold {
-            return Err(ActorError::ValidationError(
-                format!("Nivel de inspiración {} por debajo del umbral mínimo {}", 
+            return Err(ActorError::validation_error(
+                GodName::Aurora,
+                &format!("Nivel de inspiración {} por debajo del umbral mínimo {}", 
                        inspiration.level.to_numeric(), config.minimum_level_threshold)
             ));
         }
@@ -304,7 +321,8 @@ impl InspirationEngine {
         
         // Limitar historial
         if history.len() > 10000 {
-            history.drain(0..history.len() - 10000);
+            let current_len = history.len();
+            history.drain(0..current_len - 10000);
         }
         
         self.update_statistics(inspiration, false).await;
