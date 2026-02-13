@@ -6,8 +6,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, VecDeque};
 use std::sync::Arc;
 use tokio::sync::RwLock;
-use std::time::{Duration, Instant};
-use tracing::{info, warn, error, debug};
+use tracing::{debug, info, warn};
 
 use super::GodName;
 use crate::traits::message::RecoveryStrategy;

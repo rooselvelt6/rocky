@@ -4,8 +4,6 @@
 use chrono::{DateTime, Duration, Utc};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use std::sync::Arc;
-use tokio::sync::RwLock;
 use uuid::Uuid;
 
 use crate::actors::ares::{strategies::ResolutionResult, Conflict, ConflictSeverity, ConflictType};

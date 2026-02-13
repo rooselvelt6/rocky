@@ -8,11 +8,11 @@ use tokio::sync::RwLock;
 use std::collections::HashMap;
 use std::time::{Duration, Instant};
 use argon2::{Argon2, PasswordHasher, PasswordVerifier, password_hash::SaltString, password_hash::rand_core::OsRng};
-use jsonwebtoken::{encode, decode, Header, Algorithm, Validation, EncodingKey, DecodingKey, errors::Error as JwtError};
-use tracing::{info, warn, error};
+use jsonwebtoken::{encode, decode, Header, Algorithm, Validation, EncodingKey, DecodingKey};
+use tracing::{info, warn};
 
 use crate::actors::GodName;
-use crate::actors::hades::audit::{AuditLogger, AuditEntry, AuditResult};
+use crate::actors::hades::audit::{AuditLogger, AuditResult};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PasswordHash {

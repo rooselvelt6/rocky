@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tokio::sync::RwLock;
 use std::time::Duration;
-use tracing::{info, warn, error};
+use tracing::{info, warn};
 
 use crate::actors::{GodName, DivineDomain};
 use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
@@ -19,10 +19,10 @@ pub mod auth;
 pub mod keys;
 pub mod audit;
 
-pub use encryption::{EncryptionService, EncryptedData, EncryptionAlgorithm, SecretKey, EncryptionError};
-pub use auth::{AuthenticationService, PasswordHash, User, Role, Permission, JwtClaims, AuthenticationError};
-pub use keys::{KeyManager, CryptoKey, KeyType, KeyStatus, KeyManagerStats, SecureKeyStorage, KeyManagerError};
-pub use audit::{AuditLogger, AuditEntry, AuditResult, AuditQuery, DataSensitivity, ExportFormat, AuditStats};
+pub use encryption::{EncryptionService, EncryptionAlgorithm};
+pub use auth::{AuthenticationService, User, Role, Permission, JwtClaims};
+pub use keys::{KeyManager, KeyStatus};
+pub use audit::{AuditLogger, AuditResult, AuditQuery, DataSensitivity, ExportFormat};
 
 /// Hades: Guardián de la Seguridad
 /// Parte de la Trinidad Suprema junto con Zeus y Poseidón

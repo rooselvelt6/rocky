@@ -11,7 +11,7 @@ use crate::actors::GodName;
 
 use crate::errors::ActorError;
 use crate::actors::nemesis::{
-    compliance::{ComplianceAudit, ComplianceViolation, EvidenceType, RegulatoryStandard, ComplianceLevel, ViolationSeverity},
+    compliance::{ComplianceViolation, EvidenceType, RegulatoryStandard, ComplianceLevel},
     rules::LegalRule,
 };
 use tracing::info;
@@ -56,7 +56,7 @@ pub struct AuditSearchQuery {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum EventError {
     /// Error de serialización
-    SerializationError(String),
+    SerializationErrorError(String),
     /// Error de escritura
     WriteError(String),
     /// Error de lectura
@@ -76,7 +76,7 @@ pub enum EventError {
 impl std::fmt::Display for EventError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            EventError::SerializationError(msg) => write!(f, "Serialización: {}", msg),
+            EventError::SerializationErrorError(msg) => write!(f, "Serialización: {}", msg),
             EventError::WriteError(msg) => write!(f, "Escritura: {}", msg),
             EventError::ReadError(msg) => write!(f, "Lectura: {}", msg),
             EventError::ValidationError(msg) => write!(f, "Validación: {}", msg),
@@ -710,20 +710,19 @@ impl AuditLogger {
                 if let Some(session) = trail.active_audits.get_mut(session_id) {
                     session.evaluations.push(ComplianceEvaluation {
                         evaluation_id: Uuid::new_v4().to_string(),
-                        rule: LegalRule {
-                            // Crear regla ficticia para la violación
+                        rule:                         LegalRule {
                             rule_id: violation.violation_id.clone(),
                             name: format!("Violación de {}", violation.violation_type),
                             description: violation.description.clone(),
-                            standard: RegulatoryStandard::HIPAA, // Por defecto
+                            standard: RegulatoryStandard::HIPAA,
                             rule_type: crate::actors::nemesis::rules::RuleType::AccessControl,
-                severity: match violation.severity {
-                    crate::actors::nemesis::compliance::ViolationSeverity::Info => AuditSeverity::Info,
-                    crate::actors::nemesis::compliance::ViolationSeverity::Low => AuditSeverity::Info,
-                    crate::actors::nemesis::compliance::ViolationSeverity::Medium => AuditSeverity::Warning,
-                    crate::actors::nemesis::compliance::ViolationSeverity::High => AuditSeverity::Error,
-                    crate::actors::nemesis::compliance::ViolationSeverity::Critical => AuditSeverity::Critical,
-                },
+                            severity: match violation.severity {
+                                crate::actors::nemesis::compliance::ViolationSeverity::Info => crate::actors::nemesis::compliance::ViolationSeverity::Info,
+                                crate::actors::nemesis::compliance::ViolationSeverity::Low => crate::actors::nemesis::compliance::ViolationSeverity::Low,
+                                crate::actors::nemesis::compliance::ViolationSeverity::Medium => crate::actors::nemesis::compliance::ViolationSeverity::Medium,
+                                crate::actors::nemesis::compliance::ViolationSeverity::High => crate::actors::nemesis::compliance::ViolationSeverity::High,
+                                crate::actors::nemesis::compliance::ViolationSeverity::Critical => crate::actors::nemesis::compliance::ViolationSeverity::Critical,
+                            },
                             condition: crate::actors::nemesis::rules::RuleCondition {
                                 expression: "true".to_string(),
                                 available_variables: vec![],
@@ -813,7 +812,7 @@ impl AuditLogger {
             // Guardar reporte en archivo
             let report_path = format!("{}/audit_report_{}.json", config.log_directory, session_id);
             let report_json = serde_json::to_string_pretty(&report)
-                .map_err(|e| ActorError::Serialization { god: GodName::Nemesis, reason: e.to_string() })?;
+                .map_err(|e| ActorError::SerializationError { god: GodName::Nemesis, message: e.to_string() })?;
             tokio::fs::write(&report_path, report_json)
                 .await
                 .map_err(|e| ActorError::Unknown {
@@ -840,29 +839,29 @@ impl AuditLogger {
             let mut matches = true;
             
             // Filtrar por tipo de evento
-            if let Some(event_types) = &query.event_types {
-                if !event_types.contains(&event.event_type) {
+            if !query.event_types.is_empty() {
+                if !query.event_types.contains(&event.event_type) {
                     matches = false;
                 }
             }
             
             // Filtrar por severidad
-            if let Some(severities) = &query.severities {
-                if !severities.contains(&event.severity) {
+            if !query.severities.is_empty() {
+                if !query.severities.contains(&event.severity) {
                     matches = false;
                 }
             }
             
             // Filtrar por rango de tiempo
-            if let Some((start_time, end_time)) = query.date_range {
+            if let Some((ref start_time, ref end_time)) = query.date_range {
                 if event.timestamp < *start_time || event.timestamp > *end_time {
                     matches = false;
                 }
             }
             
             // Filtrar por actor
-            if let Some(actors) = &query.actors {
-                if !actors.contains(&event.actor.as_ref().map_or("Nemesis".to_string(), |x| x.clone())) {
+            if !query.actors.is_empty() {
+                if !query.actors.contains(&event.actor.as_ref().map_or("Nemesis".to_string(), |x| x.clone())) {
                     matches = false;
                 }
             }
@@ -891,7 +890,15 @@ impl AuditLogger {
             (AuditSeverity::Critical, AuditSeverity::Info) => false,
             (AuditSeverity::Info, AuditSeverity::Warning) => false,
             (AuditSeverity::Warning, AuditSeverity::Warning) => true,
+            (AuditSeverity::Error, AuditSeverity::Warning) => true,
+            (AuditSeverity::Critical, AuditSeverity::Warning) => false,
+            (AuditSeverity::Info, AuditSeverity::Error) => false,
+            (AuditSeverity::Warning, AuditSeverity::Error) => false,
             (AuditSeverity::Error, AuditSeverity::Error) => true,
+            (AuditSeverity::Critical, AuditSeverity::Error) => false,
+            (AuditSeverity::Info, AuditSeverity::Critical) => false,
+            (AuditSeverity::Warning, AuditSeverity::Critical) => false,
+            (AuditSeverity::Error, AuditSeverity::Critical) => false,
             (AuditSeverity::Critical, AuditSeverity::Critical) => true,
         }
     }
@@ -913,7 +920,7 @@ impl AuditLogger {
                     "audit_trail": trail_clone,
                     "exported_at": Utc::now(),
                 }))
-                    .map_err(|e| ActorError::Serialization { god: GodName::Nemesis, reason: e.to_string() })
+                    .map_err(|e| ActorError::SerializationError { god: GodName::Nemesis, message: e.to_string() })
             },
             AuditExportFormat::CSV => {
                 self.export_to_csv(&trail).await
@@ -925,7 +932,7 @@ impl AuditLogger {
     }
     
     /// Exporta a formato CSV
-    async fn export_to_csv(&self, trail: &AuditTrail) -> Result<String, EventError> {
+    async fn export_to_csv(&self, trail: &AuditTrail) -> Result<String, ActorError> {
         let mut csv_content = String::new();
         
         // Encabezado CSV
@@ -953,7 +960,7 @@ impl AuditLogger {
     /// Exporta a formato estructurado
     async fn export_to_structured(&self, trail: &AuditTrail) -> Result<String, ActorError> {
         serde_json::to_string_pretty(trail)
-            .map_err(|e| ActorError::Serialization { god: GodName::Nemesis, reason: e.to_string() })
+            .map_err(|e| ActorError::SerializationError { god: GodName::Nemesis, message: e.to_string() })
     }
 }
 
@@ -1008,7 +1015,6 @@ impl Default for AuditAlertSettings {
             alert_critical_violations: true,
             alert_high_violations: true,
             alert_medium_violations: false,
-            alert_low_violations: false,
             alert_channels: vec!["email".to_string(), "slack".to_string()],
             bulk_alert_threshold: 10,
         }

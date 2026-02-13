@@ -7,7 +7,7 @@ use std::collections::{HashMap, VecDeque};
 use std::sync::Arc;
 use tokio::sync::RwLock;
 use std::time::{Duration, Instant};
-use tracing::{info, warn, error, debug};
+use tracing::{warn, error, debug};
 
 use super::GodName;
 

@@ -2,16 +2,16 @@
 // OLYMPUS v15 - Chaos: Dios de la Entropía y Pruebas Caos
 
 use async_trait::async_trait;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;
-use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};
-use uuid::Uuid;
-use tracing::info;
+use tracing::{debug, info, warn};
 
 use crate::actors::{GodName, DivineDomain, ActorConfig, ActorState};
-use crate::traits::{OlympianActor, CommandPayload, ResponsePayload};
+use crate::traits::OlympianActor;
+use crate::traits::message::ResponsePayload;
 use crate::errors::ActorError;
 
 pub mod failure_injection;
@@ -22,10 +22,9 @@ pub mod recovery;
 pub mod injection;
 pub mod impact;
 
-use failure_injection::{FailureInjector, FailureType, FailureSeverity};
-use experiments::{ExperimentManager, Experiment, ChaosStrategy};
-use monitoring::{ChaosMonitor, ImpactAnalyzer, ImpactMetrics};
-use learning::ChaosLearner;
+use failure_injection::{FailureType, FailureSeverity};
+use experiments::ChaosStrategy;
+use monitoring::ImpactMetrics;
 
 /// Chaos - Dios de la Entropía y Pruebas Caos
 #[derive(Debug, Clone)]
@@ -162,7 +161,7 @@ impl OlympianActor for Chaos {
     }
 
     fn domain(&self) -> DivineDomain {
-        self.domain
+        self.domain.clone()
     }
 
     async fn initialize(&mut self) -> Result<(), ActorError> {

@@ -5,13 +5,13 @@
 use async_trait::async_trait;
 use std::sync::Arc;
 use tokio::sync::RwLock;
-use tracing::{info, debug, warn};
+use tracing::{info, debug};
 use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc, Duration};
 use std::collections::HashMap;
 
 use crate::actors::{GodName, DivineDomain};
-use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
+use crate::traits::{OlympianActor, ActorState, ActorConfig, GodHeartbeat, HealthStatus};
 use crate::traits::message::{ActorMessage, MessagePayload, CommandPayload, ResponsePayload, QueryPayload, EventPayload};
 use crate::errors::ActorError;
 

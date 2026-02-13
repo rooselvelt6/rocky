@@ -1,8 +1,7 @@
 // src/actors/moirai/predictions.rs
 // OLYMPUS v15 - Motor de Predicciones Clínicas
 
-use crate::actors::moirai::threads::{FateOutcome, PatientThread, TrajectoryTrend};
-use crate::actors::GodName;
+use crate::actors::moirai::threads::{FateOutcome, PatientThread};
 use crate::errors::ActorError;
 use chrono::{DateTime, Duration, Utc};
 use serde::{Deserialize, Serialize};

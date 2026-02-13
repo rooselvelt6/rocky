@@ -68,7 +68,7 @@ pub struct Transform {
 }
 
 /// Funciones de easing
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum EasingFunction {
     Linear,
     Ease,

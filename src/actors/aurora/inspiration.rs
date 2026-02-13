@@ -7,7 +7,7 @@ use tokio::sync::RwLock;
 use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};
 
-use crate::actors::{GodName, aurora::RenewalType};
+use crate::actors::GodName;
 use crate::errors::ActorError;
 use tracing::info;
 

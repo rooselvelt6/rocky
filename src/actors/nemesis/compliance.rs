@@ -8,7 +8,6 @@ use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};
 
 use crate::errors::ActorError;
-use crate::traits::message::ResponsePayload;
 use tracing::info;
 
 /// Gestor de cumplimiento regulatorio

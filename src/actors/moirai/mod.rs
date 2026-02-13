@@ -3,12 +3,12 @@
 // Responsabilidad: Lifecycle de pacientes, predicciones de outcomes y análisis de trayectorias
 
 use async_trait::async_trait;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;
-use tracing::{info, debug, warn, error};
-use serde::{Deserialize, Serialize};
+use tracing::{debug, info, warn};
 use chrono::{DateTime, Utc, Duration};
-use std::collections::HashMap;
 
 use crate::actors::{GodName, DivineDomain};
 use crate::traits::{OlympianActor, ActorState, ActorConfig, GodHeartbeat, HealthStatus};
@@ -21,10 +21,10 @@ pub mod predictions;
 pub mod trajectories;
 pub mod fate;
 
-pub use threads::{PatientThread, ThreadStatus, ThreadEvent, TrajectoryPoint, TrajectoryTrend, FateOutcome};
+pub use threads::{PatientThread, ThreadStatus, ThreadEvent, TrajectoryPoint, FateOutcome};
 pub use predictions::{PredictionEngine, ClinicalPrediction, PredictionType, RiskAssessment};
 pub use trajectories::TrajectoryAnalyzer;
-pub use fate::{FateEngine, ProbabilityCalculator};
+pub use fate::FateEngine;
 
 /// Moirai - Diosas del Destino y Predicciones
 /// Gestiona el ciclo de vida de pacientes, predice outcomes y analiza trayectorias clínicas

@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 use std::time::{Duration, Instant};
-use zeroize::{Zeroize, ZeroizeOnDrop};
-use tracing::{info, warn, error};
+use zeroize::Zeroize;
+use tracing::{info, warn};
 use ring::rand::{SecureRandom, SystemRandom};
 
 use crate::actors::hades::encryption::{EncryptionAlgorithm, SecretKey, EncryptionError};

@@ -3,12 +3,11 @@
 // Responsabilidad: Detectar, mediar y resolver conflictos entre actores
 
 use async_trait::async_trait;
+use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;
-use tracing::{info, debug, warn, error};
-use serde::{Deserialize, Serialize};
-use chrono::{DateTime, Utc, Duration};
-use std::collections::HashMap;
+use tracing::{debug, error, info, warn};
+use chrono::{DateTime, Duration, Utc};
 
 use crate::actors::{GodName, DivineDomain};
 use crate::traits::{OlympianActor, ActorState, ActorConfig, GodHeartbeat, HealthStatus};

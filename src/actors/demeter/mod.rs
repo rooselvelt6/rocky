@@ -5,8 +5,7 @@
 use async_trait::async_trait;
 use std::sync::Arc;
 use tokio::sync::RwLock;
-use tracing::{info, debug, warn, error};
-use serde::{Deserialize, Serialize};
+use tracing::{debug, error, info, warn};
 use chrono::{DateTime, Utc, Duration};
 
 use crate::actors::{GodName, DivineDomain};

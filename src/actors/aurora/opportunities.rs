@@ -5,11 +5,11 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 use serde::{Deserialize, Serialize};
-use chrono::{DateTime, Utc, Duration};
+use chrono::{DateTime, Utc};
 
-use crate::actors::{GodName, aurora::{RenewalType, RenewalLevel}};
+use crate::actors::{GodName, aurora::RenewalType};
 use crate::errors::ActorError;
-use tracing::info;
+use tracing::{info, warn};
 
 /// Tipos de oportunidades
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -35,7 +35,7 @@ pub enum OpportunityType {
 }
 
 /// Prioridades de oportunidades
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, PartialOrd, Serialize, Deserialize)]
 pub enum OpportunityPriority {
     /// Crítica - actuar inmediatamente
     Critical { urgency_score: u8 },

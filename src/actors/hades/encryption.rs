@@ -8,11 +8,11 @@ use tokio::sync::RwLock;
 use ring::aead::{Nonce, UnboundKey, AES_256_GCM, NonceSequence, OpeningKey, SealingKey, BoundKey, Aad};
 use ring::rand::{SecureRandom, SystemRandom};
 use chacha20poly1305::{ChaCha20Poly1305, Key, Nonce as ChaChaNonce};
-use chacha20poly1305::aead::{Aead, KeyInit, Payload};
+use chacha20poly1305::aead::{Aead, KeyInit};
 use zeroize::{Zeroize, ZeroizeOnDrop};
-use tracing::{info, warn, error};
+use tracing::{info, warn};
 
-use crate::actors::hades::keys::{KeyManager, KeyType};
+use crate::actors::hades::keys::KeyManager;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EncryptedData {

@@ -6,10 +6,9 @@ use std::sync::Arc;
 use tokio::sync::RwLock;
 use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};
-use uuid::Uuid;
 
 use crate::errors::ActorError;
-use crate::actors::nemesis::compliance::{RegulatoryStandard, ComplianceLevel};
+use crate::actors::nemesis::compliance::RegulatoryStandard;
 use tracing::info;
 
 /// Framework legal regulatorio para Némesis
@@ -84,7 +83,7 @@ pub struct RegulatoryDocument {
     /// Fecha de publicación
     pub publication_date: DateTime<Utc>,
     /// Contenido del documento
-    content: String,
+    pub content: String,
     /// URL del documento
     pub url: Option<String>,
     /// Estátus del documento
@@ -96,7 +95,7 @@ pub struct RegulatoryDocument {
     /// Región aplicable
     pub jurisdiction: Vec<String>,
     /// Citaciones relevantes
-    citations: Vec<String>,
+    pub citations: Vec<String>,
 }
 
 /// Estados de documento
@@ -119,7 +118,7 @@ pub enum DocumentStatus {
 }
 
 /// Analizador de gaps de cumplimiento
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone)]
 pub struct GapAnalyzer {
     /// Configuración del analizador
     config: Arc<RwLock<GapAnalyzerConfig>>,
@@ -314,7 +313,7 @@ impl LegalFramework {
         
         let mut policy_templates_guard = self.policy_templates.write().await;
         for template in templates {
-            policy_templates_guard.insert(template.name.clone(), template);
+            policy_templates_guard.insert(template.standard.clone(), template);
         }
         
         info!("⚖️ {} plantillas de políticas cargadas", policy_templates_guard.len());
@@ -393,7 +392,7 @@ impl LegalFramework {
 3. Audit Trail**: Complete logging of data access.
 4. Data Subject Rights**: Tools for data subject requests.
 5. Breach Response: 24-48 hour notification window.
-                "#,
+                "#.to_string(),
             },
             // Documento SOX
             RegulatoryDocument {
@@ -451,7 +450,7 @@ impl LegalFramework {
             RegulatoryDocument {
                 document_id: "pci_dss_v4".to_string(),
                 title: "PCI DSS Requirements".to_string(),
-                standard: RegulatoryStandard::PCI_DSS,
+                standard: RegulatoryStandard::PciDss,
                 version: "4.0".to_string(),
                 publication_date: Utc::now(),
                 url: Some("https://www.pcisecuritystandards.org/".to_string()),
@@ -474,6 +473,7 @@ impl LegalFramework {
         ];
         
         // Agregar documentos al hashmap
+        let doc_count = documents.len();
         {
             let mut docs = self.regulatory_documents.write().await;
             for doc in documents {
@@ -481,7 +481,7 @@ impl LegalFramework {
             }
         }
         
-        info!("📚 Cargados {} documentos regulatorios", documents.len());
+        info!("📚 Cargados {} documentos regulatorios", doc_count);
         Ok(())
     }
     
@@ -542,11 +542,8 @@ deben personalizar este contenido según los requerimientos específicos.
     pub async fn get_statistics(&self) -> LegalFrameworkStats {
         let documents = self.regulatory_documents.read().await;
         let templates = self.policy_templates.read().await;
-        let analyzer_stats = {
-            let analyzer = self.gap_analyzer.read().await;
-            analyzer.metrics.read().await.total_gaps
-        };
-        let templates = self.policy_templates.read().await;
+        let analyzer = self.gap_analyzer.read().await;
+        let detected_gaps = analyzer.detected_gaps.read().await;
         
         LegalFrameworkStats {
             total_documents: documents.len(),
@@ -558,7 +555,7 @@ deben personalizar este contenido según los requerimientos específicos.
                 RegulatoryStandard::ISO27001,
                 RegulatoryStandard::PciDss,
             ],
-            total_gaps: analyzer_stats,
+            total_gaps: detected_gaps.len() as u32,
             compliance_percentage: 95.0,
             last_analysis: Utc::now(),
         }
@@ -709,7 +706,7 @@ impl GapAnalyzer {
         
         {
             let mut gaps = self.detected_gaps.write().await;
-            *gaps = gaps_detected;
+            *gaps = gaps_detected.clone();
         }
         
         info!("🔍 Análisis de gaps completado: {} gaps detectados", gaps_detected.len());
@@ -739,7 +736,7 @@ impl GapAnalyzer {
         
         {
             let mut gaps = self.detected_gaps.write().await;
-            *gaps = doc_gaps;
+            *gaps = doc_gaps.clone();
         }
         
         info!("🔍 Análisis de documentación completado: {} gaps detectados", doc_gaps.len());
@@ -754,8 +751,8 @@ impl GapAnalyzer {
     
     /// Obtiene las métricas del analizador
     async fn get_metrics(&self) -> GapAnalysisMetrics {
-        let analyzer = self.gap_analyzer.read().await;
-        analyzer.metrics.read().await.clone()
+        let metrics = self.metrics.read().await;
+        metrics.clone()
     }
 }
 
@@ -765,6 +762,7 @@ impl Default for GapAnalysisMetrics {
             total_gaps: 0,
             gaps_by_severity: HashMap::new(),
             gaps_by_category: HashMap::new(),
+            gaps_by_standard: HashMap::new(),
             compliance_percentage: 95.0,
             critical_gaps: 0,
             severity_trend: Vec::new(),

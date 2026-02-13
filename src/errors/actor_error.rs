@@ -105,7 +105,7 @@ impl ActorError {
 impl From<usize> for ActorError {
     fn from(value: usize) -> Self {
         Self::Unknown {
-            god: crate::actors::GodName::Unknown,
+            god: GodName::Zeus,
             message: format!("Error from usize: {}", value),
         }
     }

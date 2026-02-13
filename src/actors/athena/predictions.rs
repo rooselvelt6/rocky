@@ -1,8 +1,8 @@
 // src/actors/athena/predictions.rs
 // Predictive Analytics Engine
 
+use super::analysis::PatientAnalysisResult;
 use serde::{Deserialize, Serialize};
-use super::analysis::{PatientAnalysisResult, TrendDirection};
 
 /// Prediction Engine for clinical outcomes
 #[derive(Debug, Clone)]
@@ -100,7 +100,8 @@ impl PredictionEngine {
 
         // Check for good prognostic signs
         if let Some(&glasgow) = analysis.scale_correlations.get("glasgow") {
-            if glasgow > 0.8 { // GCS > 12
+            if glasgow > 0.8 {
+                // GCS > 12
                 probability += 10.0;
             }
         }
@@ -241,7 +242,10 @@ impl PredictionEngine {
         indicators
     }
 
-    fn generate_decision_points(hours: u32, deterioration: &DeteriorationPrediction) -> Vec<DecisionPoint> {
+    fn generate_decision_points(
+        hours: u32,
+        deterioration: &DeteriorationPrediction,
+    ) -> Vec<DecisionPoint> {
         let mut points = Vec::new();
 
         match deterioration.severity {

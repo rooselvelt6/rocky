@@ -3,15 +3,19 @@
 // Cache multi-nivel con políticas avanzadas: TTL, LRU, LFU, Write-Through, Write-Behind
 
 use std::sync::Arc;
+use tokio::sync::Mutex;
 use std::collections::{HashMap, HashSet, VecDeque};
+use std::time::Instant;
 use serde::{Deserialize, Serialize};
-use tokio::sync::{RwLock, Mutex};
-use tokio::time::{interval, Duration, Instant};
-use tracing::{debug, info, warn, error};
+use tokio::sync::RwLock;
+use tokio::time::{interval, Duration as TokioDuration};
+use tracing::{debug, info, warn};
 
 use crate::infrastructure::ValkeyStore;
 use crate::errors::PersistenceError;
-use crate::actors::hestia::sync::{SyncManager, SyncRecord, SyncStatus};
+use crate::actors::hestia::sync::SyncManager;
+
+pub use tokio::time::Duration;
 
 /// Política de escritura en cache
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]

@@ -78,6 +78,7 @@ pub enum ComponentType {
     MetricCard,
     StatusIndicator,
     CommandButton,
+    ControlPanel,
 }
 
 /// Estilos de componente

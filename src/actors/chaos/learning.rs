@@ -1,7 +1,7 @@
 // src/actors/chaos/learning.rs
 // OLYMPUS v15 - Chaos Learning: Sistema de Aprendizaje Automático para Optimización de Estrategias
 
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 

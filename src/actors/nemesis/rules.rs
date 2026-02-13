@@ -6,7 +6,7 @@ use std::sync::Arc;
 use tokio::sync::RwLock;
 use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};
-use regex::Regex;
+use futures::future::BoxFuture;
 
 use crate::errors::ActorError;
 use crate::actors::nemesis::compliance::{RegulatoryStandard, ViolationSeverity, EvidenceType};
@@ -465,40 +465,43 @@ impl RuleEngine {
     }
     
     /// Evalúa una condición de regla
-    async fn evaluate_condition(
-        &self,
-        condition: &RuleCondition,
-        context: &HashMap<String, serde_json::Value>,
-    ) -> Result<(bool, f64, Vec<String>), ActorError> {
-        // Evaluar sub-condiciones primero si existen
-        if !condition.sub_conditions.is_empty() {
-            let mut sub_results = Vec::new();
-            for sub in &condition.sub_conditions {
-                sub_results.push(self.evaluate_condition(sub, context).await?);
+    fn evaluate_condition<'a>(
+        &'a self,
+        condition: &'a RuleCondition,
+        context: &'a HashMap<String, serde_json::Value>,
+    ) -> BoxFuture<'a, Result<(bool, f64, Vec<String>), ActorError>> {
+        Box::pin(async move {
+            // Evaluar sub-condiciones primero si existen
+            if !condition.sub_conditions.is_empty() {
+                let mut sub_results: Vec<(bool, f64, Vec<String>)> = Vec::new();
+                for sub in &condition.sub_conditions {
+                    let result = self.evaluate_condition(sub, context).await?;
+                    sub_results.push(result);
+                }
+                
+                let compliant: Vec<bool> = sub_results.iter().map(|(c, _, _)| *c).collect();
+                let confidence: Vec<f64> = sub_results.iter().map(|(_, c, _)| *c).collect();
+                let details: Vec<Vec<String>> = sub_results.iter().map(|(_, _, d)| d.clone()).collect();
+                
+                let final_result = match condition.logical_operator {
+                    LogicalOperator::And => compliant.iter().all(|c| *c),
+                    LogicalOperator::Or => compliant.iter().any(|c| *c),
+                    LogicalOperator::Not => !compliant.first().copied().unwrap_or(true),
+                    LogicalOperator::Xor => compliant.iter().filter(|c| **c).count() == 1,
+                };
+                
+                let avg_confidence = confidence.iter().sum::<f64>() / confidence.len() as f64;
+                let all_details: Vec<String> = details.into_iter().flatten().collect();
+                
+                return Ok((final_result, avg_confidence, all_details));
             }
             
-            let compliant: Vec<_> = sub_results.iter().map(|(c, _, _)| *c).collect();
-            let confidence: Vec<_> = sub_results.iter().map(|(_, c, _)| *c).collect();
-            let details: Vec<_> = sub_results.iter().map(|(_, _, d)| d.clone()).collect();
+            // Evaluar expresión principal
+            let (result, confidence) = self.evaluate_expression(&condition.expression, context).await?;
+            let details = vec![format!("Expression: {}", condition.expression)];
             
-            let final_result = match condition.logical_operator {
-                LogicalOperator::And => compliant.iter().all(|c| *c),
-                LogicalOperator::Or => compliant.iter().any(|c| *c),
-                LogicalOperator::Not => !compliant.first().unwrap_or(true),
-                LogicalOperator::Xor => compliant.iter().filter(|c| *c).count() == 1,
-            };
-            
-            let avg_confidence = confidence.iter().sum::<f64>() / confidence.len() as f64;
-            let all_details: Vec<_> = details.into_iter().flatten().collect();
-            
-            return Ok((final_result, avg_confidence, all_details));
-        }
-        
-        // Evaluar expresión principal
-        let (result, confidence) = self.evaluate_expression(&condition.expression, context).await?;
-        let details = vec![format!("Expression: {}", condition.expression)];
-        
-        Ok((result, confidence, details))
+            Ok((result, confidence, details))
+        })
     }
     
     /// Evalúa una expresión booleana
@@ -531,7 +534,7 @@ impl RuleEngine {
     fn json_to_hashmap(&self, json: &serde_json::Value) -> HashMap<String, serde_json::Value> {
         match json {
             serde_json::Value::Object(map) => {
-                map.into_iter().collect()
+                map.iter().map(|(k, v)| (k.clone(), v.clone())).collect()
             },
             _ => HashMap::new(),
         }

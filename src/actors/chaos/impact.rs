@@ -1,7 +1,7 @@
 // src/actors/chaos/impact.rs
 // OLYMPUS v15 - Sistema Avanzado de Análisis de Impacto para Chaos
 
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 use serde::{Deserialize, Serialize};

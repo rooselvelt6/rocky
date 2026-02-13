@@ -3,7 +3,6 @@
 // Envío de mensajes a múltiples destinatarios
 
 use serde::{Deserialize, Serialize};
-use std::sync::Arc;
 use tokio::sync::broadcast;
 
 use super::GodName;

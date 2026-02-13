@@ -3,11 +3,10 @@
 // Cola de mensajes por dios con procesamiento real
 
 use tokio::sync::{mpsc, RwLock};
-use std::time::Instant;
 use std::sync::Arc;
 use serde::{Deserialize, Serialize};
 use std::collections::VecDeque;
-use tracing::{info, warn, debug};
+use tracing::{warn, debug};
 
 use super::GodName;
 use crate::traits::message::ActorMessage;

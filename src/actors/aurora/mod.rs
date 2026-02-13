@@ -7,7 +7,7 @@ use tokio::sync::RwLock;
 
 use crate::actors::{GodName, DivineDomain};
 use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
-use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+use crate::traits::message::{ActorMessage, ResponsePayload};
 use crate::errors::ActorError;
 
 pub mod dawn;
@@ -112,25 +112,35 @@ impl OlympianActor for Aurora {
         use crate::traits::GodHeartbeat;
         
         GodHeartbeat {
-            god_name: GodName::Aurora,
-            timestamp: chrono::Utc::now(),
-            status: crate::traits::HealthStatus::Healthy,
-            uptime_seconds: 3600,
+            god: GodName::Aurora,
+            status: crate::traits::ActorStatus::Healthy,
+            last_seen: chrono::Utc::now(),
+            load: 12.5,
             memory_usage_mb: 45.2,
-            cpu_usage_percent: 12.5,
-            message: Some("🌅 Aurora operando con renovación activa".to_string()),
+            uptime_seconds: 3600,
         }
     }
     
     async fn health_check(&self) -> HealthStatus {
         let hope_level = *self.hope_level.read().await;
         
-        if hope_level >= 50.0 {
-            crate::traits::HealthStatus::Healthy
+        let status = if hope_level >= 50.0 {
+            ActorStatus::Healthy
         } else if hope_level >= 25.0 {
-            crate::traits::HealthStatus::Degraded
+            ActorStatus::Degraded
         } else {
-            crate::traits::HealthStatus::Critical
+            ActorStatus::Unhealthy
+        };
+        
+        HealthStatus {
+            god: GodName::Aurora,
+            status,
+            uptime_seconds: 3600,
+            message_count: 0,
+            error_count: 0,
+            last_error: None,
+            memory_usage_mb: 45.2,
+            timestamp: chrono::Utc::now(),
         }
     }
     

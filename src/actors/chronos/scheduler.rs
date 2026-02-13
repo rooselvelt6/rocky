@@ -6,7 +6,7 @@ use crate::actors::GodName;
 use crate::errors::ActorError;
 use chrono::{DateTime, Datelike, Timelike, Utc};
 use serde::{Deserialize, Serialize};
-use std::collections::{BTreeMap, HashMap};
+use std::collections::BTreeMap;
 
 /// Scheduler principal de tareas
 #[derive(Debug, Clone)]

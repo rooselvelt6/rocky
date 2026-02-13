@@ -7,8 +7,8 @@ use std::sync::Arc;
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::time::{Duration, Instant};
 use serde::{Deserialize, Serialize};
-use tokio::sync::{RwLock, Mutex, mpsc};
-use tokio::time::{interval, sleep, timeout};
+use tokio::sync::{RwLock, mpsc};
+use tokio::time::{interval, sleep};
 use tracing::{debug, info, warn, error, instrument};
 
 use crate::infrastructure::{ValkeyStore, SurrealStore};

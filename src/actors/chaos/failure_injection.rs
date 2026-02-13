@@ -8,13 +8,13 @@ use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
-use tracing::{info, warn, error};
+use tracing::{info, warn};
 
 use crate::actors::GodName;
 use crate::errors::ActorError;
 
 /// Tipos de fallos que se pueden inyectar
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum FailureType {
     /// Fallo de red (latencia alta)
     NetworkLatency {

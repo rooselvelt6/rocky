@@ -12,7 +12,7 @@ use tracing::info;
 
 use crate::actors::GodName;
 use crate::errors::ActorError;
-use super::{FailureType, FailureSeverity};
+use super::FailureType;
 
 /// Estrategias de experimentos Chaos
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]

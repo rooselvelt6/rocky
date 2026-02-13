@@ -7,14 +7,13 @@ use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tokio::sync::{RwLock, mpsc};
 use tokio::time::{interval, Duration};
-use tracing::{info, warn, error, debug};
+use tracing::{info, warn};
 
 use crate::actors::{GodName, DivineDomain};
 use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
 use crate::traits::message::{ActorMessage, MessagePayload, CommandPayload, ResponsePayload, QueryPayload, RecoveryStrategy};
 use crate::infrastructure::ValkeyStore;
 use crate::errors::ActorError;
-use serde_json::json;
 
 pub mod heartbeat;
 pub mod recovery;

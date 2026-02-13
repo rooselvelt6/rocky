@@ -3,12 +3,12 @@
 // Responsabilidad: Gestión de configuraciones, validación, backups y migraciones
 
 use async_trait::async_trait;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;
-use tracing::{info, debug, warn, error};
-use serde::{Deserialize, Serialize};
+use tracing::{debug, info, warn};
 use chrono::{DateTime, Utc};
-use std::collections::HashMap;
 
 use crate::actors::{GodName, DivineDomain};
 use crate::traits::{OlympianActor, ActorState, ActorConfig, GodHeartbeat, HealthStatus};
@@ -21,10 +21,10 @@ pub mod validation;
 pub mod backup;
 pub mod migration;
 
-pub use config::{ConfigManager, Configuration, ConfigEntry};
-pub use validation::{SchemaValidator, ValidationResult, ValidationError};
+pub use config::{ConfigManager, ConfigEntry};
+pub use validation::{SchemaValidator, ValidationResult};
 pub use backup::{BackupManager, Backup, BackupType};
-pub use migration::{MigrationManager, Migration, MigrationStatus};
+pub use migration::MigrationManager;
 
 /// Hefesto - Dios de la Configuración
 /// Gestiona configuraciones del sistema, validación, backups y migraciones

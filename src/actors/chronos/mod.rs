@@ -3,12 +3,11 @@
 // Responsabilidad: Programación y ejecución de tareas con sintaxis cron
 
 use async_trait::async_trait;
+use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;
-use tracing::{info, debug, warn, error};
-use serde::{Deserialize, Serialize};
+use tracing::{debug, error, info, warn};
 use chrono::{DateTime, Utc, Duration};
-use std::collections::HashMap;
 
 use crate::actors::{GodName, DivineDomain};
 use crate::traits::{OlympianActor, ActorState, ActorConfig, GodHeartbeat, HealthStatus};
@@ -21,7 +20,7 @@ pub mod tasks;
 pub mod time_events;
 pub mod statistics;
 
-pub use scheduler::{TaskScheduler, CronExpression};
+pub use scheduler::TaskScheduler;
 pub use tasks::{ScheduledTask, TaskDefinition, TaskStatus, TaskType, TaskResult};
 pub use time_events::TimeEvent;
 pub use statistics::SchedulerMetrics;

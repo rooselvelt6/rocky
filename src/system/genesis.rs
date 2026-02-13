@@ -121,7 +121,7 @@ impl Genesis {
         addToMount(&mut senders, &mut runners, Box::new(Chronos::new().await)).await;
         addToMount(&mut senders, &mut runners, Box::new(Iris::new().await)).await;
         addToMount(&mut senders, &mut runners, Box::new(Moirai::new().await)).await;
-        addToMount(&mut senders, &mut runners, Box::new(Chaos::new().await)).await;
+        addToMount(&mut senders, &mut runners, Box::new(Chaos::new())).await;
         addToMount(&mut senders, &mut runners, Box::new(Aurora::new().await)).await;
 
 

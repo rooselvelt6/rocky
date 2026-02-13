@@ -7,7 +7,7 @@ use tokio::sync::RwLock;
 
 use crate::actors::{GodName, DivineDomain};
 use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
-use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+use crate::traits::message::{ActorMessage, ResponsePayload};
 use crate::errors::ActorError;
 
 pub mod theme;

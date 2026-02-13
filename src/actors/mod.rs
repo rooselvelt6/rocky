@@ -52,11 +52,7 @@ pub mod hestia;         // 🏠 Hestia - Diosa del Hogar y Persistencia
 pub mod nemesis;        // 🦋 Némesis - Diosa de la Justicia Legal y Cumplimiento
 
 // Actor interfaces for v13
-use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
-use std::sync::Arc;
-use tokio::sync::RwLock;
 
 // Enum de todos los nombres de dioses
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]

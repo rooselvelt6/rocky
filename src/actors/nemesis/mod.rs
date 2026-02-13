@@ -2,34 +2,29 @@
 // OLYMPUS v15 - Némesis: Diosa de la Justicia Legal y Cumplimiento
 
 use async_trait::async_trait;
+use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;
+use chrono::Utc;
+use uuid::Uuid;
 
 use serde::{Deserialize, Serialize};
 use crate::actors::{GodName, DivineDomain};
 use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
 use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
 use crate::errors::ActorError;
-use tracing::info;
+use tracing::{debug, info, warn};
 
 pub mod compliance;
 pub mod audit;
 pub mod rules;
 pub mod legal_framework;
 
-use compliance::{ComplianceManager, ComplianceStatus, ViolationType, ComplianceAudit, RegulatoryStandard};
-use audit::{AuditLogger, AuditTrail};
-use rules::{RuleEngine, LegalRule, EnforcementLevel};
+use compliance::{ComplianceManager, ComplianceStatus, ComplianceAudit, ViolationType, RegulatoryStandard};
+use audit::{AuditLogger, AuditEvent, AuditEventType, AuditSeverity, AuditTechnicalMetadata};
+use rules::{RuleEngine, LegalRule};
 use legal_framework::LegalFramework;
 
-/// Némesis - Diosa de la Justicia Legal y Cumplimiento
-/// 
-/// Responsabilidades:
-/// - Gestión de cumplimiento regulatorio (HIPAA, GDPR, etc.)
-/// - Auditoría legal y trazabilidad de acciones
-/// - Aplicación de reglas y políticas de seguridad
-/// - Monitoreo de violaciones y alertas regulatorias
-/// - Gestión de documentación legal y evidencia
 #[derive(Debug, Clone)]
 pub struct Nemesis {
     name: GodName,
@@ -116,7 +111,7 @@ impl OlympianActor for Nemesis {
     }
 
     fn domain(&self) -> DivineDomain {
-        self.domain
+        self.domain.clone()
     }
 
     async fn initialize(&mut self) -> Result<(), ActorError> {
@@ -255,8 +250,27 @@ impl Nemesis {
         
         // Registrar en el log de auditoría
         {
-            let audit_logger = self.audit_logger.read().await;
-            audit_logger.log_audit(audit_result.clone()).await?;
+            let mut audit_logger = self.audit_logger.write().await;
+            audit_logger.log_event(AuditEvent {
+                event_id: Uuid::new_v4().to_string(),
+                timestamp: Utc::now(),
+                event_type: AuditEventType::SessionEnded,
+                actor: Some("Nemesis".to_string()),
+                affected_requirements: vec![target.clone()],
+                severity: AuditSeverity::Info,
+                message: format!("Auditoría completada para: {}", target),
+                context: Default::default(),
+                technical_metadata: AuditTechnicalMetadata {
+                    client_ip: None,
+                    user_agent: None,
+                    http_reference: None,
+                    session_id: None,
+                    request_id: None,
+                    component: "Nemesis".to_string(),
+                    software_version: Some("v15".to_string()),
+                    platform: Some("OLYMPUS".to_string()),
+                },
+            }).await?;
         }
         
         info!("🦋 Auditoría completada para: {}", target);
@@ -278,7 +292,13 @@ impl Nemesis {
     /// Genera reporte de cumplimiento regulatorio
     pub async fn generate_regulatory_report(&self, standard: RegulatoryStandard) -> Result<serde_json::Value, ActorError> {
         let legal_framework = self.legal_framework.read().await;
-        let report = legal_framework.generate_report(standard).await?;
-        Ok(serde_json::to_value(report).map_err(|e| ActorError::Serialization { god: GodName::Nemesis, reason: e.to_string() })?)
+        let documents = legal_framework.get_documents_by_standard(&standard).await;
+        let stats = legal_framework.get_statistics().await;
+        
+        Ok(serde_json::json!({
+            "standard": standard,
+            "documents": documents,
+            "statistics": stats,
+        }))
     }
 }

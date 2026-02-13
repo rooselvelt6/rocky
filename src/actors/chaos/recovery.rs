@@ -10,7 +10,7 @@ use uuid::Uuid;
 
 use tracing::{info, warn};
 
-use crate::actors::{GodName, DivineDomain};
+use crate::actors::GodName;
 use crate::errors::ActorError;
 
 /// Sistema de recuperación automática para Chaos

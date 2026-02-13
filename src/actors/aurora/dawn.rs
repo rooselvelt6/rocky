@@ -8,7 +8,6 @@ use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc, Timelike};
 use uuid::Uuid;
 
-use crate::actors::GodName;
 use crate::actors::aurora::{RenewalType, RenewalStatus, RenewalLevel};
 use crate::errors::ActorError;
 use tracing::info;
@@ -763,10 +762,16 @@ impl Default for DawnState {
 impl Default for CycleScheduler {
     fn default() -> Self {
         Self {
-            scheduled_cycles: Vec::new(),
-            execution_history: Vec::new(),
+            scheduled_cycles: Arc::new(RwLock::new(Vec::new())),
+            execution_history: Arc::new(RwLock::new(Vec::new())),
             next_cycle_time: None,
         }
+    }
+}
+
+impl CycleScheduler {
+    pub fn new() -> Self {
+        Self::default()
     }
 }
 
