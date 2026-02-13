@@ -10,7 +10,8 @@ use ring::rand::{SecureRandom, SystemRandom};
 use chacha20poly1305::{ChaCha20Poly1305, Key, Nonce as ChaChaNonce};
 use chacha20poly1305::aead::{Aead, KeyInit};
 use zeroize::{Zeroize, ZeroizeOnDrop};
-use tracing::{info, warn};
+use tracing::info;
+use base64::{Engine as _, engine::general_purpose::STANDARD as BASE64};
 
 use crate::actors::hades::keys::KeyManager;
 
@@ -148,7 +149,7 @@ impl EncryptionService {
         let unbound_key = UnboundKey::new(&AES_256_GCM, &key.key_bytes)
             .map_err(|_| EncryptionError::KeyCreationFailed)?;
         
-        let nonce = Nonce::assume_unique_for_key(nonce_bytes);
+        let _nonce = Nonce::assume_unique_for_key(nonce_bytes);
         let mut sealing_key = SealingKey::new(unbound_key, AesGcmNonceSequence::new(nonce_bytes));
         
         // Encrypt in-place
@@ -194,7 +195,7 @@ impl EncryptionService {
         let unbound_key = UnboundKey::new(&AES_256_GCM, &key.key_bytes)
             .map_err(|_| EncryptionError::KeyCreationFailed)?;
         
-        let nonce = Nonce::assume_unique_for_key(nonce_bytes);
+        let _nonce = Nonce::assume_unique_for_key(nonce_bytes);
         let mut opening_key = OpeningKey::new(unbound_key, AesGcmNonceSequence::new(nonce_bytes));
         
         // Decrypt
@@ -282,12 +283,12 @@ impl EncryptionService {
         let encrypted = self.encrypt(plaintext.as_bytes(), key_id, algorithm).await?;
         let json = serde_json::to_string(&encrypted)
             .map_err(|_| EncryptionError::SerializationError)?;
-        Ok(base64::encode(json))
+        Ok(BASE64.encode(json))
     }
     
     /// Decrypt a base64-encoded encrypted string
     pub async fn decrypt_string(&self, ciphertext: &str) -> Result<String, EncryptionError> {
-        let json = base64::decode(ciphertext)
+        let json = BASE64.decode(ciphertext)
             .map_err(|_| EncryptionError::Base64Error)?;
         let encrypted: EncryptedData = serde_json::from_slice(&json)
             .map_err(|_| EncryptionError::DeserializationError)?;
@@ -305,7 +306,7 @@ impl EncryptionService {
         let key_id = uuid::Uuid::new_v4().to_string();
         let key = SecretKey::new(key_bytes, key_id.clone(), algorithm);
         
-        let mut key_manager = self.key_manager.write().await;
+        let key_manager = self.key_manager.write().await;
         key_manager.store_key(key).await;
         
         info!("🔑 Generated new encryption key: {} (algorithm: {:?})", key_id, algorithm);

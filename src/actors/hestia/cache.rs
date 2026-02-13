@@ -5,10 +5,9 @@
 use std::sync::Arc;
 use tokio::sync::Mutex;
 use std::collections::{HashMap, HashSet, VecDeque};
-use std::time::Instant;
 use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
-use tokio::time::{interval, Duration as TokioDuration};
+use tokio::time::interval;
 use tracing::{debug, info, warn};
 
 use crate::infrastructure::ValkeyStore;

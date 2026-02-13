@@ -7,9 +7,9 @@ use std::sync::Arc;
 use std::time::{Duration, Instant};
 use tokio::sync::RwLock;
 use tokio::time::sleep;
-use tracing::{error, info, warn};
+use tracing::{info, warn};
 
-use super::{GodName, DeliveryTracker, DeliveryStatus};
+use super::{GodName, DeliveryTracker};
 use crate::traits::message::ActorMessage;
 use crate::errors::ActorError;
 

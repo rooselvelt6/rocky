@@ -7,7 +7,6 @@ use serde::{Deserialize, Serialize};
 
 use crate::actors::GodName;
 use crate::traits::message::RecoveryStrategy;
-use crate::errors::OlympusError;
 
 /// Estado del árbol de supervisión
 #[derive(Debug, Clone, Serialize, Deserialize)]

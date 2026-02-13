@@ -7,8 +7,8 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;
-use tracing::{debug, info, warn};
-use chrono::{DateTime, Utc, Duration};
+use tracing::{debug, info};
+use chrono::{Utc, Duration};
 
 use crate::actors::{GodName, DivineDomain};
 use crate::traits::{OlympianActor, ActorState, ActorConfig, GodHeartbeat, HealthStatus};
@@ -322,7 +322,7 @@ impl OlympianActor for Moirai {
     }
 
     async fn health_check(&self) -> HealthStatus {
-        let threads = self.threads.read().await;
+        let _threads = self.threads.read().await;
         
         HealthStatus {
             god: self.name.clone(),
@@ -375,7 +375,7 @@ impl Moirai {
                         
                         let initial_data = data.get("initial_data").cloned().unwrap_or_default();
                         
-                        let thread = self.create_thread(patient_id, initial_data).await?;
+                        let _thread = self.create_thread(patient_id, initial_data).await?;
                         
                         Ok(ResponsePayload::Success { 
                             message: format!("Thread creado para paciente {}", patient_id) 

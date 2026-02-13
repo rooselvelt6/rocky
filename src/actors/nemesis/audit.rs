@@ -583,7 +583,7 @@ impl AuditLogger {
         result: AuditSessionResult,
         notes: Vec<String>,
     ) -> Result<(), ActorError> {
-        let config = self.config.read().await;
+        let _config = self.config.read().await;
         
         {
             let mut trail = self.audit_trail.write().await;

@@ -284,7 +284,7 @@ impl LegalFramework {
         
         // Inicializar el analizador de gaps
         {
-            let mut analyzer = self.gap_analyzer.write().await;
+            let analyzer = self.gap_analyzer.write().await;
             analyzer.initialize().await?;
         }
         

@@ -521,7 +521,7 @@ impl SyncManager {
     }
     
     /// Lista backups disponibles
-    pub async fn list_backups(&self, table: &str) -> Vec<BackupMetadata> {
+    pub async fn list_backups(&self, _table: &str) -> Vec<BackupMetadata> {
         // En una implementación real, escanearías las claves
         // Por ahora retornamos vacío
         Vec::new()
@@ -685,7 +685,7 @@ impl SyncManager {
     async fn resolve_conflict_auto(
         &self, 
         record: &SyncRecord, 
-        l3_value: &serde_json::Value,
+        _l3_value: &serde_json::Value,
     ) -> Result<ConflictResolution, PersistenceError> {
         let config = self.config.read().await.clone();
         

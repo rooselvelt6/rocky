@@ -333,7 +333,7 @@ impl ConflictDetector {
 
         // Implementación simple: verificar si hay dependencia circular
         // En una implementación real, esto sería más sofisticado
-        let actor_map: HashMap<GodName, usize> = actors
+        let _actor_map: HashMap<GodName, usize> = actors
             .iter()
             .enumerate()
             .map(|(i, actor)| (*actor, i))

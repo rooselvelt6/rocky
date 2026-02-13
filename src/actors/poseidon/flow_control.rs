@@ -331,7 +331,7 @@ impl FlowController {
     }
 
     /// Adquiere un permiso para enviar un mensaje (con semáforo y rate limiting)
-    pub async fn acquire_permit(&self) -> Result<FlowPermit, FlowError> {
+    pub async fn acquire_permit(&self) -> Result<FlowPermit<'_>, FlowError> {
         let start = Instant::now();
 
         // 1. Rate limiting

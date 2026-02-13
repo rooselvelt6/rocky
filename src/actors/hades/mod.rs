@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tokio::sync::RwLock;
 use std::time::Duration;
-use tracing::{info, warn};
+use tracing::info;
 
 use crate::actors::{GodName, DivineDomain};
 use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
@@ -279,7 +279,7 @@ impl OlympianActor for Hades {
     
     async fn health_check(&self) -> HealthStatus { 
         let key_stats = self.keys.read().await.get_stats().await;
-        let audit_stats = self.audit.read().await.get_stats().await;
+        let _audit_stats = self.audit.read().await.get_stats().await;
         
         let status = if key_stats.active_keys == 0 {
             ActorStatus::Critical

@@ -15,7 +15,7 @@ impl FateEngine {
     }
 
     /// Encuentra casos similares históricos
-    pub async fn find_similar_cases(&self, thread: &PatientThread, limit: usize) -> Result<Vec<String>, crate::errors::ActorError> {
+    pub async fn find_similar_cases(&self, _thread: &PatientThread, limit: usize) -> Result<Vec<String>, crate::errors::ActorError> {
         // Simulación: retornar IDs de pacientes similares basados en scores
         let mut similar = Vec::new();
         

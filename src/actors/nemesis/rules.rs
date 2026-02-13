@@ -601,7 +601,7 @@ impl RuleEngine {
     }
     
     /// Actualiza las métricas de una regla
-    async fn update_rule_metrics(&self, rule: &LegalRule, evaluation: &RuleEvaluation) {
+    async fn update_rule_metrics(&self, _rule: &LegalRule, evaluation: &RuleEvaluation) {
         let mut metrics = self.metrics.write().await;
         
         // Esta función necesitaría acceso mutable a las métricas de la regla

@@ -2,7 +2,6 @@
 // OLYMPUS v15 - Némesis: Diosa de la Justicia Legal y Cumplimiento
 
 use async_trait::async_trait;
-use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 use chrono::Utc;
@@ -13,14 +12,14 @@ use crate::actors::{GodName, DivineDomain};
 use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
 use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
 use crate::errors::ActorError;
-use tracing::{debug, info, warn};
+use tracing::info;
 
 pub mod compliance;
 pub mod audit;
 pub mod rules;
 pub mod legal_framework;
 
-use compliance::{ComplianceManager, ComplianceStatus, ComplianceAudit, ViolationType, RegulatoryStandard};
+use compliance::{ComplianceManager, ComplianceStatus, ComplianceAudit, RegulatoryStandard};
 use audit::{AuditLogger, AuditEvent, AuditEventType, AuditSeverity, AuditTechnicalMetadata};
 use rules::{RuleEngine, LegalRule};
 use legal_framework::LegalFramework;
@@ -192,11 +191,11 @@ impl Nemesis {
     }
     
     /// Inicializa con configuración personalizada
-    pub async fn with_config(config: ActorConfig) -> Result<Self, ActorError> {
+    pub async fn with_config(_config: ActorConfig) -> Result<Self, ActorError> {
         let nemesis_config = NemesisConfig::default();
         
         let name = GodName::Nemesis;
-        let mut nemesis = Self {
+        let nemesis = Self {
             name,
             domain: DivineDomain::LegalCompliance,
             state: ActorState::new(name),
@@ -217,25 +216,25 @@ impl Nemesis {
     async fn initialize_components(&self) -> Result<(), ActorError> {
         // Inicializar el gestor de cumplimiento
         {
-            let mut compliance_manager = self.compliance_manager.write().await;
+            let compliance_manager = self.compliance_manager.write().await;
             compliance_manager.initialize().await?;
         }
         
         // Inicializar el logger de auditoría
         {
-            let mut audit_logger = self.audit_logger.write().await;
+            let audit_logger = self.audit_logger.write().await;
             audit_logger.initialize().await?;
         }
         
         // Inicializar el motor de reglas
         {
-            let mut rule_engine = self.rule_engine.write().await;
+            let rule_engine = self.rule_engine.write().await;
             rule_engine.initialize().await?;
         }
         
         // Inicializar el framework legal
         {
-            let mut legal_framework = self.legal_framework.write().await;
+            let legal_framework = self.legal_framework.write().await;
             legal_framework.initialize().await?;
         }
         
@@ -250,7 +249,7 @@ impl Nemesis {
         
         // Registrar en el log de auditoría
         {
-            let mut audit_logger = self.audit_logger.write().await;
+            let audit_logger = self.audit_logger.write().await;
             audit_logger.log_event(AuditEvent {
                 event_id: Uuid::new_v4().to_string(),
                 timestamp: Utc::now(),

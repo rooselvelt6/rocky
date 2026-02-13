@@ -356,7 +356,7 @@ impl OlympianActor for Demeter {
         let snapshot = self.capture_snapshot().await;
         
         // Determinar estado basado en uso de recursos
-        let max_usage = snapshot.cpu_usage
+        let _max_usage = snapshot.cpu_usage
             .max(snapshot.memory_usage)
             .max(snapshot.storage_usage);
         

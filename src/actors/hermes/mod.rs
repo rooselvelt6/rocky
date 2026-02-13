@@ -363,7 +363,7 @@ impl Hermes {
                     message: "Old trackings purged".to_string() 
                 })
             }
-            HermesCommand::ConfigureRetry { config } => {
+            HermesCommand::ConfigureRetry { config: _ } => {
                 // This would need to recreate the retry queue
                 info!("Retry configuration updated");
                 
@@ -480,7 +480,7 @@ impl OlympianActor for Hermes {
         
         // Start the retry worker
         let retry_worker = RetryWorker::new(self.retry_queue.clone());
-        let deliver_fn = |msg: ActorMessage, to: GodName| async move {
+        let deliver_fn = |_msg: ActorMessage, _to: GodName| async move {
             // This would need access to the mailbox_manager
             // For now, return Ok(()) as placeholder
             Ok(())

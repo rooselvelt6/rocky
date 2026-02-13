@@ -447,7 +447,7 @@ impl OlympianActor for Poseidon {
     }
     
     async fn health_check(&self) -> HealthStatus {
-        let ws_stats = self.get_websocket_stats().await;
+        let _ws_stats = self.get_websocket_stats().await;
         let flow_metrics = self.get_flow_stats().await;
         
         let status = if flow_metrics.backpressure_level > 0.95 {

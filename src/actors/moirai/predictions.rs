@@ -162,7 +162,7 @@ impl PredictionEngine {
     /// Genera recomendaciones basadas en predicciones
     pub fn generate_recommendations(
         &self,
-        thread: &PatientThread,
+        _thread: &PatientThread,
         predictions: &[ClinicalPrediction],
     ) -> Result<Vec<String>, ActorError> {
         let mut recommendations = Vec::new();

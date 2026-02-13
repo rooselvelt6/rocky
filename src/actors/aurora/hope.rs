@@ -7,7 +7,6 @@ use tokio::sync::RwLock;
 use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};
 
-use crate::actors::aurora::RenewalType;
 use tracing::info;
 
 /// Niveles de esperanza

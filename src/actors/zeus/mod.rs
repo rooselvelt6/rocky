@@ -25,7 +25,7 @@ pub use thunder::{Thunderbolt, ThunderEvent, ThunderSeverity};
 pub use supervisor::{SupervisionManager, LifecycleEvent, OlympicHealth, RecoveryAction, RestartResult, DependencyInfo};
 pub use metrics::{ZeusMetrics, ActorMetricsUpdate, MetricsSummary, HistoricalSnapshot, AlertSeverity, TrinityMetrics, TrinityStatus};
 pub use governance::{GovernanceController, GovernanceDecision, GovernanceSituation, GovernanceRecord, SecuritySeverity, FeatureFlag, CircuitBreaker, CircuitState};
-pub use config::{ZeusConfig, ConfigManager, ConfigError, Environment};
+pub use config::{ZeusConfig, ConfigManager, Environment};
 
 /// Comandos completos de Zeus
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -366,7 +366,7 @@ impl Zeus {
                 m.last_health_check = chrono::Utc::now();
                 
                 // Actualizar contadores atómicos
-                let healthy = health.healthy_count;
+                let _healthy = health.healthy_count;
                 let dead = health.dead_count;
                 
                 // Verificar salud crítica
@@ -1187,7 +1187,7 @@ impl Zeus {
     /// Maneja eventos
     async fn handle_event(&mut self, event: EventPayload) -> Result<ResponsePayload, ActorError> {
         match event {
-            EventPayload::ActorRecovered { actor, attempt } => {
+            EventPayload::ActorRecovered { actor, attempt: _ } => {
                 self.metrics.read().await.increment_recoveries();
                 self.supervision_manager.read().await.mark_recovered(actor).await;
                 

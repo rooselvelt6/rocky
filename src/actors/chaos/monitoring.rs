@@ -491,7 +491,7 @@ impl ImpactAnalyzer {
     async fn analyze_impact(
         &self,
         experiment_id: &str,
-        start_time: DateTime<Utc>,
+        _start_time: DateTime<Utc>,
     ) -> Result<ImpactAnalysis, ActorError> {
         let analysis_start = std::time::Instant::now();
         

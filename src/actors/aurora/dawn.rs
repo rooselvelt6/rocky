@@ -269,7 +269,7 @@ impl DawnSystem {
     
     /// Inicia el amanecer del sistema
     pub async fn initiate_dawn(&self) -> Result<String, ActorError> {
-        let config = self.config.read().await;
+        let _config = self.config.read().await;
         let dawn_id = Uuid::new_v4().to_string();
         
         info!("🌅 Iniciando amanecer: {}", dawn_id);
@@ -372,7 +372,7 @@ impl DawnSystem {
     }
     
     /// Ejecuta operaciones de renovación
-    async fn execute_renewal_operations(&self, cycle: &RenewalCycle) -> Result<(), ActorError> {
+    async fn execute_renewal_operations(&self, _cycle: &RenewalCycle) -> Result<(), ActorError> {
         let config = self.config.read().await;
         
         for resource in &config.optimization_resources {
@@ -473,7 +473,7 @@ impl DawnSystem {
         let cycle_id = Uuid::new_v4().to_string();
         
         {
-            let mut scheduler = self.cycle_scheduler.write().await;
+            let scheduler = self.cycle_scheduler.write().await;
             let scheduled_cycle = ScheduledCycle {
                 cycle_id: cycle_id.clone(),
                 scheduled_time: Utc::now() + chrono::Duration::minutes(delay_minutes.into()),
@@ -596,7 +596,7 @@ impl DawnSystem {
     }
     
     /// Colecta métricas antes de la renovación
-    async fn collect_pre_metrics(&self, cycle: &RenewalCycle) -> HashMap<String, f64> {
+    async fn collect_pre_metrics(&self, _cycle: &RenewalCycle) -> HashMap<String, f64> {
         let mut metrics = HashMap::new();
         
         // Simular recolección de métricas
@@ -610,7 +610,7 @@ impl DawnSystem {
     }
     
     /// Colecta métricas después de la renovación
-    async fn collect_post_metrics(&self, cycle: &RenewalCycle) -> HashMap<String, f64> {
+    async fn collect_post_metrics(&self, _cycle: &RenewalCycle) -> HashMap<String, f64> {
         let mut metrics = HashMap::new();
         
         // Simular mejoras después de la renovación
@@ -777,7 +777,7 @@ impl CycleScheduler {
 
 impl CycleScheduler {
     /// Programa un ciclo de amanecer
-    async fn schedule_cycle(&mut self, dawn_hour: &u8, timezone: &str) -> Result<(), ActorError> {
+    async fn schedule_cycle(&mut self, dawn_hour: &u8, _timezone: &str) -> Result<(), ActorError> {
         let now = Utc::now();
         
         // Calcular próximo amanecer

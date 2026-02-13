@@ -1,10 +1,10 @@
 use async_trait::async_trait;
 use std::sync::Arc;
 use tokio::sync::RwLock;
-use tracing::{info, warn};
+use tracing::info;
 
 use crate::actors::{GodName, DivineDomain};
-use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
+use crate::traits::{OlympianActor, ActorState, ActorConfig, GodHeartbeat, HealthStatus};
 use crate::traits::message::{ActorMessage, MessagePayload, CommandPayload, ResponsePayload, QueryPayload};
 use crate::errors::ActorError;
 

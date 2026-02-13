@@ -110,7 +110,7 @@ impl Erinyes {
         // Start alert processor
         alert_system.start_processor().await;
         
-        let mut erinyes = Self {
+        let erinyes = Self {
             name: GodName::Erinyes,
             state: ActorState::new(GodName::Erinyes),
             config: ActorConfig::default(),
@@ -153,7 +153,7 @@ impl Erinyes {
         // Start alert processor
         alert_system.start_processor().await;
         
-        let mut erinyes = Self {
+        let erinyes = Self {
             name: GodName::Erinyes,
             state: ActorState::new(GodName::Erinyes),
             config: ActorConfig::default(),

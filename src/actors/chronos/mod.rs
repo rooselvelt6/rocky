@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 use tracing::{debug, error, info, warn};
-use chrono::{DateTime, Utc, Duration};
+use chrono::{DateTime, Utc};
 
 use crate::actors::{GodName, DivineDomain};
 use crate::traits::{OlympianActor, ActorState, ActorConfig, GodHeartbeat, HealthStatus};
@@ -94,7 +94,7 @@ impl Chronos {
         scheduler.cancel_task(task_id)?;
         
         let mut tasks = self.tasks.write().await;
-        if let Some(mut task) = tasks.get_mut(task_id) {
+        if let Some(task) = tasks.get_mut(task_id) {
             task.status = TaskStatus::Cancelled;
             task.updated_at = Utc::now();
             info!("⏰ Chronos: Tarea {} cancelada", task_id);
@@ -109,7 +109,7 @@ impl Chronos {
     /// Pausa una tarea recurrente
     pub async fn pause_task(&self, task_id: &str) -> Result<(), ActorError> {
         let mut tasks = self.tasks.write().await;
-        if let Some(mut task) = tasks.get_mut(task_id) {
+        if let Some(task) = tasks.get_mut(task_id) {
             if task.status == TaskStatus::Running {
                 return Err(ActorError::InvalidCommand {
                     god: GodName::Chronos,
@@ -130,7 +130,7 @@ impl Chronos {
     /// Reanuda una tarea pausada
     pub async fn resume_task(&self, task_id: &str) -> Result<(), ActorError> {
         let mut tasks = self.tasks.write().await;
-        if let Some(mut task) = tasks.get_mut(task_id) {
+        if let Some(task) = tasks.get_mut(task_id) {
             if task.status != TaskStatus::Paused {
                 return Err(ActorError::InvalidCommand {
                     god: GodName::Chronos,
@@ -414,7 +414,7 @@ impl OlympianActor for Chronos {
         let metrics = self.metrics.read().await;
         let tasks = self.tasks.read().await;
         
-        let running_tasks = tasks.values().filter(|t| t.status == TaskStatus::Running).count() as u64;
+        let _running_tasks = tasks.values().filter(|t| t.status == TaskStatus::Running).count() as u64;
         
         HealthStatus {
             god: self.name.clone(),

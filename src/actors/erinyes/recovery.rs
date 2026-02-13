@@ -367,4 +367,3 @@ pub struct RecoveryStats {
     pub circuit_breakers_open: usize,
 }
 
-use futures::future::BoxFuture;

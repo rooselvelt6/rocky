@@ -411,7 +411,7 @@ impl SupervisionManager {
     pub async fn get_tree(&self) -> SupervisionTree {
         let actors = self.actors.read().await;
         let deps = self.dependencies.read().await;
-        let rev_deps = self.reverse_deps.read().await;
+        let _rev_deps = self.reverse_deps.read().await;
         
         let children: Vec<SupervisedActor> = actors.values().cloned().collect();
         
@@ -591,7 +591,7 @@ impl SupervisionManager {
     pub fn start_tree_monitor(&self, interval_secs: u64) {
         let actors = self.actors.clone();
         let history = self.restart_history.clone();
-        let max_restarts = self.max_restarts;
+        let _max_restarts = self.max_restarts;
         let window_secs = self.restart_window_seconds;
         
         tokio::spawn(async move {

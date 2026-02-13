@@ -2,7 +2,6 @@
 // OLYMPUS v15 - Estrategias de Resolución para Ares
 
 use serde::{Deserialize, Serialize};
-use chrono::Utc;
 use std::collections::HashMap;
 use tokio::time::{sleep, Duration};
 
@@ -353,7 +352,7 @@ impl ConflictResolver {
     }
     
     /// Resuelve con timeout y reintento
-    async fn resolve_timeout_retry(&mut self, conflict: &Conflict) -> Result<ResolutionResult, ActorError> {
+    async fn resolve_timeout_retry(&mut self, _conflict: &Conflict) -> Result<ResolutionResult, ActorError> {
         let mut result = ResolutionResult::success(
             ResolutionStrategy::TimeoutRetry,
             "Resuelto después de reintentos".to_string(),
@@ -377,7 +376,7 @@ impl ConflictResolver {
     }
     
     /// Resuelve por mediación
-    async fn resolve_mediation(&mut self, conflict: &Conflict) -> Result<ResolutionResult, ActorError> {
+    async fn resolve_mediation(&mut self, _conflict: &Conflict) -> Result<ResolutionResult, ActorError> {
         let mut result = ResolutionResult::success(
             ResolutionStrategy::Mediation,
             "Resuelto mediante mediación de Ares".to_string(),
@@ -429,7 +428,7 @@ impl ConflictResolver {
     }
     
     /// Resuelve con estrategia personalizada
-    async fn resolve_custom(&mut self, conflict: &Conflict) -> Result<ResolutionResult, ActorError> {
+    async fn resolve_custom(&mut self, _conflict: &Conflict) -> Result<ResolutionResult, ActorError> {
         let mut result = ResolutionResult::success(
             ResolutionStrategy::Custom("personalizada".to_string()),
             "Resuelto con estrategia personalizada".to_string(),

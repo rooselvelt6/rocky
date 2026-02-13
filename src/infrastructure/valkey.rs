@@ -3,9 +3,7 @@
 // Memoria de corto plazo para buffer y cache
 
 use serde::{Deserialize, Serialize};
-use std::time::Duration;
 use std::sync::Arc;
-use tokio::sync::RwLock;
 use thiserror::Error;
 
 #[derive(Debug, Error)]

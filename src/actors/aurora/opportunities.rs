@@ -7,9 +7,9 @@ use tokio::sync::RwLock;
 use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};
 
-use crate::actors::{GodName, aurora::RenewalType};
+use crate::actors::GodName;
 use crate::errors::ActorError;
-use tracing::{info, warn};
+use tracing::info;
 
 /// Tipos de oportunidades
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -320,7 +320,7 @@ impl OpportunityDetector {
                 OpportunityStatus::Cancelled
             };
             
-            let opportunity_id_clone = opportunity.opportunity_id.clone();
+            let _opportunity_id_clone = opportunity.opportunity_id.clone();
             let opportunity_title_clone = opportunity.title.clone();
             
             // Re-agregar si fue aprobada

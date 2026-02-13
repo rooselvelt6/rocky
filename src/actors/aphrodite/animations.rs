@@ -650,11 +650,11 @@ impl Default for AnimationPerformance {
 impl Default for AnimationPresets {
     fn default() -> Self {
         let mut entrance = HashMap::new();
-        let mut exit = HashMap::new();
-        let mut attention = HashMap::new();
-        let mut loading = HashMap::new();
-        let mut feedback = HashMap::new();
-        let mut special = HashMap::new();
+        let exit = HashMap::new();
+        let attention = HashMap::new();
+        let loading = HashMap::new();
+        let feedback = HashMap::new();
+        let special = HashMap::new();
 
         // Presets de entrada
         entrance.insert(

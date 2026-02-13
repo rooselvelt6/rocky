@@ -602,8 +602,8 @@ impl ImpactAnalysisSystem {
     /// Ejecuta análisis de impacto de forma asíncrona
     async fn execute_impact_analysis(&self, analysis_id: String) -> Result<(), ActorError> {
         let active_analyses = self.active_analyses.clone();
-        let correlations = self.correlations.clone();
-        let impact_patterns = self.impact_patterns.clone();
+        let _correlations = self.correlations.clone();
+        let _impact_patterns = self.impact_patterns.clone();
         
         tokio::spawn(async move {
             // Fase 1: Recolección de datos

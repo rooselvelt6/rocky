@@ -3,11 +3,10 @@
 
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 use chrono::{DateTime, Utc};
-use tracing::{debug, info, warn};
+use tracing::info;
 
 use crate::actors::{GodName, DivineDomain, ActorConfig, ActorState};
 use crate::traits::OlympianActor;
@@ -170,7 +169,7 @@ impl OlympianActor for Chaos {
         Ok(())
     }
 
-    async fn handle_message(&mut self, msg: crate::traits::message::ActorMessage) -> Result<ResponsePayload, ActorError> {
+    async fn handle_message(&mut self, _msg: crate::traits::message::ActorMessage) -> Result<ResponsePayload, ActorError> {
         // Implementación básica
         Ok(ResponsePayload::Success { message: "message_handled".to_string() })
     }
@@ -232,7 +231,7 @@ impl Chaos {
     }
     
     /// Inicializa con configuración
-    pub async fn with_config(config: ActorConfig) -> Result<Self, ActorError> {
+    pub async fn with_config(_config: ActorConfig) -> Result<Self, ActorError> {
         let chaos_config = serde_json::from_value(serde_json::json!({})).ok().unwrap_or_default();
         
         let name = GodName::Chaos;

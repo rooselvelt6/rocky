@@ -435,7 +435,7 @@ impl ComplianceManager {
     }
     
     /// Audita violaciones específicas de un objetivo
-    async fn audit_target_violations(&self, target: &str, standard: &RegulatoryStandard) -> Result<Vec<ComplianceViolation>, ActorError> {
+    async fn audit_target_violations(&self, target: &str, _standard: &RegulatoryStandard) -> Result<Vec<ComplianceViolation>, ActorError> {
         let mut violations = Vec::new();
         
         // Simular detección de violaciones (en una implementación real, esto analizaría logs, configuración, etc.)

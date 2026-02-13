@@ -12,13 +12,12 @@
 
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
-use std::collections::{HashMap, HashSet};
-use std::sync::{Arc, Mutex};
-use std::time::{Duration, Instant};
+use std::collections::HashSet;
+use std::sync::Arc;
+use std::time::Duration;
 use tokio::sync::{mpsc, RwLock};
-use tokio::time::{interval, sleep};
+use tokio::time::interval;
 use tracing::{debug, error, info, warn, instrument};
-use chrono::{DateTime, Utc};
 
 use crate::actors::{GodName, DivineDomain};
 use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
@@ -801,7 +800,7 @@ impl Hestia {
                     data: serde_json::to_value(&result).unwrap_or_default()
                 })
             }
-            HestiaCommand::Sync { direction, keys } => {
+            HestiaCommand::Sync { direction: _, keys } => {
                 let result = self.sync(keys).await?;
                 Ok(ResponsePayload::Data { 
                     data: serde_json::to_value(&result).unwrap_or_default()

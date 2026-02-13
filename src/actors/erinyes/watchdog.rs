@@ -155,7 +155,7 @@ impl Watchdog {
     }
     
     pub async fn report_death(&self, actor: GodName, reason: String) {
-        let now = Instant::now();
+        let _now = Instant::now();
         let mut records = self.death_records.write().await;
         
         let record = DeathRecord {

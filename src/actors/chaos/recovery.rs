@@ -583,7 +583,7 @@ impl RecoverySystem {
     }
     
     /// Simula la ejecución de un paso de recuperación
-    async fn execute_step(strategy: &RecoveryStrategyType, step: &str) -> bool {
+    async fn execute_step(strategy: &RecoveryStrategyType, _step: &str) -> bool {
         // Simular tiempo de ejecución
         let delay = match strategy {
             RecoveryStrategyType::RestartActor => 2000,

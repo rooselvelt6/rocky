@@ -79,7 +79,7 @@ impl ScheduledTask {
     }
 
     /// Verifica si la tarea debe ejecutarse ahora
-    pub fn is_due(&self, now: DateTime<Utc>) -> bool {
+    pub fn is_due(&self, _now: DateTime<Utc>) -> bool {
         if self.status == TaskStatus::Paused || self.status == TaskStatus::Cancelled {
             return false;
         }
@@ -97,7 +97,7 @@ impl ScheduledTask {
     }
 
     /// Marca la tarea como fallida
-    pub fn mark_failed(&mut self, error: &str) {
+    pub fn mark_failed(&mut self, _error: &str) {
         self.status = TaskStatus::Failed;
         self.updated_at = Utc::now();
     }

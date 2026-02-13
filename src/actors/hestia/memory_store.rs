@@ -261,7 +261,7 @@ impl MemoryStore {
     /// Limpia todos los datos
     pub async fn clear(&self) -> Result<(), PersistenceError> {
         // Obtener todas las claves con el prefijo y eliminarlas
-        let pattern = format!("{}:*", self.prefix);
+        let _pattern = format!("{}:*", self.prefix);
         self.valkey.flush().await
             .map_err(|e| PersistenceError::ValkeyError(e.to_string()))?;
         

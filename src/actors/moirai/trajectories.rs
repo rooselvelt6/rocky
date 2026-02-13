@@ -4,7 +4,6 @@
 use crate::actors::moirai::threads::{ThreadEvent, TrajectoryPoint, TrajectoryTrend};
 use crate::errors::ActorError;
 use chrono::{DateTime, Utc};
-use serde::{Deserialize, Serialize};
 
 /// Analizador de trayectorias
 #[derive(Debug, Clone)]

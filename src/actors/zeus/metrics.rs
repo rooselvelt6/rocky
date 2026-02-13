@@ -394,7 +394,7 @@ impl ZeusMetrics {
     pub async fn check_thresholds(&self) -> Vec<MetricAlert> {
         let thresholds = self.alert_thresholds.read().await.clone();
         let mut alerts = Vec::new();
-        let now = Utc::now();
+        let _now = Utc::now();
         
         // Verificar tasa de errores
         let error_rate = self.get_error_rate();

@@ -117,7 +117,7 @@ impl SurrealStore {
         Ok(result)
     }
 
-    pub async fn update<T: Serialize>(&self, table: &str, id: &str, data: &T) -> Result<serde_json::Value, SurrealError> {
+    pub async fn update<T: Serialize>(&self, _table: &str, id: &str, data: &T) -> Result<serde_json::Value, SurrealError> {
         let client = self.client.read().await;
         let data = serde_json::to_value(data)
             .map_err(|e| SurrealError::SerializationError(e.to_string()))?;
@@ -134,7 +134,7 @@ impl SurrealStore {
         Ok(result.pop().unwrap_or(serde_json::Value::Null))
     }
 
-    pub async fn delete(&self, table: &str, id: &str) -> Result<(), SurrealError> {
+    pub async fn delete(&self, _table: &str, id: &str) -> Result<(), SurrealError> {
         let client = self.client.read().await;
         
         client.as_ref()
