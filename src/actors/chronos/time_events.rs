@@ -202,6 +202,7 @@ pub struct TimeEventLog {
     max_size: usize,
 }
 
+#[allow(dead_code)]
 impl TimeEventLog {
     /// Crea un nuevo log con capacidad máxima
     pub fn new(max_size: usize) -> Self {

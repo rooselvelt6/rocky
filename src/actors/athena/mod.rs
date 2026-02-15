@@ -2,6 +2,8 @@
 // OLYMPUS v13 - Athena: Diosa de la Sabiduría Clínica
 // Análisis de pacientes, escalas clínicas, predicciones
 
+#![allow(dead_code)]
+
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;

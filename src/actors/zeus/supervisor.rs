@@ -80,6 +80,7 @@ pub struct DependencyInfo {
     pub depth: usize,
 }
 
+#[allow(dead_code)]
 impl SupervisionManager {
     pub fn new() -> Self {
         let (lifecycle_tx, _) = mpsc::channel(1000);

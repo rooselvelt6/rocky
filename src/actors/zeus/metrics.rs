@@ -2,6 +2,8 @@
 // OLYMPUS v15 - Zeus Metrics
 // Métricas avanzadas con históricos, Prometheus-compatible y alertas
 
+#![allow(dead_code)]
+
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, VecDeque};
 use std::sync::atomic::{AtomicU64, Ordering};
@@ -164,6 +166,7 @@ impl Default for TrinityStatus {
     }
 }
 
+#[allow(dead_code)]
 impl ZeusMetrics {
     pub fn new() -> Self {
         let now = Utc::now();

@@ -2,6 +2,8 @@
 // OLYMPUS v15 - Poseidon: Señor del Flujo de Datos
 // WebSocket real con tokio-tungstenite, flow control y reconnection
 
+#![allow(dead_code)]
+
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
@@ -25,17 +27,16 @@ pub mod flow_control;
 pub mod reconnection;
 
 pub use websocket::{
-    WebSocketManager, ConnectionInfo, ConnectionStatus, WebSocketConfig, WebSocketStats,
-    ConnectionEvent, WebSocketError, MessageCallback
+    WebSocketManager, ConnectionInfo, WebSocketStats,
+    WebSocketError, MessageCallback
 };
 pub use buffer::EmergencyBuffer;
 pub use async_writer::AsyncWriter;
 pub use flow_control::{
-    FlowController, FlowMetrics, FlowConfig, FlowError, FlowPermit, RateLimitAlgorithm
+    FlowController, FlowMetrics, FlowConfig
 };
 pub use reconnection::{
-    ReconnectionManager, ReconnectionPolicy, ReconnectionState, ReconnectionEvent,
-    CircuitState, CircuitBreakerStats, ReconnectionError, ReconnectionPlan
+    ReconnectionManager, ReconnectionState
 };
 
 /// Comandos de Poseidon
@@ -105,6 +106,7 @@ pub enum PoseidonEvent {
 }
 
 /// Poseidon: Dios del Flujo de Datos
+#[allow(dead_code)]
 pub struct Poseidon {
     name: GodName,
     state: ActorState,

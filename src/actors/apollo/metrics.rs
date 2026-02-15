@@ -1,6 +1,8 @@
+#![allow(dead_code)]
+
+use crate::actors::GodName;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use crate::actors::GodName;
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct EventMetrics {
@@ -15,7 +17,10 @@ pub struct EventMetrics {
 impl EventMetrics {
     pub fn record_event(&mut self, actor: GodName, event_type: &str) {
         self.total_events += 1;
-        *self.events_per_type.entry(event_type.to_string()).or_insert(0) += 1;
+        *self
+            .events_per_type
+            .entry(event_type.to_string())
+            .or_insert(0) += 1;
         *self.events_per_actor.entry(actor).or_insert(0) += 1;
         self.last_event_time = Some(chrono::Utc::now());
     }

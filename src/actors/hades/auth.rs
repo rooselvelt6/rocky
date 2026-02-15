@@ -2,6 +2,8 @@
 // OLYMPUS v15 - Hades Authentication Service
 // Autenticación real con Argon2id, JWT, y RBAC
 
+#![allow(dead_code)]
+
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tokio::sync::RwLock;

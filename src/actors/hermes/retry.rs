@@ -2,6 +2,8 @@
 // OLYMPUS v15 - Hermes Retry System
 // Sistema de reintentos con backoff exponencial
 
+#![allow(dead_code)]
+
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use std::time::{Duration, Instant};

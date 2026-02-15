@@ -2,6 +2,8 @@
 // OLYMPUS v13 - Erinyes Dead Letter Queue
 // Cola de mensajes no entregados con persistencia Valkey + SurrealDB
 
+#![allow(dead_code)]
+
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use uuid::Uuid;

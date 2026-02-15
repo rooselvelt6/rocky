@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 pub mod apache;
 pub mod config;
 pub mod glasgow;

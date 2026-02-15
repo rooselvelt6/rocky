@@ -1,6 +1,8 @@
 // src/actors/iris/mod.rs
 // OLYMPUS v13 - Iris: Diosa del Arcoíris y Comunicaciones
 
+#![allow(dead_code)]
+
 use async_trait::async_trait;
 use std::sync::Arc;
 use tokio::sync::RwLock;

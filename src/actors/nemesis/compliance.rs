@@ -1,6 +1,8 @@
 // src/actors/nemesis/compliance.rs
 // OLYMPUS v15 - Compliance: Gestión de Cumplimiento Regulatorio para Némesis
 
+#![allow(dead_code)]
+
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;

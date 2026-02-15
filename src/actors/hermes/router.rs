@@ -2,6 +2,8 @@
 // OLYMPUS v13 - Hermes Message Router
 // Routing de mensajes por patrón
 
+#![allow(dead_code)]
+
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::Arc;

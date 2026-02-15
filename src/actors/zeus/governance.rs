@@ -2,6 +2,8 @@
 // OLYMPUS v15 - Zeus Governance Controller
 // Decisiones de alto nivel del Olimpo con Circuit Breaker, Feature Flags y Rate Limiting
 
+#![allow(dead_code)]
+
 use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
 use std::sync::Arc;
@@ -352,6 +354,7 @@ pub struct RateLimitStats {
 
 /// Access Policy Manager
 #[derive(Debug, Clone, Default)]
+#[allow(dead_code)]
 pub struct AccessPolicyManager {
     policies: HashMap<String, AccessPolicy>,
     role_permissions: HashMap<String, Vec<Permission>>,

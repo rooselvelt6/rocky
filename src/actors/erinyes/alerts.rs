@@ -2,6 +2,8 @@
 // OLYMPUS v15 - Erinyes Alert System
 // Sistema avanzado de alertas con múltiples canales y smart grouping
 
+#![allow(dead_code)]
+
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tokio::sync::{RwLock, mpsc};
@@ -105,6 +107,7 @@ pub struct AlertGroup {
 }
 
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct AlertSystem {
     alerts: Arc<RwLock<Vec<Alert>>>,
     rules: Arc<RwLock<Vec<AlertRule>>>,

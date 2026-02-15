@@ -2,6 +2,8 @@
 // OLYMPUS v15 - Dionysus: Dios del Vino y Análisis Avanzado
 // Responsabilidad: Analytics, estadísticas, tendencias y detección de anomalías
 
+#![allow(dead_code)]
+
 use async_trait::async_trait;
 use std::sync::Arc;
 use tokio::sync::RwLock;

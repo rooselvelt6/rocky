@@ -2,6 +2,8 @@
 // OLYMPUS v13 - Zeus Thunderbolt
 // Sistema de broadcast instantáneo a velocidad de la luz
 
+#![allow(dead_code)]
+
 use serde::{Deserialize, Serialize};
 use tokio::sync::broadcast;
 

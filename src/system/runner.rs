@@ -2,16 +2,14 @@
 // OLYMPUS v15 - Actor Runner
 // Motor de ejecución genérico para actores del Olimpo (OTP-like)
 
-use std::sync::Arc;
-use tokio::sync::mpsc;
-use tracing::{info, error, debug, warn};
-use std::time::Duration;
-use chrono::Utc;
+#![allow(dead_code)]
 
-use crate::traits::{OlympianActor, ActorStatus, GodHeartbeat};
-use crate::traits::message::{ActorMessage, MessagePayload, ResponsePayload};
+use tokio::sync::mpsc;
+use tracing::{info, error};
+
+use crate::traits::OlympianActor;
+use crate::traits::message::ActorMessage;
 use crate::actors::GodName;
-use crate::errors::ActorError;
 
 /// Ejecutor de un actor individual
 /// Mantiene el ciclo de vida, procesa mensajes y maneja errores
@@ -68,7 +66,7 @@ impl ActorRunner {
                     let result = self.actor.handle_message(msg).await;
                     
                     match result {
-                        Ok(response) => {
+                        Ok(_response) => {
                             // Si la respuesta requiere envío, se manejaría aquí o el actor ya lo hizo
                             // Por ahora solo logueamos errores de lógica interna
                         }

@@ -1,6 +1,8 @@
 // src/errors/mod.rs
 // OLYMPUS v13 - Errors Module
 
+#![allow(dead_code)]
+
 mod actor_error;
 mod olympus_error;
 mod persistence_error;

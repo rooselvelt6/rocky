@@ -16,9 +16,9 @@ pub mod queries;
 pub use events::ApolloEvent;
 pub use logging::{LogEntry, LogLevel};
 pub use metrics::EventMetrics;
-pub use queries::EventQuery;
 
 #[derive(Debug)]
+#[allow(dead_code)]
 pub struct Apollo {
     name: GodName,
     state: ActorState,

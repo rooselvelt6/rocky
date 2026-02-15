@@ -1,6 +1,8 @@
 // src/actors/hestia/mod.rs
 // OLYMPUS v15 - Hestia: Sistema de Persistencia Completo
 // Diosa del Hogar - Guardiana de la Persistencia Dual (Valkey + SurrealDB)
+
+#![allow(dead_code)]
 // 
 // Arquitectura:
 // - L1 (Hot): Cache en memoria local (lru_cache)

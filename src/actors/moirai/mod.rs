@@ -2,6 +2,8 @@
 // OLYMPUS v15 - Moirai: Diosas del Destino y Predicciones Clínicas
 // Responsabilidad: Lifecycle de pacientes, predicciones de outcomes y análisis de trayectorias
 
+#![allow(dead_code)]
+
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;

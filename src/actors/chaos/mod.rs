@@ -1,6 +1,8 @@
 // src/actors/chaos/mod.rs
 // OLYMPUS v15 - Chaos: Dios de la Entropía y Pruebas Caos
 
+#![allow(dead_code)]
+
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
@@ -8,8 +10,8 @@ use tokio::sync::RwLock;
 use chrono::{DateTime, Utc};
 use tracing::info;
 
-use crate::actors::{GodName, DivineDomain, ActorConfig, ActorState};
-use crate::traits::OlympianActor;
+use crate::actors::{GodName, DivineDomain};
+use crate::traits::{OlympianActor, ActorConfig, ActorState};
 use crate::traits::message::ResponsePayload;
 use crate::errors::ActorError;
 

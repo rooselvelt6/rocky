@@ -1,6 +1,8 @@
 // src/actors/nemesis/rules.rs
 // OLYMPUS v15 - Rules: Sistema de Reglas Legales para Némesis
 
+#![allow(dead_code)]
+
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;

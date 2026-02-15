@@ -2,6 +2,8 @@
 // OLYMPUS v15 - Erinyes: Guardiana Suprema de Integridad
 // Sistema inmunitario completo que protege la Trinidad y todo el Olimpo
 
+#![allow(dead_code)]
+
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
@@ -21,16 +23,17 @@ pub mod dead_letter;
 pub mod watchdog;
 pub mod alerts;
 
-pub use heartbeat::{HeartbeatMonitor, HeartbeatState, HeartbeatStats, HeartbeatConfig};
-pub use recovery::{RecoveryEngine, RecoveryRecord, RecoveryConfig, RecoveryUrgency, RecoveryStats};
-pub use dead_letter::{DeadLetterQueue, DeadLetter, DeadLetterStatus};
-pub use watchdog::{Watchdog, WatchdogEvent, WatchdogEventType, WatchdogSeverity, DeathRecord, SystemHealth, SystemStatus};
-pub use alerts::{AlertSystem, Alert, AlertSeverity, AlertCategory, AlertRule, AlertCondition, AlertChannel, AlertStats};
+pub use heartbeat::{HeartbeatMonitor, HeartbeatState, HeartbeatConfig};
+pub use recovery::{RecoveryEngine, RecoveryUrgency};
+pub use dead_letter::{DeadLetterQueue};
+pub use watchdog::{Watchdog, WatchdogEventType, WatchdogSeverity, SystemStatus};
+pub use alerts::{AlertSystem, AlertSeverity, AlertChannel};
 
 /// Erinyes: La Guardiana de la Integridad
 /// Vigila la Trinidad Suprema (Zeus, Hades, Poseidón) y todos los actores
 /// Detecta fallos, recupera actores, gestiona dead letters y alertas
 #[derive(Debug)]
+#[allow(dead_code)]
 pub struct Erinyes {
     name: GodName,
     state: ActorState,
@@ -294,6 +297,7 @@ impl Erinyes {
 }
 
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct ErinyesConfig {
     pub trinity_members: Vec<GodName>,
     pub monitoring_interval_ms: u64,

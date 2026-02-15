@@ -1,6 +1,8 @@
 // src/actors/hera/mod.rs
 // OLYMPUS v15 - Hera: Reina de los Dioses y Validación de Datos
 
+#![allow(dead_code)]
+
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -22,6 +24,7 @@ use schemas::*;
 use rules::*;
 
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct Hera {
     name: GodName,
     state: ActorState,

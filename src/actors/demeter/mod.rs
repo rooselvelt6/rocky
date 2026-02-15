@@ -2,6 +2,8 @@
 // OLYMPUS v15 - Demeter: Diosa de la Agricultura y Recursos
 // Responsabilidad: Monitoreo de recursos del sistema y gestión de umbrales
 
+#![allow(dead_code)]
+
 use async_trait::async_trait;
 use std::sync::Arc;
 use tokio::sync::RwLock;

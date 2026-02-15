@@ -2,6 +2,8 @@
 // OLYMPUS v15 - Erinyes Heartbeat Monitor
 // Monitoreo avanzado cada 500ms de todos los dioses con análisis de tendencias
 
+#![allow(dead_code)]
+
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, VecDeque};
 use std::sync::Arc;

@@ -1,6 +1,8 @@
 // src/actors/aphrodite/mod.rs
 // OLYMPUS v13 - Aphrodite: Diosa de la Belleza y UI
 
+#![allow(dead_code)]
+
 use async_trait::async_trait;
 use std::sync::Arc;
 use tokio::sync::RwLock;

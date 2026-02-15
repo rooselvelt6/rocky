@@ -2,6 +2,8 @@
 // OLYMPUS v15 - Hades Encryption Service
 // Cifrado real con AES-256-GCM y ChaCha20-Poly1305 usando ring y chacha20poly1305
 
+#![allow(dead_code)]
+
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tokio::sync::RwLock;

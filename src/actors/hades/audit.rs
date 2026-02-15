@@ -2,6 +2,8 @@
 // OLYMPUS v15 - Hades Audit Logger
 // Sistema completo de auditoría HIPAA-compliant
 
+#![allow(dead_code)]
+
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tokio::sync::RwLock;

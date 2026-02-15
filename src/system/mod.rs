@@ -6,4 +6,3 @@ pub mod genesis;
 pub mod runner;
 
 pub use genesis::Genesis;
-pub use runner::ActorRunner;

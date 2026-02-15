@@ -1,6 +1,8 @@
 // src/actors/nemesis/audit.rs
 // OLYMPUS v15 - Audit: Sistema de Auditoría y Trazabilidad para Némesis
 
+#![allow(dead_code)]
+
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;

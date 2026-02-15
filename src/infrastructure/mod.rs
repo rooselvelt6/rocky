@@ -1,19 +1,15 @@
 // src/infrastructure/mod.rs
 // OLYMPUS v13 - Infrastructure Module
 
+#![allow(dead_code)]
+
 pub mod valkey;
 pub mod surreal;
 
 pub use valkey::{
     ValkeyStore,
-    ValkeyConfig,
-    ValkeyError,
-    SharedValkeyStore,
 };
 
 pub use surreal::{
     SurrealStore,
-    SurrealConfig,
-    SurrealError,
-    SharedSurrealStore,
 };

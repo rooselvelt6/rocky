@@ -2,6 +2,8 @@
 // OLYMPUS v15 - Chronos: Dios del Tiempo y Scheduling
 // Responsabilidad: Programación y ejecución de tareas con sintaxis cron
 
+#![allow(dead_code)]
+
 use async_trait::async_trait;
 use std::collections::HashMap;
 use std::sync::Arc;

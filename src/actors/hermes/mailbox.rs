@@ -2,6 +2,8 @@
 // OLYMPUS v15 - Hermes Mailbox
 // Cola de mensajes por dios con procesamiento real
 
+#![allow(dead_code)]
+
 use tokio::sync::{mpsc, RwLock};
 use std::sync::Arc;
 use serde::{Deserialize, Serialize};

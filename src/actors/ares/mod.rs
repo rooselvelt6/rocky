@@ -2,6 +2,8 @@
 // OLYMPUS v15 - Ares: Dios de la Guerra y Resolución de Conflictos
 // Responsabilidad: Detectar, mediar y resolver conflictos entre actores
 
+#![allow(dead_code)]
+
 use async_trait::async_trait;
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -26,6 +28,7 @@ pub use history::{ConflictHistory, ConflictStats};
 /// Ares - Dios de la Resolución de Conflictos
 /// Gestiona la detección y resolución de conflictos entre actores del sistema
 #[derive(Debug)]
+#[allow(dead_code)]
 pub struct Ares {
     name: GodName,
     state: ActorState,
@@ -103,7 +106,7 @@ impl Ares {
         
         // Guardar en historial
         let mut history = self.history.write().await;
-        history.mark_resolved(&conflict.id, result.clone());
+        history.mark_resolved(&conflict.id, result.clone())?;
         
         // Actualizar estadísticas
         let mut stats = self.stats.write().await;

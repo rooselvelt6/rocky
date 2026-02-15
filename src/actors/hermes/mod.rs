@@ -2,6 +2,8 @@
 // OLYMPUS v15 - Hermes: Mensajero Divino
 // Sistema completo de mensajería con retry, broadcast, y delivery tracking
 
+#![allow(dead_code)]
+
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
@@ -21,13 +23,14 @@ pub mod delivery;
 pub mod broadcast;
 pub mod retry;
 
-pub use router::{MessageRouter, Route};
-pub use mailbox::{Mailbox, MailboxStats, MailboxManager};
-pub use delivery::{DeliveryTracker, DeliveryTracking, DeliveryStatus, DeliveryTrackingHandle};
+pub use router::{MessageRouter};
+pub use mailbox::{MailboxManager};
+pub use delivery::{DeliveryTracker};
 pub use broadcast::{Broadcaster, BroadcastEvent};
-pub use retry::{RetryQueue, RetryConfig, RetryWorker, RetryableMessage};
+pub use retry::{RetryQueue, RetryConfig, RetryWorker};
 
 #[derive(Debug)]
+#[allow(dead_code)]
 pub struct Hermes {
     name: GodName,
     state: ActorState,

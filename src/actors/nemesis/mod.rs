@@ -1,6 +1,8 @@
 // src/actors/nemesis/mod.rs
 // OLYMPUS v15 - Némesis: Diosa de la Justicia Legal y Cumplimiento
 
+#![allow(dead_code)]
+
 use async_trait::async_trait;
 use std::sync::Arc;
 use tokio::sync::RwLock;
@@ -25,6 +27,7 @@ use rules::{RuleEngine, LegalRule};
 use legal_framework::LegalFramework;
 
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct Nemesis {
     name: GodName,
     domain: DivineDomain,

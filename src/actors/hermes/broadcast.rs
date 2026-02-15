@@ -2,6 +2,8 @@
 // OLYMPUS v13 - Hermes Broadcaster
 // Envío de mensajes a múltiples destinatarios
 
+#![allow(dead_code)]
+
 use serde::{Deserialize, Serialize};
 use tokio::sync::broadcast;
 

@@ -4,12 +4,12 @@
 
 use tokio::sync::mpsc;
 use std::sync::Arc;
-use tracing::{info, error, warn};
+use tracing::info;
 use std::collections::HashMap;
 
-use crate::actors::{GodName, DivineDomain};
-use crate::traits::{OlympianActor, ActorConfig};
-use crate::traits::message::{ActorMessage, MessagePayload, CommandPayload};
+use crate::actors::GodName;
+use crate::traits::OlympianActor;
+use crate::traits::message::ActorMessage;
 use crate::system::runner::ActorRunner;
 use crate::infrastructure::{ValkeyStore, SurrealStore}; 
 use crate::actors::zeus::ZeusConfig;
@@ -62,7 +62,7 @@ impl Genesis {
         // Trinidad + Erinyes first.
         
         // --- HERMES (Vital para routing) ---
-        let mut hermes = Hermes::new().await;
+        let hermes = Hermes::new().await;
         let (hermes_tx, hermes_rx) = mpsc::channel(1000);
         senders.insert(GodName::Hermes, hermes_tx.clone());
         runners.push(ActorRunner::new(Box::new(hermes), hermes_rx));
@@ -72,16 +72,16 @@ impl Genesis {
 
         // --- ZEUS (Gobernador) ---
         let zeus = Zeus::new(ZeusConfig::default()).await;
-        addToMount(&mut senders, &mut runners, Box::new(zeus)).await;
+        add_to_mount(&mut senders, &mut runners, Box::new(zeus)).await;
 
         // --- HADES (Seguridad) ---
         let hades = Hades::new().await;
-        addToMount(&mut senders, &mut runners, Box::new(hades)).await;
+        add_to_mount(&mut senders, &mut runners, Box::new(hades)).await;
 
         // --- POSEIDON (Datos) ---
         // Poseidon necesita Valkey o config especial a veces? Vimos new().await en v15
         let poseidon = Poseidon::new(valkey.clone()).await;
-        addToMount(&mut senders, &mut runners, Box::new(poseidon)).await;
+        add_to_mount(&mut senders, &mut runners, Box::new(poseidon)).await;
 
         // --- ERINYES (Monitor) ---
         // Erinyes necesita Valkey
@@ -94,18 +94,18 @@ impl Genesis {
         // Asumiendo que ValkeyStore::new retorna Result<Self, Error>.
         
         let erinyes = Erinyes::new(valkey.clone()).await; 
-        addToMount(&mut senders, &mut runners, Box::new(erinyes)).await;
+        add_to_mount(&mut senders, &mut runners, Box::new(erinyes)).await;
 
         // --- RESTO DEL PANTEÓN ---
         // Instanciaremos los demás. Asumimos `new()` async standard.
         // Si alguno falla compilación (nombres incorrectos, etc), ajustaremos.
         
-        addToMount(&mut senders, &mut runners, Box::new(Hera::new().await)).await;
-        addToMount(&mut senders, &mut runners, Box::new(Artemis::new().expect("Artemis failed to ignite"))).await;
-        addToMount(&mut senders, &mut runners, Box::new(Apollo::new().await)).await;
-        addToMount(&mut senders, &mut runners, Box::new(Athena::new().await)).await;
-        addToMount(&mut senders, &mut runners, Box::new(Ares::new().await)).await;
-        addToMount(&mut senders, &mut runners, Box::new(Aphrodite::new().await)).await;
+        add_to_mount(&mut senders, &mut runners, Box::new(Hera::new().await)).await;
+        add_to_mount(&mut senders, &mut runners, Box::new(Artemis::new().expect("Artemis failed to ignite"))).await;
+        add_to_mount(&mut senders, &mut runners, Box::new(Apollo::new().await)).await;
+        add_to_mount(&mut senders, &mut runners, Box::new(Athena::new().await)).await;
+        add_to_mount(&mut senders, &mut runners, Box::new(Ares::new().await)).await;
+        add_to_mount(&mut senders, &mut runners, Box::new(Aphrodite::new().await)).await;
         // Hephaestus a veces es Hefesto en imports legacy, chequearemos nombre
         // En olympus_system.rs línea 17: `pub mod hefesto;`
         // En mi lista usé `hephaestus`. 
@@ -113,25 +113,25 @@ impl Genesis {
         // Probaremos con Hephaestus si el módulo es correcto, si no fallará.
         // En olympus_system.rs: `hefesto`.
         // Intentaremos cargar `crate::actors::hephaestus::Hephaestus`.
-        addToMount(&mut senders, &mut runners, Box::new(Hefesto::new().await)).await;
+        add_to_mount(&mut senders, &mut runners, Box::new(Hefesto::new().await)).await;
         
-        addToMount(&mut senders, &mut runners, Box::new(Dionysus::new().await)).await;
-        addToMount(&mut senders, &mut runners, Box::new(Demeter::new().await)).await;
-        addToMount(&mut senders, &mut runners, Box::new(Hestia::new(valkey.clone(), surreal.clone()).await)).await;
-        addToMount(&mut senders, &mut runners, Box::new(Chronos::new().await)).await;
-        addToMount(&mut senders, &mut runners, Box::new(Iris::new().await)).await;
-        addToMount(&mut senders, &mut runners, Box::new(Moirai::new().await)).await;
-        addToMount(&mut senders, &mut runners, Box::new(Chaos::new())).await;
-        addToMount(&mut senders, &mut runners, Box::new(Aurora::new().await)).await;
+        add_to_mount(&mut senders, &mut runners, Box::new(Dionysus::new().await)).await;
+        add_to_mount(&mut senders, &mut runners, Box::new(Demeter::new().await)).await;
+        add_to_mount(&mut senders, &mut runners, Box::new(Hestia::new(valkey.clone(), surreal.clone()).await)).await;
+        add_to_mount(&mut senders, &mut runners, Box::new(Chronos::new().await)).await;
+        add_to_mount(&mut senders, &mut runners, Box::new(Iris::new().await)).await;
+        add_to_mount(&mut senders, &mut runners, Box::new(Moirai::new().await)).await;
+        add_to_mount(&mut senders, &mut runners, Box::new(Chaos::new())).await;
+        add_to_mount(&mut senders, &mut runners, Box::new(Aurora::new().await)).await;
 
 
         // 3. Wiring (Conexión)
         info!("🧶 GENESIS: Conectando neuronas del Olimpo (Routing en Hermes)...");
         
         // Registrar a todos en Hermes
-        let hermes_sender = senders.get(&GodName::Hermes).unwrap().clone();
+        let _hermes_sender = senders.get(&GodName::Hermes).unwrap().clone();
         
-        for (name, tx) in &senders {
+        for (name, _tx) in &senders {
             if name == &GodName::Hermes { continue; }
             
             // Crear comando manual de registro
@@ -214,7 +214,7 @@ impl Genesis {
         
         // 5. Señal de Vida Inicial
         // Enviamos un Ping a Zeus
-        if let Some(zeus_tx) = senders.get(&GodName::Zeus) {
+        if let Some(_zeus_tx) = senders.get(&GodName::Zeus) {
             // Mensaje dummy para despertar
             // Necesitamos construir un ActorMessage válido.
             // Dejamos que Zeus arranque con su initialize().
@@ -224,7 +224,7 @@ impl Genesis {
     }
 }
 
-async fn addToMount(
+async fn add_to_mount(
     map: &mut HashMap<GodName, mpsc::Sender<ActorMessage>>, 
     list: &mut Vec<ActorRunner>, 
     actor: Box<dyn OlympianActor>

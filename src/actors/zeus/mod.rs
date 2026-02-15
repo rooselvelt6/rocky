@@ -2,6 +2,8 @@
 // OLYMPUS v15 - Zeus: Gobernador Supremo y Coordinador de la Trinidad
 // Supervisor del Olimpo con thunderstrike, métricas avanzadas y gestión completa
 
+#![allow(dead_code)]
+
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
@@ -22,9 +24,9 @@ pub mod governance;
 pub mod config;
 
 pub use thunder::{Thunderbolt, ThunderEvent, ThunderSeverity};
-pub use supervisor::{SupervisionManager, LifecycleEvent, OlympicHealth, RecoveryAction, RestartResult, DependencyInfo};
-pub use metrics::{ZeusMetrics, ActorMetricsUpdate, MetricsSummary, HistoricalSnapshot, AlertSeverity, TrinityMetrics, TrinityStatus};
-pub use governance::{GovernanceController, GovernanceDecision, GovernanceSituation, GovernanceRecord, SecuritySeverity, FeatureFlag, CircuitBreaker, CircuitState};
+pub use supervisor::{SupervisionManager, LifecycleEvent, RestartResult};
+pub use metrics::{ZeusMetrics, AlertSeverity, TrinityMetrics, TrinityStatus};
+pub use governance::{GovernanceController, GovernanceDecision, GovernanceSituation, CircuitState};
 pub use config::{ZeusConfig, ConfigManager, Environment};
 
 /// Comandos completos de Zeus
@@ -164,6 +166,7 @@ impl Default for TrinityState {
 
 /// Zeus: El Gobernador Supremo del Olimpo
 #[derive(Debug)]
+#[allow(dead_code)]
 pub struct Zeus {
     // Identidad
     name: GodName,

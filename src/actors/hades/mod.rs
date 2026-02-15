@@ -2,6 +2,8 @@
 // OLYMPUS v15 - Hades: Dios del Inframundo y Seguridad
 // Sistema completo de encriptación, autenticación y auditoría
 
+#![allow(dead_code)]
+
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
@@ -28,6 +30,7 @@ pub use audit::{AuditLogger, AuditResult, AuditQuery, DataSensitivity, ExportFor
 /// Parte de la Trinidad Suprema junto con Zeus y Poseidón
 /// Protege todo el Olimpo con cifrado real, autenticación y auditoría
 #[derive(Debug)]
+#[allow(dead_code)]
 pub struct Hades {
     name: GodName,
     state: ActorState,

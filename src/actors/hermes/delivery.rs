@@ -2,6 +2,8 @@
 // OLYMPUS v13 - Hermes Delivery Tracker
 // Seguimiento de entrega de mensajes
 
+#![allow(dead_code)]
+
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::Arc;

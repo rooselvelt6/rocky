@@ -1,6 +1,8 @@
 // src/actors/ares/detector.rs
 // OLYMPUS v15 - Detector de Conflictos para Ares
 
+#![allow(dead_code)]
+
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;

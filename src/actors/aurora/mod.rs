@@ -1,6 +1,8 @@
 // src/actors/aurora/mod.rs
 // OLYMPUS v13 - Aurora: Diosa del Amanecer y Nuevos Inicios
 
+#![allow(dead_code)]
+
 use async_trait::async_trait;
 use std::sync::Arc;
 use tokio::sync::RwLock;
@@ -77,6 +79,7 @@ pub enum RenewalLevel {
 }
 
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct Aurora {
     name: GodName,
     state: ActorState,

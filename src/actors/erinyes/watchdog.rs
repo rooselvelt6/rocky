@@ -2,6 +2,8 @@
 // OLYMPUS v15 - Erinyes Watchdog
 // Vigilancia continua del sistema con análisis predictivo
 
+#![allow(dead_code)]
+
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, VecDeque};
 use std::sync::Arc;

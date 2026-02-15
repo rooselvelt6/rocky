@@ -2,6 +2,8 @@
 // OLYMPUS v15 - Erinyes Recovery Engine
 // Motor de recuperación avanzado con múltiples estrategias
 
+#![allow(dead_code)]
+
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::Arc;

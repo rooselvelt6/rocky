@@ -1,6 +1,8 @@
 // src/actors/nemesis/legal_framework.rs
 // OLYMPUS v15 - Legal Framework: Framework Legal Regulatorio para Némesis
 
+#![allow(dead_code)]
+
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;

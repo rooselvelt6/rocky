@@ -2,6 +2,8 @@
 // OLYMPUS v15 - Zeus Configuration
 // Configuración centralizada del Olimpo con hot-reloading y validación
 
+#![allow(dead_code)]
+
 use serde::{Deserialize, Serialize};
 use tokio::sync::{RwLock, watch};
 use std::sync::Arc;
@@ -190,6 +192,7 @@ impl Default for ZeusConfig {
     }
 }
 
+#[allow(dead_code)]
 impl ZeusConfig {
     /// Crea configuración desde variables de entorno
     pub fn from_env() -> Self {

@@ -2,6 +2,8 @@
 // OLYMPUS v15 - Hefesto: Dios de la Forja y Configuración
 // Responsabilidad: Gestión de configuraciones, validación, backups y migraciones
 
+#![allow(dead_code)]
+
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;

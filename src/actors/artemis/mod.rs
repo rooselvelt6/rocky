@@ -1,6 +1,8 @@
 // src/actors/artemis/mod.rs
 // OLYMPUS v13 - Artemis: Diosa de la Caza y Búsqueda (Motor de Búsqueda)
 
+#![allow(dead_code)]
+
 use async_trait::async_trait;
 use std::sync::Arc;
 use tokio::sync::RwLock;

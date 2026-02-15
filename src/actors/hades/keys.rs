@@ -2,6 +2,8 @@
 // OLYMPUS v15 - Hades Key Manager
 // Gestión segura de claves criptográficas con rotación automática y zeroize
 
+#![allow(dead_code)]
+
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::Arc;
