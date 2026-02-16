@@ -46,6 +46,7 @@ impl Eye {
     ///
     /// # Examples
     /// ```
+    /// use olympus::uci::scale::glasgow::Eye;
     /// let eye = Eye::from_u8(4).unwrap();
     /// assert_eq!(eye.to_u8(), 4);
     /// ```
@@ -211,7 +212,7 @@ impl Motor {
 ///
 /// # Example
 /// ```
-/// use uci::scale::glasgow::Glasgow;
+/// use olympus::uci::scale::glasgow::Glasgow;
 ///
 /// let gcs = Glasgow::from_u8(4, 5, 6).unwrap();
 /// let score = gcs.score(); // Returns 15
@@ -241,7 +242,8 @@ impl Glasgow {
     ///
     /// # Example
     /// ```
-    /// let gcs = Glasgow::from_u8(3, 4, 5)?;
+    /// use olympus::uci::scale::glasgow::Glasgow;
+    /// let gcs = Glasgow::from_u8(3, 4, 5).unwrap();
     /// assert_eq!(gcs.score(), 12); // Moderate TBI
     /// ```
     pub fn from_u8(eye: u8, verbal: u8, motor: u8) -> Result<Self, String> {
