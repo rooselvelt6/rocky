@@ -9,6 +9,18 @@ pub mod erinyes;
 pub mod athena;
 pub mod apollo;
 pub mod poseidon;
+pub mod ares;
+pub mod artemis;
+pub mod aurora;
+pub mod chaos;
+pub mod chronos;
+pub mod demeter;
+pub mod dionysus;
+pub mod hefesto;
+pub mod hera;
+pub mod iris;
+pub mod moirai;
+pub mod nemesis;
 
 use olympus::actors::{GodName, DivineDomain};
 use std::sync::Once;
