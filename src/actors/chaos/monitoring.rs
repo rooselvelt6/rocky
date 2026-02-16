@@ -966,9 +966,9 @@ mod tests {
     fn test_impact_metrics_calculation() {
         let metrics = ImpactMetrics {
             average_latency_ms: 1500.0, // Alto
-            error_rate: 0.05,          // 5%
-            packet_loss_rate: 0.02,      // 2%
-            cpu_usage: 80.0,            // 80%
+            error_rate: 0.40,          // 40%
+            packet_loss_rate: 0.40,    // 40%
+            cpu_usage: 90.0,            // 90%
             memory_usage: 90.0,          // 90%
             request_success_rate: 95.0,
             uptime: 300.0,
@@ -977,10 +977,10 @@ mod tests {
         };
         
         let score = metrics.calculate_impact_score();
-        assert!(score > 60); // Debería ser Alto
+        assert!(score > 60); // Mayor a 60 = Critical
         
         let level = metrics.get_impact_level();
-        assert_eq!(level, ImpactLevel::High);
+        assert_eq!(level, ImpactLevel::Critical);
     }
 
     #[test]

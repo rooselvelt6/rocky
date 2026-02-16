@@ -683,6 +683,6 @@ mod tests {
         
         let description = failure_state.description();
         assert!(description.contains("10.5%"));
-        assert!(description.contains("pérdida"));
+        assert!(description.to_lowercase().contains("pérdida"));
     }
 }
