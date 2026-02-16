@@ -75,6 +75,6 @@ impl MessageRouter {
     }
     
     pub fn route_count(&self) -> usize {
-        self.routes.blocking_read().len()
+        self.routes.try_read().map(|r| r.len()).unwrap_or(0)
     }
 }

@@ -154,7 +154,7 @@ impl ClinicalAnalysis {
     }
     
     pub fn analysis_count(&self) -> usize {
-        self.analyses.blocking_read().len()
+        self.analyses.try_read().map(|a| a.len()).unwrap_or(0)
     }
 }
 
