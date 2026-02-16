@@ -641,7 +641,7 @@ impl Chronos {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::traits::message::MessagePriority;
+    // use crate::traits::message::MessagePriority;
     use serde_json::json;
 
     #[tokio::test]

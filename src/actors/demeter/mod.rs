@@ -659,7 +659,7 @@ mod tests {
         demeter.capture_snapshot().await;
         
         // Verificar que hay alertas
-        let alerts = demeter.get_active_alerts().await;
+        let _alerts = demeter.get_active_alerts().await;
         // Nota: Depende de que el CPU real esté por encima del 1%
         // En general esto debería ser cierto
     }

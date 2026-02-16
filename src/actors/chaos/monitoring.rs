@@ -1033,7 +1033,7 @@ mod tests {
             last_measured: Utc::now(),
         };
         
-        let result = analyzer.update_metrics(experiment_id, &new_metrics).await;
+        let result = analyzer.update_metrics(experiment_id, new_metrics).await;
         assert!(result.is_ok());
         
         // Verificar que las métricas se actualizaron

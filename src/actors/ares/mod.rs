@@ -544,7 +544,7 @@ mod tests {
         assert_eq!(active.len(), 1);
         
         // Resolver conflicto
-        let result = ares.resolve_conflict(&conflict.id, ResolutionStrategy::Priority).await?;
+        let _result = ares.resolve_conflict(&conflict.id, ResolutionStrategy::Priority).await?;
         
         // Verificar que se resolvió
         let active = ares.list_active_conflicts().await;

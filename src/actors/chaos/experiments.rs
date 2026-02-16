@@ -723,7 +723,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_experiment_manager() {
-        let manager = ExperimentManager::new();
+        let mut manager = ExperimentManager::new();
         
         assert_eq!(manager.get_active_count().await, 0);
         assert_eq!(manager.get_total_count().await, 0);

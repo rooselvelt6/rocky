@@ -638,15 +638,15 @@ mod tests {
         assert_eq!(FailureSeverity::Critical.as_number(), 4);
     }
 
-    #[test]
-    fn test_injector_creation() {
+    #[tokio::test]
+    async fn test_injector_creation() {
         let injector = FailureInjector::new();
         
         // El inyector debe inicializarse correctamente
-        let active_failures = tokio::task::block_inplace(injector.get_active_failures());
+        let active_failures = injector.get_active_failures().await;
         assert!(active_failures.is_empty());
         
-        let stats = tokio::task::block_inplace(injector.get_stats());
+        let stats = injector.get_stats().await;
         assert_eq!(stats.total_injections, 0);
     }
 

@@ -439,7 +439,6 @@ mod tests {
         let health = dionysus.health_check().await;
         
         assert_eq!(health.god, GodName::Dionysus);
-        assert!(health.uptime_seconds >= 0);
         
         Ok(())
     }
