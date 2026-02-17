@@ -1,0 +1,86 @@
+[package]
+name = "olympus-server"
+version = "13.0.0"
+edition = "2021"
+description = "OLYMPUS Server - Backend con Actores"
+authors = ["Olympus Medical Team"]
+
+[dependencies]
+olympus-core = { path = "../olympus-core" }
+
+# Web framework
+axum = { version = "0.8.7", features = ["ws"] }
+tower-http = { version = "0.6.7", features = ["full", "cors"] }
+tower = { version = "0.5", features = ["full"] }
+
+# Async runtime
+tokio = { version = "1.48.0", features = ["macros", "rt-multi-thread", "net", "signal", "time", "sync", "fs", "io-util", "parking_lot", "tracing"] }
+
+# Database
+surrealdb = { version = "2.4", features = ["protocol-ws", "protocol-http", "kv-mem"] }
+valkey = { version = "0.0.0-alpha5" }
+
+# Actor system
+ractor = { version = "0.9", features = ["async-trait"] }
+
+# Search
+tantivy = "0.22"
+
+# WebSocket
+tokio-tungstenite = "0.24"
+
+# Serialization
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.126"
+
+# Time
+chrono = { version = "0.4", features = ["serde"] }
+
+# Config
+dotenvy = "0.15"
+config = { version = "0.14", features = ["yaml", "json"] }
+
+# HTTP client
+reqwest = { version = "0.12", features = ["json"] }
+
+# Logging
+tracing = { version = "0.1.41", features = ["max_level_trace", "release_max_level_debug", "async-await", "log", "log-always"] }
+tracing-subscriber = { version = "0.3.20", features = ["env-filter", "fmt", "json", "registry", "smallvec", "time", "tracing-log"] }
+
+# Crypto & Security
+jsonwebtoken = { version = "10.2.0", features = ["rust_crypto", "pem"], default-features = false }
+chacha20poly1305 = "0.10"
+zeroize = { version = "1.8", features = ["derive"] }
+argon2 = "0.5"
+blake3 = "1.5"
+ring = "0.17"
+rustls = "0.23"
+
+# Error handling
+thiserror = "1.0"
+anyhow = "1.0"
+eyre = "0.6"
+color-eyre = "0.6"
+
+# Utilities
+uuid = { version = "1.10", features = ["v4", "serde", "fast-rng"] }
+base64 = "0.22"
+regex = "1.10"
+futures-util = { version = "0.3", features = ["sink"] }
+async-trait = "0.1"
+
+# Concurrency
+dashmap = "6.0"
+lru = "0.12"
+parking_lot = "0.12"
+flume = "0.11"
+async-channel = "2.3"
+crossbeam = "0.8"
+
+# Resilience
+failsafe = "0.3"
+backoff = "0.4"
+retry = "2.0"
+
+# Metrics
+prometheus = "0.13"

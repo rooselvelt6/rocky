@@ -1,4 +1,27 @@
 services:
+  valkey:
+    image: valkey/valkey:latest
+    container_name: rocky-valkey
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - valkey-data:/data
+    command: valkey-server --appendonly yes
+    networks:
+      - rocky-net
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
   surrealdb:
     image: surrealdb/surrealdb:v2.4
     container_name: rocky-surrealdb
@@ -51,14 +74,19 @@ services:
       - DB_DB=uci
       - DB_MAX_RETRIES=10
       - DB_RETRY_DELAY=5
+      - VALKEY_HOST=valkey
+      - VALKEY_PORT=6379
     depends_on:
       surrealdb:
+        condition: service_healthy
+        restart: true
+      valkey:
         condition: service_healthy
         restart: true
     networks:
       - rocky-net
     healthcheck:
-      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health" ]
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/status" ]
       interval: 15s
       timeout: 10s
       retries: 5
@@ -83,3 +111,5 @@ networks:
 volumes:
   rocky_surreal_data:
     external: true
+  valkey-data:
+    driver: local

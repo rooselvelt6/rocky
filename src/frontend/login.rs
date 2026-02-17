@@ -1,14 +1,7 @@
 use crate::frontend::i18n::{t, use_i18n};
+use crate::server_functions::auth::login;
 use leptos::*;
 use leptos_router::*;
-use serde::{Deserialize, Serialize};
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct AuthState {
-    pub token: Option<String>,
-    pub user_id: Option<String>,
-    pub role: Option<String>,
-}
 
 #[component]
 pub fn Login() -> impl IntoView {
@@ -16,56 +9,48 @@ pub fn Login() -> impl IntoView {
     let (username, set_username) = create_signal(String::new());
     let (password, set_password) = create_signal(String::new());
     let (error_msg, set_error_msg) = create_signal(None::<String>);
+    let (loading, set_loading) = create_signal(false);
 
     let navigate = use_navigate();
 
     let on_submit = move |ev: ev::SubmitEvent| {
         ev.prevent_default();
         set_error_msg.set(None);
+        set_loading.set(true);
 
         let user = username.get();
         let pass = password.get();
         let navigate = navigate.clone();
 
         spawn_local(async move {
-            let res = reqwasm::http::Request::post("/api/login")
-                .header("Content-Type", "application/json")
-                .body(
-                    serde_json::to_string(&serde_json::json!({
-                        "username": user,
-                        "password": pass
-                    }))
-                    .unwrap(),
-                )
-                .send()
-                .await;
+            let result = login(user.clone(), pass.clone()).await;
 
-            match res {
-                Ok(resp) if resp.ok() => {
-                    let text = resp.text().await.unwrap_or_default();
-                    if let Ok(data) = serde_json::from_str::<serde_json::Value>(&text) {
-                        let token = data["token"].as_str().unwrap_or_default();
-                        let user_id = data["user"]["id"].as_str().unwrap_or_default();
-                        let role = data["user"]["role"].as_str().unwrap_or_default();
-
-                        // Store in storage
+            match result {
+                Ok(response) => {
+                    set_loading.set(false);
+                    if response.success {
+                        let token_str = response.token.unwrap_or_default();
+                        let user_id_str = response.user_id.unwrap_or_default();
+                        let role_str = response.role.unwrap_or_default();
+                        
                         if let Some(storage) = window().local_storage().ok().flatten() {
-                            let _ = storage.set_item("uci_token", token);
-                            let _ = storage.set_item("uci_user_id", user_id);
-                            let _ = storage.set_item("uci_role", role);
+                            let _ = storage.set_item("uci_token", &token_str);
+                            let _ = storage.set_item("uci_user_id", &user_id_str);
+                            let _ = storage.set_item("uci_role", &role_str);
                         }
 
-                        // Try to trigger auth update in parent
                         if let Some(set_trigger) = use_context::<WriteSignal<i32>>() {
                             set_trigger.update(|v| *v += 1);
                         }
 
-                        // Redirect to Dashboard
                         navigate("/dashboard", Default::default());
+                    } else {
+                        set_error_msg.set(Some(response.message));
                     }
                 }
-                _ => {
-                    set_error_msg.set(Some(t(lang.get(), "invalid_credentials")));
+                Err(e) => {
+                    set_loading.set(false);
+                    set_error_msg.set(Some(format!("Error: {}", e)));
                 }
             }
         });
@@ -126,9 +111,10 @@ pub fn Login() -> impl IntoView {
 
                     <button
                         type="submit"
-                        class="w-full bg-indigo-600 text-white py-3.5 sm:py-4 rounded-xl sm:rounded-2xl font-black text-base sm:text-lg hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-200 active:scale-[0.98] flex items-center justify-center gap-2 sm:gap-3"
+                        disabled=loading
+                        class="w-full bg-indigo-600 text-white py-3.5 sm:py-4 rounded-xl sm:rounded-2xl font-black text-base sm:text-lg hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-200 active:scale-[0.98] flex items-center justify-center gap-2 sm:gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        <i class="fas fa-sign-in-alt"></i>
+                        <i class={move || if loading.get() { "fas fa-spinner fa-spin" } else { "fas fa-sign-in-alt" }}></i>
                         {move || t(lang.get(), "login_btn")}
                     </button>
                 </form>

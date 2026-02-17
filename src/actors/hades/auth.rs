@@ -16,6 +16,28 @@ use tracing::{info, warn};
 use crate::actors::hades::audit::{AuditLogger, AuditResult};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct OtpCode {
+    pub code: String,
+    pub user_id: String,
+    pub username: String,
+    pub created_at: Instant,
+    pub expires_at: Instant,
+    pub attempts: u32,
+    pub verified: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct OtpSession {
+    pub session_id: String,
+    pub user_id: String,
+    pub username: String,
+    pub password_verified: bool,
+    pub otp_verified: bool,
+    pub created_at: Instant,
+    pub expires_at: Instant,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PasswordHash {
     pub hash: String,
     pub salt: String,
@@ -138,11 +160,15 @@ pub struct JwtClaims {
 pub struct AuthenticationService {
     users: Arc<RwLock<HashMap<String, User>>>,
     sessions: Arc<RwLock<HashMap<String, Session>>>,
+    otp_codes: Arc<RwLock<HashMap<String, OtpCode>>>,
+    otp_sessions: Arc<RwLock<HashMap<String, OtpSession>>>,
     audit_logger: Arc<RwLock<AuditLogger>>,
     jwt_secret: Arc<RwLock<String>>,
     token_duration_hours: u64,
     max_login_attempts: u32,
     lockout_duration_minutes: u64,
+    otp_expiry_seconds: u64,
+    otp_max_attempts: u32,
 }
 
 #[derive(Debug, Clone)]
@@ -167,12 +193,304 @@ impl AuthenticationService {
         Self {
             users: Arc::new(RwLock::new(HashMap::new())),
             sessions: Arc::new(RwLock::new(HashMap::new())),
+            otp_codes: Arc::new(RwLock::new(HashMap::new())),
+            otp_sessions: Arc::new(RwLock::new(HashMap::new())),
             audit_logger,
             jwt_secret: Arc::new(RwLock::new(jwt_secret)),
             token_duration_hours: 24,
             max_login_attempts: 5,
             lockout_duration_minutes: 30,
+            otp_expiry_seconds: 300,
+            otp_max_attempts: 3,
         }
+    }
+    
+    fn generate_otp_code(&self) -> String {
+        use rand::Rng;
+        let mut rng = rand::thread_rng();
+        format!("{:06}", rng.gen_range(0..999999))
+    }
+    
+    pub async fn initiate_login(&self, username: &str, password: &str, ip_address: Option<String>, user_agent: Option<String>) 
+        -> Result<OtpSessionResponse, AuthenticationError> 
+    {
+        let users = self.users.read().await;
+        let user = users.values()
+            .find(|u| u.username == username || u.email == username)
+            .cloned()
+            .ok_or(AuthenticationError::InvalidCredentials)?;
+        drop(users);
+        
+        if let Some(locked_until) = user.locked_until {
+            if chrono::Utc::now() < locked_until {
+                return Err(AuthenticationError::AccountLocked);
+            }
+        }
+        
+        let password_valid = self.verify_password(password, &user.password_hash).await?;
+        if !password_valid {
+            let mut users = self.users.write().await;
+            if let Some(u) = users.get_mut(&user.id) {
+                u.login_attempts += 1;
+                if u.login_attempts >= self.max_login_attempts {
+                    u.locked_until = Some(chrono::Utc::now() + chrono::Duration::minutes(self.lockout_duration_minutes as i64));
+                }
+            }
+            self.audit_logger.write().await.log("LOGIN_FAILED", &user.id, username, AuditResult::Failure, 
+                serde_json::json!({"reason": "Invalid password"})).await;
+            return Err(AuthenticationError::InvalidCredentials);
+        }
+        
+        let session_id = uuid::Uuid::new_v4().to_string();
+        let otp_code = self.generate_otp_code();
+        let now = Instant::now();
+        
+        let otp_session = OtpSession {
+            session_id: session_id.clone(),
+            user_id: user.id.clone(),
+            username: user.username.clone(),
+            password_verified: true,
+            otp_verified: false,
+            created_at: now,
+            expires_at: now + Duration::from_secs(self.otp_expiry_seconds),
+        };
+        
+        let otp = OtpCode {
+            code: otp_code.clone(),
+            user_id: user.id.clone(),
+            username: user.username.clone(),
+            created_at: now,
+            expires_at: now + Duration::from_secs(self.otp_expiry_seconds),
+            attempts: 0,
+            verified: false,
+        };
+        
+        {
+            let mut sessions = self.otp_sessions.write().await;
+            sessions.insert(session_id.clone(), otp_session);
+        }
+        {
+            let mut codes = self.otp_codes.write().await;
+            codes.insert(otp_code.clone(), otp);
+        }
+        
+        self.audit_logger.write().await.log("OTP_SENT", &user.id, username, AuditResult::Success,
+            serde_json::json!({"session_id": session_id})).await;
+        
+        info!("📧 OTP code generated for user: {} (code: {})", username, otp_code);
+        
+        Ok(OtpSessionResponse {
+            session_id,
+            otp_code: otp_code,
+            message: "OTP code sent to your email".to_string(),
+        })
+    }
+    
+    pub async fn verify_otp(&self, session_id: &str, otp_code: &str, ip_address: Option<String>, user_agent: Option<String>) 
+        -> Result<AuthResponse, AuthenticationError> 
+    {
+        let otp_sessions = self.otp_sessions.read().await;
+        let session = otp_sessions.get(session_id)
+            .ok_or(AuthenticationError::InvalidSession)?
+            .clone();
+        drop(otp_sessions);
+        
+        if Instant::now() > session.expires_at {
+            self.otp_sessions.write().await.remove(session_id);
+            return Err(AuthenticationError::SessionExpired);
+        }
+        
+        let mut codes = self.otp_codes.write().await;
+        let otp = codes.get_mut(otp_code)
+            .ok_or(AuthenticationError::InvalidOtp)?;
+        
+        if Instant::now() > otp.expires_at {
+            codes.remove(otp_code);
+            return Err(AuthenticationError::OtpExpired);
+        }
+        
+        if otp.attempts >= self.otp_max_attempts {
+            codes.remove(otp_code);
+            self.otp_sessions.write().await.remove(session_id);
+            return Err(AuthenticationError::OtpMaxAttempts);
+        }
+        
+        if otp.code != otp_code {
+            otp.attempts += 1;
+            drop(codes);
+            self.audit_logger.write().await.log("OTP_FAILED", &session.user_id, &session.username, AuditResult::Failure,
+                serde_json::json!({"attempts": otp.attempts})).await;
+            return Err(AuthenticationError::InvalidOtp);
+        }
+        
+        otp.verified = true;
+        drop(codes);
+        
+        let mut otp_sessions = self.otp_sessions.write().await;
+        if let Some(s) = otp_sessions.get_mut(session_id) {
+            s.otp_verified = true;
+        }
+        drop(otp_sessions);
+        
+        let users = self.users.read().await;
+        let user = users.get(&session.user_id).cloned().ok_or(AuthenticationError::UserNotFound)?;
+        drop(users);
+        
+        let mut users = self.users.write().await;
+        if let Some(u) = users.get_mut(&user.id) {
+            u.login_attempts = 0;
+            u.locked_until = None;
+            u.last_login = Some(chrono::Utc::now());
+        }
+        drop(users);
+        
+        let token = self.generate_jwt(&user).await?;
+        
+        let session = Session {
+            token: token.clone(),
+            user_id: user.id.clone(),
+            created_at: Instant::now(),
+            last_activity: Instant::now(),
+            ip_address,
+            user_agent,
+        };
+        
+        {
+            let mut sessions = self.sessions.write().await;
+            sessions.insert(token.clone(), session);
+        }
+        
+        self.otp_codes.write().await.remove(otp_code);
+        self.otp_sessions.write().await.remove(session_id);
+        
+        self.audit_logger.write().await.log("LOGIN_SUCCESS_OTP", &user.id, &user.username, AuditResult::Success,
+            serde_json::json!({})).await;
+        
+        info!("✅ User authenticated with OTP: {} ({})", user.username, user.id);
+        
+        Ok(AuthResponse {
+            user_id: user.id,
+            username: user.username,
+            email: user.email,
+            roles: user.roles.iter().map(|r| format!("{:?}", r)).collect(),
+            token,
+        })
+    }
+    
+    pub async fn get_otp_status(&self, session_id: &str) -> Result<OtpStatus, AuthenticationError> {
+        let sessions = self.otp_sessions.read().await;
+        let session = sessions.get(session_id)
+            .ok_or(AuthenticationError::InvalidSession)?
+            .clone();
+        drop(sessions);
+        
+        let codes = self.otp_codes.read().await;
+        let otp = codes.values().find(|o| o.user_id == session.user_id && !o.verified);
+        
+        Ok(OtpStatus {
+            session_id: session.session_id,
+            username: session.username,
+            password_verified: session.password_verified,
+            otp_verified: session.otp_verified,
+            expires_at: session.expires_at.elapsed().as_secs(),
+            pending_otp: otp.is_some(),
+        })
+    }
+    
+    pub async fn resend_otp(&self, session_id: &str) -> Result<String, AuthenticationError> {
+        let otp_sessions = self.otp_sessions.read().await;
+        let session = otp_sessions.get(session_id)
+            .ok_or(AuthenticationError::InvalidSession)?
+            .clone();
+        drop(otp_sessions);
+        
+        if Instant::now() > session.expires_at {
+            self.otp_sessions.write().await.remove(session_id);
+            return Err(AuthenticationError::SessionExpired);
+        }
+        
+        if session.otp_verified {
+            return Err(AuthenticationError::OtpAlreadyVerified);
+        }
+        
+        let new_otp = self.generate_otp_code();
+        let now = Instant::now();
+        
+        let codes = self.otp_codes.read().await;
+        let old_otp = codes.values().find(|o| o.user_id == session.user_id && !o.verified);
+        
+        if let Some(old) = old_otp {
+            let mut codes_write = self.otp_codes.write().await;
+            codes_write.remove(&old.code);
+        }
+        drop(codes);
+        
+        let otp = OtpCode {
+            code: new_otp.clone(),
+            user_id: session.user_id.clone(),
+            username: session.username.clone(),
+            created_at: now,
+            expires_at: now + Duration::from_secs(self.otp_expiry_seconds),
+            attempts: 0,
+            verified: false,
+        };
+        
+        self.otp_codes.write().await.insert(new_otp.clone(), otp);
+        
+        self.audit_logger.write().await.log("OTP_RESENT", &session.user_id, &session.username, AuditResult::Success,
+            serde_json::json!({})).await;
+        
+        info!("📧 OTP resent for user: {}", session.username);
+        
+        Ok(new_otp)
+    }
+    
+    pub async fn cleanup_expired_otp(&self) -> usize {
+        let now = Instant::now();
+        let mut count = 0;
+        
+        {
+            let mut codes = self.otp_codes.write().await;
+            let expired: Vec<String> = codes.iter()
+                .filter(|(_, o)| now > o.expires_at)
+                .map(|(k, _)| k.clone())
+                .collect();
+            for k in &expired {
+                codes.remove(k);
+            }
+            count += expired.len();
+        }
+        
+        {
+            let mut sessions = self.otp_sessions.write().await;
+            let expired: Vec<String> = sessions.iter()
+                .filter(|(_, s)| now > s.expires_at)
+                .map(|(k, _)| k.clone())
+                .collect();
+            for k in &expired {
+                sessions.remove(k);
+            }
+            count += expired.len();
+        }
+        
+        count
+    }
+    
+    pub async fn get_active_otp_sessions(&self) -> Vec<OtpStatus> {
+        let sessions = self.otp_sessions.read().await;
+        let codes = self.otp_codes.read().await;
+        
+        sessions.values().map(|s| {
+            let pending = codes.values().any(|c| c.user_id == s.user_id && !c.verified);
+            OtpStatus {
+                session_id: s.session_id.clone(),
+                username: s.username.clone(),
+                password_verified: s.password_verified,
+                otp_verified: s.otp_verified,
+                expires_at: s.expires_at.elapsed().as_secs(),
+                pending_otp: pending,
+            }
+        }).collect()
     }
     
     /// Hash a password using Argon2id
@@ -591,4 +909,48 @@ pub enum AuthenticationError {
     
     #[error("Invalid token")]
     InvalidToken,
+    
+    #[error("Invalid OTP code")]
+    InvalidOtp,
+    
+    #[error("OTP code expired")]
+    OtpExpired,
+    
+    #[error("Maximum OTP attempts exceeded")]
+    OtpMaxAttempts,
+    
+    #[error("Invalid session")]
+    InvalidSession,
+    
+    #[error("Session expired")]
+    SessionExpired,
+    
+    #[error("OTP already verified")]
+    OtpAlreadyVerified,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct OtpSessionResponse {
+    pub session_id: String,
+    pub otp_code: String,
+    pub message: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AuthResponse {
+    pub user_id: String,
+    pub username: String,
+    pub email: String,
+    pub roles: Vec<String>,
+    pub token: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct OtpStatus {
+    pub session_id: String,
+    pub username: String,
+    pub password_verified: bool,
+    pub otp_verified: bool,
+    pub expires_at: u64,
+    pub pending_otp: bool,
 }

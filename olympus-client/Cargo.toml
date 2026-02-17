@@ -1,0 +1,40 @@
+[package]
+name = "olympus-client"
+version = "13.0.0"
+edition = "2021"
+description = "OLYMPUS Client - Frontend WASM con Leptos"
+authors = ["Olympus Medical Team"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[[bin]]
+name = "client"
+path = "src/main.rs"
+
+[dependencies]
+olympus-core = { path = "../olympus-core" }
+
+# Leptos
+leptos = { version = "0.6", features = ["csr"] }
+leptos_meta = { version = "0.6", features = ["csr"] }
+leptos_router = { version = "0.6", features = ["csr"] }
+
+# WASM
+wasm-bindgen = "0.2"
+js-sys = "0.3"
+web-sys = { version = "0.3", features = ["Storage", "Window", "Document", "Element", "HtmlElement", "Blob", "BlobPropertyBag", "Url", "HtmlAnchorElement"] }
+console_error_panic_hook = "0.1"
+gloo-timers = "0.3"
+
+# HTTP para WASM
+reqwasm = "0.5.0"
+
+# Serialization
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.126"
+
+# Utils
+getrandom = { version = "0.2", features = ["js"] }
+uuid = { version = "1.10", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }

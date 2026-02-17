@@ -1,19 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UCI - ICU Medical Scales</title>
-    <!-- Tailwind CSS -->
+    <title>Olympus UCI - Leptos 0.7</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="/style.css">
     
 <script type="module">
-import init, * as bindings from '/frontend-d3fb3de0071a465e.js';
-const wasm = await init({ module_or_path: '/frontend-d3fb3de0071a465e_bg.wasm' });
+import init, * as bindings from '/olympus-client-6d41392ed32d22e0.js';
+const wasm = await init({ module_or_path: '/olympus-client-6d41392ed32d22e0_bg.wasm' });
 
 
 window.wasmBindings = bindings;
@@ -22,10 +18,8 @@ window.wasmBindings = bindings;
 dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
 
 </script>
-<link rel="modulepreload" href="/frontend-d3fb3de0071a465e.js" crossorigin="anonymous" integrity="sha384-6EC7OWCf+OvM19pB/jh0N2fv3uLc3Bft+GNZaFLfEDUiHbXfCgxlJPtXYUUVP+eZ"><link rel="preload" href="/frontend-d3fb3de0071a465e_bg.wasm" crossorigin="anonymous" integrity="sha384-yt0WCXpmEIqaouWLKXIdZONrBPGmxNMif3yy06hQ+r5L0n9E/LlI+HzDg7nIVAMC" as="fetch" type="application/wasm"></head>
-
+<link rel="modulepreload" href="/olympus-client-6d41392ed32d22e0.js" crossorigin="anonymous" integrity="sha384-bBsGXf9wsDs3WSFDVJvzgwm5nDnD46R5we9UMbUQz6RZgO+MqnOpjW1G7QvAiXUp"><link rel="preload" href="/olympus-client-6d41392ed32d22e0_bg.wasm" crossorigin="anonymous" integrity="sha384-n/1Yg2Drzri3TlGljTJ87+bGkEAmx++9Q1b13gU8R32RPdLTtO84wlpWt69Ugbyy" as="fetch" type="application/wasm"></head>
 <body>
     <div id="app"></div>
 </body>
-
 </html>

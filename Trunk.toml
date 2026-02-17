@@ -1,4 +1,13 @@
 [build]
 target = "index.html"
 dist = "dist"
+public_url = "/"
 
+[serve]
+port = 8080
+open = false
+
+[[hooks]]
+stage = "build"
+command = "sh"
+command_arguments = ["-c", "echo 'Building Olympus v15 with Leptos 0.8...'"]
