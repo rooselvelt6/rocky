@@ -21,16 +21,17 @@ use crate::system::Genesis;
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing_subscriber::fmt::init();
     
-    info!("🏔️  OLYMPUS SYSTEM v15 - STARTING UP  🏔️");
-    info!("⚡  Server Mode with 20 Gods (Actors)");
+    info!("🏔️  OLYMPUS SYSTEM v16 - STARTING UP  🏔️");
+    info!("⚡  Server Mode with 21 Gods (Actors)");
     info!("🏛️  Backend: Tokio + Axum + SurrealDB + Valkey");
 
     match Genesis::ignite().await {
-        Ok(_) => info!("✨ Genesis completado. Los 20 dioses caminan entre nosotros."),
+        Ok(_) => info!("✨ Genesis completado. Los 21 dioses caminan entre nosotros."),
         Err(e) => {
             error!("💀 Genesis falló: {}", e);
         }
     }
+
 
     let app = Router::new()
         .route("/", get(index))

@@ -88,41 +88,29 @@ impl HealthStatus {
     }
 }
 
+use ractor::{Actor, ActorRef, ActorProcessingErr};
+
 /// Interface base para todos los dioses del Olimpo
+/// Ahora alineada con Ractor v0.9
 #[async_trait]
-pub trait OlympianActor: Send + Sync {
+pub trait OlympianActor: Actor<Msg = ActorMessage, Arguments = ActorConfig> {
     /// Nombre del dios
     fn name(&self) -> GodName;
 
     /// Dominio del dios
     fn domain(&self) -> DivineDomain;
 
-    /// Manejar mensaje entrante (estilo OTP GenServer)
-    async fn handle_message(&mut self, msg: ActorMessage) -> Result<ResponsePayload, ActorError>;
-
     /// Estado para persistencia
-    async fn persistent_state(&self) -> serde_json::Value;
+    async fn persistent_state(&self, state: &Self::State) -> serde_json::Value;
 
     /// Cargar estado desde persistencia
-    fn load_state(&mut self, state: &serde_json::Value) -> Result<(), ActorError>;
+    fn load_state(&self, state: &serde_json::Value) -> Result<Self::State, ActorError>;
 
     /// Heartbeat para Erinyes
-    fn heartbeat(&self) -> GodHeartbeat;
+    fn heartbeat(&self, state: &Self::State) -> GodHeartbeat;
 
     /// Health check
-    async fn health_check(&self) -> HealthStatus;
-
-    /// Configuración del actor
-    fn config(&self) -> Option<&ActorConfig>;
-
-    /// Inicialización post-creación
-    async fn initialize(&mut self) -> Result<(), ActorError>;
-
-    /// Limpieza pre-destrucción
-    async fn shutdown(&mut self) -> Result<(), ActorError>;
-
-    /// Obtener estado actual del actor
-    fn actor_state(&self) -> ActorState;
+    async fn health_check(&self, state: &Self::State) -> HealthStatus;
 }
 
 /// Estado interno del actor

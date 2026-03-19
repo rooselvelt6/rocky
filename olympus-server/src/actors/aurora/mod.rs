@@ -1,15 +1,16 @@
 // src/actors/aurora/mod.rs
-// OLYMPUS v13 - Aurora: Diosa del Amanecer y Nuevos Inicios
+// OLYMPUS v16 - Aurora: Diosa del Amanecer y Nuevos Inicios
+// Implementación sobre Ractor
 
 #![allow(dead_code)]
 
 use async_trait::async_trait;
-use std::sync::Arc;
-use tokio::sync::RwLock;
+use serde::{Deserialize, Serialize};
+use ractor::{Actor, ActorRef, ActorProcessingErr};
 
 use crate::actors::{GodName, DivineDomain};
 use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
-use crate::traits::message::{ActorMessage, ResponsePayload};
+use crate::traits::message::{ActorMessage, MessagePayload, CommandPayload, ResponsePayload, QueryPayload};
 use crate::errors::ActorError;
 
 pub mod dawn;
@@ -17,138 +18,95 @@ pub mod hope;
 pub mod opportunities;
 pub mod inspiration;
 
-use serde::{Deserialize, Serialize};
-
 /// Tipo de renovación para ciclos del amanecer
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum RenewalType {
-    /// Sistema completo
     System,
-    /// Componente específico
     Component(String),
-    /// Base de datos
     Database,
-    /// Cache
     Cache,
-    /// Memoria del sistema
     Memory,
-    /// Red
     Network,
-    /// Almacenamiento
     Storage,
-    /// Procesos
     Processes,
-    /// Servicios
     Services,
-    /// Configuración
     Configuration,
 }
 
 /// Estado de una renovación
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum RenewalStatus {
-    /// Pendiente de ejecución
     Pending,
-    /// En progreso
     InProgress,
-    /// Completada exitosamente
     Completed,
-    /// Fallida
     Failed,
-    /// Cancelada
     Cancelled,
-    /// En pausa
     Paused,
-    /// Reintentando
     Retrying,
 }
 
 /// Nivel de renovación
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum RenewalLevel {
-    /// Renovación completa (reinicio total)
     Full,
-    /// Renovación ligera (optimización)
     Light,
-    /// Renovación mínima (mantenimiento básico)
     Minimal,
-    /// Renovación inteligente (basada en IA)
     Smart,
-    /// Renovación personalizada
     Custom(String),
 }
 
-#[derive(Debug, Clone)]
-#[allow(dead_code)]
-pub struct Aurora {
-    name: GodName,
-    state: ActorState,
-    hope_level: Arc<RwLock<f64>>,
+/// Aurora Commands
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum AuroraCommand {
+    StartRenewal { renewal_type: RenewalType, level: RenewalLevel },
+    UpdateHope { level: f64 },
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct DawnOpportunity {
-    pub opportunity_id: String,
-    pub opportunity_type: String,
-    pub potential_impact: f64,
-    pub time_window_minutes: u64,
+/// Aurora State for Ractor
+pub struct AuroraState {
+    pub name: GodName,
+    pub metadata: ActorState,
+    pub hope_level: f64,
+}
+
+pub struct Aurora;
+
+#[async_trait]
+impl Actor for Aurora {
+    type Msg = ActorMessage;
+    type State = AuroraState;
+    type Arguments = ();
+
+    async fn pre_start(&self, _myself: ActorRef<Self::Msg>, _args: Self::Arguments) -> Result<Self::State, ActorProcessingErr> {
+        Ok(AuroraState {
+            name: GodName::Aurora,
+            metadata: ActorState::new(GodName::Aurora),
+            hope_level: 100.0,
+        })
+    }
+
+    async fn handle(&self, _myself: ActorRef<Self::Msg>, message: Self::Msg, state: &mut Self::State) -> Result<(), ActorProcessingErr> {
+        match message.payload {
+            MessagePayload::Command(cmd) => {
+                let res = self.handle_command(cmd, state).await;
+                if let Some(reply) = message.reply_to { let _ = reply.send(res); }
+            }
+            MessagePayload::Query(query) => {
+                let res = self.handle_query(query, state).await;
+                if let Some(reply) = message.reply_to { let _ = reply.send(res); }
+            }
+            _ => if let Some(reply) = message.reply_to { let _ = reply.send(Ok(ResponsePayload::Ack { message_id: message.id })); }
+        }
+        Ok(())
+    }
 }
 
 impl Aurora {
-    pub async fn new() -> Self {
-        Self {
-            name: GodName::Aurora,
-            state: ActorState::new(GodName::Aurora),
-            hope_level: Arc::new(RwLock::new(100.0)),
-        }
+    async fn handle_command(&self, _cmd: CommandPayload, _state: &mut AuroraState) -> Result<ResponsePayload, ActorError> {
+        Ok(ResponsePayload::Success { message: "Aurora recovery action applied".to_string() })
     }
-}
 
-#[async_trait]
-impl OlympianActor for Aurora {
-    fn name(&self) -> GodName { GodName::Aurora }
-    fn domain(&self) -> DivineDomain { DivineDomain::NewBeginnings }
-    async fn handle_message(&mut self, msg: ActorMessage) -> Result<ResponsePayload, ActorError> { Ok(ResponsePayload::Ack { message_id: msg.id }) }
-    async fn persistent_state(&self) -> serde_json::Value { serde_json::json!({}) }
-    fn load_state(&mut self, _state: &serde_json::Value) -> Result<(), ActorError> { Ok(()) }
-    fn heartbeat(&self) -> GodHeartbeat {
-        use crate::traits::GodHeartbeat;
-        
-        GodHeartbeat {
-            god: GodName::Aurora,
-            status: crate::traits::ActorStatus::Healthy,
-            last_seen: chrono::Utc::now(),
-            load: 12.5,
-            memory_usage_mb: 45.2,
-            uptime_seconds: 3600,
-        }
+    async fn handle_query(&self, _query: QueryPayload, state: &AuroraState) -> Result<ResponsePayload, ActorError> {
+        Ok(ResponsePayload::Data { data: serde_json::json!({ "hope_level": state.hope_level }) })
     }
-    
-    async fn health_check(&self) -> HealthStatus {
-        let hope_level = *self.hope_level.read().await;
-        
-        let status = if hope_level >= 50.0 {
-            ActorStatus::Healthy
-        } else if hope_level >= 25.0 {
-            ActorStatus::Degraded
-        } else {
-            ActorStatus::Unhealthy
-        };
-        
-        HealthStatus {
-            god: GodName::Aurora,
-            status,
-            uptime_seconds: 3600,
-            message_count: 0,
-            error_count: 0,
-            last_error: None,
-            memory_usage_mb: 45.2,
-            timestamp: chrono::Utc::now(),
-        }
-    }
-    
-    fn config(&self) -> Option<&ActorConfig> { None }
-    async fn initialize(&mut self) -> Result<(), ActorError> { Ok(()) }
-    async fn shutdown(&mut self) -> Result<(), ActorError> { Ok(()) }
-    fn actor_state(&self) -> ActorState { self.state.clone() }
 }

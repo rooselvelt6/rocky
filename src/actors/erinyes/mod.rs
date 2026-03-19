@@ -13,7 +13,7 @@ use tracing::{info, warn};
 
 use crate::actors::{GodName, DivineDomain};
 use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
-use crate::traits::message::{ActorMessage, MessagePayload, CommandPayload, ResponsePayload, QueryPayload, RecoveryStrategy};
+use crate::traits::message::{ActorMessage, MessagePayload, CommandPayload, ResponsePayload, QueryPayload, RecoveryStrategy, EventPayload};
 use crate::infrastructure::ValkeyStore;
 use crate::errors::ActorError;
 

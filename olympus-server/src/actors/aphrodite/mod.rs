@@ -1,28 +1,24 @@
 // src/actors/aphrodite/mod.rs
-// OLYMPUS v13 - Aphrodite: Diosa de la Belleza y UI
+// OLYMPUS v16 - Aphrodite: Diosa de la Belleza y UI
+// Implementación sobre Ractor
 
 #![allow(dead_code)]
 
 use async_trait::async_trait;
 use std::sync::Arc;
 use tokio::sync::RwLock;
+use serde::{Deserialize, Serialize};
+use ractor::{Actor, ActorRef, ActorProcessingErr};
 
 use crate::actors::{GodName, DivineDomain};
 use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
-use crate::traits::message::{ActorMessage, ResponsePayload};
+use crate::traits::message::{ActorMessage, MessagePayload, CommandPayload, ResponsePayload, QueryPayload};
 use crate::errors::ActorError;
 
 pub mod theme;
 pub mod components;
 pub mod animations;
 pub mod accessibility;
-
-#[derive(Debug, Clone)]
-pub struct Aphrodite {
-    name: GodName,
-    state: ActorState,
-    current_theme: Arc<RwLock<Theme>>,
-}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Theme {
@@ -60,16 +56,6 @@ pub struct ThemeSpacing {
     pub xl: String,
 }
 
-impl Aphrodite {
-    pub async fn new() -> Self {
-        Self {
-            name: GodName::Aphrodite,
-            state: ActorState::new(GodName::Aphrodite),
-            current_theme: Arc::new(RwLock::new(Theme::default())),
-        }
-    }
-}
-
 impl Default for Theme {
     fn default() -> Self {
         Self {
@@ -100,31 +86,55 @@ impl Default for Theme {
     }
 }
 
-#[async_trait]
-impl OlympianActor for Aphrodite {
-    fn name(&self) -> GodName { GodName::Aphrodite }
-    fn domain(&self) -> DivineDomain { DivineDomain::UI }
-    async fn handle_message(&mut self, msg: ActorMessage) -> Result<ResponsePayload, ActorError> { Ok(ResponsePayload::Ack { message_id: msg.id }) }
-    async fn persistent_state(&self) -> serde_json::Value { serde_json::json!({}) }
-    fn load_state(&mut self, _state: &serde_json::Value) -> Result<(), ActorError> { Ok(()) }
-    fn heartbeat(&self) -> GodHeartbeat {
-        GodHeartbeat {
-            god: self.name(),
-            status: ActorStatus::Healthy,
-            last_seen: chrono::Utc::now(),
-            load: 0.1,
-            memory_usage_mb: 25.0,
-            uptime_seconds: 0,
-        }
-    }
-    
-    async fn health_check(&self) -> HealthStatus {
-        HealthStatus::healthy(self.name())
-    }
-    fn config(&self) -> Option<&ActorConfig> { None }
-    async fn initialize(&mut self) -> Result<(), ActorError> { Ok(()) }
-    async fn shutdown(&mut self) -> Result<(), ActorError> { Ok(()) }
-    fn actor_state(&self) -> ActorState { self.state.clone() }
+pub struct AphroditeState {
+    pub name: GodName,
+    pub metadata: ActorState,
+    pub current_theme: Theme,
 }
 
-use serde::{Deserialize, Serialize};
+pub struct Aphrodite;
+
+#[async_trait]
+impl Actor for Aphrodite {
+    type Msg = ActorMessage;
+    type State = AphroditeState;
+    type Arguments = ();
+
+    async fn pre_start(&self, _myself: ActorRef<Self::Msg>, _args: Self::Arguments) -> Result<Self::State, ActorProcessingErr> {
+        Ok(AphroditeState {
+            name: GodName::Aphrodite,
+            metadata: ActorState::new(GodName::Aphrodite),
+            current_theme: Theme::default(),
+        })
+    }
+
+    async fn handle(&self, _myself: ActorRef<Self::Msg>, message: Self::Msg, state: &mut Self::State) -> Result<(), ActorProcessingErr> {
+        match message.payload {
+            MessagePayload::Command(cmd) => {
+                let res = self.handle_command(cmd, state).await;
+                if let Some(reply) = message.reply_to { let _ = reply.send(res); }
+            }
+            MessagePayload::Query(query) => {
+                let res = self.handle_query(query, state).await;
+                if let Some(reply) = message.reply_to { let _ = reply.send(res); }
+            }
+            _ => if let Some(reply) = message.reply_to { let _ = reply.send(Ok(ResponsePayload::Ack { message_id: message.id })); }
+        }
+        Ok(())
+    }
+}
+
+impl Aphrodite {
+    async fn handle_command(&self, _cmd: CommandPayload, _state: &mut AphroditeState) -> Result<ResponsePayload, ActorError> {
+        Ok(ResponsePayload::Success { message: "Aphrodite command processed".to_string() })
+    }
+
+    async fn handle_query(&self, query: QueryPayload, state: &AphroditeState) -> Result<ResponsePayload, ActorError> {
+        match query {
+            QueryPayload::GetStats => {
+                Ok(ResponsePayload::Stats { data: serde_json::json!({ "theme": state.current_theme.name }) })
+            }
+            _ => Ok(ResponsePayload::Data { data: serde_json::json!({}) }),
+        }
+    }
+}

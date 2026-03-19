@@ -423,7 +423,8 @@ impl OlympianActor for Hermes {
         match msg.payload {
             MessagePayload::Command(cmd) => self.handle_command(cmd).await,
             MessagePayload::Query(query) => self.handle_query(query).await,
-            _ => self.route_message(msg).await,
+            MessagePayload::Event(event) => self.handle_event(event).await,
+            MessagePayload::Response(_) => Ok(ResponsePayload::Ack { message_id: msg.id }),
         }
     }
     

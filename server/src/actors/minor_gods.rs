@@ -1,83 +1,63 @@
 // server/src/actors/minor_gods.rs
 // Dioses menores del Olimpo - Implementaciones básicas
 
-use super::{ActorMessage, GodHealth, GodName, MessagePayload, OlympianActor};
+use super::{ActorMessage, GodName, OlympianActor};
 use async_trait::async_trait;
-use chrono::Utc;
+use ractor::{Actor, ActorRef, ActorProcessingErr};
 
 macro_rules! define_minor_god {
-    ($name:ident, $domain:expr, $action:expr) => {
-        pub struct $name {
-            messages_count: u64,
-        }
+    ($name:ident, $domain:expr) => {
+        pub struct $name;
 
         impl $name {
             pub fn new() -> Self {
-                Self {
-                    messages_count: 0,
-                }
+                Self
             }
         }
 
-        #[async_trait]
+        impl Actor for $name {
+            type Msg = ActorMessage;
+            type State = ();
+            type Arguments = ();
+
+            async fn pre_start(&self, _myself: ActorRef<Self::Msg>, _args: ()) -> Result<Self::State, ActorProcessingErr> {
+                tracing::info!(concat!("✨ ", stringify!($name), " v16: Desplegado en el dominio ", $domain));
+                Ok(())
+            }
+
+            async fn handle(&self, _myself: ActorRef<Self::Msg>, msg: Self::Msg, _state: &mut Self::State) -> Result<(), ActorProcessingErr> {
+                tracing::debug!(concat!("✨ ", stringify!($name), ": Procesando mensaje de {:?}"), msg.from);
+                Ok(())
+            }
+        }
+
         impl OlympianActor for $name {
             fn name(&self) -> GodName {
                 GodName::$name
             }
 
-            async fn handle_message(&mut self, msg: ActorMessage) -> Option<ActorMessage> {
-                self.messages_count += 1;
-
-                // Dioses menores solo procesan mensajes simples
-                tracing::debug!(concat!("✨ ", stringify!($name), ": Procesando mensaje de {:?}"), msg.from);
-
-                match &msg.payload {
-                    MessagePayload::Heartbeat { .. } => {
-                        // Responder con heartbeat
-                        Some(ActorMessage::new(
-                            GodName::$name,
-                            msg.from,
-                            MessagePayload::Heartbeat { timestamp: Utc::now() }
-                        ))
-                    }
-                    _ => None
-                }
-            }
-
-            async fn health(&self) -> GodHealth {
-                GodHealth {
-                    name: GodName::$name,
-                    healthy: true,
-                    last_heartbeat: Utc::now(),
-                    messages_processed: self.messages_count,
-                    uptime_seconds: 0,
-                    status: $action.to_string(),
-                }
-            }
-
             async fn initialize(&mut self) -> Result<(), String> {
-                tracing::info!(concat!("✨ ", stringify!($name), ": {} - Iniciando..."), $domain);
                 Ok(())
             }
 
             async fn shutdown(&mut self) -> Result<(), String> {
-                tracing::info!(concat!("✨ ", stringify!($name), ": {} - Deteniendo..."), $domain);
+                tracing::info!(concat!("✨ ", stringify!($name), ": Detenido."));
                 Ok(())
             }
         }
     };
 }
 
-define_minor_god!(Apollo, "Events", "Logging events");
-define_minor_god!(Artemis, "Search", "Indexing");
-define_minor_god!(Hera, "Validation", "Validating");
-define_minor_god!(Ares, "ConflictResolution", "Resolving conflicts");
-define_minor_god!(Hefesto, "Configuration", "Configuring");
-define_minor_god!(Chronos, "Scheduling", "Scheduling tasks");
-define_minor_god!(Moirai, "Predictions", "Predicting");
-define_minor_god!(Chaos, "Testing", "Testing chaos");
-define_minor_god!(Aurora, "NewBeginnings", "Renewing");
-// Aphrodite tiene su propia implementación completa en aphrodite.rs
-define_minor_god!(Iris, "Communications", "Communicating");
-define_minor_god!(Demeter, "Resources", "Managing resources");
-define_minor_god!(Dionysus, "Analysis", "Analyzing");
+define_minor_god!(Apollo, "Events");
+define_minor_god!(Artemis, "Search");
+define_minor_god!(Hera, "Validation");
+define_minor_god!(Ares, "ConflictResolution");
+define_minor_god!(Hefesto, "Configuration");
+define_minor_god!(Chronos, "Scheduling");
+define_minor_god!(Moirai, "Predictions");
+define_minor_god!(Chaos, "Testing");
+define_minor_god!(Aurora, "NewBeginnings");
+define_minor_god!(Iris, "Communications");
+define_minor_god!(Demeter, "Resources");
+define_minor_god!(Dionysus, "Analysis");
+

@@ -57,6 +57,7 @@ ring = "0.17"
 rustls = "0.23"
 
 # Error handling
+futures = "0.3"
 thiserror = "1.0"
 anyhow = "1.0"
 eyre = "0.6"

@@ -1,12 +1,10 @@
-// server/src/actors/mod.rs
-// Sistema de Actores Olympus - 20 Dioses
-
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::Arc;
-use tokio::sync::{mpsc, RwLock};
+use tokio::sync::RwLock;
 use chrono::{DateTime, Utc};
+use ractor::{Actor, ActorRef, ActorProcessingErr, RpcReplyPort};
 
 pub mod zeus;
 pub mod hades;
@@ -106,12 +104,22 @@ impl GodName {
 }
 
 // Tipos de mensajes entre dioses
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub enum MessagePayload {
-    // Comandos
-    Command { action: String, data: serde_json::Value },
-    // Consultas
-    Query { query_type: String, params: serde_json::Value },
+    // Comandos (v16: Ahora con soporte Ractor RPC)
+    Command { 
+        action: String, 
+        data: serde_json::Value,
+        #[serde(skip)]
+        reply: Option<RpcReplyPort<MessagePayload>>
+    },
+    // Consultas (v16: Ahora con soporte Ractor RPC)
+    Query { 
+        query_type: String, 
+        params: serde_json::Value,
+        #[serde(skip)]
+        reply: Option<RpcReplyPort<MessagePayload>>
+    },
     // Eventos
     Event { event_type: String, data: serde_json::Value },
     // Respuestas
@@ -123,7 +131,7 @@ pub enum MessagePayload {
 }
 
 // Mensaje entre actores
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ActorMessage {
     pub id: String,
     pub from: GodName,
@@ -145,6 +153,7 @@ impl ActorMessage {
 }
 
 // Estado de salud de un dios
+#[allow(dead_code)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GodHealth {
     pub name: GodName,
@@ -155,111 +164,40 @@ pub struct GodHealth {
     pub status: String,
 }
 
-// Trait para todos los dioses
-#[async_trait]
-pub trait OlympianActor: Send + Sync {
+// Trait para todos los dioses (v16: Ahora basado en Ractor)
+pub trait OlympianActor: Actor<Msg = ActorMessage> {
     fn name(&self) -> GodName;
-    async fn handle_message(&mut self, msg: ActorMessage) -> Option<ActorMessage>;
-    async fn health(&self) -> GodHealth;
     async fn initialize(&mut self) -> Result<(), String>;
     async fn shutdown(&mut self) -> Result<(), String>;
 }
 
-// Runtime de actor
-pub struct ActorRuntime {
-    actor: Box<dyn OlympianActor>,
-    inbox: mpsc::Receiver<ActorMessage>,
-    messages_processed: u64,
-    start_time: DateTime<Utc>,
-}
-
-impl ActorRuntime {
-    pub fn new(actor: Box<dyn OlympianActor>, inbox: mpsc::Receiver<ActorMessage>) -> Self {
-        Self {
-            actor,
-            inbox,
-            messages_processed: 0,
-            start_time: Utc::now(),
-        }
-    }
-
-    pub async fn run(mut self) {
-        let name = self.actor.name();
-        tracing::info!("🌟 [{}] Actor iniciado", name.as_str());
-
-        // Inicializar
-        if let Err(e) = self.actor.initialize().await {
-            tracing::error!("🚨 [{}] Fallo al inicializar: {}", name.as_str(), e);
-            return;
-        }
-
-        tracing::info!("✨ [{}] Actor listo", name.as_str());
-
-        // Loop principal
-        loop {
-            match self.inbox.recv().await {
-                Some(msg) => {
-                    let should_shutdown = matches!(msg.payload, MessagePayload::Shutdown { .. });
-                    
-                    if let Some(response) = self.actor.handle_message(msg).await {
-                        // Si hay respuesta, manejarla (por ahora solo log)
-                        tracing::debug!("📨 [{}] Respuesta generada", name.as_str());
-                    }
-                    
-                    self.messages_processed += 1;
-
-                    if should_shutdown {
-                        break;
-                    }
-                }
-                None => {
-                    tracing::warn!("📭 [{}] Canal cerrado", name.as_str());
-                    break;
-                }
-            }
-        }
-
-        // Shutdown
-        let _ = self.actor.shutdown().await;
-        tracing::info!("🛑 [{}] Actor detenido", name.as_str());
-    }
-
-    pub fn get_stats(&self) -> (u64, DateTime<Utc>) {
-        (self.messages_processed, self.start_time)
-    }
-}
+// Nota: En v16, cada actor implementará Actor de Ractor directamente
+// para aprovechar la supervisión automática de Zeus.
 
 // Estado del Olimpo - singleton compartido
+#[allow(dead_code)]
 pub type OlympusState = Arc<RwLock<OlympusInner>>;
 
+#[allow(dead_code)]
 pub struct OlympusInner {
-    pub senders: HashMap<GodName, mpsc::Sender<ActorMessage>>,
-    pub health: HashMap<GodName, GodHealth>,
+    pub actors: HashMap<GodName, ActorRef<ActorMessage>>,
     pub start_time: DateTime<Utc>,
 }
 
+#[allow(dead_code)]
 impl OlympusInner {
     pub fn new() -> Self {
         Self {
-            senders: HashMap::new(),
-            health: HashMap::new(),
+            actors: HashMap::new(),
             start_time: Utc::now(),
         }
     }
 
     pub async fn send_to(&self, god: GodName, msg: ActorMessage) -> Result<(), String> {
-        if let Some(sender) = self.senders.get(&god) {
-            sender.send(msg).await.map_err(|e| format!("Failed to send: {}", e))
+        if let Some(actor) = self.actors.get(&god) {
+            actor.send_message(msg).map_err(|e| format!("Fallo al enviar vía Ractor: {}", e))
         } else {
-            Err(format!("God {:?} not found", god))
+            Err(format!("Dios {:?} no encontrado en el registro", god))
         }
-    }
-
-    pub async fn update_health(&mut self, health: GodHealth) {
-        self.health.insert(health.name, health);
-    }
-
-    pub fn get_all_health(&self) -> Vec<GodHealth> {
-        self.health.values().cloned().collect()
     }
 }

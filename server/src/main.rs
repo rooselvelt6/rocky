@@ -1,5 +1,5 @@
 use axum::{
-    routing::{get, post, delete},
+    routing::{get, post},
     Router,
     Json,
     extract::{Path, State},
@@ -15,14 +15,16 @@ use tokio::sync::{mpsc, RwLock};
 mod actors;
 mod genesis;
 
-use actors::{GodName, ActorMessage, MessagePayload};
-use genesis::OlympusGenesis;
+use crate::actors::{GodName, ActorMessage, MessagePayload};
+use crate::genesis::OlympusGenesis;
+
+use ractor::ActorRef;
 
 // Estado del servidor
 #[derive(Clone)]
 pub struct AppState {
     pub patients: Arc<RwLock<HashMap<String, serde_json::Value>>>,
-    pub god_senders: Arc<RwLock<HashMap<GodName, mpsc::Sender<ActorMessage>>>>,
+    pub god_actors: Arc<RwLock<HashMap<GodName, ActorRef<ActorMessage>>>>,
     pub start_time: std::time::Instant,
 }
 
@@ -61,18 +63,18 @@ async fn main() {
     // Inicializar tracing
     tracing_subscriber::fmt::init();
     
-    println!("🏔️  OLYMPUS SYSTEM v15 - ACTOR SYSTEM  🏔️");
-    println!("⚡  20 Divine Gods - OTP Architecture");
-    println!("🚀  Integrando sistema de actores...");
+    println!("🏔️  OLYMPUS SYSTEM v16 - RACTOR ENGINE  🏔️");
+    println!("⚡  20 Gods United - High Availability Fabric");
+    println!("🚀  Sincronizando tejido de actores...");
 
     // IGNICION: Iniciar los 20 dioses
-    let god_senders = match OlympusGenesis::ignite().await {
-        Ok(senders) => {
-            println!("✅ {} Dioses iniciados correctamente", senders.len());
-            Arc::new(RwLock::new(senders))
+    let god_actors = match OlympusGenesis::ignite().await {
+        Ok(actors) => {
+            println!("✅ {} Dioses activos en Ractor", actors.len());
+            Arc::new(RwLock::new(actors))
         }
         Err(e) => {
-            eprintln!("❌ Error iniciando Genesis: {}", e);
+            eprintln!("❌ Error en Ignición: {}", e);
             std::process::exit(1);
         }
     };
@@ -80,7 +82,7 @@ async fn main() {
     // Estado compartido
     let state = AppState {
         patients: Arc::new(RwLock::new(HashMap::new())),
-        god_senders,
+        god_actors,
         start_time: std::time::Instant::now(),
     };
 
@@ -134,80 +136,74 @@ async fn login_step1(
     State(state): State<AppState>,
     Json(req): Json<AuthRequest>,
 ) -> Json<AuthResponse> {
-    // Enviar mensaje a Hades para autenticar
-    let msg = ActorMessage::new(
-        GodName::Zeus,
-        GodName::Hades,
-        MessagePayload::Command {
-            action: "authenticate".to_string(),
-            data: json!({
-                "username": req.username,
-                "password": req.password,
-            }),
+    let actors = state.god_actors.read().await;
+    if let Some(hades) = actors.get(&GodName::Hades) {
+        let result = ractor::call!(hades, |reply| ActorMessage::new(
+            GodName::Zeus,
+            GodName::Hades,
+            MessagePayload::Command {
+                action: "authenticate".to_string(),
+                data: serde_json::json!({
+                    "username": req.username,
+                    "password": req.password,
+                }),
+                reply: Some(reply),
+            }
+        ));
+
+        if let Ok(MessagePayload::Response { success, data, .. }) = result {
+            return Json(AuthResponse {
+                success,
+                token: None,
+                username: data["username"].as_str().map(|s| s.to_string()),
+                message: data["message"].as_str().unwrap_or("Error").to_string(),
+            });
         }
-    );
-
-    // En una implementación completa, esperaríamos respuesta async
-    // Por ahora, simulamos la respuesta
-    let senders = state.god_senders.read().await;
-    if let Some(hades_tx) = senders.get(&GodName::Hades) {
-        let _ = hades_tx.send(msg).await;
     }
 
-    // Simular respuesta
-    if req.username == "admin" && req.password == "admin123" {
-        Json(AuthResponse {
-            success: true,
-            token: None,
-            username: Some(req.username),
-            message: "Código OTP enviado: 123456".to_string(),
-        })
-    } else {
-        Json(AuthResponse {
-            success: false,
-            token: None,
-            username: None,
-            message: "Credenciales inválidas".to_string(),
-        })
-    }
+    Json(AuthResponse {
+        success: false,
+        token: None,
+        username: None,
+        message: "Hades no disponible".to_string(),
+    })
 }
 
 async fn login_step2(
     State(state): State<AppState>,
     Json(req): Json<OtpRequest>,
 ) -> Json<AuthResponse> {
-    let msg = ActorMessage::new(
-        GodName::Zeus,
-        GodName::Hades,
-        MessagePayload::Command {
-            action: "verify_otp".to_string(),
-            data: json!({
-                "otp_code": req.otp_code,
-                "username": "admin",
-            }),
+    let actors = state.god_actors.read().await;
+    if let Some(hades) = actors.get(&GodName::Hades) {
+        let result = ractor::call!(hades, |reply| ActorMessage::new(
+            GodName::Zeus,
+            GodName::Hades,
+            MessagePayload::Command {
+                action: "verify_otp".to_string(),
+                data: serde_json::json!({
+                    "otp_code": req.otp_code,
+                    "username": "admin",
+                }),
+                reply: Some(reply),
+            }
+        ));
+
+        if let Ok(MessagePayload::Response { success, data, .. }) = result {
+            return Json(AuthResponse {
+                success,
+                token: data["token"].as_str().map(|s| s.to_string()),
+                username: data["username"].as_str().map(|s| s.to_string()),
+                message: if success { "¡Acceso concedido!".to_string() } else { data["message"].as_str().unwrap_or("Código inválido").to_string() },
+            });
         }
-    );
-
-    let senders = state.god_senders.read().await;
-    if let Some(hades_tx) = senders.get(&GodName::Hades) {
-        let _ = hades_tx.send(msg).await;
     }
 
-    if req.otp_code == "123456" {
-        Json(AuthResponse {
-            success: true,
-            token: Some("jwt_token_olympus_2026".to_string()),
-            username: Some("admin".to_string()),
-            message: "¡Zeus aprueba tu acceso!".to_string(),
-        })
-    } else {
-        Json(AuthResponse {
-            success: false,
-            token: None,
-            username: None,
-            message: "Código OTP inválido".to_string(),
-        })
-    }
+    Json(AuthResponse {
+        success: false,
+        token: None,
+        username: None,
+        message: "Fallo en verificación OTP".to_string(),
+    })
 }
 
 async fn logout() -> Json<AuthResponse> {
@@ -222,25 +218,33 @@ async fn logout() -> Json<AuthResponse> {
 // === PACIENTES (Poseidon) ===
 
 async fn get_patients(State(state): State<AppState>) -> Json<serde_json::Value> {
-    // Enviar mensaje a Poseidon
-    let msg = ActorMessage::new(
-        GodName::Zeus,
-        GodName::Poseidon,
-        MessagePayload::Query {
-            query_type: "get_patients".to_string(),
-            params: json!({}),
-        }
-    );
+    let actors = state.god_actors.read().await;
+    if let Some(poseidon) = actors.get(&GodName::Poseidon) {
+        // Usar ractor::call para peticiones request-response (RPC)
+        let result = ractor::call!(poseidon, |reply| ActorMessage::new(
+            GodName::Zeus,
+            GodName::Poseidon,
+            MessagePayload::Query {
+                query_type: "get_patients".to_string(),
+                params: serde_json::json!({}),
+                reply: Some(reply),
+            }
+        ));
 
-    let senders = state.god_senders.read().await;
-    if let Some(poseidon_tx) = senders.get(&GodName::Poseidon) {
-        let _ = poseidon_tx.send(msg).await;
+        match result {
+            Ok(MessagePayload::Response { success, data, .. }) if success => {
+                return Json(serde_json::json!({ "patients": data }));
+            }
+            Ok(MessagePayload::Response { error, .. }) => {
+                return Json(serde_json::json!({ "error": error.unwrap_or_else(|| "Error desconocido".to_string()) }));
+            }
+            _ => {
+                return Json(serde_json::json!({ "error": "Fallo en la comunicación con el actor" }));
+            }
+        }
     }
 
-    // Por ahora, leer de memoria
-    let patients = state.patients.read().await;
-    let list: Vec<_> = patients.values().cloned().collect();
-    Json(json!({ "patients": list }))
+    Json(serde_json::json!({ "error": "Actor Poseidon no disponible" }))
 }
 
 async fn get_patient(
@@ -273,12 +277,13 @@ async fn create_patient(
                 "identity_card": &patient.identity_card,
                 "principal_diagnosis": &patient.principal_diagnosis,
             }),
+            reply: None,
         }
     );
 
-    let senders = state.god_senders.read().await;
-    if let Some(poseidon_tx) = senders.get(&GodName::Poseidon) {
-        let _ = poseidon_tx.send(msg).await;
+    let actors = state.god_actors.read().await;
+    if let Some(poseidon) = actors.get(&GodName::Poseidon) {
+        let _ = poseidon.send_message(msg);
     }
 
     // Guardar en memoria
@@ -311,12 +316,13 @@ async fn delete_patient(
         MessagePayload::Command {
             action: "delete_patient".to_string(),
             data: json!({ "id": &id }),
+            reply: None,
         }
     );
 
-    let senders = state.god_senders.read().await;
-    if let Some(poseidon_tx) = senders.get(&GodName::Poseidon) {
-        let _ = poseidon_tx.send(msg).await;
+    let actors = state.god_actors.read().await;
+    if let Some(target) = actors.get(&GodName::Poseidon) {
+        let _ = target.send_message(msg);
     }
 
     state.patients.write().await.remove(&id);
@@ -341,44 +347,35 @@ async fn calculate_glasgow(
     State(state): State<AppState>,
     Json(req): Json<GlasgowRequest>,
 ) -> Json<serde_json::Value> {
-    let msg = ActorMessage::new(
-        GodName::Zeus,
-        GodName::Athena,
-        MessagePayload::Command {
-            action: "calculate_glasgow".to_string(),
-            data: json!({
-                "eye": req.eye,
-                "verbal": req.verbal,
-                "motor": req.motor,
-            }),
-        }
-    );
+    let actors = state.god_actors.read().await;
+    if let Some(athena) = actors.get(&GodName::Athena) {
+        let result = ractor::call!(athena, |reply| ActorMessage::new(
+            GodName::Zeus,
+            GodName::Athena,
+            MessagePayload::Command {
+                action: "calculate_glasgow".to_string(),
+                data: serde_json::json!({
+                    "eye": req.eye,
+                    "verbal": req.verbal,
+                    "motor": req.motor,
+                }),
+                reply: Some(reply),
+            }
+        ));
 
-    let senders = state.god_senders.read().await;
-    if let Some(athena_tx) = senders.get(&GodName::Athena) {
-        let _ = athena_tx.send(msg).await;
+        if let Ok(MessagePayload::Response { success, data, .. }) = result {
+            return Json(serde_json::json!({
+                "success": success,
+                "scale": "Glasgow",
+                "patient_id": req.patient_id,
+                "total": data["total"],
+                "interpretation": data["interpretation"],
+                "calculated_by": "Athena"
+            }));
+        }
     }
 
-    // Calcular respuesta
-    let total = req.eye + req.verbal + req.motor;
-    let interpretation = match total {
-        3..=8 => "Coma severo",
-        9..=12 => "Coma moderado",
-        13..=15 => "Coma leve/Normal",
-        _ => "Error",
-    };
-
-    Json(json!({
-        "success": true,
-        "scale": "Glasgow",
-        "patient_id": req.patient_id,
-        "eye": req.eye,
-        "verbal": req.verbal,
-        "motor": req.motor,
-        "total": total,
-        "interpretation": interpretation,
-        "calculated_by": "Athena"
-    }))
+    Json(serde_json::json!({ "error": "Athena no disponible" }))
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -409,12 +406,13 @@ async fn calculate_sofa(
                 "cns": req.cns,
                 "renal": req.renal,
             }),
+            reply: None,
         }
     );
 
-    let senders = state.god_senders.read().await;
-    if let Some(athena_tx) = senders.get(&GodName::Athena) {
-        let _ = athena_tx.send(msg).await;
+    let actors = state.god_actors.read().await;
+    if let Some(athena) = actors.get(&GodName::Athena) {
+        let _ = athena.send_message(msg);
     }
 
     let total = req.respiratory + req.coagulation + req.liver + req.cardiovascular + req.cns + req.renal;
@@ -462,12 +460,13 @@ async fn calculate_news2(
                 "heart_rate": req.heart_rate,
                 "systolic_bp": req.systolic_bp,
             }),
+            reply: None,
         }
     );
 
-    let senders = state.god_senders.read().await;
-    if let Some(athena_tx) = senders.get(&GodName::Athena) {
-        let _ = athena_tx.send(msg).await;
+    let actors = state.god_actors.read().await;
+    if let Some(athena) = actors.get(&GodName::Athena) {
+        let _ = athena.send_message(msg);
     }
 
     // Calcular NEWS2 simplificado
@@ -507,31 +506,28 @@ async fn calculate_news2(
 // === MONITOREO (Zeus + Erinyes) ===
 
 async fn api_status(State(state): State<AppState>) -> Json<serde_json::Value> {
-    let uptime = state.start_time.elapsed().as_secs();
-    let senders = state.god_senders.read().await;
+    let actors = state.god_actors.read().await;
     
     Json(json!({
         "status": "active",
-        "version": "v15.0.0",
-        "mode": "Olympus Actor System",
-        "active_gods": senders.len(),
-        "uptime_seconds": uptime,
-        "message": "Sistema operativo con 20 dioses divinos",
+        "version": "v16.0.0",
+        "mode": "Olympus Ractor Fabric",
+        "active_gods": actors.len(),
+        "uptime_seconds": state.start_time.elapsed().as_secs(),
+        "message": "Sistema operativo v16 acelerado por Ractor",
         "trinity": ["Zeus", "Hades", "Poseidon"],
     }))
 }
 
 async fn api_gods(State(state): State<AppState>) -> Json<serde_json::Value> {
-    let senders = state.god_senders.read().await;
+    let actors = state.god_actors.read().await;
     
-    // Construir lista de dioses con datos simulados (en producción vendrían de health checks)
-    let gods: Vec<serde_json::Value> = senders.keys().map(|god| {
+    let gods: Vec<serde_json::Value> = actors.keys().map(|god| {
         json!({
             "name": god.as_str(),
             "domain": god.domain(),
             "active": true,
-            "status": "Active",
-            "messages_processed": 0,
+            "status": "Active (Ractor)",
             "uptime_seconds": state.start_time.elapsed().as_secs(),
         })
     }).collect();
@@ -540,7 +536,7 @@ async fn api_gods(State(state): State<AppState>) -> Json<serde_json::Value> {
         "gods": gods,
         "total": gods.len(),
         "all_active": true,
-        "trinity_status": "Healthy",
+        "fabric_status": "Healthy",
     }))
 }
 
@@ -552,12 +548,13 @@ async fn api_trinity(State(state): State<AppState>) -> Json<serde_json::Value> {
         MessagePayload::Query {
             query_type: "supervision_status".to_string(),
             params: json!({}),
+            reply: None,
         }
     );
 
-    let senders = state.god_senders.read().await;
-    if let Some(zeus_tx) = senders.get(&GodName::Zeus) {
-        let _ = zeus_tx.send(msg).await;
+    let actors = state.god_actors.read().await;
+    if let Some(zeus) = actors.get(&GodName::Zeus) {
+        let _ = zeus.send_message(msg);
     }
 
     Json(json!({
@@ -573,49 +570,50 @@ async fn api_trinity(State(state): State<AppState>) -> Json<serde_json::Value> {
 
 async fn api_stats(State(state): State<AppState>) -> Json<serde_json::Value> {
     let patients = state.patients.read().await;
-    let senders = state.god_senders.read().await;
+    let actors = state.god_actors.read().await;
     
     Json(json!({
         "total_patients": patients.len(),
         "active_patients": patients.len(),
-        "olympus_gods": senders.len(),
-        "gods_active": senders.len(),
+        "olympus_gods": actors.len(),
+        "fabric_status": "Synchronized",
         "system_uptime": format!("{}s", state.start_time.elapsed().as_secs()),
-        "trinity_healthy": true,
+        "v16_ready": true,
     }))
 }
 
 // === UI/TEMAS (Aphrodite - Diosa de la Belleza) ===
 
 async fn get_current_theme(State(state): State<AppState>) -> Json<serde_json::Value> {
-    let msg = ActorMessage::new(
-        GodName::Zeus,
-        GodName::Aphrodite,
-        MessagePayload::Query {
-            query_type: "get_current_theme".to_string(),
-            params: json!({}),
-        }
-    );
+    let actors = state.god_actors.read().await;
+    if let Some(aphrodite) = actors.get(&GodName::Aphrodite) {
+        let result = ractor::call!(aphrodite, |reply| ActorMessage::new(
+            GodName::Zeus,
+            GodName::Aphrodite,
+            MessagePayload::Query {
+                query_type: "get_current_theme".to_string(),
+                params: serde_json::json!({}),
+                reply: Some(reply),
+            }
+        ));
 
-    let senders = state.god_senders.read().await;
-    if let Some(aphrodite_tx) = senders.get(&GodName::Aphrodite) {
-        let _ = aphrodite_tx.send(msg).await;
+        if let Ok(MessagePayload::Response { success, data, .. }) = result {
+            return Json(serde_json::json!({
+                "theme": data,
+                "controlled_by": "Aphrodite",
+                "success": success
+            }));
+        }
     }
 
-    // Respuesta por defecto (en producción vendría del actor)
-    Json(json!({
+    // Fallback si Aphrodite falla
+    Json(serde_json::json!({
         "theme": {
-            "name": "Olympus Dark",
+            "name": "Olympus Dark (Fallback)",
             "primary_color": "#6366f1",
-            "secondary_color": "#8b5cf6",
-            "background": "#0f172a",
-            "surface": "#1e293b",
-            "text_primary": "#f8fafc",
-            "text_secondary": "#94a3b8",
-            "accent": "#f59e0b",
-            "border_radius": "0.75rem",
+            "background": "#0f172a"
         },
-        "controlled_by": "Aphrodite"
+        "error": "Aphrodite no disponible"
     }))
 }
 
@@ -636,12 +634,13 @@ async fn switch_theme(
             data: json!({
                 "theme_name": req.theme_name,
             }),
+            reply: None,
         }
     );
 
-    let senders = state.god_senders.read().await;
-    if let Some(aphrodite_tx) = senders.get(&GodName::Aphrodite) {
-        let _ = aphrodite_tx.send(msg).await;
+    let actors = state.god_actors.read().await;
+    if let Some(aphrodite) = actors.get(&GodName::Aphrodite) {
+        let _ = aphrodite.send_message(msg);
     }
 
     Json(json!({
@@ -658,12 +657,13 @@ async fn get_all_themes(State(state): State<AppState>) -> Json<serde_json::Value
         MessagePayload::Query {
             query_type: "get_all_themes".to_string(),
             params: json!({}),
+            reply: None,
         }
     );
 
-    let senders = state.god_senders.read().await;
-    if let Some(aphrodite_tx) = senders.get(&GodName::Aphrodite) {
-        let _ = aphrodite_tx.send(msg).await;
+    let actors = state.god_actors.read().await;
+    if let Some(aphrodite) = actors.get(&GodName::Aphrodite) {
+        let _ = aphrodite.send_message(msg);
     }
 
     Json(json!({
@@ -685,12 +685,13 @@ async fn get_css_variables(State(state): State<AppState>) -> Json<serde_json::Va
         MessagePayload::Query {
             query_type: "get_css_variables".to_string(),
             params: json!({}),
+            reply: None,
         }
     );
 
-    let senders = state.god_senders.read().await;
-    if let Some(aphrodite_tx) = senders.get(&GodName::Aphrodite) {
-        let _ = aphrodite_tx.send(msg).await;
+    let actors = state.god_actors.read().await;
+    if let Some(aphrodite) = actors.get(&GodName::Aphrodite) {
+        let _ = aphrodite.send_message(msg);
     }
 
     Json(json!({
@@ -715,12 +716,13 @@ async fn get_components(State(state): State<AppState>) -> Json<serde_json::Value
         MessagePayload::Query {
             query_type: "get_component_styles".to_string(),
             params: json!({}),
+            reply: None,
         }
     );
 
-    let senders = state.god_senders.read().await;
-    if let Some(aphrodite_tx) = senders.get(&GodName::Aphrodite) {
-        let _ = aphrodite_tx.send(msg).await;
+    let actors = state.god_actors.read().await;
+    if let Some(aphrodite) = actors.get(&GodName::Aphrodite) {
+        let _ = aphrodite.send_message(msg);
     }
 
     Json(json!({
@@ -771,12 +773,13 @@ async fn update_component(
                 "style_key": req.style_key,
                 "style_value": req.style_value,
             }),
+            reply: None,
         }
     );
 
-    let senders = state.god_senders.read().await;
-    if let Some(aphrodite_tx) = senders.get(&GodName::Aphrodite) {
-        let _ = aphrodite_tx.send(msg).await;
+    let actors = state.god_actors.read().await;
+    if let Some(aphrodite) = actors.get(&GodName::Aphrodite) {
+        let _ = aphrodite.send_message(msg);
     }
 
     Json(json!({

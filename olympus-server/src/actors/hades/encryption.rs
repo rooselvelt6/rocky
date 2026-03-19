@@ -7,7 +7,7 @@
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tokio::sync::RwLock;
-use ring::aead::{Nonce, UnboundKey, AES_256_GCM, NonceSequence, OpeningKey, SealingKey, BoundKey, Aad};
+use ring::aead::{Nonce, UnboundKey, AES_256_GCM, LessSafeKey, Aad};
 use ring::rand::{SecureRandom, SystemRandom};
 use chacha20poly1305::{ChaCha20Poly1305, Key, Nonce as ChaChaNonce};
 use chacha20poly1305::aead::{Aead, KeyInit};
@@ -151,16 +151,13 @@ impl EncryptionService {
         let unbound_key = UnboundKey::new(&AES_256_GCM, &key.key_bytes)
             .map_err(|_| EncryptionError::KeyCreationFailed)?;
         
-        let _nonce = Nonce::assume_unique_for_key(nonce_bytes);
-        let mut sealing_key = SealingKey::new(unbound_key, AesGcmNonceSequence::new(nonce_bytes));
+        let sealing_key = LessSafeKey::new(unbound_key);
+        let nonce = Nonce::assume_unique_for_key(nonce_bytes);
         
         // Encrypt in-place
         let mut ciphertext = data.to_vec();
-        let tag = sealing_key.seal_in_place_separate_tag(Aad::empty(), &mut ciphertext)
+        sealing_key.seal_in_place_append_tag(nonce, Aad::empty(), &mut ciphertext)
             .map_err(|_| EncryptionError::EncryptionFailed)?;
-        
-        // Append tag to ciphertext
-        ciphertext.extend_from_slice(tag.as_ref());
         
         info!("🔐 Data encrypted with AES-256-GCM (key_id: {})", key_id);
         
@@ -197,12 +194,12 @@ impl EncryptionService {
         let unbound_key = UnboundKey::new(&AES_256_GCM, &key.key_bytes)
             .map_err(|_| EncryptionError::KeyCreationFailed)?;
         
-        let _nonce = Nonce::assume_unique_for_key(nonce_bytes);
-        let mut opening_key = OpeningKey::new(unbound_key, AesGcmNonceSequence::new(nonce_bytes));
+        let opening_key = LessSafeKey::new(unbound_key);
+        let nonce = Nonce::assume_unique_for_key(nonce_bytes);
         
         // Decrypt
         let mut ciphertext = data.ciphertext.clone();
-        let plaintext = opening_key.open_in_place(Aad::empty(), &mut ciphertext)
+        let plaintext = opening_key.open_in_place(nonce, Aad::empty(), &mut ciphertext)
             .map_err(|_| EncryptionError::DecryptionFailed)?;
         
         info!("🔓 Data decrypted with AES-256-GCM (key_id: {})", data.key_id);
@@ -328,22 +325,7 @@ impl EncryptionService {
     }
 }
 
-// Nonce sequence for AES-GCM
-struct AesGcmNonceSequence {
-    nonce: [u8; 12],
-}
-
-impl AesGcmNonceSequence {
-    fn new(nonce: [u8; 12]) -> Self {
-        Self { nonce }
-    }
-}
-
-impl NonceSequence for AesGcmNonceSequence {
-    fn advance(&mut self) -> Result<Nonce, ring::error::Unspecified> {
-        Ok(Nonce::assume_unique_for_key(self.nonce))
-    }
-}
+// AesGcmNonceSequence removed in favor of direct Nonce usage with LessSafeKey
 
 #[derive(Debug, thiserror::Error)]
 pub enum EncryptionError {

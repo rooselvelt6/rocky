@@ -12,6 +12,7 @@ use tokio::sync::{RwLock, mpsc};
 use tracing::{info, warn};
 
 use super::GodName;
+use futures::future::BoxFuture;
 use crate::traits::message::RecoveryStrategy;
 use crate::errors::ActorError;
 use crate::actors::erinyes::alerts::{AlertSeverity, AlertSystem};

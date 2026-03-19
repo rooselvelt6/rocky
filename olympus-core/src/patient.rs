@@ -181,12 +181,14 @@ impl Patient {
 
     fn calculate_hospital_stay(hospital_date: &str, uci_date: &str) -> Option<i64> {
         let hospital = chrono::DateTime::parse_from_rfc3339(hospital_date)
+            .map(|dt| dt.with_timezone(&chrono::Utc))
             .or_else(|_| {
                 chrono::NaiveDate::parse_from_str(hospital_date, "%Y-%m-%d")
                     .map(|d| d.and_hms_opt(0, 0, 0).unwrap().and_utc())
             })
             .ok()?;
         let uci = chrono::DateTime::parse_from_rfc3339(uci_date)
+            .map(|dt| dt.with_timezone(&chrono::Utc))
             .or_else(|_| {
                 chrono::NaiveDate::parse_from_str(uci_date, "%Y-%m-%d")
                     .map(|d| d.and_hms_opt(0, 0, 0).unwrap().and_utc())

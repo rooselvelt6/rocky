@@ -1,0 +1,70 @@
+warning: profiles for the non root package will be ignored, specify profiles at the workspace root:
+package:   /home/tdy/Escritorio/rocky/client/Cargo.toml
+workspace: /home/tdy/Escritorio/rocky/Cargo.toml
+    Checking tokio v1.49.0
+   Compiling zeroize_derive v1.4.3
+    Checking zeroize v1.8.2
+    Checking rustls-pki-types v1.14.0
+    Checking rustls-webpki v0.103.9
+    Checking rustls v0.23.36
+    Checking hyper v1.8.1
+    Checking tokio-util v0.7.18
+    Checking webpki-roots v1.0.6
+   Compiling darling_core v0.20.11
+   Compiling bindgen v0.72.1
+   Compiling darling_macro v0.20.11
+    Checking cedar-policy-core v2.4.2
+    Checking hyper-util v0.1.20
+    Checking tokio-rustls v0.26.4
+    Checking tower v0.5.3
+   Compiling librocksdb-sys v0.17.3+10.4.2
+    Checking cedar-policy-validator v2.4.2
+   Compiling darling v0.20.11
+    Checking object_store v0.12.5
+    Checking tower-http v0.6.8
+    Checking tungstenite v0.23.0
+    Checking affinitypool v0.3.1
+    Checking jsonwebtoken v9.3.1
+    Checking bcrypt v0.15.1
+   Compiling bon-macros v2.3.0
+    Checking cedar-policy v2.4.2
+    Checking hyper-rustls v0.27.7
+    Checking webpki-roots v0.26.11
+   Compiling strum_macros v0.26.4
+    Checking surrealdb-core v2.6.2
+    Checking strum v0.26.3
+    Checking tokio-tungstenite v0.23.1
+    Checking reqwest v0.12.28
+    Checking bon v2.3.0
+    Checking combine v4.6.7
+    Checking tokio-retry v0.3.0
+    Checking surrealdb v2.6.2
+    Checking redis v0.25.4
+    Checking axum v0.7.9
+    Checking tower-http v0.5.2
+    Checking ractor v0.15.10
+    Checking secrecy v0.10.3
+    Checking olympus-core v13.0.0 (/home/tdy/Escritorio/rocky/olympus-core)
+error[E0308]: mismatched types
+   --> olympus-core/src/patient.rs:185:17
+    |
+185 | /                 chrono::NaiveDate::parse_from_str(hospital_date, "%Y-%m-%d")
+186 | |                     .map(|d| d.and_hms_opt(0, 0, 0).unwrap().and_utc())
+    | |_______________________________________________________________________^ expected `Result<DateTime<FixedOffset>, _>`, found `Result<DateTime<Utc>, ParseError>`
+    |
+    = note: expected enum `Result<DateTime<FixedOffset>, _>`
+               found enum `Result<DateTime<Utc>, ParseError>`
+
+error[E0308]: mismatched types
+   --> olympus-core/src/patient.rs:191:17
+    |
+191 | /                 chrono::NaiveDate::parse_from_str(uci_date, "%Y-%m-%d")
+192 | |                     .map(|d| d.and_hms_opt(0, 0, 0).unwrap().and_utc())
+    | |_______________________________________________________________________^ expected `Result<DateTime<FixedOffset>, _>`, found `Result<DateTime<Utc>, ParseError>`
+    |
+    = note: expected enum `Result<DateTime<FixedOffset>, _>`
+               found enum `Result<DateTime<Utc>, ParseError>`
+
+For more information about this error, try `rustc --explain E0308`.
+error: could not compile `olympus-core` (lib) due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...

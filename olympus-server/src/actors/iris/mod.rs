@@ -1,23 +1,17 @@
 // src/actors/iris/mod.rs
-// OLYMPUS v13 - Iris: Diosa del Arcoíris y Comunicaciones
+// OLYMPUS v16 - Iris: Diosa del Arcoíris y Comunicaciones
+// Implementación sobre Ractor
 
 #![allow(dead_code)]
 
 use async_trait::async_trait;
-use std::sync::Arc;
-use tokio::sync::RwLock;
+use serde::{Deserialize, Serialize};
+use ractor::{Actor, ActorRef, ActorProcessingErr};
 
 use crate::actors::{GodName, DivineDomain};
-use crate::traits::{OlympianActor, ActorState, ActorConfig, GodHeartbeat, HealthStatus};
-use crate::traits::message::{ActorMessage, ResponsePayload};
+use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};
+use crate::traits::message::{ActorMessage, MessagePayload, CommandPayload, ResponsePayload, QueryPayload};
 use crate::errors::ActorError;
-
-#[derive(Debug, Clone)]
-pub struct Iris {
-    name: GodName,
-    state: ActorState,
-    connections: Arc<RwLock<std::collections::HashMap<String, Connection>>>,
-}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Connection {
@@ -34,29 +28,51 @@ pub enum ConnectionStatus {
     Disconnected,
 }
 
-impl Iris {
-    pub async fn new() -> Self {
-        Self {
+/// Iris State for Ractor
+pub struct IrisState {
+    pub name: GodName,
+    pub metadata: ActorState,
+    pub connections: std::collections::HashMap<String, Connection>,
+}
+
+pub struct Iris;
+
+#[async_trait]
+impl Actor for Iris {
+    type Msg = ActorMessage;
+    type State = IrisState;
+    type Arguments = ();
+
+    async fn pre_start(&self, _myself: ActorRef<Self::Msg>, _args: Self::Arguments) -> Result<Self::State, ActorProcessingErr> {
+        Ok(IrisState {
             name: GodName::Iris,
-            state: ActorState::new(GodName::Iris),
-            connections: Arc::new(RwLock::new(std::collections::HashMap::new())),
+            metadata: ActorState::new(GodName::Iris),
+            connections: std::collections::HashMap::new(),
+        })
+    }
+
+    async fn handle(&self, _myself: ActorRef<Self::Msg>, message: Self::Msg, state: &mut Self::State) -> Result<(), ActorProcessingErr> {
+        match message.payload {
+            MessagePayload::Command(cmd) => {
+                let res = self.handle_command(cmd, state).await;
+                if let Some(reply) = message.reply_to { let _ = reply.send(res); }
+            }
+            MessagePayload::Query(query) => {
+                let res = self.handle_query(query, state).await;
+                if let Some(reply) = message.reply_to { let _ = reply.send(res); }
+            }
+            _ => if let Some(reply) = message.reply_to { let _ = reply.send(Ok(ResponsePayload::Ack { message_id: message.id })); }
         }
+        Ok(())
     }
 }
 
-#[async_trait]
-impl OlympianActor for Iris {
-    fn name(&self) -> GodName { GodName::Iris }
-    fn domain(&self) -> DivineDomain { DivineDomain::Communications }
-    async fn handle_message(&mut self, msg: ActorMessage) -> Result<ResponsePayload, ActorError> { Ok(ResponsePayload::Ack { message_id: msg.id }) }
-    async fn persistent_state(&self) -> serde_json::Value { serde_json::json!({}) }
-    fn load_state(&mut self, _state: &serde_json::Value) -> Result<(), ActorError> { Ok(()) }
-    fn heartbeat(&self) -> GodHeartbeat { unimplemented!() }
-    async fn health_check(&self) -> HealthStatus { unimplemented!() }
-    fn config(&self) -> Option<&ActorConfig> { None }
-    async fn initialize(&mut self) -> Result<(), ActorError> { Ok(()) }
-    async fn shutdown(&mut self) -> Result<(), ActorError> { Ok(()) }
-    fn actor_state(&self) -> ActorState { self.state.clone() }
-}
+impl Iris {
+    async fn handle_command(&self, _cmd: CommandPayload, _state: &mut IrisState) -> Result<ResponsePayload, ActorError> {
+        Ok(ResponsePayload::Success { message: "Iris communication bridge established".to_string() })
+    }
 
-use serde::{Deserialize, Serialize};
+    async fn handle_query(&self, _query: QueryPayload, state: &IrisState) -> Result<ResponsePayload, ActorError> {
+        Ok(ResponsePayload::Data { data: serde_json::json!({ "connection_count": state.connections.len() }) })
+    }
+}

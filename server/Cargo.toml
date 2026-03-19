@@ -33,6 +33,10 @@ anyhow = "1.0"
 # Utils
 once_cell = "1.19"
 dashmap = "6.0"
+ractor = "0.15.10"
+rocksdb = "0.24.0"
+secrecy = "0.10.3"
+zeroize = { version = "1.8.2", features = ["zeroize_derive"] }
 
 [[bin]]
 name = "olympus"

@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tokio::sync::RwLock;
 use std::time::Duration;
-use tracing::info;
+use tracing::{info, debug};
 
 use crate::actors::{GodName, DivineDomain};
 use crate::traits::{OlympianActor, ActorState, ActorConfig, ActorStatus, GodHeartbeat, HealthStatus};

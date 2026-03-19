@@ -1,0 +1,3 @@
+error: two packages named `olympus-server` in this workspace:
+- /home/tdy/Escritorio/rocky/server/Cargo.toml
+- /home/tdy/Escritorio/rocky/olympus-server/Cargo.toml
