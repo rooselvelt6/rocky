@@ -1,103 +1,76 @@
-# 🏛️ OLYMPUS UCI v16 - Ractor Engine Fabric
+# 🏛️ OLYMPUS UCI - Sistema de Gestión de Unidad de Cuidados Intensivos
 
 ![Rust](https://img.shields.io/badge/Rust-2021-orange?style=for-the-badge&logo=rust)
 ![Version](https://img.shields.io/badge/Version-16.0.0-gold?style=for-the-badge)
-![Actors](https://img.shields.io/badge/Actors-20%20Ractor%20Mesh-green?style=for-the-badge)
-![Status](https://img.shields.io/badge/Status-Ultra%20Secure-brightgreen?style=for-the-badge)
+![Actors](https://img.shields.io/badge/Actors-21%20Gods%20Mesh-green?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen?style=for-the-badge)
 
-> **Sistema UCI industrial basado en la malla de actores Ractor (OTP) con persistencia en 3 niveles y seguridad de memoria Zeroize.**
-
----
-
-## 🎯 ¿Qué es OLYMPUS v16?
-
-**OLYMPUS UCI v16** es la evolución definitiva del sistema de gestión crítica. Hemos migrado de un sistema de canales manual a la **malla de actores Ractor**, integrando una arquitectura de persistencia inquebrantable (**RocksDB + Valkey + SurrealDB**) y blindaje de memoria mediante **Zeroize**.
-
-### ⚡ Características de la Versión 16
-
-- 🚀 **Ractor Fabric** - Todos los 20 dioses operan sobre el framework industrial Ractor para alta disponibilidad.
-- 🔒 **Zeroize & Secrecy** - Hades protege la RAM borrando secretos físicamente tras su uso.
-- 💾 **Tríada de Persistencia** - **RocksDB** como buffer local de nanosegundos, **Valkey** para cache y **SurrealDB** como persistencia transaccional.
-- ✅ **Zero Warnings** - Código quirúrgico libre de advertencias y deuda técnica.
-- 🧠 **Athena Engine** - Cálculos clínicos concurrentes de alto rendimiento.
-- 🎨 **Aphrodite UI** - Gestión de temas ultra-sensible bajo el modelo de actores.
+> **Sistema UCI industrial basado en la malla de actores Ractor (OTP) con persistencia en múltiples niveles y seguridad de memoria.**
 
 ---
 
-## 🏛️ El Panteón V16: 20 Dioses Activos
+## 📋 Descripción
 
-### ⚡ Trinidad Suprema (Críticos)
+**OLYMPUS UCI** es un sistema de gestión de Unidad de Cuidados Intensivos desarrollado en Rust, utilizando una arquitectura de actores basada en **Ractor** para alta disponibilidad y concurrencia segura.
 
-| Dios | Dominio | Dominación Ractor | Estado |
-|------|---------|-------------------|--------|
-| **👑 Zeus** | Gobernanza | Supervisor Nativo Ractor | ✅ Supervising |
-| **🔒 Hades** | Seguridad | **Zeroize Memory Protection** | ✅ Protecting |
-| **🌊 Poseidón** | Datos | Flujo Asíncrono SurrealDB | ✅ Connected |
+### Características Principales
 
-### 🧠 Dioses de Análisis e Infraestructura
-
-| Dios | Dominio | Innovación v16 | Estado |
-|------|---------|----------------|--------|
-| **🧠 Athena** | Escalas/ML | Concurrencia Ractor Optimizada | ✅ Analyzing |
-| **📨 Hermes** | Mensajería | Malla de Enrutamiento de Alta Frecuencia | ✅ Routing |
-| **🏛️ Hestia** | Persistencia | **RocksDB Native Buffer** | ✅ Buffering |
-| **👁️ Erinyes** | Monitoreo | Telemetría Ractor Ebebida | ✅ Monitoring |
-| **🎨 Aphrodite** | UI/Belleza | Temas Reactivos Asíncronos | ✅ Designing |
+- 🏛️ **21 Actores (Dioses)** - Cada dios representa un dominio funcional del sistema
+- ⚡ **Ractor Framework** - Modelo de actores nativo de Rust para concurrencia
+- 🔒 **Zeroize & Secrecy** - Protección de memoria con borrado seguro de datos sensibles
+- 💾 **Persistencia Triple** - Valkey (cache) + SurrealDB (transaccional)
+- 🧠 **Cálculos Clínicos** - SAPS, SOFA, NEWS2, Glasgow automatizados
+- 🌐 **API REST** - Backend Axum con servidor frontend estático
 
 ---
 
-## 🚀 Guía de Inicio Rápido
+## 🏛️ El Panteón: 21 Dioses Activos
 
-### **1. Iniciar Infraestructura**
+### Trinidad Suprema
 
-```bash
-# Iniciar Valkey + SurrealDB
-docker-compose up -d valkey surrealdb
-# (RocksDB se inicializa localmente en el servidor)
-```
+| Dios | Dominio | Descripción |
+|------|---------|-------------|
+| **👑 Zeus** | Gobernanza | Supervisor raíz del sistema |
+| **🔒 Hades** | Seguridad | Protección y cifrado de datos |
+| **🌊 Poseidón** | Datos | Gestión de flujo de datos |
 
-### **2. Ejecutar el Motor Ractor**
+### Dioses de Análisis Clínico
 
-```bash
-# Ejecutar el servidor (Versión 16)
-cargo run -p olympus-server
-```
+| Dios | Dominio |
+|------|---------|
+| **🧠 Athena** | Escalas/ML |
+| **📊 Demeter** | Estadísticas |
+| **🔬 Apollo** | Laboratorios |
+| **📋 Artemis** | Registros |
+| **⚕️ Moirai** | Protocolos |
 
-**Salida v16 en consola:**
-```
-🏔️  OLYMPUS SYSTEM v16 - RACTOR ENGINE  🏔️
-⚡  20 Gods United - High Availability Fabric
-🚀  Sincronizando tejido de actores...
-✨ GENESIS v16: Iniciando secuencia de ignición Ractor...
-⚡ Zeus desplegado (Ractor)
-🔒 Hades desplegado (Ractor)
-🌊 Poseidon desplegado (Ractor)
-🧠 Athena desplegado (Ractor)
-📨 Hermes desplegado (Ractor)
-🏛️ Hestia desplegado (Ractor)
-👁️ Erinyes desplegado (Ractor)
-🎨 Aphrodite desplegado (Ractor)
-...
-🌌 GENESIS v16: 20 Dioses activos en el tejido Ractor.
-🚀 Servidor Axum v16 corriendo en http://127.0.0.1:3000
-```
+### Dioses de Infraestructura
 
----
+| Dios | Dominio |
+|------|---------|
+| **📨 Hermes** | Mensajería |
+| **🏛️ Hestia** | Persistencia |
+| **👁️ Erinyes** | Monitoreo |
+| **⏱️ Chronos** | Scheduling |
+| **🔮 Iris** | Logging |
 
-## 🏗️ Arquitectura de Datos v16
+### Dioses de UI y Negocio
 
-### **La Tríada de Persistencia**
+| Dios | Dominio |
+|------|---------|
+| **🎨 Aphrodite** | UI/Temas |
+| **⚔️ Ares** | Validaciones |
+| **👸 Hera** | Usuarios |
+| **🔥 Hefesto** | Template engine |
+| **🎭 Dionysus** | Reportes |
 
-1.  **RocksDB (Local)**: Buffer inmediato. Escrituras en nanosegundos. Tolerancia a fallas de red.
-2.  **Valkey (RAM)**: Lectura ultra-rápida de estado actual y cache.
-3.  **SurrealDB (Cloud/Master)**: Persistencia final documental y relacional.
+### Dioses de Sistema
 
----
-
-## 🔒 Seguridad de Memoria (Zeroize)
-
-Hades ya no solo valida; **destruye**.
-Utilizando el trait `ZeroizeOnDrop`, cualquier secreto (OTP, contraseñas, claves JWT) que pase por el sistema es sobrescrito con ceros en la RAM física al terminar su alcance, previniendo ataques de volcado de memoria (Memory Dumps).
+| Dios | Dominio |
+|------|---------|
+| **🌅 Aurora** | Notificaciones |
+| **🌌 Chaos** | Fallbacks |
+| **⚖️ Nemesis** | Auditoría |
 
 ---
 
@@ -105,15 +78,111 @@ Utilizando el trait `ZeroizeOnDrop`, cualquier secreto (OTP, contraseñas, clave
 
 ```
 rocky/
-├── server/                    # Ractor Engine + Hades Security
-│   ├── src/
-│   │   ├── main.rs           # Axum + Ractor Bridge
-│   │   ├── genesis.rs        # Ractor Async Bootloader
-│   │   ├── actors/           # Lógica Divina v16
-│   │   │   ├── hades.rs      # Zeroize Integration
-│   │   │   ├── hestia.rs     # RocksDB Integration
-│   │   │   └── ...           # All migrated to ractor::Actor
-└── ...
+├── olympus-core/           # Tipos compartidos (Patient, User, escalas clínicas)
+│   └── src/
+│       ├── patient.rs       # Modelo de paciente UCI
+│       ├── saps.rs          # SAPS II score
+│       ├── sofa.rs          # SOFA score
+│       ├── glasgow.rs       # Escala Glasgow
+│       └── news2.rs         # NEWS2 score
+│
+├── olympus-server/         # Servidor principal (21 actores)
+│   └── src/
+│       ├── main.rs         # Axum + Tokio runtime
+│       ├── system/
+│       │   └── genesis.rs   # Bootloader de actores
+│       ├── actors/         # Los 21 dioses
+│       │   ├── zeus.rs     # Supervisor
+│       │   ├── hades.rs    # Seguridad
+│       │   ├── poseidon.rs # Datos
+│       │   └── ...
+│       ├── traits/         # Traits de actor
+│       ├── infrastructure/ # Valkey, SurrealDB
+│       └── uci/            # Lógica UCI
+│
+├── olympus-client/         # Frontend estático
+│   └── dist/
+│
+├── server/                  # Módulo legacy (compatibilidad)
+│
+├── client/                  # Cliente CLI legacy
+│
+├── tests/                   # Tests de integración
+│
+├── Cargo.toml              # Workspace configuration
+├── docker-compose.yml      # Valkey + SurrealDB
+└── justfile                # Tareas de desarrollo
+```
+
+---
+
+## 🚀 Guía de Inicio Rápido
+
+### 1. Requisitos
+
+- Rust 1.75+
+- Docker y Docker Compose
+- Valkey
+- SurrealDB (opcional)
+
+### 2. Iniciar Infraestructura
+
+```bash
+docker-compose up -d valkey surrealdb
+```
+
+### 3. Ejecutar el Servidor
+
+```bash
+cargo run -p olympus-server
+```
+
+**Salida esperada:**
+```
+🏔️  OLYMPUS SYSTEM v16 - STARTING UP  🏔️
+⚡  Server Mode with 21 Gods (Actors)
+✨ GENESIS: Iniciando secuencia de ignición Ractor v16...
+⚡ Zeus igniting as Root Supervisor...
+🌌 GENESIS: All 21 Gods have been successfully spawned in Ractor.
+🌍 API Gateway escuchando en http://127.0.0.1:3000
+🌐 Frontend disponible en http://127.0.0.1:3000/
+```
+
+### 4. Endpoints API
+
+| Endpoint | Descripción |
+|----------|-------------|
+| `GET /` | Redirección al frontend |
+| `GET /health` | Health check |
+| `GET /api/status` | Estado del sistema |
+| `GET /api/login` | Endpoint de login |
+| `GET /api/patients` | Listar pacientes |
+| `GET /api/patients/:id` | Obtener paciente |
+
+---
+
+## 📊 Escalas Clínicas Implementadas
+
+El sistema calcula automáticamente:
+
+- **SAPS II** - Simplified Acute Physiology Score
+- **SOFA** - Sequential Organ Failure Assessment
+- **NEWS2** - National Early Warning Score
+- **Glasgow** - Escala de coma de Glasgow
+- **Apache II** - Acute Physiology and Chronic Health Evaluation
+
+---
+
+## 🔧 Desarrollo
+
+### Comandos Disponibles
+
+```bash
+just build      # Compilar proyecto
+just test       # Ejecutar tests
+just lint       # Verificar código
+just format     # Formatear código
+just clean      # Limpiar build
 ```
 
 ---
@@ -124,8 +193,4 @@ MIT License - Ver [LICENSE](LICENSE) para detalles.
 
 ---
 
-> **🏛️ OLYMPUS UCI v16: La fuerza del acero (Rust), la resiliencia del cristal (OTP) y la inmediatez del rayo (RocksDB).**
-
-<p align="center">
-  <strong>⭐ Star v16 si te parece útil! ⭐</strong>
-</p>
+> **🏛️ OLYMPUS UCI: La fuerza del acero (Rust), la resiliencia del cristal (Ractor) y la precisión de la medicina.**
