@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OLYMPUS UCI v16</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #ffd700, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            color: #888;
+            font-size: 1.2rem;
+        }
+        .version {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 8px 24px;
+            border-radius: 50px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .status {
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .status h2 { margin-bottom: 20px; color: #ffd700; }
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .status-item:last-child { border-bottom: none; }
+        .label { color: #888; }
+        .value { font-weight: bold; }
+        .gods {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .god {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .god:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-3px);
+        }
+        .god-icon { font-size: 2rem; margin-bottom: 8px; }
+        .god-name { font-size: 0.9rem; color: #aaa; }
+        .api-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 30px;
+        }
+        .api-section h2 { margin-bottom: 20px; color: #ffd700; }
+        .endpoint {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .method {
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        .method.get { background: #4caf50; }
+        .method.post { background: #2196f3; }
+        .method.put { background: #ff9800; }
+        .method.delete { background: #f44336; }
+        .endpoint-path { font-family: monospace; color: #ffd700; }
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">🏛️</div>
+            <h1>OLYMPUS UCI</h1>
+            <p class="subtitle">Sistema de Gestión de Unidad de Cuidados Intensivos</p>
+            <span class="version">v16.0.0 - 21 Gods</span>
+        </header>
+
+        <div class="status">
+            <h2>📊 Estado del Sistema</h2>
+            <div class="status-item">
+                <span class="label">Estado</span>
+                <span class="value" style="color: #4caf50;">● Activo</span>
+            </div>
+            <div class="status-item">
+                <span class="label">Versión</span>
+                <span class="value">v16.0.0</span>
+            </div>
+            <div class="status-item">
+                <span class="label">Actores (Dioses)</span>
+                <span class="value">21</span>
+            </div>
+            <div class="status-item">
+                <span class="label">Trinidad</span>
+                <span class="value">Zeus, Hades, Poseidon</span>
+            </div>
+            <div class="status-item">
+                <span class="label">Base de Datos</span>
+                <span class="value">SurrealDB + Valkey</span>
+            </div>
+            <div class="status-item">
+                <span class="label">Framework</span>
+                <span class="value">Rust + Tokio + Axum</span>
+            </div>
+            
+            <h3 style="margin: 30px 0 15px; color: #ffd700;">⚡ Los 21 Dioses</h3>
+            <div class="gods">
+                <div class="god"><div class="god-icon">⚡</div><div class="god-name">Zeus</div></div>
+                <div class="god"><div class="god-icon">💀</div><div class="god-name">Hades</div></div>
+                <div class="god"><div class="god-icon">🌊</div><div class="god-name">Poseidon</div></div>
+                <div class="god"><div class="god-icon">👁️</div><div class="god-name">Erinyes</div></div>
+                <div class="god"><div class="god-icon">🦉</div><div class="god-name">Athena</div></div>
+                <div class="god"><div class="god-icon">☀️</div><div class="god-name">Apollo</div></div>
+                <div class="god"><div class="god-icon">🔍</div><div class="god-name">Artemis</div></div>
+                <div class="god"><div class="god-icon">🕊️</div><div class="god-name">Hermes</div></div>
+                <div class="god"><div class="god-icon">👑</div><div class="god-name">Hera</div></div>
+                <div class="god"><div class="god-icon">⚔️</div><div class="god-name">Ares</div></div>
+                <div class="god"><div class="god-icon">🔥</div><div class="god-name">Hefesto</div></div>
+                <div class="god"><div class="god-icon">⏰</div><div class="god-name">Chronos</div></div>
+                <div class="god"><div class="god-icon">🌈</div><div class="god-name">Iris</div></div>
+                <div class="god"><div class="god-icon">🌾</div><div class="god-name">Demeter</div></div>
+                <div class="god"><div class="god-icon">🍷</div><div class="god-name">Dionysus</div></div>
+                <div class="god"><div class="god-icon">🏠</div><div class="god-name">Hestia</div></div>
+                <div class="god"><div class="god-icon">🌙</div><div class="god-name">Moirai</div></div>
+                <div class="god"><div class="god-icon">🌪️</div><div class="god-name">Chaos</div></div>
+                <div class="god"><div class="god-icon">🌅</div><div class="god-name">Aurora</div></div>
+                <div class="god"><div class="god-icon">💜</div><div class="god-name">Aphrodite</div></div>
+                <div class="god"><div class="god-icon">⚖️</div><div class="god-name">Nemesis</div></div>
+            </div>
+        </div>
+
+        <div class="api-section">
+            <h2>🔌 API Endpoints</h2>
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="endpoint-path">/health</span>
+                <span>Health check</span>
+            </div>
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="endpoint-path">/api/status</span>
+                <span>Estado del sistema</span>
+            </div>
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="endpoint-path">/api/patients</span>
+                <span>Lista de pacientes</span>
+            </div>
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="endpoint-path">/api/patients/{id}</span>
+                <span>Detalle de paciente</span>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>🏛️ OLYMPUS UCI v16 - Desarrollado con Rust</p>
+            <p>La fuerza del acero, la resiliencia del cristal y la precisión de la medicina</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -6,6 +6,7 @@ use axum::{
 use tower_http::services::ServeDir;
 use tracing::{info, error};
 use std::net::SocketAddr;
+use std::path::PathBuf;
 
 mod actors;
 mod traits;
@@ -32,15 +33,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
 
+    let static_path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../olympus-client/dist");
+    
     let app = Router::new()
         .route("/", get(index))
         .route("/health", get(health_check))
         .route("/api/status", get(system_status))
         .route("/api/login", get(api_login))
         .route("/api/patients", get(api_patients))
-        .route("/api/patients/:id", get(api_patient))
-        .nest_service("/static", ServeDir::new("../olympus-client/dist"))
-        .fallback_service(ServeDir::new("../olympus-client/dist"));
+        .route("/api/patients/{id}", get(api_patient))
+        .nest_service("/static", ServeDir::new(&static_path))
+        .fallback_service(ServeDir::new(&static_path));
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
     info!("🌍 API Gateway escuchando en http://{}", addr);
