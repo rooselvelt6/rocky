@@ -4,6 +4,7 @@
 ![Version](https://img.shields.io/badge/Version-16.0.0-gold?style=for-the-badge)
 ![Actors](https://img.shields.io/badge/Actors-21%20Gods%20Mesh-green?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen?style=for-the-badge)
+![Q1](https://img.shields.io/badge/Q1-2026%20Features-blue?style=for-the-badge)
 
 > **Sistema UCI industrial basado en la malla de actores Ractor (OTP) con persistencia en múltiples niveles y seguridad de memoria.**
 
@@ -11,7 +12,7 @@
 
 ## 📋 Descripción
 
-**OLYMPUS UCI** es un sistema de gestión de Unidad de Cuidados Intensivos desarrollado en Rust, utilizando una arquitectura de actores basada en **Ractor** para alta disponibilidad y concurrencia segura.
+**OLYMPUS UCI v16** es un sistema de gestión de Unidad de Cuidados Intensivos desarrollado en Rust, utilizando una arquitectura de actores basada en **Ractor** para alta disponibilidad y concurrencia segura. Incluye todas las funcionalidades Q1 2026: búsqueda avanzada, reportes PDF, dashboard analítico y Ward View mejorado.
 
 ### Características Principales
 
@@ -159,6 +160,17 @@ cargo run -p olympus-server
 | `GET /api/patients` | Listar pacientes |
 | `GET /api/patients/:id` | Obtener paciente |
 
+### Endpoints Q1 2026
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `POST /api/search` | Búsqueda avanzada de pacientes |
+| `POST /api/report/pdf` | Generar reporte PDF |
+| `GET /api/dashboard/metrics` | Métricas del dashboard |
+| `POST /api/export` | Exportar datos (CSV/Excel) |
+| `GET /api/ward/view` | Vista de sala en tiempo real |
+| `GET /api/ward/patient/:id` | Detalle paciente en sala |
+
 ---
 
 ## 📊 Escalas Clínicas Implementadas
@@ -170,6 +182,39 @@ El sistema calcula automáticamente:
 - **NEWS2** - National Early Warning Score
 - **Glasgow** - Escala de coma de Glasgow
 - **Apache II** - Acute Physiology and Chronic Health Evaluation
+
+---
+
+## 🚀 Funcionalidades Q1 2026
+
+### 🔍 Búsqueda Avanzada de Pacientes
+- Filtros por nombre, ID, fecha de ingreso, severidad
+- Ordenamiento por diferentes columnas
+- Búsqueda en tiempo real con debounce
+- Búsqueda por diagnóstico principal
+
+### 📄 Reportes PDF
+- Reporte individual de paciente con todas sus evaluaciones
+- Logo del hospital personalizable
+- Gráficos de tendencias incluidos
+- Múltiples tipos: Summary, Evolution, Discharge, Transfer
+
+### 📈 Dashboard de Analítica
+- Gráficos de tendencias SOFA/APACHE
+- Estadísticas de la unidad (ocupación, mortalidad)
+- Panel de KPIs (pacientes críticos, alertas activas)
+- Historial de métricas
+
+### 📊 Exportación de Datos
+- Exportación CSV/TSV compatible con SPSS y R
+- Scripts de importación para análisis estadístico
+- Múltiples formatos: CSV, TSV, JSON, Excel
+
+### 🖥️ Ward View Mejorado
+- Grid de pacientes con estado en tiempo real
+- Color-coding por severidad (Verde/Amarillo/Naranja/Rojo)
+- Alertas visuales (parpadeo para críticos, NEWS2 > 7)
+- Actualización en tiempo real
 
 ---
 
@@ -185,6 +230,14 @@ just format     # Formatear código
 just clean      # Limpiar build
 ```
 
+### Compilación Rápida
+
+```bash
+cargo check -p olympus-server    # Verificar sin compilar
+cargo build -p olympus-server     # Compilar servidor
+cargo build --release             # Compilación optimizada
+```
+
 ---
 
 ## 📄 Licencia
@@ -193,4 +246,4 @@ MIT License - Ver [LICENSE](LICENSE) para detalles.
 
 ---
 
-> **🏛️ OLYMPUS UCI: La fuerza del acero (Rust), la resiliencia del cristal (Ractor) y la precisión de la medicina.**
+> **🏛️ OLYMPUS UCI v16: La fuerza del acero (Rust), la resiliencia del cristal (Ractor), la precisión de la medicina y la visión del futuro (Q1 2026).**

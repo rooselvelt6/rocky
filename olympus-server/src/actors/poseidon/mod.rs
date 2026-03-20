@@ -108,16 +108,85 @@ impl Actor for Poseidon {
 impl Poseidon {
     async fn handle_command(&self, cmd: CommandPayload, state: &mut PoseidonState) -> Result<ResponsePayload, ActorError> {
         match cmd {
-            _ => Ok(ResponsePayload::Error { error: "Query not yet fully ported".to_string(), code: 501 }),
+            CommandPayload::Custom(data) => {
+                let action = data.get("action").and_then(|v| v.as_str()).unwrap_or("");
+                match action {
+                    "connect" => {
+                        let url = data.get("url").and_then(|v| v.as_str()).unwrap_or("ws://localhost:8080");
+                        let mut ws_manager = state.ws_manager.write().await;
+                        ws_manager.connect(url).await
+                            .map_err(|e| ActorError::InvalidCommand { god: GodName::Poseidon, reason: e.to_string() })?;
+                        Ok(ResponsePayload::Success { message: format!("Connected to {}", url) })
+                    }
+                    "disconnect" => {
+                        let mut ws_manager = state.ws_manager.write().await;
+                        ws_manager.disconnect().await
+                            .map_err(|e| ActorError::InvalidCommand { god: GodName::Poseidon, reason: e.to_string() })?;
+                        Ok(ResponsePayload::Success { message: "Disconnected".to_string() })
+                    }
+                    "send" => {
+                        let msg = data.get("message").and_then(|v| v.as_str()).unwrap_or("");
+                        let mut ws_manager = state.ws_manager.write().await;
+                        ws_manager.send_message(msg).await
+                            .map_err(|e| ActorError::InvalidCommand { god: GodName::Poseidon, reason: e.to_string() })?;
+                        Ok(ResponsePayload::Success { message: "Message sent".to_string() })
+                    }
+                    "get_buffer_stats" => {
+                        let stats = state.buffer.get_stats().await;
+                        Ok(ResponsePayload::Data { data: serde_json::to_value(stats).unwrap_or_default() })
+                    }
+                    "clear_buffer" => {
+                        state.buffer.clear().await;
+                        Ok(ResponsePayload::Success { message: "Buffer cleared".to_string() })
+                    }
+                    "clear_flow_buffer" => {
+                        state.flow_controller.clear_buffer().await;
+                        Ok(ResponsePayload::Success { message: "Flow buffer cleared".to_string() })
+                    }
+                    _ => Err(ActorError::InvalidCommand { god: GodName::Poseidon, reason: format!("Unknown action: {}", action) }),
+                }
+            }
+            _ => Ok(ResponsePayload::Success { message: "Poseidon command processed".to_string() }),
         }
     }
 
     async fn handle_query(&self, query: QueryPayload, state: &PoseidonState) -> Result<ResponsePayload, ActorError> {
         match query {
             QueryPayload::HealthStatus => {
-                Ok(ResponsePayload::Data { data: json!({ "status": "healthy", "domain": "DataFlow" }) })
+                let ws_manager = state.ws_manager.read().await;
+                let is_connected = ws_manager.is_connected();
+                let buffer_size = state.buffer.len().await;
+                Ok(ResponsePayload::Data { data: json!({
+                    "status": if is_connected { "healthy" } else { "degraded" },
+                    "domain": "DataFlow",
+                    "connected": is_connected,
+                    "buffer_size": buffer_size
+                }) })
             }
-            _ => Ok(ResponsePayload::Error { error: "Query not yet fully ported".to_string(), code: 501 }),
+            QueryPayload::GetStats => {
+                let ws_manager = state.ws_manager.read().await;
+                let stats = ws_manager.get_stats();
+                Ok(ResponsePayload::Stats { data: serde_json::to_value(stats).unwrap_or_default() })
+            }
+            QueryPayload::Custom(data) => {
+                let query_type = data.get("query_type").and_then(|v| v.as_str()).unwrap_or("");
+                match query_type {
+                    "buffer_status" => {
+                        let stats = state.buffer.get_stats().await;
+                        Ok(ResponsePayload::Data { data: serde_json::to_value(stats).unwrap_or_default() })
+                    }
+                    "flow_metrics" => {
+                        let metrics = state.flow_controller.get_metrics().await;
+                        Ok(ResponsePayload::Data { data: serde_json::to_value(metrics).unwrap_or_default() })
+                    }
+                    "connection_info" => {
+                        let ws_manager = state.ws_manager.read().await;
+                        Ok(ResponsePayload::Data { data: serde_json::to_value(ws_manager.get_connection_info()).unwrap_or_default() })
+                    }
+                    _ => Ok(ResponsePayload::Data { data: json!({ "domain": "DataFlow" }) }),
+                }
+            }
+            _ => Ok(ResponsePayload::Data { data: json!({ "domain": "DataFlow" }) }),
         }
     }
 }

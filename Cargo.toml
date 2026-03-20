@@ -1,9 +1,9 @@
 [workspace]
-members = ["server", "client", "olympus-core"]
+members = ["server", "client", "olympus-core", "olympus-server"]
 resolver = "2"
 
 [workspace.package]
-version = "15.0.0"
+version = "16.0.0"
 edition = "2021"
 authors = ["Olympus Team"]
 

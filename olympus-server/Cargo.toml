@@ -1,6 +1,6 @@
 [package]
 name = "olympus-server"
-version = "13.0.0"
+version = "16.0.0"
 edition = "2021"
 description = "OLYMPUS Server - Backend con Actores"
 authors = ["Olympus Medical Team"]
