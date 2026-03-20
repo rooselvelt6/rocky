@@ -63,17 +63,17 @@ impl Actor for Apollo {
                     serde_json::to_value(&event).unwrap_or(serde_json::json!({})),
                 );
                 self.record_event(apollo_event, state).await;
-                if let Some(reply) = message.reply_to { let _ = reply.send(Ok(ResponsePayload::Ack { message_id: message.id })); }
+                
             }
             MessagePayload::Command(cmd) => {
                 let res = self.handle_command(cmd, state).await;
-                if let Some(reply) = message.reply_to { let _ = reply.send(res); }
+                let _ = res;
             }
             MessagePayload::Query(query) => {
                 let res = self.handle_query(query, state).await;
-                if let Some(reply) = message.reply_to { let _ = reply.send(res); }
+                let _ = res;
             }
-            _ => if let Some(reply) = message.reply_to { let _ = reply.send(Ok(ResponsePayload::Ack { message_id: message.id })); }
+             _ => {}
         }
         Ok(())
     }

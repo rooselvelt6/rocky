@@ -78,7 +78,7 @@ impl Actor for Chaos {
     async fn pre_start(&self, _myself: ActorRef<Self::Msg>, _args: Self::Arguments) -> Result<Self::State, ActorProcessingErr> {
         Ok(ChaosState {
             name: GodName::Chaos,
-            domain: DivineDomain::ChaosTesting,
+            domain: DivineDomain::Testing,
             metadata: ActorState::new(GodName::Chaos),
             config: ChaosConfig::default(),
         })
@@ -88,13 +88,13 @@ impl Actor for Chaos {
         match message.payload {
             MessagePayload::Command(cmd) => {
                 let res = self.handle_command(cmd, state).await;
-                if let Some(reply) = message.reply_to { let _ = reply.send(res); }
+                let _ = res;
             }
             MessagePayload::Query(query) => {
                 let res = self.handle_query(query, state).await;
-                if let Some(reply) = message.reply_to { let _ = reply.send(res); }
+                let _ = res;
             }
-            _ => if let Some(reply) = message.reply_to { let _ = reply.send(Ok(ResponsePayload::Ack { message_id: message.id })); }
+             _ => {}
         }
         Ok(())
     }

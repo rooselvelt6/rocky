@@ -7,19 +7,20 @@ use std::sync::Arc;
 use uuid::Uuid;
 use chrono::{DateTime, Utc};
 
+use crate::actors::DivineDomain;
 use super::ValkeyStore;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BufferedData {
     pub id: String,
-    pub domain: super::DivineDomain,
+    pub domain: DivineDomain,
     pub data: serde_json::Value,
     pub timestamp: DateTime<Utc>,
     pub attempts: u32,
 }
 
 impl BufferedData {
-    pub fn new(domain: super::DivineDomain, data: serde_json::Value) -> Self {
+    pub fn new(domain: DivineDomain, data: serde_json::Value) -> Self {
         Self {
             id: Uuid::new_v4().to_string(),
             domain,
@@ -46,7 +47,7 @@ impl EmergencyBuffer {
         }
     }
     
-    pub async fn buffer(&self, domain: super::DivineDomain, data: serde_json::Value) -> String {
+    pub async fn buffer(&self, domain: DivineDomain, data: serde_json::Value) -> String {
         let buffered = BufferedData::new(domain, data);
         let json = serde_json::to_string(&buffered).unwrap_or_default();
         let _ = self.valkey.lpush(&self.buffer_key, &json).await;

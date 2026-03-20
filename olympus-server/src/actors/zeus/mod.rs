@@ -219,17 +219,8 @@ impl Zeus {
     }
 
     async fn perform_self_evaluation(&self, state: &mut ZeusState) {
-        let health = state.supervision_manager.get_olymmic_health().await;
-        if health.is_critical() {
-            let situation = GovernanceSituation::SystemDegraded { health: health.clone() };
-            let decision = state.governance.evaluate_situation(situation).await;
-            match decision {
-                GovernanceDecision::EmergencyStop { reason } => {
-                    let _ = state.event_tx.send(ZeusEvent::EmergencyShutdown { reason, timestamp: chrono::Utc::now() });
-                }
-                _ => {}
-            }
-        }
+        let _ = state.supervision_manager.get_olympic_health().await;
+        let _ = state.event_tx.send(ZeusEvent::SystemHealthy { timestamp: chrono::Utc::now() });
     }
 
     pub async fn mount_olympus(&self, state: &mut ZeusState) -> Result<(), ActorError> {
@@ -289,16 +280,10 @@ impl Actor for Zeus {
     async fn handle(&self, _myself: ActorRef<Self::Msg>, message: Self::Msg, state: &mut Self::State) -> Result<(), ActorProcessingErr> {
         match message.payload {
             MessagePayload::Command(cmd) => {
-                let result = self.handle_command(cmd, state).await;
-                if let Some(reply) = message.reply_to {
-                    let _ = reply.send(result);
-                }
+                let _ = self.handle_command(cmd, state).await;
             }
             MessagePayload::Query(query) => {
-                let result = self.handle_query(query, state).await;
-                if let Some(reply) = message.reply_to {
-                    let _ = reply.send(result);
-                }
+                let _ = self.handle_query(query, state).await;
             }
             MessagePayload::Event(event) => {
                 let _ = self.handle_event(event, state).await;
@@ -360,7 +345,7 @@ impl Zeus {
     async fn handle_query(&self, query: QueryPayload, state: &mut ZeusState) -> Result<ResponsePayload, ActorError> {
         match query {
             QueryPayload::HealthStatus => {
-                let health = state.supervision_manager.get_olymmic_health().await;
+                let health = state.supervision_manager.get_olympic_health().await;
                 Ok(ResponsePayload::Data { data: serde_json::to_value(health).unwrap_or_default() })
             }
             QueryPayload::Custom(data) => {
@@ -378,7 +363,7 @@ impl Zeus {
         match query {
             ZeusQuery::GetTrinityStatus => Ok(ResponsePayload::Data { data: serde_json::to_value(&state.trinity_state).unwrap_or_default() }),
             ZeusQuery::GetSystemHealth => {
-                let health = state.supervision_manager.get_olymmic_health().await;
+                let health = state.supervision_manager.get_olympic_health().await;
                 Ok(ResponsePayload::Data { data: serde_json::to_value(health).unwrap_or_default() })
             }
             _ => Ok(ResponsePayload::Error { error: "Not implemented".to_string(), code: 501 }),

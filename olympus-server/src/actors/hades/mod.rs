@@ -82,11 +82,11 @@ impl Actor for Hades {
         match message.payload {
             MessagePayload::Command(cmd) => {
                 let res = self.handle_command(cmd, state).await;
-                if let Some(reply) = message.reply_to { let _ = reply.send(res); }
+                let _ = res;
             }
             MessagePayload::Query(query) => {
                 let res = self.handle_query(query, state).await;
-                if let Some(reply) = message.reply_to { let _ = reply.send(res); }
+                let _ = res;
             }
             _ => {}
         }

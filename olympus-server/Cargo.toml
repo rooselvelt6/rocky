@@ -69,6 +69,8 @@ base64 = "0.22"
 regex = "1.10"
 futures-util = { version = "0.3", features = ["sink"] }
 async-trait = "0.1"
+rand = "0.8"
+serde_yaml = "0.9"
 
 # Concurrency
 dashmap = "6.0"

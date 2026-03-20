@@ -73,17 +73,17 @@ impl Actor for Dionysus {
             MessagePayload::Event(event) => {
                 let source = message.from.unwrap_or(GodName::Zeus);
                 self.process_event(source, &event, state).await;
-                if let Some(reply) = message.reply_to { let _ = reply.send(Ok(ResponsePayload::Ack { message_id: message.id })); }
+                
             }
             MessagePayload::Command(cmd) => {
                 let res = self.handle_command(cmd, state).await;
-                if let Some(reply) = message.reply_to { let _ = reply.send(res); }
+                let _ = res;
             }
             MessagePayload::Query(query) => {
                 let res = self.handle_query(query, state).await;
-                if let Some(reply) = message.reply_to { let _ = reply.send(res); }
+                let _ = res;
             }
-            _ => if let Some(reply) = message.reply_to { let _ = reply.send(Ok(ResponsePayload::Ack { message_id: message.id })); }
+             _ => {}
         }
         Ok(())
     }

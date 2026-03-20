@@ -185,11 +185,11 @@ impl Actor for Erinyes {
         match message.payload {
             MessagePayload::Command(cmd) => {
                 let res = self.handle_command(cmd, state).await;
-                if let Some(reply) = message.reply_to { let _ = reply.send(res); }
+                let _ = res;
             }
             MessagePayload::Query(query) => {
                 let res = self.handle_query(query, state).await;
-                if let Some(reply) = message.reply_to { let _ = reply.send(res); }
+                let _ = res;
             }
             MessagePayload::Event(event) => {
                 let _ = self.handle_event(event, state).await;

@@ -57,14 +57,12 @@ impl Actor for Athena {
     async fn handle(&self, _myself: ActorRef<Self::Msg>, message: Self::Msg, state: &mut Self::State) -> Result<(), ActorProcessingErr> {
         match message.payload {
             MessagePayload::Command(cmd) => {
-                let res = self.handle_command(cmd, state).await;
-                if let Some(reply) = message.reply_to { let _ = reply.send(res); }
+                let _ = self.handle_command(cmd, state).await;
             }
             MessagePayload::Query(query) => {
-                let res = self.handle_query(query, state).await;
-                if let Some(reply) = message.reply_to { let _ = reply.send(res); }
+                let _ = self.handle_query(query, state).await;
             }
-            _ => if let Some(reply) = message.reply_to { let _ = reply.send(Ok(ResponsePayload::Ack { message_id: message.id })); }
+            _ => {}
         }
         Ok(())
     }

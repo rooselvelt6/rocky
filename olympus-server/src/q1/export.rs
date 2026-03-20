@@ -166,14 +166,14 @@ impl DataExporter {
         let mut output = Vec::new();
 
         if request.include_headers {
-            writeln!(output, "evaluation_id{},patient_id{},evaluation_date{},scale_type{},score{},outcome{},severity{},evaluator{}", 
+            writeln!(output, "evaluation_id{}patient_id{}evaluation_date{}scale_type{}score{}outcome{}severity{}evaluator", 
                      delimiter, delimiter, delimiter, delimiter, delimiter, delimiter, delimiter).map_err(|e| ExportError::IoError(e.to_string()))?;
         }
 
         for eval in evaluations {
             writeln!(
                 output,
-                "{}{}{}{}{}{}{}{}{}{}{}{}{}",
+                "{}{}{}{}{}{}{}{}",
                 eval.evaluation_id,
                 delimiter,
                 eval.patient_id,

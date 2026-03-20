@@ -3,7 +3,15 @@
 
 use serde_json::Value;
 use std::collections::HashMap;
-use crate::actors::hera::ValidationRule;
+
+#[derive(Debug, Clone)]
+pub struct ValidationRule {
+    pub name: String,
+    pub rule_type: String,
+    pub validation_pattern: String,
+    pub error_message: String,
+    pub is_required: bool,
+}
 
 #[derive(Debug, Clone)]
 pub struct RuleEngine {
@@ -18,7 +26,7 @@ impl RuleEngine {
         engine.load_default_rules();
         engine
     }
-    
+
     fn load_default_rules(&mut self) {
         // Glasgow rules
         let mut glasgow_rules = Vec::new();
@@ -30,7 +38,7 @@ impl RuleEngine {
             is_required: true,
         });
         self.rules.insert("glasgow".to_string(), glasgow_rules);
-        
+
         // Vital signs rules
         let mut vital_rules = Vec::new();
         vital_rules.push(ValidationRule {
@@ -48,7 +56,7 @@ impl RuleEngine {
             is_required: false,
         });
         self.rules.insert("vital_signs".to_string(), vital_rules);
-        
+
         // Patient rules
         let mut patient_rules = Vec::new();
         patient_rules.push(ValidationRule {
@@ -60,14 +68,14 @@ impl RuleEngine {
         });
         self.rules.insert("patient".to_string(), patient_rules);
     }
-    
+
     pub fn validate_rules(&self, data: &Value, schema_name: &str) -> Result<Vec<String>, String> {
         let mut warnings = Vec::new();
-        
+
         if let Some(rules) = self.rules.get(schema_name) {
             for rule in rules {
                 match self.apply_rule(rule, data) {
-                    RuleResult::Pass => {},
+                    RuleResult::Pass => {}
                     RuleResult::Warning(msg) => warnings.push(msg),
                     RuleResult::Error(msg) => {
                         if rule.is_required {
@@ -79,10 +87,10 @@ impl RuleEngine {
                 }
             }
         }
-        
+
         Ok(warnings)
     }
-    
+
     fn apply_rule(&self, rule: &ValidationRule, data: &Value) -> RuleResult {
         match rule.name.as_str() {
             "glasgow_score_consistency" => self.validate_glasgow_consistency(data),
@@ -91,7 +99,7 @@ impl RuleEngine {
             _ => RuleResult::Pass,
         }
     }
-    
+
     fn validate_glasgow_consistency(&self, data: &Value) -> RuleResult {
         if let (Some(eye), Some(verbal), Some(motor), Some(score)) = (
             data.get("eye_response").and_then(|v| v.as_u64()),
@@ -109,7 +117,7 @@ impl RuleEngine {
         }
         RuleResult::Pass
     }
-    
+
     fn validate_pulse_pressure(&self, data: &Value) -> RuleResult {
         if let (Some(sbp), Some(dbp)) = (
             data.get("systolic_bp").and_then(|v| v.as_u64()),
@@ -117,25 +125,25 @@ impl RuleEngine {
         ) {
             if sbp <= dbp {
                 return RuleResult::Error(
-                    "Systolic BP must be greater than diastolic BP".to_string()
+                    "Systolic BP must be greater than diastolic BP".to_string(),
                 );
             }
-            
+
             let pulse_pressure = sbp - dbp;
             if pulse_pressure < 20 {
                 return RuleResult::Warning(
-                    "Narrow pulse pressure detected - consider cardiac evaluation".to_string()
+                    "Narrow pulse pressure detected - consider cardiac evaluation".to_string(),
                 );
             }
             if pulse_pressure > 100 {
                 return RuleResult::Warning(
-                    "Wide pulse pressure detected - consider aortic regurgitation".to_string()
+                    "Wide pulse pressure detected - consider aortic regurgitation".to_string(),
                 );
             }
         }
         RuleResult::Pass
     }
-    
+
     fn validate_age(&self, data: &Value) -> RuleResult {
         if let Some(age) = data.get("age").and_then(|v| v.as_u64()) {
             if age == 0 {
@@ -147,10 +155,11 @@ impl RuleEngine {
         }
         RuleResult::Pass
     }
-    
+
     pub fn add_rule(&mut self, rule: ValidationRule) {
         let schema_name = rule.rule_type.clone();
-        self.rules.entry(schema_name)
+        self.rules
+            .entry(schema_name)
             .or_insert_with(Vec::new)
             .push(rule);
     }
@@ -171,7 +180,7 @@ mod tests {
     #[test]
     fn test_glasgow_consistency() {
         let engine = RuleEngine::new();
-        
+
         // Valid Glasgow
         let valid = json!({
             "eye_response": 4,
@@ -180,7 +189,7 @@ mod tests {
             "score": 15
         });
         assert!(engine.validate_rules(&valid, "glasgow").is_ok());
-        
+
         // Invalid Glasgow (inconsistent score)
         let invalid = json!({
             "eye_response": 4,
@@ -194,14 +203,14 @@ mod tests {
     #[test]
     fn test_pulse_pressure() {
         let engine = RuleEngine::new();
-        
+
         // Valid BP
         let valid = json!({
             "systolic_bp": 120,
             "diastolic_bp": 80
         });
         assert!(engine.validate_rules(&valid, "vital_signs").is_ok());
-        
+
         // Invalid BP (systolic < diastolic)
         let invalid = json!({
             "systolic_bp": 80,

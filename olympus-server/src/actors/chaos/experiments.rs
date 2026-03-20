@@ -13,6 +13,14 @@ use tracing::info;
 use crate::actors::GodName;
 use crate::errors::ActorError;
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ChaosExportFormat {
+    Json,
+    Csv,
+    Yaml,
+    Prometheus,
+}
+
 /// Estrategias de experimentos Chaos
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum ChaosStrategy {
@@ -451,28 +459,28 @@ impl ExperimentManager {
     }
     
     /// Exporta resultados en formato específico
-    pub async fn export_results(&self, format: super::ExportFormat) -> Result<String, ActorError> {
+    pub async fn export_results(&self, format: ChaosExportFormat) -> Result<String, ActorError> {
         let history = self.experiment_history.read().await.clone();
         
         match format {
-            super::ExportFormat::Json => {
+            ChaosExportFormat::Json => {
                 serde_json::to_string_pretty(&history)
                     .map_err(|e| ActorError::Unknown {
                         god: GodName::Chaos,
                         message: format!("Error exportando JSON: {}", e),
                     })
             },
-            super::ExportFormat::Csv => {
+            ChaosExportFormat::Csv => {
                 self.export_to_csv(&history).await
             },
-            super::ExportFormat::Yaml => {
+            ChaosExportFormat::Yaml => {
                 serde_yaml::to_string(&history)
                     .map_err(|e| ActorError::Unknown {
                         god: GodName::Chaos,
                         message: format!("Error exportando YAML: {}", e),
                     })
             },
-            super::ExportFormat::Prometheus => {
+            ChaosExportFormat::Prometheus => {
                 self.export_to_prometheus(&history).await
             },
         }
