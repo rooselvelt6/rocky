@@ -1,5 +1,5 @@
 [workspace]
-members = ["server", "client", "olympus-core", "olympus-server"]
+members = ["client", "olympus-core", "olympus-server"]
 resolver = "2"
 
 [workspace.package]
